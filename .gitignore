@@ -1,0 +1,30 @@
+# Node
+node_modules/
+dist/
+build/
+.cache/
+.vite/
+*.log
+
+# Python
+.venv/
+venv/
+__pycache__/
+*.pyc
+.pytest_cache/
+.mypy_cache/
+
+# Env / secrets
+.env
+.env.*
+!.env.example
+
+# OS / Editor
+.DS_Store
+Thumbs.db
+.vscode/
+.idea/
+
+# Dev media assets (keep out of git)
+dev-assets/
+release-bundles/

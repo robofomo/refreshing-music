@@ -1,0 +1,24 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Dev Viewer</title>
+    <script type="module" src="/src/main.ts"></script>
+  </head>
+  <body>
+    <div id="app">
+      <canvas id="stage"></canvas>
+      <div id="hud" class="panel"></div>
+      <div id="controls" class="panel">
+        <button id="prevBtn">Prev</button>
+        <button id="playBtn">Play</button>
+        <button id="nextBtn">Next</button>
+        <input id="seek" type="range" min="0" max="1000" value="0" />
+        <button id="seedBtn">Random Seed</button>
+        <button id="hudBtn">Toggle HUD</button>
+      </div>
+    </div>
+    <audio id="audio" preload="metadata" crossorigin="anonymous"></audio>
+  </body>
+</html>

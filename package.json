@@ -1,12 +1,14 @@
-﻿{
+{
   "name": "gen-music-visualizer",
   "private": true,
   "scripts": {
     "idgen": "node tools/id-gen.mjs",
-    "preprocess": "node tools/batch-preprocess.mjs"
+    "preprocess": "node tools/batch-preprocess.mjs",
+    "dev": "npm --workspace apps/dev-viewer run dev"
   },
   "workspaces": [
     "apps/*",
     "packages/*"
   ]
 }
+

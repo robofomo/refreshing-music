@@ -52,5 +52,47 @@
     "rawText": "\n\n\n\n\n\n"
   },
   "createdLocalRaw": "January 25, 2026 at 8:40 PM",
-  "createdTz": "Pacific/Auckland"
+  "createdTz": "Pacific/Auckland",
+  "timing": {
+    "sections": [
+      {
+        "id": "intro-1",
+        "t0Ms": 0,
+        "t1Ms": 14000
+      },
+      {
+        "id": "development-1",
+        "t0Ms": 14000,
+        "t1Ms": 42000
+      },
+      {
+        "id": "ending-1",
+        "t0Ms": 62000,
+        "t1Ms": 76000
+      }
+    ],
+    "lyricsLines": [
+      {
+        "i": 0,
+        "t0Ms": 1500,
+        "t1Ms": 4500
+      },
+      {
+        "i": 2,
+        "t0Ms": 22000,
+        "t1Ms": 25500
+      },
+      {
+        "i": 4,
+        "t0Ms": 65000,
+        "t1Ms": 70000
+      }
+    ],
+    "beatsMs": [
+      0,
+      500,
+      1000,
+      1500
+    ]
+  }
 }

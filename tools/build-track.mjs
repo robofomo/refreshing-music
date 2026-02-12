@@ -4,6 +4,7 @@ import { spawnSync } from "node:child_process";
 import { pathToFileURL } from "node:url";
 import { parseComposerFile } from "./parse-composer.mjs";
 import { nzLocalStringToUtcIso } from "./time-nz-to-utc.mjs";
+import { readJson5Lite } from "./read-json5-lite.mjs";
 
 function parseArgs(argv) {
   const out = {};
@@ -109,6 +110,36 @@ function composerDataFromFile(composerPath) {
   return parseComposerFile(composerPath);
 }
 
+function findTimingPath(mp3Path) {
+  const base = path.parse(mp3Path).name;
+  const alongside = path.join(path.dirname(mp3Path), `${base}.timing.json5`);
+  if (fs.existsSync(alongside)) return alongside;
+  const alongsideSlugged = path.join(path.dirname(mp3Path), `${slugify(base)}.timing.json5`);
+  if (fs.existsSync(alongsideSlugged)) return alongsideSlugged;
+  const inDevAssets = path.resolve("dev-assets", `${base}.timing.json5`);
+  if (fs.existsSync(inDevAssets)) return inDevAssets;
+  const inDevAssetsSlugged = path.resolve("dev-assets", `${slugify(base)}.timing.json5`);
+  if (fs.existsSync(inDevAssetsSlugged)) return inDevAssetsSlugged;
+  return "";
+}
+
+function validateTiming(track, timing, timingPath) {
+  const sectionIds = new Set((track.sections ?? []).map((s) => s.id));
+  for (const s of timing?.sections ?? []) {
+    if (s?.id && !sectionIds.has(s.id)) {
+      console.warn(`timing warning (${timingPath}): section id not found: ${s.id}`);
+    }
+  }
+
+  const lyricLines = String(track.lyrics?.rawText ?? "").split("\n");
+  for (const row of timing?.lyricsLines ?? []) {
+    const i = row?.i;
+    if (!Number.isInteger(i) || i < 0 || i >= lyricLines.length) {
+      console.warn(`timing warning (${timingPath}): lyricsLines i out of range: ${i}`);
+    }
+  }
+}
+
 export function buildTrack({ mp3Path, composerPath, titleArg }) {
   if (!mp3Path) throw new Error("--mp3 is required");
   if (!fs.existsSync(mp3Path)) throw new Error(`Missing mp3: ${mp3Path}`);
@@ -157,6 +188,16 @@ export function buildTrack({ mp3Path, composerPath, titleArg }) {
 
   if (created.createdLocalRaw) track.createdLocalRaw = created.createdLocalRaw;
   if (created.createdTz) track.createdTz = created.createdTz;
+  const timingPath = findTimingPath(mp3Path);
+  if (timingPath) {
+    try {
+      const timing = readJson5Lite(timingPath);
+      track.timing = timing;
+      validateTiming(track, timing, timingPath);
+    } catch (err) {
+      console.warn(err instanceof Error ? err.message : String(err));
+    }
+  }
 
   fs.writeFileSync(outPath, `${JSON.stringify(track, null, 2)}\n`, "utf8");
   upsertTracksIndex(tracksDir);

@@ -68,6 +68,40 @@
         }
       },
       "additionalProperties": true
+    },
+    "timing": {
+      "type": "object",
+      "properties": {
+        "sections": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "properties": {
+              "id": { "type": "string" },
+              "t0Ms": { "type": "integer" },
+              "t1Ms": { "type": "integer" }
+            },
+            "additionalProperties": true
+          }
+        },
+        "lyricsLines": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "properties": {
+              "i": { "type": "integer" },
+              "t0Ms": { "type": "integer" },
+              "t1Ms": { "type": "integer" }
+            },
+            "additionalProperties": true
+          }
+        },
+        "beatsMs": {
+          "type": "array",
+          "items": { "type": "number" }
+        }
+      },
+      "additionalProperties": true
     }
   },
   "additionalProperties": true

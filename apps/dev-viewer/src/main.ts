@@ -31,13 +31,16 @@ const hud = document.getElementById("hud") as HTMLDivElement;
 const playBtn = document.getElementById("playBtn") as HTMLButtonElement;
 const prevBtn = document.getElementById("prevBtn") as HTMLButtonElement;
 const nextBtn = document.getElementById("nextBtn") as HTMLButtonElement;
+const offsetDownBtn = document.getElementById("offsetDownBtn") as HTMLButtonElement;
+const offsetUpBtn = document.getElementById("offsetUpBtn") as HTMLButtonElement;
+const offsetResetBtn = document.getElementById("offsetResetBtn") as HTMLButtonElement;
 const seedBtn = document.getElementById("seedBtn") as HTMLButtonElement;
 const hudBtn = document.getElementById("hudBtn") as HTMLButtonElement;
 const seek = document.getElementById("seek") as HTMLInputElement;
 const audio = document.getElementById("audio") as HTMLAudioElement;
 const ctx = canvas.getContext("2d");
 
-if (!ctx) throw new Error("Canvas 2D context unavailable");
+if (!ctx) throw new Error("Canvas2D not supported");
 
 const palettes = [
   ["#0f172a", "#124e66", "#2f9c95"],
@@ -53,14 +56,22 @@ let trackUrl = "";
 let lyricsLines: string[] = [];
 
 let seed = 1;
+const DEFAULT_RENDER_OFFSET_MS = -240;
+const MIN_RENDER_OFFSET_MS = -500;
+const MAX_RENDER_OFFSET_MS = 500;
+let renderOffsetMs = DEFAULT_RENDER_OFFSET_MS;
 let hudVisible = new URL(location.href).searchParams.get("hud") === "1";
 let particles: Particle[] = [];
 let palette = palettes[0];
 let isSeeking = false;
+let pendingSeekRatio = 0;
+let wasPlayingBeforeSeek = false;
+let seekInFlight = false;
+const ampHistory: Array<{ tMs: number; amp: number }> = [];
 
 let audioCtx: AudioContext | null = null;
 let analyser: AnalyserNode | null = null;
-let audioData: Uint8Array | null = null;
+let audioData: Uint8Array<ArrayBuffer> | null = null;
 
 function hashString(s: string) {
   let h = 2166136261 >>> 0;
@@ -93,12 +104,108 @@ function updateUrlParam(key: string, value: string | null) {
   history.replaceState({}, "", u);
 }
 
+function clampOffset(v: number) {
+  if (!Number.isFinite(v)) return DEFAULT_RENDER_OFFSET_MS;
+  return Math.max(MIN_RENDER_OFFSET_MS, Math.min(MAX_RENDER_OFFSET_MS, Math.round(v)));
+}
+
+function setRenderOffset(next: number) {
+  renderOffsetMs = clampOffset(next);
+  updateUrlParam("offset", String(renderOffsetMs));
+}
+
+function once(el: HTMLMediaElement, event: string) {
+  return new Promise<void>((resolve) => {
+    const h = () => {
+      el.removeEventListener(event, h);
+      resolve();
+    };
+    el.addEventListener(event, h, { once: true });
+  });
+}
+
+async function ensureMetadataLoaded() {
+  if (audio.readyState >= 1) return;
+  if (!audio.preload) audio.preload = "metadata";
+  audio.load();
+  await once(audio, "loadedmetadata");
+}
+
+async function seekToSeconds(seconds: number) {
+  await ensureMetadataLoaded();
+  audio.pause();
+  audio.currentTime = seconds;
+  await once(audio, "seeked");
+}
+
+function beginSeek() {
+  isSeeking = true;
+  wasPlayingBeforeSeek = !audio.paused;
+  audio.pause();
+}
+
+function applySeekFromSlider() {
+  pendingSeekRatio = Number(seek.value) / 1000;
+}
+
+async function finishSeek() {
+  if (seekInFlight) return;
+  seekInFlight = true;
+  await ensureMetadataLoaded();
+  const duration = Number.isFinite(audio.duration) ? audio.duration : 0;
+  const target = Math.max(0, Math.min(duration, pendingSeekRatio * duration));
+
+  audio.pause();
+  try {
+    await seekToSeconds(target);
+
+    ensureAudioGraph();
+    if (audioCtx && audioCtx.state !== "running") {
+      await audioCtx.resume().catch(() => undefined);
+    }
+
+    if (wasPlayingBeforeSeek) {
+      await audio.play().catch(() => undefined);
+    }
+  } finally {
+    isSeeking = false;
+    seekInFlight = false;
+  }
+}
+
+function endSeek() {
+  if (!isSeeking) return;
+  isSeeking = false;
+  void finishSeek();
+}
+
+function pushAmplitudeSample(tAudioMs: number, amp: number) {
+  ampHistory.push({ tMs: tAudioMs, amp });
+  const cutoff = tAudioMs - 5000;
+  while (ampHistory.length > 2 && ampHistory[0].tMs < cutoff) ampHistory.shift();
+}
+
+function amplitudeAt(tMs: number, fallbackAmp: number) {
+  if (!ampHistory.length) return fallbackAmp;
+  if (tMs <= ampHistory[0].tMs) return ampHistory[0].amp;
+  for (let i = 1; i < ampHistory.length; i += 1) {
+    const a = ampHistory[i - 1];
+    const b = ampHistory[i];
+    if (tMs <= b.tMs) {
+      const span = Math.max(1, b.tMs - a.tMs);
+      const u = (tMs - a.tMs) / span;
+      return a.amp + (b.amp - a.amp) * u;
+    }
+  }
+  return ampHistory[ampHistory.length - 1].amp;
+}
+
 function ensureAudioGraph() {
   if (audioCtx) return;
   audioCtx = new AudioContext();
   analyser = audioCtx.createAnalyser();
   analyser.fftSize = 1024;
-  audioData = new Uint8Array(analyser.fftSize);
+  audioData = new Uint8Array(new ArrayBuffer(analyser.fftSize));
   const src = audioCtx.createMediaElementSource(audio);
   src.connect(analyser);
   analyser.connect(audioCtx.destination);
@@ -186,14 +293,22 @@ function resizeCanvas() {
 }
 
 function render() {
+  if (!ctx) return;
   resizeCanvas();
   const w = canvas.width;
   const h = canvas.height;
-  const currentTimeMs = audio.currentTime * 1000;
-  const amp = rmsAmplitude();
-  const pulse = beatPulse(currentTimeMs);
-  const wobbleX = Math.sin(currentTimeMs * 0.001 + seed * 0.00001) * amp * 48;
-  const wobbleY = Math.cos(currentTimeMs * 0.0013 + seed * 0.00002) * amp * 48;
+  const tAudioMs = audio.currentTime * 1000;
+  const tRenderMs = tAudioMs + renderOffsetMs;
+  if (!audio.paused && audioCtx && audioCtx.state !== "running") {
+    audioCtx.resume().catch(() => undefined);
+  }
+  const ampNow = rmsAmplitude();
+  pushAmplitudeSample(tAudioMs, ampNow);
+  const amp = amplitudeAt(tRenderMs, ampNow);
+  const pulse = beatPulse(tRenderMs);
+  const wobbleX = Math.sin(tRenderMs * 0.001 + seed * 0.00001) * amp * 48;
+  const wobbleY = Math.cos(tRenderMs * 0.0013 + seed * 0.00002) * amp * 48;
+  const phaseOffset = renderOffsetMs * 0.001;
 
   ctx.save();
   ctx.translate(wobbleX, wobbleY);
@@ -213,10 +328,10 @@ function render() {
   ctx.arc(centerX, centerY, glow, 0, Math.PI * 2);
   ctx.fill();
 
-  const t = currentTimeMs * 0.001;
+  const t = tRenderMs * 0.001;
   for (const p of particles) {
-    const dx = Math.cos(p.angle) * p.speed * t + Math.sin(t * p.drift * 0.3) * 0.02;
-    const dy = Math.sin(p.angle) * p.speed * t + Math.cos(t * p.drift * 0.2) * 0.02;
+    const dx = Math.cos(p.angle) * p.speed * t + Math.sin((t + phaseOffset) * p.drift * 0.3) * 0.02;
+    const dy = Math.sin(p.angle) * p.speed * t + Math.cos((t + phaseOffset) * p.drift * 0.2) * 0.02;
     let x = ((p.x + dx) % 1 + 1) % 1;
     let y = ((p.y + dy) % 1 + 1) % 1;
     x *= w;
@@ -229,12 +344,14 @@ function render() {
 
   ctx.restore();
 
-  if (!isSeeking && Number.isFinite(audio.duration) && audio.duration > 0) {
-    seek.value = String(Math.min(1000, Math.max(0, (audio.currentTime / audio.duration) * 1000)));
-  }
+if (!isSeeking && Number.isFinite(audio.duration) && audio.duration > 0) {
+  seek.value = String(
+    Math.min(1000, Math.max(0, (audio.currentTime / audio.duration) * 1000))
+  );
+}
 
-  const sec = findCurrentSection(currentTimeMs);
-  const lyricRef = findCurrentLyricLine(currentTimeMs);
+  const sec = findCurrentSection(tRenderMs);
+  const lyricRef = findCurrentLyricLine(tRenderMs);
   const lyricText =
     typeof lyricRef?.i === "number" && lyricRef.i >= 0 && lyricRef.i < lyricsLines.length ? lyricsLines[lyricRef.i] : "";
   hud.style.display = hudVisible ? "block" : "none";
@@ -242,7 +359,9 @@ function render() {
     `title: ${track?.title ?? "-"}`,
     `trackId: ${track?.trackId ?? "-"}`,
     `seed: ${seed}`,
-    `time: ${fmtMs(currentTimeMs)}`,
+    `time: ${fmtMs(tAudioMs)}`,
+    `renderTime: ${fmtMs(tRenderMs)}`,
+    `offsetMs: ${renderOffsetMs}`,
     `section: ${sec?.id ?? "-"}`,
     `lyric: ${lyricText || "-"}`
   ].join("\n");
@@ -291,7 +410,9 @@ async function init() {
   const url = new URL(location.href);
   const requestedTrackId = url.searchParams.get("track");
   const seedParam = url.searchParams.get("seed");
+  const offsetParam = url.searchParams.get("offset");
   seed = seedParam ? Number(seedParam) : NaN;
+  setRenderOffset(offsetParam ? Number(offsetParam) : DEFAULT_RENDER_OFFSET_MS);
 
   const byTrackId = requestedTrackId
     ? indexEntries.findIndex((entry) => trackIdFromEntry(entry) === requestedTrackId)
@@ -318,15 +439,39 @@ nextBtn.addEventListener("click", async () => {
   await loadTrack(selectedIndex + 1);
 });
 
-seek.addEventListener("pointerdown", () => {
-  isSeeking = true;
+seek.addEventListener("pointerdown", (e) => {
+  seek.setPointerCapture(e.pointerId);
+  beginSeek();
+  const r = seek.getBoundingClientRect();
+  const x = Math.min(r.width, Math.max(0, e.clientX - r.left));
+  const ratio = r.width ? x / r.width : 0;
+  seek.value = String(Math.round(ratio * 1000));
+  applySeekFromSlider();
 });
-seek.addEventListener("pointerup", () => {
-  isSeeking = false;
+// seek.addEventListener("mousedown", beginSeek);
+// seek.addEventListener("touchstart", beginSeek, { passive: true });
+
+seek.addEventListener("pointerup", (e) => {
+  try { seek.releasePointerCapture(e.pointerId); } catch {}
+  void finishSeek();
 });
-seek.addEventListener("input", () => {
-  if (!Number.isFinite(audio.duration) || audio.duration <= 0) return;
-  audio.currentTime = (Number(seek.value) / 1000) * audio.duration;
+// window.addEventListener("mouseup", () => {
+//   endSeek();
+// });
+// window.addEventListener("touchend", () => {
+//   endSeek();
+// });
+seek.addEventListener("input", applySeekFromSlider);
+seek.addEventListener("change", () => {
+  if (isSeeking || seekInFlight) return;
+  wasPlayingBeforeSeek = !audio.paused;
+  void finishSeek();
+});
+seek.addEventListener("click", () => {
+  if (isSeeking || seekInFlight) return;
+  wasPlayingBeforeSeek = !audio.paused;
+  applySeekFromSlider();
+  void finishSeek();
 });
 
 seedBtn.addEventListener("click", () => {
@@ -340,11 +485,42 @@ hudBtn.addEventListener("click", () => {
   updateUrlParam("hud", hudVisible ? "1" : null);
 });
 
-audio.addEventListener("play", () => {
+offsetDownBtn.addEventListener("click", () => {
+  setRenderOffset(renderOffsetMs - 10);
+});
+offsetUpBtn.addEventListener("click", () => {
+  setRenderOffset(renderOffsetMs + 10);
+});
+offsetResetBtn.addEventListener("click", () => {
+  setRenderOffset(DEFAULT_RENDER_OFFSET_MS);
+});
+
+window.addEventListener("keydown", (e) => {
+  if (e.code === "BracketLeft") {
+    setRenderOffset(renderOffsetMs - 10);
+    e.preventDefault();
+  } else if (e.code === "BracketRight") {
+    setRenderOffset(renderOffsetMs + 10);
+    e.preventDefault();
+  } else if (e.code === "Backslash") {
+    setRenderOffset(DEFAULT_RENDER_OFFSET_MS);
+    e.preventDefault();
+  }
+});
+
+audio.addEventListener("play", () => { 
+  ensureAudioGraph();
+  audioCtx?.resume().catch(() => undefined);
   playBtn.textContent = "Pause";
+});
+audio.addEventListener("seeking", () => {
+  audioCtx?.resume().catch(() => undefined);
 });
 audio.addEventListener("pause", () => {
   playBtn.textContent = "Play";
+});
+document.addEventListener("visibilitychange", () => {
+  if (!document.hidden) audioCtx?.resume().catch(() => undefined);
 });
 
 window.addEventListener("resize", resizeCanvas);

@@ -2,7 +2,8 @@
   "name": "gen-music-visualizer",
   "private": true,
   "scripts": {
-    "idgen": "node tools/id-gen.mjs"
+    "idgen": "node tools/id-gen.mjs",
+    "preprocess": "node tools/batch-preprocess.mjs"
   },
   "workspaces": [
     "apps/*",

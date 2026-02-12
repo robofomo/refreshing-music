@@ -1,0 +1,79 @@
+{
+  "workId": "q14Ul4ClLKqh",
+  "trackId": "QNNU5P0F_Uos1i",
+  "createdAt": "2026-02-12T06:20:24.500Z",
+  "slug": "channels-of-light",
+  "title": "Channels of Light",
+  "audio": {
+    "filename": "Channels of Light.mp3",
+    "path": "../../dev-assets/Channels of Light.mp3",
+    "cidOrTx": "",
+    "mime": "audio/mpeg",
+    "bytes": 4312742
+  },
+  "composer": {
+    "rawText": "[Song Title: Channels of Light]\r\n[Style: electro, breakbeat, clean studio recording, conversational male vocal]\r\n[Caption: Systems hum until color speaks.]\r\n[Image: RGB bars dissolving into motion.]\r\n[Refresh Title: R to the G to the B]\r\n[Theme: System & Process]\r\n[Gradients: 3]\r\n[Rank: 27]\r\n[Title Rarity: 1.70]\r\n[Seeds: 88304, A:41, B:6, C:199, D:72]\r\n[Perspective: system_voice → we_community]\r\n[Concept: Simple rules, vivid results.]\r\n[Topic: System & Process → rules_as_music]\r\n[Genre Bias: electro → breakbeat]\r\n[Style Change: Reset]\r\n[Modulation: none]\r\n[Hook Prominence: high]\r\n[Deviation: crisp contrast]\r\n[Created: February 10, 2026 at 9:30 PM]\r\n[Composer Version: v2.6]\r\n\r\n[Intro]\r\n[Glitch clicks, metronomic synth, no vocals]\r\n\r\n[Fragment A]\r\n[Dry drum machine, mono bass]\r\nRed sets the baseline  \r\nGreen finds the groove  \r\nBlue holds the ceiling  \r\nThat’s how we move  \r\n\r\n[Reset]\r\n[Tempo hiccup, filter sweep]\r\nR to the G to the B  \r\n\r\n[Fragment B]\r\n[Beat widens, syncopated hats]\r\nEvery rule hums softly  \r\nTill it’s played just right  \r\nNumbers turn to feeling  \r\nSignals turn to light  \r\n\r\n[Bridge]\r\n[Breakdown bridge, vocals closer]\r\nWe don’t need the noise loud  \r\nWe just tune the frame  \r\nSmall decisions repeating  \r\nNever twice the same  \r\n\r\n[Final Chorus]\r\n[Full beat return, call-and-response backing]\r\nR to the G to the B  \r\nWatch the pattern breathe  \r\nSimple lines in motion  \r\nShow us what we see  \r\n\r\n[Ending]\r\n[Strip to pulse and echo]\r\nR to the G to the B\r\n",
+    "headerMap": {
+      "Song Title": "Channels of Light",
+      "Style": "electro, breakbeat, clean studio recording, conversational male vocal",
+      "Caption": "Systems hum until color speaks.",
+      "Image": "RGB bars dissolving into motion.",
+      "Refresh Title": "R to the G to the B",
+      "Theme": "System & Process",
+      "Gradients": "3",
+      "Rank": "27",
+      "Title Rarity": "1.70",
+      "Seeds": "88304, A:41, B:6, C:199, D:72",
+      "Perspective": "system_voice → we_community",
+      "Concept": "Simple rules, vivid results.",
+      "Topic": "System & Process → rules_as_music",
+      "Genre Bias": "electro → breakbeat",
+      "Style Change": "Reset",
+      "Modulation": "none",
+      "Hook Prominence": "high",
+      "Deviation": "crisp contrast",
+      "Created": "February 10, 2026 at 9:30 PM",
+      "Composer Version": "v2.6"
+    }
+  },
+  "sections": [
+    {
+      "id": "intro",
+      "labelRaw": "Intro",
+      "notesRaw": "Glitch clicks, metronomic synth, no vocals"
+    },
+    {
+      "id": "fragment-a",
+      "labelRaw": "Fragment A",
+      "notesRaw": "Dry drum machine, mono bass"
+    },
+    {
+      "id": "reset",
+      "labelRaw": "Reset",
+      "notesRaw": "Tempo hiccup, filter sweep"
+    },
+    {
+      "id": "fragment-b",
+      "labelRaw": "Fragment B",
+      "notesRaw": "Beat widens, syncopated hats"
+    },
+    {
+      "id": "bridge",
+      "labelRaw": "Bridge",
+      "notesRaw": "Breakdown bridge, vocals closer"
+    },
+    {
+      "id": "final-chorus",
+      "labelRaw": "Final Chorus",
+      "notesRaw": "Full beat return, call-and-response backing"
+    },
+    {
+      "id": "ending",
+      "labelRaw": "Ending",
+      "notesRaw": "Strip to pulse and echo"
+    }
+  ],
+  "lyrics": {
+    "rawText": "\nRed sets the baseline  \nGreen finds the groove  \nBlue holds the ceiling  \nThat’s how we move  \n\nR to the G to the B  \n\nEvery rule hums softly  \nTill it’s played just right  \nNumbers turn to feeling  \nSignals turn to light  \n\nWe don’t need the noise loud  \nWe just tune the frame  \nSmall decisions repeating  \nNever twice the same  \n\nR to the G to the B  \nWatch the pattern breathe  \nSimple lines in motion  \nShow us what we see  \n\nR to the G to the B\n"
+  }
+}

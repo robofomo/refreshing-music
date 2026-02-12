@@ -1,0 +1,54 @@
+{
+  "workId": "WvIH27tAZA_k",
+  "trackId": "EdNkleskScFkNg",
+  "createdAt": "2026-02-12T06:20:24.697Z",
+  "slug": "two-tones-one-reset",
+  "title": "Two Tones, One Reset",
+  "audio": {
+    "filename": "Two Tones, One Reset.mp3",
+    "path": "../../dev-assets/Two Tones, One Reset.mp3",
+    "cidOrTx": "",
+    "mime": "audio/mpeg",
+    "bytes": 5203778
+  },
+  "composer": {
+    "rawText": "[Title: Two Tones, One Reset]\r\n[Theme: Random]\r\n[Variation: Random 2]\r\n[Gradients: 2]\r\n[Seed: 86]\r\n[Style: minimalist instrumental, soloist and accompanist, experimental ambient, glass textures, clean studio recording]\r\n[Image: soft two-color gradient with subtle motion]\r\n[Caption: A minimal refresh — same idea, new breath.]\r\n[Created: January 25, 2026 at 8:40 PM]\r\n[Composer Version: v1.0]\r\n\r\n[Intro]\r\n[Glass harmonica enters alone, slow sustained tones, wide stereo.]\r\n\r\n[Development]\r\n[Analog modular synth fades in beneath, low harmonic pulse, gentle filter movement.]\r\n\r\n[Refresh]\r\n[The opening motif repeats with slight timing variation, as if reloaded.]\r\n\r\n[Ending]\r\n[The synth drops out first, leaving a single glass harmonic that fades into silence.]\r\n\r\n\r\n\r\n",
+    "headerMap": {
+      "Title": "Two Tones, One Reset",
+      "Theme": "Random",
+      "Variation": "Random 2",
+      "Gradients": "2",
+      "Seed": "86",
+      "Style": "minimalist instrumental, soloist and accompanist, experimental ambient, glass textures, clean studio recording",
+      "Image": "soft two-color gradient with subtle motion",
+      "Caption": "A minimal refresh — same idea, new breath.",
+      "Created": "January 25, 2026 at 8:40 PM",
+      "Composer Version": "v1.0"
+    }
+  },
+  "sections": [
+    {
+      "id": "intro",
+      "labelRaw": "Intro",
+      "notesRaw": "Glass harmonica enters alone, slow sustained tones, wide stereo."
+    },
+    {
+      "id": "development",
+      "labelRaw": "Development",
+      "notesRaw": "Analog modular synth fades in beneath, low harmonic pulse, gentle filter movement."
+    },
+    {
+      "id": "refresh",
+      "labelRaw": "Refresh",
+      "notesRaw": "The opening motif repeats with slight timing variation, as if reloaded."
+    },
+    {
+      "id": "ending",
+      "labelRaw": "Ending",
+      "notesRaw": "The synth drops out first, leaving a single glass harmonic that fades into silence."
+    }
+  ],
+  "lyrics": {
+    "rawText": "\n\n\n\n\n\n"
+  }
+}

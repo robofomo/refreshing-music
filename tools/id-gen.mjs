@@ -51,7 +51,7 @@ function mp3FingerprintBytes(filePath) {
 // Usage:
 // node tools/id-gen.mjs <path-to-mp3> "<title>" "<style>" "<composerVersion>" <path-to-composer-rawtext-file(optional)>
 const [mp3Path, title, style, composerVersion, rawTextPath] = process.argv.slice(2);
-if (!mp3Path || !title || !style || !composerVersion) {
+if ([mp3Path, title, style, composerVersion].some((v) => v === undefined)) {
   console.error('Usage: node tools/id-gen.mjs <mp3Path> "<title>" "<style>" "<composerVersion>" [rawTextFile]');
   process.exit(1);
 }

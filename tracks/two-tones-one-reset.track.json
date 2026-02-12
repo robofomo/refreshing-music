@@ -1,7 +1,9 @@
 ﻿{
   "workId": "TODO_WORK_ID",
   "trackId": "TODO_TRACK_ID",
-  "createdAt": "1970-01-01T00:00:00.000Z",
+  "createdLocalRaw": "January 25, 2026 at 8:40 PM",
+  "createdTz": "Pacific/Auckland",
+  "createdAt": "2026-01-25T07:40:00.000Z",
   "slug": "two-tones-one-reset",
   "title": "Two Tones, One Reset",
   "audio": {

@@ -6,6 +6,8 @@
   "properties": {
     "workId": { "type": "string" },
     "trackId": { "type": "string" },
+    "createdLocalRaw": { "type": "string" },
+    "createdTz": { "type": "string" },
     "createdAt": { "type": "string", "format": "date-time" },
     "slug": { "type": "string" },
     "title": { "type": "string" },

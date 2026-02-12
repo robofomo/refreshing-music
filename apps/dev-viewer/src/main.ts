@@ -149,6 +149,9 @@ function resumeAudioContext() {
 
 async function togglePlayPause() {
   if (audio.paused) {
+    if (isAtTrackEnd()) {
+      await loadTrack(selectedIndex + 1);
+    }
     ensureAudioGraph();
     await resumeAudioContext();
     await audio.play().catch(() => undefined);
@@ -173,6 +176,11 @@ function logAudioState(event: string, extra: Record<string, unknown> = {}) {
     hasAnalyser: Boolean(analyser),
     ...extra
   });
+}
+
+function isAtTrackEnd() {
+  if (!Number.isFinite(audio.duration) || audio.duration <= 0) return false;
+  return audio.currentTime >= audio.duration - 0.05;
 }
 
 function resetAmpHistory(reason: string) {
@@ -534,18 +542,30 @@ async function init() {
   showControlsTemporarily();
 }
 
+async function goNextTrack() {
+  await loadTrack(selectedIndex + 1);
+}
+
+async function goPrevTrackOrRestart() {
+  if (audio.currentTime > 5) {
+    audio.currentTime = 0;
+    return;
+  }
+  await loadTrack(selectedIndex - 1);
+}
+
 playBtn.addEventListener("click", async () => {
   await togglePlayPause();
 });
 
 prevBtn.addEventListener("click", async () => {
   logAudioState("prev-click");
-  await loadTrack(selectedIndex - 1);
+  await goPrevTrackOrRestart();
 });
 
 nextBtn.addEventListener("click", async () => {
   logAudioState("next-click");
-  await loadTrack(selectedIndex + 1);
+  await goNextTrack();
 });
 
 seek.addEventListener("pointerdown", (e) => {
@@ -612,6 +632,16 @@ window.addEventListener("keydown", async (e) => {
     audio.currentTime = Math.min(maxT, audio.currentTime + 5);
     return;
   }
+  if (e.key.toLowerCase() === "n" || e.key === "." || e.key === ">") {
+    e.preventDefault();
+    await goNextTrack();
+    return;
+  }
+  if (e.key.toLowerCase() === "p" || e.key === "," || e.key === "<") {
+    e.preventDefault();
+    await goPrevTrackOrRestart();
+    return;
+  }
   if (e.key.toLowerCase() === "h" || e.key === "?") {
     e.preventDefault();
     hudVisible = !hudVisible;
@@ -668,6 +698,12 @@ audio.addEventListener("seeked", () => {
 audio.addEventListener("pause", () => {
   logAudioState("pause");
   setPlayButtonIcon();
+});
+audio.addEventListener("ended", async () => {
+  await goNextTrack();
+  ensureAudioGraph();
+  await resumeAudioContext();
+  await audio.play().catch(() => undefined);
 });
 document.addEventListener("visibilitychange", () => {
   if (!document.hidden) {

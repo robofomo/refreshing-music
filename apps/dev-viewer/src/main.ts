@@ -72,6 +72,10 @@ const ampHistory: Array<{ tMs: number; amp: number }> = [];
 let audioCtx: AudioContext | null = null;
 let analyser: AnalyserNode | null = null;
 let audioData: Uint8Array<ArrayBuffer> | null = null;
+const DEBUG_AUDIO = false;
+let lastDebugLogTs = 0;
+let lowAmpSinceMs = 0;
+let lastGraphRebuildTs = 0;
 
 function hashString(s: string) {
   let h = 2166136261 >>> 0;
@@ -114,6 +118,29 @@ function setRenderOffset(next: number) {
   updateUrlParam("offset", String(renderOffsetMs));
 }
 
+function logAudioState(event: string, extra: Record<string, unknown> = {}) {
+  if (!DEBUG_AUDIO) return;
+  const now = performance.now();
+  if ((event === "reactivity-stalled" || event === "reactivity-ok") && now - lastDebugLogTs < 1000) return;
+  lastDebugLogTs = now;
+  console.log(`[audio] ${event}`, {
+    paused: audio.paused,
+    currentTime: Number(audio.currentTime.toFixed(3)),
+    duration: Number.isFinite(audio.duration) ? Number(audio.duration.toFixed(3)) : audio.duration,
+    readyState: audio.readyState,
+    networkState: audio.networkState,
+    audioCtxState: audioCtx?.state ?? "none",
+    hasAnalyser: Boolean(analyser),
+    ...extra
+  });
+}
+
+function resetAmpHistory(reason: string) {
+  ampHistory.length = 0;
+  lowAmpSinceMs = 0;
+  logAudioState("amp-history-reset", { reason });
+}
+
 function once(el: HTMLMediaElement, event: string) {
   return new Promise<void>((resolve) => {
     const h = () => {
@@ -142,6 +169,8 @@ function beginSeek() {
   isSeeking = true;
   wasPlayingBeforeSeek = !audio.paused;
   audio.pause();
+  resetAmpHistory("seek-begin");
+  logAudioState("seek-begin");
 }
 
 function applySeekFromSlider() {
@@ -158,6 +187,8 @@ async function finishSeek() {
   audio.pause();
   try {
     await seekToSeconds(target);
+    resetAmpHistory("seek-complete");
+    logAudioState("seek-complete", { target });
 
     ensureAudioGraph();
     if (audioCtx && audioCtx.state !== "running") {
@@ -165,7 +196,10 @@ async function finishSeek() {
     }
 
     if (wasPlayingBeforeSeek) {
-      await audio.play().catch(() => undefined);
+      await audio.play().catch((err) => {
+        logAudioState("play-resume-failed", { err: err instanceof Error ? err.message : String(err) });
+        return undefined;
+      });
     }
   } finally {
     isSeeking = false;
@@ -209,6 +243,22 @@ function ensureAudioGraph() {
   const src = audioCtx.createMediaElementSource(audio);
   src.connect(analyser);
   analyser.connect(audioCtx.destination);
+}
+
+function rebuildAudioGraph(reason: string) {
+  const now = performance.now();
+  if (now - lastGraphRebuildTs < 5000) return;
+  lastGraphRebuildTs = now;
+
+  const oldCtx = audioCtx;
+  audioCtx = null;
+  analyser = null;
+  audioData = null;
+  oldCtx?.close().catch(() => undefined);
+
+  ensureAudioGraph();
+  audioCtx?.resume().catch(() => undefined);
+  logAudioState("analyser-rebuilt", { reason });
 }
 
 function rmsAmplitude() {
@@ -298,11 +348,29 @@ function render() {
   const w = canvas.width;
   const h = canvas.height;
   const tAudioMs = audio.currentTime * 1000;
+  const lastAmp = ampHistory.length ? ampHistory[ampHistory.length - 1] : null;
+  if (lastAmp && tAudioMs + 250 < lastAmp.tMs) {
+    resetAmpHistory("time-jump-backward");
+  }
   const tRenderMs = tAudioMs + renderOffsetMs;
   if (!audio.paused && audioCtx && audioCtx.state !== "running") {
     audioCtx.resume().catch(() => undefined);
   }
   const ampNow = rmsAmplitude();
+  if (!audio.paused) {
+    if (ampNow < 0.004) {
+      if (!lowAmpSinceMs) lowAmpSinceMs = tAudioMs;
+      if (tAudioMs - lowAmpSinceMs > 2000) {
+        logAudioState("reactivity-stalled", { amp: Number(ampNow.toFixed(6)) });
+        rebuildAudioGraph("low-rms-while-playing");
+      }
+    } else {
+      if (lowAmpSinceMs) logAudioState("reactivity-ok", { amp: Number(ampNow.toFixed(6)) });
+      lowAmpSinceMs = 0;
+    }
+  } else {
+    lowAmpSinceMs = 0;
+  }
   pushAmplitudeSample(tAudioMs, ampNow);
   const amp = amplitudeAt(tRenderMs, ampNow);
   const pulse = beatPulse(tRenderMs);
@@ -380,6 +448,8 @@ async function loadTrack(nextIndex: number) {
   const resp = await fetch(trackUrl);
   if (!resp.ok) throw new Error(`Failed to load track json: ${entry}`);
   track = (await resp.json()) as Track;
+  resetAmpHistory("track-load");
+  logAudioState("track-loaded", { trackId });
   lyricsLines = String(track.lyrics?.rawText ?? "").split("\n");
 
   const audioUrl = new URL(track.audio.path, trackUrl).toString();
@@ -432,10 +502,12 @@ playBtn.addEventListener("click", async () => {
 });
 
 prevBtn.addEventListener("click", async () => {
+  logAudioState("prev-click");
   await loadTrack(selectedIndex - 1);
 });
 
 nextBtn.addEventListener("click", async () => {
+  logAudioState("next-click");
   await loadTrack(selectedIndex + 1);
 });
 
@@ -511,16 +583,25 @@ window.addEventListener("keydown", (e) => {
 audio.addEventListener("play", () => { 
   ensureAudioGraph();
   audioCtx?.resume().catch(() => undefined);
+  logAudioState("play");
   playBtn.textContent = "Pause";
 });
 audio.addEventListener("seeking", () => {
   audioCtx?.resume().catch(() => undefined);
+  logAudioState("seeking");
+});
+audio.addEventListener("seeked", () => {
+  logAudioState("seeked");
 });
 audio.addEventListener("pause", () => {
+  logAudioState("pause");
   playBtn.textContent = "Play";
 });
 document.addEventListener("visibilitychange", () => {
-  if (!document.hidden) audioCtx?.resume().catch(() => undefined);
+  if (!document.hidden) {
+    audioCtx?.resume().catch(() => undefined);
+    logAudioState("visibility-return");
+  }
 });
 
 window.addEventListener("resize", resizeCanvas);

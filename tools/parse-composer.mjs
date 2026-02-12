@@ -20,6 +20,7 @@ export function parseComposerText(rawText) {
   const lines = text.split(/\r?\n/);
   const headerMap = {};
   const sections = [];
+  const sectionIdCounts = new Map();
   const lyricLines = [];
 
   let current = null;
@@ -27,8 +28,11 @@ export function parseComposerText(rawText) {
 
   const pushSection = () => {
     if (!current) return;
+    const baseId = slugify(current.labelRaw) || "section";
+    const n = (sectionIdCounts.get(baseId) ?? 0) + 1;
+    sectionIdCounts.set(baseId, n);
     sections.push({
-      id: current.id,
+      id: `${baseId}-${n}`,
       labelRaw: current.labelRaw,
       notesRaw: current.notes.join("\n").trim()
     });
@@ -53,7 +57,7 @@ export function parseComposerText(rawText) {
       }
       if (isBracket && !inner.includes(":")) {
         pushSection();
-        current = { labelRaw: inner.trim(), id: slugify(inner), notes: [] };
+        current = { labelRaw: inner.trim(), notes: [] };
         phase = "afterSectionHeader";
       }
       continue;
@@ -72,7 +76,7 @@ export function parseComposerText(rawText) {
     if (phase === "sectionBody") {
       if (isBracket && !inner.includes(":")) {
         pushSection();
-        current = { labelRaw: inner.trim(), id: slugify(inner), notes: [] };
+        current = { labelRaw: inner.trim(), notes: [] };
         phase = "afterSectionHeader";
       }
     }

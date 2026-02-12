@@ -1,7 +1,7 @@
 {
   "workId": "WvIH27tAZA_k",
   "trackId": "EdNkleskScFkNg",
-  "createdAt": "2026-02-12T06:20:24.697Z",
+  "createdAt": "2026-01-25T07:40:00.000Z",
   "slug": "two-tones-one-reset",
   "title": "Two Tones, One Reset",
   "audio": {
@@ -28,27 +28,29 @@
   },
   "sections": [
     {
-      "id": "intro",
+      "id": "intro-1",
       "labelRaw": "Intro",
       "notesRaw": "Glass harmonica enters alone, slow sustained tones, wide stereo."
     },
     {
-      "id": "development",
+      "id": "development-1",
       "labelRaw": "Development",
       "notesRaw": "Analog modular synth fades in beneath, low harmonic pulse, gentle filter movement."
     },
     {
-      "id": "refresh",
+      "id": "refresh-1",
       "labelRaw": "Refresh",
       "notesRaw": "The opening motif repeats with slight timing variation, as if reloaded."
     },
     {
-      "id": "ending",
+      "id": "ending-1",
       "labelRaw": "Ending",
       "notesRaw": "The synth drops out first, leaving a single glass harmonic that fades into silence."
     }
   ],
   "lyrics": {
     "rawText": "\n\n\n\n\n\n"
-  }
+  },
+  "createdLocalRaw": "January 25, 2026 at 8:40 PM",
+  "createdTz": "Pacific/Auckland"
 }

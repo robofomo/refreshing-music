@@ -1,7 +1,7 @@
 {
   "workId": "q14Ul4ClLKqh",
   "trackId": "QNNU5P0F_Uos1i",
-  "createdAt": "2026-02-12T06:20:24.500Z",
+  "createdAt": "2026-02-10T08:30:00.000Z",
   "slug": "channels-of-light",
   "title": "Channels of Light",
   "audio": {
@@ -38,42 +38,44 @@
   },
   "sections": [
     {
-      "id": "intro",
+      "id": "intro-1",
       "labelRaw": "Intro",
       "notesRaw": "Glitch clicks, metronomic synth, no vocals"
     },
     {
-      "id": "fragment-a",
+      "id": "fragment-a-1",
       "labelRaw": "Fragment A",
       "notesRaw": "Dry drum machine, mono bass"
     },
     {
-      "id": "reset",
+      "id": "reset-1",
       "labelRaw": "Reset",
       "notesRaw": "Tempo hiccup, filter sweep"
     },
     {
-      "id": "fragment-b",
+      "id": "fragment-b-1",
       "labelRaw": "Fragment B",
       "notesRaw": "Beat widens, syncopated hats"
     },
     {
-      "id": "bridge",
+      "id": "bridge-1",
       "labelRaw": "Bridge",
       "notesRaw": "Breakdown bridge, vocals closer"
     },
     {
-      "id": "final-chorus",
+      "id": "final-chorus-1",
       "labelRaw": "Final Chorus",
       "notesRaw": "Full beat return, call-and-response backing"
     },
     {
-      "id": "ending",
+      "id": "ending-1",
       "labelRaw": "Ending",
       "notesRaw": "Strip to pulse and echo"
     }
   ],
   "lyrics": {
     "rawText": "\nRed sets the baseline  \nGreen finds the groove  \nBlue holds the ceiling  \nThat’s how we move  \n\nR to the G to the B  \n\nEvery rule hums softly  \nTill it’s played just right  \nNumbers turn to feeling  \nSignals turn to light  \n\nWe don’t need the noise loud  \nWe just tune the frame  \nSmall decisions repeating  \nNever twice the same  \n\nR to the G to the B  \nWatch the pattern breathe  \nSimple lines in motion  \nShow us what we see  \n\nR to the G to the B\n"
-  }
+  },
+  "createdLocalRaw": "February 10, 2026 at 9:30 PM",
+  "createdTz": "Pacific/Auckland"
 }

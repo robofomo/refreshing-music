@@ -1,13 +1,11 @@
 ﻿{
-  "\": "https://json-schema.org/draft/2020-12/schema",
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
   "title": "Track v0",
   "type": "object",
   "required": ["workId", "trackId", "slug", "title", "audio", "composer"],
   "properties": {
     "workId": { "type": "string" },
     "trackId": { "type": "string" },
-    "createdLocalRaw": { "type": "string" },
-    "createdTz": { "type": "string" },
     "createdAt": { "type": "string", "format": "date-time" },
     "slug": { "type": "string" },
     "title": { "type": "string" },

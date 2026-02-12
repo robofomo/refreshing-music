@@ -1,0 +1,76 @@
+{
+  "workId": "_uRMR_FyhfAd",
+  "trackId": "_pzFs206tPBhPX",
+  "createdAt": "2026-01-25T22:15:00.000Z",
+  "slug": "static-in-the-ultraviolet",
+  "title": "Static in the Ultraviolet",
+  "audio": {
+    "filename": "Static in the Ultraviolet.mp3",
+    "path": "../../dev-assets/Static in the Ultraviolet.mp3",
+    "cidOrTx": "",
+    "mime": "audio/mpeg",
+    "bytes": 6442847
+  },
+  "composer": {
+    "rawText": "[Title: Static in the Ultraviolet]\r\n[Style: psychedelic rock, clean studio recording, electric guitar (fuzz), bass guitar, drum kit, analog synth pad, confident male vocalist]\r\n[Caption: A drift through distortion and thought.]\r\n[Image: violet fog with blurred neon lights]\r\n[Refresh Title: Purple Haze]\r\n[Theme: Colors]\r\n[Gradients: 2]\r\n[Seed: 41]\r\n[Created: January 26, 2026 at 11:15 AM]\r\n[Composer Version: v1.4]\r\n\r\n[Intro]\r\n[Smooth, exploratory melodic movement.]\r\nThe air is thick with colored sound,\r\nMy feet lift slightly off the ground.\r\n\r\n[Verse]\r\n[Grounded melodic contour that develops naturally.]\r\nThe walls all bend, the clocks unwind,\r\nA second sun inside my mind.\r\nI reach for words that slide away,\r\nThey melt like stars before the day.\r\n\r\n[Verse]\r\n[Calm melodic progression with slight variation.]\r\nThe mirror hums, it knows my name,\r\nIt smiles but never stays the same.\r\nI breathe in light, I breathe out doubt,\r\nThe edges blur, then fade me out.\r\n\r\n[Chorus]\r\n[Memorable melodic hook with emotional clarity.]\r\nThis purple haze won’t let me go,\r\nIt pulls me where I don’t yet know.\r\nBetween the truth and what I see,\r\nThe blur feels almost real to me.\r\n\r\n[Verse]\r\n[Focused melodic storytelling with light motion.]\r\nThe city sings in liquid tones,\r\nThrough borrowed thoughts and silent phones.\r\nI’m not lost, I’m just delayed,\r\nInside the mess the mind has made.\r\n\r\n[Bridge]\r\n[Unexpected melodic turn that feels intentional.]\r\nIf clarity comes crashing through,\r\nI hope it’s strange and slightly blue.\r\nDon’t wake me yet, don’t clear the phase,\r\nI’ve learned to live inside the haze.\r\n\r\n[Chorus]\r\n[Higher register with expanded phrasing.]\r\nThis purple haze won’t let me go,\r\nIt pulls me where I don’t yet know.\r\nBetween the truth and what I see,\r\nThe blur feels almost real to me.\r\n\r\n[Ending]\r\n[Melody gently resolves with clarity.]\r\nThe colors thin, the echoes stay,\r\nA softer shade to end the day.\r\n",
+    "headerMap": {
+      "Title": "Static in the Ultraviolet",
+      "Style": "psychedelic rock, clean studio recording, electric guitar (fuzz), bass guitar, drum kit, analog synth pad, confident male vocalist",
+      "Caption": "A drift through distortion and thought.",
+      "Image": "violet fog with blurred neon lights",
+      "Refresh Title": "Purple Haze",
+      "Theme": "Colors",
+      "Gradients": "2",
+      "Seed": "41",
+      "Created": "January 26, 2026 at 11:15 AM",
+      "Composer Version": "v1.4"
+    }
+  },
+  "sections": [
+    {
+      "id": "intro-1",
+      "labelRaw": "Intro",
+      "notesRaw": "Smooth, exploratory melodic movement."
+    },
+    {
+      "id": "verse-1",
+      "labelRaw": "Verse",
+      "notesRaw": "Grounded melodic contour that develops naturally."
+    },
+    {
+      "id": "verse-2",
+      "labelRaw": "Verse",
+      "notesRaw": "Calm melodic progression with slight variation."
+    },
+    {
+      "id": "chorus-1",
+      "labelRaw": "Chorus",
+      "notesRaw": "Memorable melodic hook with emotional clarity."
+    },
+    {
+      "id": "verse-3",
+      "labelRaw": "Verse",
+      "notesRaw": "Focused melodic storytelling with light motion."
+    },
+    {
+      "id": "bridge-1",
+      "labelRaw": "Bridge",
+      "notesRaw": "Unexpected melodic turn that feels intentional."
+    },
+    {
+      "id": "chorus-2",
+      "labelRaw": "Chorus",
+      "notesRaw": "Higher register with expanded phrasing."
+    },
+    {
+      "id": "ending-1",
+      "labelRaw": "Ending",
+      "notesRaw": "Melody gently resolves with clarity."
+    }
+  ],
+  "lyrics": {
+    "rawText": "The air is thick with colored sound,\nMy feet lift slightly off the ground.\n\nThe walls all bend, the clocks unwind,\nA second sun inside my mind.\nI reach for words that slide away,\nThey melt like stars before the day.\n\nThe mirror hums, it knows my name,\nIt smiles but never stays the same.\nI breathe in light, I breathe out doubt,\nThe edges blur, then fade me out.\n\nThis purple haze won’t let me go,\nIt pulls me where I don’t yet know.\nBetween the truth and what I see,\nThe blur feels almost real to me.\n\nThe city sings in liquid tones,\nThrough borrowed thoughts and silent phones.\nI’m not lost, I’m just delayed,\nInside the mess the mind has made.\n\nIf clarity comes crashing through,\nI hope it’s strange and slightly blue.\nDon’t wake me yet, don’t clear the phase,\nI’ve learned to live inside the haze.\n\nThis purple haze won’t let me go,\nIt pulls me where I don’t yet know.\nBetween the truth and what I see,\nThe blur feels almost real to me.\n\nThe colors thin, the echoes stay,\nA softer shade to end the day.\n"
+  },
+  "createdLocalRaw": "January 26, 2026 at 11:15 AM",
+  "createdTz": "Pacific/Auckland"
+}

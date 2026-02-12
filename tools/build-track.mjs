@@ -3,6 +3,7 @@ import path from "node:path";
 import { spawnSync } from "node:child_process";
 import { pathToFileURL } from "node:url";
 import { parseComposerFile } from "./parse-composer.mjs";
+import { nzLocalStringToUtcIso } from "./time-nz-to-utc.mjs";
 
 function parseArgs(argv) {
   const out = {};
@@ -37,6 +38,23 @@ function titleFromHeaderMap(headerMap) {
 function valueByKey(headerMap, keyName) {
   const hit = Object.entries(headerMap).find(([k]) => k.toLowerCase() === keyName.toLowerCase());
   return hit ? hit[1] : "";
+}
+
+function createdFields(headerMap, audioStat) {
+  const createdLocalRaw = valueByKey(headerMap, "created");
+  if (!createdLocalRaw) {
+    return { createdAt: new Date(audioStat.mtimeMs).toISOString() };
+  }
+
+  try {
+    return {
+      createdAt: nzLocalStringToUtcIso(createdLocalRaw),
+      createdLocalRaw,
+      createdTz: "Pacific/Auckland"
+    };
+  } catch {
+    return { createdAt: new Date(audioStat.mtimeMs).toISOString() };
+  }
 }
 
 function uniqueSlug(tracksDir, slugBase, trackId) {
@@ -112,11 +130,12 @@ export function buildTrack({ mp3Path, composerPath, titleArg }) {
   const audioStat = fs.statSync(mp3Path);
   const outPath = path.join(outDir, `${ids.trackId}.track.json`);
   const audioPath = toPosix(path.relative(outDir, mp3Path));
+  const created = createdFields(composer.headerMap, audioStat);
 
   const track = {
     workId: ids.workId,
     trackId: ids.trackId,
-    createdAt: new Date().toISOString(),
+    createdAt: created.createdAt,
     slug,
     title,
     audio: {
@@ -135,6 +154,9 @@ export function buildTrack({ mp3Path, composerPath, titleArg }) {
       rawText: composer.lyricsRawText
     }
   };
+
+  if (created.createdLocalRaw) track.createdLocalRaw = created.createdLocalRaw;
+  if (created.createdTz) track.createdTz = created.createdTz;
 
   fs.writeFileSync(outPath, `${JSON.stringify(track, null, 2)}\n`, "utf8");
   upsertTracksIndex(tracksDir);

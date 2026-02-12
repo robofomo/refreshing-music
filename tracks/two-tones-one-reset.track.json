@@ -1,0 +1,31 @@
+﻿{
+  "trackId": "ttor_v1_0",
+  "slug": "two-tones-one-reset",
+  "title": "Two Tones, One Reset",
+  "audio": {
+    "filename": "two-tones-one-reset.mp3",
+    "path": "../dev-assets/two-tones-one-reset.mp3",
+    "cidOrTx": "",
+    "mime": "audio/mpeg"
+  },
+  "composer": {
+    "rawText": "[Title: Two Tones, One Reset]\n[Theme: Random]\n[Variation: Random 2]\n[Gradients: 2]\n[Seed: 86]\n[Style: minimalist instrumental, soloist and accompanist, experimental ambient, glass textures, clean studio recording]\n[Image: soft two-color gradient with subtle motion]\n[Caption: A minimal refresh â€” same idea, new breath.]\n[Composer Version: v1.0]\n\n[Intro]\n[Glass harmonica enters alone, slow sustained tones, wide stereo.]\n\n[Development]\n[Analog modular synth fades in beneath, low harmonic pulse, gentle filter movement.]\n\n[Refresh]\n[The opening motif repeats with slight timing variation, as if reloaded.]\n\n[Ending]\n[The synth drops out first, leaving a single glass harmonic that fades into silence.]\n",
+    "headerMap": {
+      "Title": "Two Tones, One Reset",
+      "Theme": "Random",
+      "Variation": "Random 2",
+      "Gradients": "2",
+      "Seed": "86",
+      "Style": "minimalist instrumental, soloist and accompanist, experimental ambient, glass textures, clean studio recording",
+      "Image": "soft two-color gradient with subtle motion",
+      "Caption": "A minimal refresh â€” same idea, new breath.",
+      "Composer Version": "v1.0"
+    }
+  },
+  "sections": [
+    { "id": "intro", "labelRaw": "Intro", "notesRaw": "Glass harmonica enters alone, slow sustained tones, wide stereo." },
+    { "id": "development", "labelRaw": "Development", "notesRaw": "Analog modular synth fades in beneath, low harmonic pulse, gentle filter movement." },
+    { "id": "refresh", "labelRaw": "Refresh", "notesRaw": "The opening motif repeats with slight timing variation, as if reloaded." },
+    { "id": "ending", "labelRaw": "Ending", "notesRaw": "The synth drops out first, leaving a single glass harmonic that fades into silence." }
+  ]
+}

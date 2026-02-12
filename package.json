@@ -1,0 +1,8 @@
+﻿{
+  "name": "gen-music-visualizer",
+  "private": true,
+  "workspaces": [
+    "apps/*",
+    "packages/*"
+  ]
+}

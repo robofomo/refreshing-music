@@ -1,0 +1,74 @@
+﻿{
+  "\": "https://json-schema.org/draft/2020-12/schema",
+  "title": "Track v0",
+  "type": "object",
+  "required": ["workId", "trackId", "slug", "title", "audio", "composer"],
+  "properties": {
+    "workId": { "type": "string" },
+    "trackId": { "type": "string" },
+    "createdAt": { "type": "string", "format": "date-time" },
+    "slug": { "type": "string" },
+    "title": { "type": "string" },
+    "audio": {
+      "type": "object",
+      "required": ["filename", "path"],
+      "properties": {
+        "filename": { "type": "string" },
+        "path": { "type": "string" },
+        "cidOrTx": { "type": "string" },
+        "mime": { "type": "string" },
+        "bytes": { "type": "integer" },
+        "durationMs": { "type": "integer" },
+        "contentHash": { "type": "string" }
+      },
+      "additionalProperties": true
+    },
+    "composer": {
+      "type": "object",
+      "required": ["rawText"],
+      "properties": {
+        "rawText": { "type": "string" },
+        "headerMap": { "type": "object", "additionalProperties": true }
+      },
+      "additionalProperties": true
+    },
+    "sections": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "required": ["id", "labelRaw"],
+        "properties": {
+          "id": { "type": "string" },
+          "labelRaw": { "type": "string" },
+          "labelNorm": { "type": "string" },
+          "t0Ms": { "type": "integer" },
+          "t1Ms": { "type": "integer" },
+          "notesRaw": { "type": "string" }
+        },
+        "additionalProperties": true
+      }
+    },
+    "lyrics": {
+      "type": "object",
+      "properties": {
+        "rawText": { "type": "string" },
+        "lines": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "required": ["t0Ms", "text"],
+            "properties": {
+              "t0Ms": { "type": "integer" },
+              "t1Ms": { "type": "integer" },
+              "text": { "type": "string" },
+              "sectionId": { "type": "string" }
+            },
+            "additionalProperties": true
+          }
+        }
+      },
+      "additionalProperties": true
+    }
+  },
+  "additionalProperties": true
+}

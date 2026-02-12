@@ -33,6 +33,7 @@ const prevBtn = document.getElementById("prevBtn") as HTMLButtonElement;
 const nextBtn = document.getElementById("nextBtn") as HTMLButtonElement;
 const seedBtn = document.getElementById("seedBtn") as HTMLButtonElement;
 const hudBtn = document.getElementById("hudBtn") as HTMLButtonElement;
+const controls = document.getElementById("controls") as HTMLDivElement;
 const seek = document.getElementById("seek") as HTMLInputElement;
 const audio = document.getElementById("audio") as HTMLAudioElement;
 const ctx = canvas.getContext("2d");
@@ -73,6 +74,9 @@ const DEBUG_AUDIO = false;
 let lastDebugLogTs = 0;
 let lowAmpSinceMs = 0;
 let lastGraphRebuildTs = 0;
+const CONTROLS_HIDE_MS = 5000;
+let controlsHideTimer = 0;
+let canvasClickTimer = 0;
 
 function hashString(s: string) {
   let h = 2166136261 >>> 0;
@@ -115,8 +119,24 @@ function setRenderOffset(next: number) {
   updateUrlParam("offset", String(renderOffsetMs));
 }
 
+function setControlsVisible(visible: boolean) {
+  controls.classList.toggle("is-hidden", !visible);
+}
+
+function showControlsTemporarily() {
+  setControlsVisible(true);
+  if (controlsHideTimer) window.clearTimeout(controlsHideTimer);
+  controlsHideTimer = window.setTimeout(() => setControlsVisible(false), CONTROLS_HIDE_MS);
+}
+
 function setPlayButtonIcon() {
   playBtn.textContent = audio.paused ? "\u25B6" : "\u23F8";
+}
+
+function randomizeSeed() {
+  const nextSeed = Math.floor(Math.random() * 2_000_000_000);
+  buildScene(nextSeed);
+  updateUrlParam("seed", String(nextSeed));
 }
 
 function resumeAudioContext() {
@@ -511,6 +531,7 @@ async function init() {
     ? indexEntries.findIndex((entry) => trackIdFromEntry(entry) === requestedTrackId)
     : -1;
   await loadTrack(byTrackId >= 0 ? byTrackId : 0);
+  showControlsTemporarily();
 }
 
 playBtn.addEventListener("click", async () => {
@@ -563,17 +584,18 @@ seek.addEventListener("click", () => {
 });
 
 seedBtn.addEventListener("click", () => {
-  const nextSeed = Math.floor(Math.random() * 2_000_000_000);
-  buildScene(nextSeed);
-  updateUrlParam("seed", String(nextSeed));
+  randomizeSeed();
+  showControlsTemporarily();
 });
 
 hudBtn.addEventListener("click", () => {
   hudVisible = !hudVisible;
   updateUrlParam("hud", hudVisible ? "1" : null);
+  showControlsTemporarily();
 });
 
 window.addEventListener("keydown", async (e) => {
+  showControlsTemporarily();
   if ((e.code === "Space" || e.key.toLowerCase() === "k") && !e.repeat) {
     e.preventDefault();
     await togglePlayPause();
@@ -606,6 +628,28 @@ window.addEventListener("keydown", async (e) => {
     setRenderOffset(DEFAULT_RENDER_OFFSET_MS);
     e.preventDefault();
   }
+});
+
+window.addEventListener("mousemove", showControlsTemporarily);
+window.addEventListener("touchstart", showControlsTemporarily, { passive: true });
+window.addEventListener("pointerdown", showControlsTemporarily);
+
+canvas.addEventListener("click", () => {
+  if (canvasClickTimer) window.clearTimeout(canvasClickTimer);
+  canvasClickTimer = window.setTimeout(() => {
+    randomizeSeed();
+    showControlsTemporarily();
+  }, 220);
+});
+
+canvas.addEventListener("dblclick", () => {
+  if (canvasClickTimer) {
+    window.clearTimeout(canvasClickTimer);
+    canvasClickTimer = 0;
+  }
+  hudVisible = !hudVisible;
+  updateUrlParam("hud", hudVisible ? "1" : null);
+  showControlsTemporarily();
 });
 
 audio.addEventListener("play", () => { 

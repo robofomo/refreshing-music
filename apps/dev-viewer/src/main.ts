@@ -31,9 +31,6 @@ const hud = document.getElementById("hud") as HTMLDivElement;
 const playBtn = document.getElementById("playBtn") as HTMLButtonElement;
 const prevBtn = document.getElementById("prevBtn") as HTMLButtonElement;
 const nextBtn = document.getElementById("nextBtn") as HTMLButtonElement;
-const offsetDownBtn = document.getElementById("offsetDownBtn") as HTMLButtonElement;
-const offsetUpBtn = document.getElementById("offsetUpBtn") as HTMLButtonElement;
-const offsetResetBtn = document.getElementById("offsetResetBtn") as HTMLButtonElement;
 const seedBtn = document.getElementById("seedBtn") as HTMLButtonElement;
 const hudBtn = document.getElementById("hudBtn") as HTMLButtonElement;
 const seek = document.getElementById("seek") as HTMLInputElement;
@@ -118,6 +115,29 @@ function setRenderOffset(next: number) {
   updateUrlParam("offset", String(renderOffsetMs));
 }
 
+function setPlayButtonIcon() {
+  playBtn.textContent = audio.paused ? "\u25B6" : "\u23F8";
+}
+
+function resumeAudioContext() {
+  const ctxRef = audioCtx;
+  if (ctxRef && ctxRef.state !== "running") {
+    return ctxRef.resume().catch(() => undefined);
+  }
+  return Promise.resolve(undefined);
+}
+
+async function togglePlayPause() {
+  if (audio.paused) {
+    ensureAudioGraph();
+    await resumeAudioContext();
+    await audio.play().catch(() => undefined);
+  } else {
+    audio.pause();
+  }
+  setPlayButtonIcon();
+}
+
 function logAudioState(event: string, extra: Record<string, unknown> = {}) {
   if (!DEBUG_AUDIO) return;
   const now = performance.now();
@@ -191,9 +211,7 @@ async function finishSeek() {
     logAudioState("seek-complete", { target });
 
     ensureAudioGraph();
-    if (audioCtx && audioCtx.state !== "running") {
-      await audioCtx.resume().catch(() => undefined);
-    }
+    await resumeAudioContext();
 
     if (wasPlayingBeforeSeek) {
       await audio.play().catch((err) => {
@@ -257,7 +275,7 @@ function rebuildAudioGraph(reason: string) {
   oldCtx?.close().catch(() => undefined);
 
   ensureAudioGraph();
-  audioCtx?.resume().catch(() => undefined);
+  void resumeAudioContext();
   logAudioState("analyser-rebuilt", { reason });
 }
 
@@ -353,8 +371,8 @@ function render() {
     resetAmpHistory("time-jump-backward");
   }
   const tRenderMs = tAudioMs + renderOffsetMs;
-  if (!audio.paused && audioCtx && audioCtx.state !== "running") {
-    audioCtx.resume().catch(() => undefined);
+  if (!audio.paused) {
+    void resumeAudioContext();
   }
   const ampNow = rmsAmplitude();
   if (!audio.paused) {
@@ -428,10 +446,15 @@ if (!isSeeking && Number.isFinite(audio.duration) && audio.duration > 0) {
     `trackId: ${track?.trackId ?? "-"}`,
     `seed: ${seed}`,
     `time: ${fmtMs(tAudioMs)}`,
-    `renderTime: ${fmtMs(tRenderMs)}`,
     `offsetMs: ${renderOffsetMs}`,
     `section: ${sec?.id ?? "-"}`,
-    `lyric: ${lyricText || "-"}`
+    `lyric: ${lyricText || "-"}`,
+    ``,
+    `keys: space/k play`,
+    `      left/right seek`,
+    `      [ ] offset`,
+    `      \\ reset offset`,
+    `      h/? hud`
   ].join("\n");
 
   requestAnimationFrame(render);
@@ -467,7 +490,7 @@ async function loadTrack(nextIndex: number) {
   if (wasPlaying) {
     await audio.play().catch(() => undefined);
   }
-  playBtn.textContent = audio.paused ? "Play" : "Pause";
+  setPlayButtonIcon();
 }
 
 async function init() {
@@ -491,14 +514,7 @@ async function init() {
 }
 
 playBtn.addEventListener("click", async () => {
-  if (audio.paused) {
-    ensureAudioGraph();
-    await audioCtx?.resume();
-    await audio.play().catch(() => undefined);
-  } else {
-    audio.pause();
-  }
-  playBtn.textContent = audio.paused ? "Play" : "Pause";
+  await togglePlayPause();
 });
 
 prevBtn.addEventListener("click", async () => {
@@ -557,17 +573,29 @@ hudBtn.addEventListener("click", () => {
   updateUrlParam("hud", hudVisible ? "1" : null);
 });
 
-offsetDownBtn.addEventListener("click", () => {
-  setRenderOffset(renderOffsetMs - 10);
-});
-offsetUpBtn.addEventListener("click", () => {
-  setRenderOffset(renderOffsetMs + 10);
-});
-offsetResetBtn.addEventListener("click", () => {
-  setRenderOffset(DEFAULT_RENDER_OFFSET_MS);
-});
-
-window.addEventListener("keydown", (e) => {
+window.addEventListener("keydown", async (e) => {
+  if ((e.code === "Space" || e.key.toLowerCase() === "k") && !e.repeat) {
+    e.preventDefault();
+    await togglePlayPause();
+    return;
+  }
+  if (e.code === "ArrowLeft") {
+    e.preventDefault();
+    audio.currentTime = Math.max(0, audio.currentTime - 5);
+    return;
+  }
+  if (e.code === "ArrowRight") {
+    e.preventDefault();
+    const maxT = Number.isFinite(audio.duration) ? audio.duration : audio.currentTime + 5;
+    audio.currentTime = Math.min(maxT, audio.currentTime + 5);
+    return;
+  }
+  if (e.key.toLowerCase() === "h" || e.key === "?") {
+    e.preventDefault();
+    hudVisible = !hudVisible;
+    updateUrlParam("hud", hudVisible ? "1" : null);
+    return;
+  }
   if (e.code === "BracketLeft") {
     setRenderOffset(renderOffsetMs - 10);
     e.preventDefault();
@@ -582,12 +610,12 @@ window.addEventListener("keydown", (e) => {
 
 audio.addEventListener("play", () => { 
   ensureAudioGraph();
-  audioCtx?.resume().catch(() => undefined);
+  void resumeAudioContext();
   logAudioState("play");
-  playBtn.textContent = "Pause";
+  setPlayButtonIcon();
 });
 audio.addEventListener("seeking", () => {
-  audioCtx?.resume().catch(() => undefined);
+  void resumeAudioContext();
   logAudioState("seeking");
 });
 audio.addEventListener("seeked", () => {
@@ -595,11 +623,11 @@ audio.addEventListener("seeked", () => {
 });
 audio.addEventListener("pause", () => {
   logAudioState("pause");
-  playBtn.textContent = "Play";
+  setPlayButtonIcon();
 });
 document.addEventListener("visibilitychange", () => {
   if (!document.hidden) {
-    audioCtx?.resume().catch(() => undefined);
+    void resumeAudioContext();
     logAudioState("visibility-return");
   }
 });
@@ -612,3 +640,4 @@ init().catch((err) => {
   hud.style.display = "block";
   hud.textContent = err instanceof Error ? err.message : String(err);
 });
+

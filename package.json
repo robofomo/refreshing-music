@@ -1,6 +1,9 @@
 ﻿{
   "name": "gen-music-visualizer",
   "private": true,
+  "scripts": {
+    "idgen": "node tools/id-gen.mjs"
+  },
   "workspaces": [
     "apps/*",
     "packages/*"

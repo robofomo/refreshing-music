@@ -1,6 +1,5 @@
 import fs from "node:fs";
 import crypto from "node:crypto";
-import path from "node:path";
 
 function base64url(buf) {
   return buf.toString("base64").replace(/\+/g, "-").replace(/\//g, "_").replace(/=+$/g, "");
@@ -12,15 +11,12 @@ function sha256Short(buffer, n = 14) {
 }
 
 function canonicalizeWorkText({ title, style, composerVersion, rawText }) {
-  // Keep this stable. Add fields later only with a version bump.
-  const parts = [
-    `title=${(title ?? "").trim()}`,
-    `style=${(style ?? "").trim()}`,
-    `composerVersion=${(composerVersion ?? "").trim()}`,
-    // rawText makes collisions very unlikely but is still metadata-driven
-    `rawText=${(rawText ?? "").trim()}`
-  ];
-  return parts.join("\n");
+  return [
+    `title:${(title ?? "").trim()}`,
+    `style:${(style ?? "").trim()}`,
+    `composerVersion:${(composerVersion ?? "").trim()}`,
+    `rawText:${(rawText ?? "").trim()}`
+  ].join("\n");
 }
 
 function kebab(s) {
@@ -55,7 +51,7 @@ function mp3FingerprintBytes(filePath) {
 // Usage:
 // node tools/id-gen.mjs <path-to-mp3> "<title>" "<style>" "<composerVersion>" <path-to-composer-rawtext-file(optional)>
 const [mp3Path, title, style, composerVersion, rawTextPath] = process.argv.slice(2);
-if (!mp3Path || !title) {
+if (!mp3Path || !title || !style || !composerVersion) {
   console.error('Usage: node tools/id-gen.mjs <mp3Path> "<title>" "<style>" "<composerVersion>" [rawTextFile]');
   process.exit(1);
 }

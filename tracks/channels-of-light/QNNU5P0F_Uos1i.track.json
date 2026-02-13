@@ -1,6 +1,10 @@
 {
   "workId": "q14Ul4ClLKqh",
   "trackId": "QNNU5P0F_Uos1i",
+  "recipeRef": {
+    "albumId": "system-process",
+    "trackOverrideId": "QNNU5P0F_Uos1i"
+  },
   "createdAt": "2026-02-10T08:30:00.000Z",
   "slug": "channels-of-light",
   "title": "Channels of Light",

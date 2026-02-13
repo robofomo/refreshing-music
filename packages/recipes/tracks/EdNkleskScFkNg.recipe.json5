@@ -1,0 +1,10 @@
+{
+  "recipeVersion": "0",
+  "recipeId": "two-tones-override",
+  "transitions": { "default": { "kind": "noiseDissolve", "durationMs": 820, "params": { "cell": 8 } } },
+  "layers": [
+    { "id": "bg", "module": "bg.gradientField", "params": { "gradientStops": 5 } },
+    { "id": "particles", "module": "fg.particles", "opacity": 0.52, "params": { "count": 120 } },
+    { "id": "lyrics", "module": "ui.lyricsKaraoke", "params": { "mode": "center", "opacity": 0.92, "controlsReservedPx": 108 } },
+  ],
+}

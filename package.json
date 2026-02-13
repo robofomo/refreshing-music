@@ -4,7 +4,8 @@
   "scripts": {
     "idgen": "node tools/id-gen.mjs",
     "preprocess": "node tools/batch-preprocess.mjs",
-    "dev": "npm --workspace apps/dev-viewer run dev"
+    "dev": "npm --workspace apps/dev-viewer run dev",
+    "recipes:validate": "node --input-type=module --eval \"import('./packages/recipes/resolveRecipe.mjs').then(m=>m.resolveRecipe({ albumId:'example-theme' })).then(r=>console.log(r.recipeId))\""
   },
   "workspaces": [
     "apps/*",

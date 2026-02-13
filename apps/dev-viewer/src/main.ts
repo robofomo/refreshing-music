@@ -1,4 +1,6 @@
 import "./style.css";
+import { createEngine, hashStringToSeed } from "../../../packages/engine/src/index";
+import { classifySection } from "../../../packages/engine/src/sections";
 
 type TimingSection = { id?: string; t0Ms?: number; t1Ms?: number };
 type TimingLyric = { i?: number; t0Ms?: number; t1Ms?: number };
@@ -14,6 +16,7 @@ type Track = {
     lyricsLines?: TimingLyric[];
     beatsMs?: number[];
   };
+  recipeRef?: { albumId?: string; trackOverrideId?: string };
 };
 
 type Particle = {
@@ -59,8 +62,8 @@ const MIN_RENDER_OFFSET_MS = -500;
 const MAX_RENDER_OFFSET_MS = 500;
 let renderOffsetMs = DEFAULT_RENDER_OFFSET_MS;
 let hudVisible = new URL(location.href).searchParams.get("hud") === "1";
-let particles: Particle[] = [];
-let palette = palettes[0];
+let lyricsEnabled = new URL(location.href).searchParams.get("lyrics") !== "0";
+let lyricMode = new URL(location.href).searchParams.get("lyricMode") || "center";
 let isSeeking = false;
 let pendingSeekRatio = 0;
 let wasPlayingBeforeSeek = false;
@@ -77,15 +80,13 @@ let lastGraphRebuildTs = 0;
 const CONTROLS_HIDE_MS = 5000;
 let controlsHideTimer = 0;
 let canvasClickTimer = 0;
-
-function hashString(s: string) {
-  let h = 2166136261 >>> 0;
-  for (let i = 0; i < s.length; i += 1) {
-    h ^= s.charCodeAt(i);
-    h = Math.imul(h, 16777619);
-  }
-  return h >>> 0;
-}
+let currentRecipe: any = null;
+const engine = createEngine({
+  canvas,
+  dpr: Math.max(1, Math.min(window.devicePixelRatio || 1, 2)),
+  getTimeState: () => ({ tMs: audio.currentTime * 1000 }),
+  getAudioState: () => ({ amp: rmsAmplitude(), paused: audio.paused })
+});
 
 function mulberry32(a: number) {
   return () => {
@@ -117,6 +118,11 @@ function clampOffset(v: number) {
 function setRenderOffset(next: number) {
   renderOffsetMs = clampOffset(next);
   updateUrlParam("offset", String(renderOffsetMs));
+}
+
+function setLyricsEnabled(next: boolean) {
+  lyricsEnabled = next;
+  updateUrlParam("lyrics", next ? "1" : "0");
 }
 
 function setControlsVisible(visible: boolean) {
@@ -362,18 +368,7 @@ function beatPulse(currentTimeMs: number) {
 
 function buildScene(nextSeed: number) {
   seed = nextSeed >>> 0;
-  const rng = mulberry32(seed);
-  palette = palettes[Math.floor(rng() * palettes.length)];
-  const count = 200 + Math.floor(rng() * 201);
-  particles = Array.from({ length: count }, () => ({
-    x: rng(),
-    y: rng(),
-    size: 0.8 + rng() * 2.8,
-    speed: 0.005 + rng() * 0.03,
-    angle: rng() * Math.PI * 2,
-    alpha: 0.2 + rng() * 0.8,
-    drift: -1 + rng() * 2
-  }));
+  engine.reset(seed);
 }
 
 function resizeCanvas() {
@@ -390,9 +385,6 @@ function resizeCanvas() {
 
 function render() {
   if (!ctx) return;
-  resizeCanvas();
-  const w = canvas.width;
-  const h = canvas.height;
   const tAudioMs = audio.currentTime * 1000;
   const lastAmp = ampHistory.length ? ampHistory[ampHistory.length - 1] : null;
   if (lastAmp && tAudioMs + 250 < lastAmp.tMs) {
@@ -419,44 +411,26 @@ function render() {
   }
   pushAmplitudeSample(tAudioMs, ampNow);
   const amp = amplitudeAt(tRenderMs, ampNow);
-  const pulse = beatPulse(tRenderMs);
-  const wobbleX = Math.sin(tRenderMs * 0.001 + seed * 0.00001) * amp * 48;
-  const wobbleY = Math.cos(tRenderMs * 0.0013 + seed * 0.00002) * amp * 48;
-  const phaseOffset = renderOffsetMs * 0.001;
-
-  ctx.save();
-  ctx.translate(wobbleX, wobbleY);
-
-  const g = ctx.createLinearGradient(0, 0, w, h);
-  g.addColorStop(0, palette[0]);
-  g.addColorStop(0.5, palette[1]);
-  g.addColorStop(1, palette[2]);
-  ctx.fillStyle = g;
-  ctx.fillRect(-64, -64, w + 128, h + 128);
-
-  const centerX = w * 0.5;
-  const centerY = h * 0.5;
-  const glow = 120 + pulse * 280 + amp * 180;
-  ctx.fillStyle = `rgba(255,255,255,${0.05 + pulse * 0.09})`;
-  ctx.beginPath();
-  ctx.arc(centerX, centerY, glow, 0, Math.PI * 2);
-  ctx.fill();
-
-  const t = tRenderMs * 0.001;
-  for (const p of particles) {
-    const dx = Math.cos(p.angle) * p.speed * t + Math.sin((t + phaseOffset) * p.drift * 0.3) * 0.02;
-    const dy = Math.sin(p.angle) * p.speed * t + Math.cos((t + phaseOffset) * p.drift * 0.2) * 0.02;
-    let x = ((p.x + dx) % 1 + 1) % 1;
-    let y = ((p.y + dy) % 1 + 1) % 1;
-    x *= w;
-    y *= h;
-    ctx.fillStyle = `rgba(255,255,255,${0.15 * p.alpha + pulse * 0.18})`;
-    ctx.beginPath();
-    ctx.arc(x, y, p.size + pulse * 1.4, 0, Math.PI * 2);
-    ctx.fill();
-  }
-
-  ctx.restore();
+  const sec = findCurrentSection(tRenderMs);
+  const sectionId = sec?.id ?? "";
+  const sectionType = classifySection(sectionId || sec?.id || "");
+  const controlsRect = controls.getBoundingClientRect();
+  const viewportHeightPx = window.visualViewport?.height ?? window.innerHeight;
+  const frameInfo = engine.renderFrame({
+    tMs: tRenderMs,
+    sectionId,
+    sectionType,
+    amp,
+    energy: amp,
+    recipe: currentRecipe,
+    track,
+    lyricsEnabled,
+    lyricMode,
+    uiLayout: {
+      controlsTopPx: controlsRect.top,
+      viewportHeightPx
+    }
+  });
 
 if (!isSeeking && Number.isFinite(audio.duration) && audio.duration > 0) {
   seek.value = String(
@@ -464,10 +438,13 @@ if (!isSeeking && Number.isFinite(audio.duration) && audio.duration > 0) {
   );
 }
 
-  const sec = findCurrentSection(tRenderMs);
   const lyricRef = findCurrentLyricLine(tRenderMs);
-  const lyricText =
-    typeof lyricRef?.i === "number" && lyricRef.i >= 0 && lyricRef.i < lyricsLines.length ? lyricsLines[lyricRef.i] : "";
+  const lyricIndex = typeof frameInfo?.lyricIndex === "number" ? frameInfo.lyricIndex : (typeof lyricRef?.i === "number" ? lyricRef.i : -1);
+  const lyricText = frameInfo?.lyricText
+    ? String(frameInfo.lyricText)
+    : typeof lyricRef?.i === "number" && lyricRef.i >= 0 && lyricRef.i < lyricsLines.length
+      ? lyricsLines[lyricRef.i]
+      : "";
   hud.style.display = hudVisible ? "block" : "none";
   hud.textContent = [
     `title: ${track?.title ?? "-"}`,
@@ -475,14 +452,17 @@ if (!isSeeking && Number.isFinite(audio.duration) && audio.duration > 0) {
     `seed: ${seed}`,
     `time: ${fmtMs(tAudioMs)}`,
     `offsetMs: ${renderOffsetMs}`,
-    `section: ${sec?.id ?? "-"}`,
+    `sectionId: ${sectionId || "-"}`,
+    `sectionType: ${frameInfo?.sectionType ?? sectionType}`,
+    `lyricIndex: ${lyricIndex}`,
     `lyric: ${lyricText || "-"}`,
     ``,
     `keys: space/k play`,
     `      left/right seek`,
     `      [ ] offset`,
     `      \\ reset offset`,
-    `      h/? hud`
+    `      h/? hud`,
+    `      l lyrics on/off`
   ].join("\n");
 
   requestAnimationFrame(render);
@@ -502,6 +482,19 @@ async function loadTrack(nextIndex: number) {
   resetAmpHistory("track-load");
   logAudioState("track-loaded", { trackId });
   lyricsLines = String(track.lyrics?.rawText ?? "").split("\n");
+  try {
+    const albumId = track.recipeRef?.albumId ?? "example-theme";
+    const override = track.recipeRef?.trackOverrideId ?? "";
+    const recipeUrl = new URL(`/recipes/resolve?albumId=${encodeURIComponent(albumId)}&trackOverrideId=${encodeURIComponent(override)}`, location.origin);
+    let recipeResp = await fetch(recipeUrl.toString());
+    if (!recipeResp.ok) {
+      const fallbackUrl = new URL(`/recipes/resolve?albumId=example-theme&trackOverrideId=${encodeURIComponent(override)}`, location.origin);
+      recipeResp = await fetch(fallbackUrl.toString());
+    }
+    currentRecipe = recipeResp.ok ? await recipeResp.json() : { layers: [{ module: "bg.gradientField", params: { gradientStops: 3 } }] };
+  } catch {
+    currentRecipe = { layers: [{ module: "bg.gradientField", params: { gradientStops: 3 } }] };
+  }
 
   const audioUrl = new URL(track.audio.path, trackUrl).toString();
   const wasPlaying = !audio.paused;
@@ -509,7 +502,7 @@ async function loadTrack(nextIndex: number) {
   audio.load();
 
   if (!Number.isInteger(seed)) {
-    buildScene(hashString(track.trackId || trackId));
+    buildScene(hashStringToSeed(track.trackId || trackId));
     updateUrlParam("seed", String(seed));
   } else {
     buildScene(seed);
@@ -532,8 +525,13 @@ async function init() {
   const requestedTrackId = url.searchParams.get("track");
   const seedParam = url.searchParams.get("seed");
   const offsetParam = url.searchParams.get("offset");
+  const lyricsParam = url.searchParams.get("lyrics");
+  const lyricModeParam = url.searchParams.get("lyricMode");
   seed = seedParam ? Number(seedParam) : NaN;
   setRenderOffset(offsetParam ? Number(offsetParam) : DEFAULT_RENDER_OFFSET_MS);
+  setLyricsEnabled(lyricsParam !== "0");
+  lyricMode = lyricModeParam === "fixed" || lyricModeParam === "off" ? lyricModeParam : "center";
+  updateUrlParam("lyricMode", lyricMode);
 
   const byTrackId = requestedTrackId
     ? indexEntries.findIndex((entry) => trackIdFromEntry(entry) === requestedTrackId)
@@ -646,6 +644,17 @@ window.addEventListener("keydown", async (e) => {
     e.preventDefault();
     hudVisible = !hudVisible;
     updateUrlParam("hud", hudVisible ? "1" : null);
+    return;
+  }
+  if (e.key.toLowerCase() === "l") {
+    e.preventDefault();
+    setLyricsEnabled(!lyricsEnabled);
+    return;
+  }
+  if (e.key.toLowerCase() === "m") {
+    e.preventDefault();
+    lyricMode = lyricMode === "fixed" ? "center" : lyricMode === "center" ? "off" : "fixed";
+    updateUrlParam("lyricMode", lyricMode);
     return;
   }
   if (e.code === "BracketLeft") {

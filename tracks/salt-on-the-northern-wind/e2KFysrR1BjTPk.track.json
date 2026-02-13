@@ -1,6 +1,10 @@
 {
   "workId": "ovLpvXlHPhqQ",
   "trackId": "e2KFysrR1BjTPk",
+  "recipeRef": {
+    "albumId": "colors",
+    "trackOverrideId": "e2KFysrR1BjTPk"
+  },
   "createdAt": "2026-01-25T10:03:00.000Z",
   "slug": "salt-on-the-northern-wind",
   "title": "Salt on the Northern Wind",

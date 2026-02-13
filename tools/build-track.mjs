@@ -41,6 +41,15 @@ function valueByKey(headerMap, keyName) {
   return hit ? hit[1] : "";
 }
 
+function recipeRefFromComposer(headerMap, trackId) {
+  const theme = valueByKey(headerMap, "theme");
+  const albumId = slugify(theme || "example-theme");
+  return {
+    albumId,
+    trackOverrideId: trackId
+  };
+}
+
 function createdFields(headerMap, audioStat) {
   const createdLocalRaw = valueByKey(headerMap, "created");
   if (!createdLocalRaw) {
@@ -166,6 +175,7 @@ export function buildTrack({ mp3Path, composerPath, titleArg }) {
   const track = {
     workId: ids.workId,
     trackId: ids.trackId,
+    recipeRef: recipeRefFromComposer(composer.headerMap, ids.trackId),
     createdAt: created.createdAt,
     slug,
     title,

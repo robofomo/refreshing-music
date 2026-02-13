@@ -7,6 +7,14 @@
     "workId": { "type": "string" },
     "trackId": { "type": "string" },
     "createdAt": { "type": "string", "format": "date-time" },
+    "recipeRef": {
+      "type": "object",
+      "properties": {
+        "albumId": { "type": "string" },
+        "trackOverrideId": { "type": "string" }
+      },
+      "additionalProperties": true
+    },
     "slug": { "type": "string" },
     "title": { "type": "string" },
     "audio": {

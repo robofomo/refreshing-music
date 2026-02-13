@@ -39,7 +39,7 @@ body,
   right: auto;
   transform: translateX(-50%);
   width: min(250px, calc(100% - 24px));
-  bottom: 12px;
+  bottom: calc(12px + env(safe-area-inset-bottom));
   display: flex;
   flex-wrap: wrap;
   justify-content: center;

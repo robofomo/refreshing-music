@@ -1,6 +1,10 @@
 {
   "workId": "WvIH27tAZA_k",
   "trackId": "EdNkleskScFkNg",
+  "recipeRef": {
+    "albumId": "random",
+    "trackOverrideId": "EdNkleskScFkNg"
+  },
   "createdAt": "2026-01-25T07:40:00.000Z",
   "slug": "two-tones-one-reset",
   "title": "Two Tones, One Reset",

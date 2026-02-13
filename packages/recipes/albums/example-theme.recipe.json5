@@ -1,0 +1,42 @@
+{
+  "recipeVersion": "0",
+  "recipeId": "example-theme",
+  "name": "Example Theme",
+  "themeTags": ["example"],
+  "palettePolicy": { "source": "refreshTitle", "fallbackTitle": "Random 5" },
+  "layers": [
+    {
+      "id": "bg",
+      "module": "bg.gradientField",
+      "params": { "gradientStops": 3, "driftSpeed": 0.012, "noiseScale": 0.45, "soften": 0.94 },
+    },
+    {
+      "id": "particles",
+      "module": "fg.particles",
+      "blend": "screen",
+      "opacity": 0.55,
+      "params": { "count": 140, "sizeRange": [1.6, 4.8], "speed": 0.48, "curl": 0.55, "opacity": 0.62 },
+      "bindings": [
+        { "target": "opacity", "source": "amp", "map": { "inMin": 0, "inMax": 0.35, "outMin": 0.45, "outMax": 0.72 } },
+      ],
+    },
+    {
+      "id": "lyrics",
+      "module": "ui.lyricsKaraoke",
+      "params": { "mode": "center", "fontSizePx": 30, "lineGapPx": 10, "opacity": 0.92, "safeMarginPx": 34, "controlsReservedPx": 108, "glowStrength": 0.85 },
+    },
+  ],
+  "sectionRules": [
+    { "when": { "sectionType": "chorus" }, "set": { "bg.gradientField.hueRotatePerMinute": 12, "fg.particles.opacity": 0.4, "ui.lyricsKaraoke.fontSizePx": 34, "ui.lyricsKaraoke.glowStrength": 1.05 } },
+    { "when": { "sectionType": "verse" }, "set": { "fg.particles.count": 120, "fg.particles.opacity": 0.25, "ui.lyricsKaraoke.fontSizePx": 28, "ui.lyricsKaraoke.glowStrength": 0.72 } },
+    { "when": { "sectionType": "intro" }, "set": { "fg.particles.opacity": 0.12, "ui.lyricsKaraoke.opacity": 0.5 } },
+    { "when": { "sectionType": "instrumental" }, "set": { "ui.lyricsKaraoke.opacity": 0 } },
+  ],
+  "transitions": {
+    "default": { "kind": "crossfade", "durationMs": 1000 },
+    "bySectionChange": [
+      { "toAny": ["chorus"], "transition": { "kind": "wipe", "durationMs": 850 } },
+      { "toAny": ["bridge"], "transition": { "kind": "noiseDissolve", "durationMs": 950, "params": { "cell": 10 } } },
+    ],
+  },
+}

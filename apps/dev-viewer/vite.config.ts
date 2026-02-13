@@ -1,6 +1,7 @@
 import fs from "node:fs";
 import path from "node:path";
 import { defineConfig } from "vite";
+import { resolveRecipe } from "../../packages/recipes/resolveRecipe.mjs";
 
 const repoRoot = path.resolve(__dirname, "..", "..");
 const tracksRoot = path.join(repoRoot, "tracks");
@@ -51,12 +52,35 @@ function resolveStaticPath(urlPath: string, mount: string, root: string) {
 }
 
 export default defineConfig({
+  server: {
+    fs: {
+      allow: [repoRoot]
+    }
+  },
   plugins: [
     {
       name: "repo-static-mounts",
       configureServer(server) {
         server.middlewares.use((req, res, next) => {
-          const reqPath = (req.url ?? "").split("?")[0];
+          const fullUrl = req.url ?? "";
+          const reqPath = fullUrl.split("?")[0];
+          if (reqPath === "/recipes/resolve") {
+            const url = new URL(fullUrl, "http://localhost");
+            const albumId = url.searchParams.get("albumId") ?? "";
+            const trackOverrideId = url.searchParams.get("trackOverrideId") ?? "";
+            try {
+              const resolved = resolveRecipe({ albumId, trackOverrideId: trackOverrideId || undefined });
+              res.statusCode = 200;
+              res.setHeader("Content-Type", "application/json; charset=utf-8");
+              res.end(JSON.stringify(resolved));
+            } catch (err) {
+              res.statusCode = 400;
+              res.setHeader("Content-Type", "application/json; charset=utf-8");
+              res.end(JSON.stringify({ error: err instanceof Error ? err.message : String(err) }));
+            }
+            return;
+          }
+
           const trackFile = resolveStaticPath(reqPath, "/tracks", tracksRoot);
           if (trackFile && fs.existsSync(trackFile) && fs.statSync(trackFile).isFile()) {
             sendFile(req, res, trackFile);

@@ -1,6 +1,10 @@
 {
   "workId": "Np9NO_Kz0hSm",
   "trackId": "zWBXP_7hUiNQFI",
+  "recipeRef": {
+    "albumId": "random",
+    "trackOverrideId": "zWBXP_7hUiNQFI"
+  },
   "createdAt": "2026-01-25T21:32:00.000Z",
   "slug": "checksum-in-the-middle",
   "title": "Checksum in the Middle",

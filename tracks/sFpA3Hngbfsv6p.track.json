@@ -1,0 +1,28 @@
+{
+  "workId": "clock-drift-over-static-fields",
+  "trackId": "sFpA3Hngbfsv6p",
+  "recipeRef": {
+    "albumId": "example-theme",
+    "trackOverrideId": "sFpA3Hngbfsv6p"
+  },
+  "createdAt": "2026-02-13T01:52:33.394Z",
+  "slug": "clock-drift-over-static-fields",
+  "title": "Clock Drift Over Static Fields",
+  "audio": {
+    "filename": "mix.mp3",
+    "path": "../assets/clock-drift-over-static-fields/sFpA3Hngbfsv6p/mix.mp3",
+    "cidOrTx": "",
+    "mime": "audio/mpeg",
+    "bytes": 4302866
+  },
+  "composer": {
+    "rawText": "",
+    "headerMap": {}
+  },
+  "sections": [],
+  "lyrics": {
+    "rawText": ""
+  },
+  "sourceGroupKey": "clock-drift-over-static-fields",
+  "assetDir": "assets/clock-drift-over-static-fields/sFpA3Hngbfsv6p"
+}

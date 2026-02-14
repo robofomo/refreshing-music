@@ -5,7 +5,8 @@ import { resolveRecipe } from "../../packages/recipes/resolveRecipe.mjs";
 
 const repoRoot = path.resolve(__dirname, "..", "..");
 const tracksRoot = path.join(repoRoot, "tracks");
-const assetsRoot = path.join(repoRoot, "dev-assets");
+const assetsRoot = path.join(repoRoot, "assets");
+const legacyAssetsRoot = path.join(repoRoot, "dev-assets");
 
 function sendFile(req: any, res: any, filePath: string) {
   const ext = path.extname(filePath).toLowerCase();
@@ -87,9 +88,14 @@ export default defineConfig({
             return;
           }
 
-          const assetFile = resolveStaticPath(reqPath, "/dev-assets", assetsRoot);
+          const assetFile = resolveStaticPath(reqPath, "/assets", assetsRoot);
           if (assetFile && fs.existsSync(assetFile) && fs.statSync(assetFile).isFile()) {
             sendFile(req, res, assetFile);
+            return;
+          }
+          const legacyAssetFile = resolveStaticPath(reqPath, "/dev-assets", legacyAssetsRoot);
+          if (legacyAssetFile && fs.existsSync(legacyAssetFile) && fs.statSync(legacyAssetFile).isFile()) {
+            sendFile(req, res, legacyAssetFile);
             return;
           }
           next();

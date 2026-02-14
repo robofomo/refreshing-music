@@ -1,0 +1,28 @@
+{
+  "workId": "off-by-one-still-true",
+  "trackId": "6o_ZqzRrXVMeec",
+  "recipeRef": {
+    "albumId": "example-theme",
+    "trackOverrideId": "6o_ZqzRrXVMeec"
+  },
+  "createdAt": "2026-02-13T02:13:08.895Z",
+  "slug": "off-by-one-still-true",
+  "title": "Off By One Still True",
+  "audio": {
+    "filename": "mix.mp3",
+    "path": "../assets/off-by-one-still-true/6o_ZqzRrXVMeec/mix.mp3",
+    "cidOrTx": "",
+    "mime": "audio/mpeg",
+    "bytes": 3714432
+  },
+  "composer": {
+    "rawText": "",
+    "headerMap": {}
+  },
+  "sections": [],
+  "lyrics": {
+    "rawText": ""
+  },
+  "sourceGroupKey": "off-by-one-still-true",
+  "assetDir": "assets/off-by-one-still-true/6o_ZqzRrXVMeec"
+}

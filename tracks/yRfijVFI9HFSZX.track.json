@@ -1,0 +1,28 @@
+{
+  "workId": "sweat-between-the-colors",
+  "trackId": "yRfijVFI9HFSZX",
+  "recipeRef": {
+    "albumId": "example-theme",
+    "trackOverrideId": "yRfijVFI9HFSZX"
+  },
+  "createdAt": "2026-02-13T01:52:23.500Z",
+  "slug": "sweat-between-the-colors",
+  "title": "Sweat Between The Colors",
+  "audio": {
+    "filename": "mix.mp3",
+    "path": "../assets/sweat-between-the-colors/yRfijVFI9HFSZX/mix.mp3",
+    "cidOrTx": "",
+    "mime": "audio/mpeg",
+    "bytes": 3939503
+  },
+  "composer": {
+    "rawText": "",
+    "headerMap": {}
+  },
+  "sections": [],
+  "lyrics": {
+    "rawText": ""
+  },
+  "sourceGroupKey": "sweat-between-the-colors",
+  "assetDir": "assets/sweat-between-the-colors/yRfijVFI9HFSZX"
+}

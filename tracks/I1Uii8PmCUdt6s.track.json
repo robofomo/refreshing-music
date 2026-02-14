@@ -1,0 +1,28 @@
+{
+  "workId": "lime-dust-on-neon-concrete",
+  "trackId": "I1Uii8PmCUdt6s",
+  "recipeRef": {
+    "albumId": "example-theme",
+    "trackOverrideId": "I1Uii8PmCUdt6s"
+  },
+  "createdAt": "2026-02-13T01:52:42.291Z",
+  "slug": "lime-dust-on-neon-concrete",
+  "title": "Lime Dust On Neon Concrete",
+  "audio": {
+    "filename": "mix.mp3",
+    "path": "../assets/lime-dust-on-neon-concrete/I1Uii8PmCUdt6s/mix.mp3",
+    "cidOrTx": "",
+    "mime": "audio/mpeg",
+    "bytes": 2454126
+  },
+  "composer": {
+    "rawText": "",
+    "headerMap": {}
+  },
+  "sections": [],
+  "lyrics": {
+    "rawText": ""
+  },
+  "sourceGroupKey": "lime-dust-on-neon-concrete",
+  "assetDir": "assets/lime-dust-on-neon-concrete/I1Uii8PmCUdt6s"
+}

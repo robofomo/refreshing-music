@@ -1,0 +1,28 @@
+{
+  "workId": "pressure-systems-drifting-east",
+  "trackId": "5BRc7B-kKG8eF9",
+  "recipeRef": {
+    "albumId": "example-theme",
+    "trackOverrideId": "5BRc7B-kKG8eF9"
+  },
+  "createdAt": "2026-02-13T01:52:50.170Z",
+  "slug": "pressure-systems-drifting-east",
+  "title": "Pressure Systems Drifting East",
+  "audio": {
+    "filename": "mix.mp3",
+    "path": "../assets/pressure-systems-drifting-east/5BRc7B-kKG8eF9/mix.mp3",
+    "cidOrTx": "",
+    "mime": "audio/mpeg",
+    "bytes": 3860560
+  },
+  "composer": {
+    "rawText": "",
+    "headerMap": {}
+  },
+  "sections": [],
+  "lyrics": {
+    "rawText": ""
+  },
+  "sourceGroupKey": "pressure-systems-drifting-east",
+  "assetDir": "assets/pressure-systems-drifting-east/5BRc7B-kKG8eF9"
+}

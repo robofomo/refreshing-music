@@ -1,0 +1,104 @@
+{
+  "workId": "two-tones-one-reset",
+  "trackId": "EdNkleskScFkNg",
+  "recipeRef": {
+    "albumId": "random",
+    "trackOverrideId": "EdNkleskScFkNg"
+  },
+  "createdAt": "2026-01-25T07:40:00.000Z",
+  "slug": "two-tones-one-reset",
+  "title": "Two Tones, One Reset",
+  "audio": {
+    "filename": "mix.mp3",
+    "path": "../assets/two-tones-one-reset/EdNkleskScFkNg/mix.mp3",
+    "cidOrTx": "",
+    "mime": "audio/mpeg",
+    "bytes": 5203778
+  },
+  "composer": {
+    "rawText": "[Title: Two Tones, One Reset]\r\n[Theme: Random]\r\n[Variation: Random 2]\r\n[Gradients: 2]\r\n[Seed: 86]\r\n[Style: minimalist instrumental, soloist and accompanist, experimental ambient, glass textures, clean studio recording]\r\n[Image: soft two-color gradient with subtle motion]\r\n[Caption: A minimal refresh — same idea, new breath.]\r\n[Created: January 25, 2026 at 8:40 PM]\r\n[Composer Version: v1.0]\r\n\r\n[Intro]\r\n[Glass harmonica enters alone, slow sustained tones, wide stereo.]\r\n\r\n[Development]\r\n[Analog modular synth fades in beneath, low harmonic pulse, gentle filter movement.]\r\n\r\n[Refresh]\r\n[The opening motif repeats with slight timing variation, as if reloaded.]\r\n\r\n[Ending]\r\n[The synth drops out first, leaving a single glass harmonic that fades into silence.]\r\n\r\n\r\n\r\n",
+    "headerMap": {
+      "Title": "Two Tones, One Reset",
+      "Theme": "Random",
+      "Variation": "Random 2",
+      "Gradients": "2",
+      "Seed": "86",
+      "Style": "minimalist instrumental, soloist and accompanist, experimental ambient, glass textures, clean studio recording",
+      "Image": "soft two-color gradient with subtle motion",
+      "Caption": "A minimal refresh — same idea, new breath.",
+      "Created": "January 25, 2026 at 8:40 PM",
+      "Composer Version": "v1.0"
+    }
+  },
+  "sections": [
+    {
+      "id": "intro-1",
+      "labelRaw": "Intro",
+      "notesRaw": "Glass harmonica enters alone, slow sustained tones, wide stereo."
+    },
+    {
+      "id": "development-1",
+      "labelRaw": "Development",
+      "notesRaw": "Analog modular synth fades in beneath, low harmonic pulse, gentle filter movement."
+    },
+    {
+      "id": "refresh-1",
+      "labelRaw": "Refresh",
+      "notesRaw": "The opening motif repeats with slight timing variation, as if reloaded."
+    },
+    {
+      "id": "ending-1",
+      "labelRaw": "Ending",
+      "notesRaw": "The synth drops out first, leaving a single glass harmonic that fades into silence."
+    }
+  ],
+  "lyrics": {
+    "rawText": "\n\n\n\n\n\n"
+  },
+  "sourceGroupKey": "two-tones-one-reset",
+  "assetDir": "assets/two-tones-one-reset/EdNkleskScFkNg",
+  "createdLocalRaw": "January 25, 2026 at 8:40 PM",
+  "createdTz": "Pacific/Auckland",
+  "timing": {
+    "sections": [
+      {
+        "id": "intro-1",
+        "t0Ms": 0,
+        "t1Ms": 14000
+      },
+      {
+        "id": "development-1",
+        "t0Ms": 14000,
+        "t1Ms": 42000
+      },
+      {
+        "id": "ending-1",
+        "t0Ms": 62000,
+        "t1Ms": 76000
+      }
+    ],
+    "lyricsLines": [
+      {
+        "i": 0,
+        "t0Ms": 1500,
+        "t1Ms": 4500
+      },
+      {
+        "i": 2,
+        "t0Ms": 22000,
+        "t1Ms": 25500
+      },
+      {
+        "i": 4,
+        "t0Ms": 65000,
+        "t1Ms": 70000
+      }
+    ],
+    "beatsMs": [
+      0,
+      500,
+      1000,
+      1500
+    ]
+  }
+}

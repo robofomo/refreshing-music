@@ -27,4 +27,6 @@ Thumbs.db
 
 # Dev media assets (keep out of git)
 dev-assets/
+inbox/
+assets/
 release-bundles/

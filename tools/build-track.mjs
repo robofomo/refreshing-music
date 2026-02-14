@@ -84,18 +84,30 @@ function toPosix(relPath) {
 }
 
 function upsertTracksIndex(tracksDir) {
-  const out = [];
+  const byTrackId = new Map();
   const walk = (dir) => {
     for (const entry of fs.readdirSync(dir, { withFileTypes: true })) {
       const p = path.join(dir, entry.name);
       if (entry.isDirectory()) {
         walk(p);
       } else if (entry.isFile() && entry.name.endsWith(".track.json")) {
-        out.push(toPosix(path.relative(tracksDir, p)));
+        const rel = toPosix(path.relative(tracksDir, p));
+        const trackId = entry.name.replace(/\.track\.json$/i, "");
+        const cur = byTrackId.get(trackId);
+        if (!cur) {
+          byTrackId.set(trackId, rel);
+        } else {
+          const curDepth = cur.split("/").length;
+          const nextDepth = rel.split("/").length;
+          if (nextDepth < curDepth || (nextDepth === curDepth && rel.length < cur.length)) {
+            byTrackId.set(trackId, rel);
+          }
+        }
       }
     }
   };
   walk(tracksDir);
+  const out = Array.from(byTrackId.values());
   out.sort();
   fs.writeFileSync(path.join(tracksDir, "index.json"), `${JSON.stringify(out, null, 2)}\n`, "utf8");
 }
@@ -125,10 +137,8 @@ function findTimingPath(mp3Path) {
   if (fs.existsSync(alongside)) return alongside;
   const alongsideSlugged = path.join(path.dirname(mp3Path), `${slugify(base)}.timing.json5`);
   if (fs.existsSync(alongsideSlugged)) return alongsideSlugged;
-  const inDevAssets = path.resolve("dev-assets", `${base}.timing.json5`);
-  if (fs.existsSync(inDevAssets)) return inDevAssets;
-  const inDevAssetsSlugged = path.resolve("dev-assets", `${slugify(base)}.timing.json5`);
-  if (fs.existsSync(inDevAssetsSlugged)) return inDevAssetsSlugged;
+  const direct = path.join(path.dirname(mp3Path), "timing.json5");
+  if (fs.existsSync(direct)) return direct;
   return "";
 }
 
@@ -149,7 +159,20 @@ function validateTiming(track, timing, timingPath) {
   }
 }
 
-export function buildTrack({ mp3Path, composerPath, titleArg }) {
+export function buildTrack(opts) {
+  return buildTrackWithOptions(opts);
+}
+
+export function buildTrackWithOptions({
+  mp3Path,
+  composerPath,
+  titleArg,
+  trackJsonPath,
+  workIdOverride,
+  trackIdOverride,
+  sourceGroupKey,
+  assetDir
+}) {
   if (!mp3Path) throw new Error("--mp3 is required");
   if (!fs.existsSync(mp3Path)) throw new Error(`Missing mp3: ${mp3Path}`);
 
@@ -161,21 +184,24 @@ export function buildTrack({ mp3Path, composerPath, titleArg }) {
   const style = valueByKey(composer.headerMap, "style");
   const composerVersion = valueByKey(composer.headerMap, "composer version");
   const ids = runIdGen({ mp3Path, title, style, composerVersion, composerPath });
+  const trackId = trackIdOverride || ids.trackId;
+  const workId = workIdOverride || ids.workId;
 
   const tracksDir = path.resolve("tracks");
-  const slug = uniqueSlug(tracksDir, ids.slugBase || slugify(title) || "untitled", ids.trackId);
-  const outDir = path.join(tracksDir, slug);
+  const defaultSlug = ids.slugBase || slugify(title) || "untitled";
+  const slug = trackJsonPath ? defaultSlug : uniqueSlug(tracksDir, defaultSlug, trackId);
+  const outPath = trackJsonPath ? path.resolve(trackJsonPath) : path.join(tracksDir, slug, `${trackId}.track.json`);
+  const outDir = path.dirname(outPath);
   fs.mkdirSync(outDir, { recursive: true });
 
   const audioStat = fs.statSync(mp3Path);
-  const outPath = path.join(outDir, `${ids.trackId}.track.json`);
   const audioPath = toPosix(path.relative(outDir, mp3Path));
   const created = createdFields(composer.headerMap, audioStat);
 
   const track = {
-    workId: ids.workId,
-    trackId: ids.trackId,
-    recipeRef: recipeRefFromComposer(composer.headerMap, ids.trackId),
+    workId,
+    trackId,
+    recipeRef: recipeRefFromComposer(composer.headerMap, trackId),
     createdAt: created.createdAt,
     slug,
     title,
@@ -195,6 +221,8 @@ export function buildTrack({ mp3Path, composerPath, titleArg }) {
       rawText: composer.lyricsRawText
     }
   };
+  if (sourceGroupKey) track.sourceGroupKey = sourceGroupKey;
+  if (assetDir) track.assetDir = toPosix(assetDir);
 
   if (created.createdLocalRaw) track.createdLocalRaw = created.createdLocalRaw;
   if (created.createdTz) track.createdTz = created.createdTz;
@@ -212,7 +240,7 @@ export function buildTrack({ mp3Path, composerPath, titleArg }) {
   fs.writeFileSync(outPath, `${JSON.stringify(track, null, 2)}\n`, "utf8");
   upsertTracksIndex(tracksDir);
 
-  return { outputPath: outPath, slug, trackId: ids.trackId };
+  return { outputPath: outPath, slug, trackId };
 }
 
 const isCli = process.argv[1] && import.meta.url === pathToFileURL(process.argv[1]).href;

@@ -1,0 +1,28 @@
+{
+  "workId": "loop-with-a-smile",
+  "trackId": "K318rgYw7KIKP1",
+  "recipeRef": {
+    "albumId": "example-theme",
+    "trackOverrideId": "K318rgYw7KIKP1"
+  },
+  "createdAt": "2026-02-13T02:12:30.496Z",
+  "slug": "loop-with-a-smile",
+  "title": "Loop With A Smile",
+  "audio": {
+    "filename": "mix.mp3",
+    "path": "../assets/loop-with-a-smile/K318rgYw7KIKP1/mix.mp3",
+    "cidOrTx": "",
+    "mime": "audio/mpeg",
+    "bytes": 3360455
+  },
+  "composer": {
+    "rawText": "",
+    "headerMap": {}
+  },
+  "sections": [],
+  "lyrics": {
+    "rawText": ""
+  },
+  "sourceGroupKey": "loop-with-a-smile",
+  "assetDir": "assets/loop-with-a-smile/K318rgYw7KIKP1"
+}

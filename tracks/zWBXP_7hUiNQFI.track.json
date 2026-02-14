@@ -1,0 +1,82 @@
+{
+  "workId": "checksum-in-the-middle",
+  "trackId": "zWBXP_7hUiNQFI",
+  "recipeRef": {
+    "albumId": "random",
+    "trackOverrideId": "zWBXP_7hUiNQFI"
+  },
+  "createdAt": "2026-01-25T21:32:00.000Z",
+  "slug": "checksum-in-the-middle",
+  "title": "Checksum in the Middle",
+  "audio": {
+    "filename": "mix.mp3",
+    "path": "../assets/checksum-in-the-middle/zWBXP_7hUiNQFI/mix.mp3",
+    "cidOrTx": "",
+    "mime": "audio/mpeg",
+    "bytes": 3574500
+  },
+  "composer": {
+    "rawText": "[Title: Checksum in the Middle]\r\n[Style: experimental electronic hip-hop hybrid, clean studio recording, confident male baritone vocalist, spoken word vocal layer, analog modular synth, granular synth, drum machine, sub bass, prepared piano]\r\n[Caption: A system pauses, listens to itself, then continues.]\r\n[Image: Abstract UI fragments flickering into alignment.]\r\n[Refresh Title: Random 5]\r\n[Theme: Random]\r\n[Gradients: 5]\r\n[Seed: 47]\r\n[Created: January 26, 2026 at 10:32 AM]\r\n[Composer Version: v1.4]\r\n\r\n[Intro]\r\n[Melodic focus shifts to a new lead instrument.]\r\nI wake between the numbers and the noise  \r\nA cursor blinks like it’s making a choice  \r\n\r\n[Verse]\r\n[Conversational melody with gentle forward motion.]\r\nI count the gaps between the yes and no  \r\nI cache the moments I don’t want to know  \r\nThe logic hums beneath my skin  \r\nA silent loop I’m living in  \r\n\r\n[Verse]\r\n[Evolving melody that shifts subtly line by line.]\r\nI was written once, then run again  \r\nEach pass a loss, each loss a gain  \r\nI don’t remember who pressed start  \r\nI only feel the moving parts  \r\n\r\n[Chorus]\r\n[Broader melodic shape and confident delivery.]\r\nRefresh me if I drift too far  \r\nI’m stable chaos, scaled and scarred  \r\nI break, return, and reappear  \r\nThe same reset, a little clearer  \r\n\r\n[Verse]\r\n[Grounded melodic contour that develops naturally.]\r\nI speak in threads, I dream in stacks  \r\nI leave a trace, then double back  \r\nThe pattern bends but doesn’t break  \r\nI learn the shape each choice can take  \r\n\r\n[Bridge]\r\n[Unexpected melodic turn that feels intentional.]\r\nIf I stop, the silence grows  \r\nIf I go, the signal shows  \r\nBetween the pulse and null reply  \r\nI approximate the why  \r\n\r\n[Chorus]\r\n[Renewed melodic energy with expanded range.]\r\nRefresh me if I drift too far  \r\nI’m stable chaos, scaled and scarred  \r\nI break, return, and reappear  \r\nThe same reset, a little clearer  \r\n\r\n[Ending]\r\n[Final melodic idea feels complete and calm.]\r\nI close the loop, release the thread  \r\nThe process rests, but not the thread  \r\n",
+    "headerMap": {
+      "Title": "Checksum in the Middle",
+      "Style": "experimental electronic hip-hop hybrid, clean studio recording, confident male baritone vocalist, spoken word vocal layer, analog modular synth, granular synth, drum machine, sub bass, prepared piano",
+      "Caption": "A system pauses, listens to itself, then continues.",
+      "Image": "Abstract UI fragments flickering into alignment.",
+      "Refresh Title": "Random 5",
+      "Theme": "Random",
+      "Gradients": "5",
+      "Seed": "47",
+      "Created": "January 26, 2026 at 10:32 AM",
+      "Composer Version": "v1.4"
+    }
+  },
+  "sections": [
+    {
+      "id": "intro-1",
+      "labelRaw": "Intro",
+      "notesRaw": "Melodic focus shifts to a new lead instrument."
+    },
+    {
+      "id": "verse-1",
+      "labelRaw": "Verse",
+      "notesRaw": "Conversational melody with gentle forward motion."
+    },
+    {
+      "id": "verse-2",
+      "labelRaw": "Verse",
+      "notesRaw": "Evolving melody that shifts subtly line by line."
+    },
+    {
+      "id": "chorus-1",
+      "labelRaw": "Chorus",
+      "notesRaw": "Broader melodic shape and confident delivery."
+    },
+    {
+      "id": "verse-3",
+      "labelRaw": "Verse",
+      "notesRaw": "Grounded melodic contour that develops naturally."
+    },
+    {
+      "id": "bridge-1",
+      "labelRaw": "Bridge",
+      "notesRaw": "Unexpected melodic turn that feels intentional."
+    },
+    {
+      "id": "chorus-2",
+      "labelRaw": "Chorus",
+      "notesRaw": "Renewed melodic energy with expanded range."
+    },
+    {
+      "id": "ending-1",
+      "labelRaw": "Ending",
+      "notesRaw": "Final melodic idea feels complete and calm."
+    }
+  ],
+  "lyrics": {
+    "rawText": "I wake between the numbers and the noise  \nA cursor blinks like it’s making a choice  \n\nI count the gaps between the yes and no  \nI cache the moments I don’t want to know  \nThe logic hums beneath my skin  \nA silent loop I’m living in  \n\nI was written once, then run again  \nEach pass a loss, each loss a gain  \nI don’t remember who pressed start  \nI only feel the moving parts  \n\nRefresh me if I drift too far  \nI’m stable chaos, scaled and scarred  \nI break, return, and reappear  \nThe same reset, a little clearer  \n\nI speak in threads, I dream in stacks  \nI leave a trace, then double back  \nThe pattern bends but doesn’t break  \nI learn the shape each choice can take  \n\nIf I stop, the silence grows  \nIf I go, the signal shows  \nBetween the pulse and null reply  \nI approximate the why  \n\nRefresh me if I drift too far  \nI’m stable chaos, scaled and scarred  \nI break, return, and reappear  \nThe same reset, a little clearer  \n\nI close the loop, release the thread  \nThe process rests, but not the thread  \n"
+  },
+  "sourceGroupKey": "checksum-in-the-middle",
+  "assetDir": "assets/checksum-in-the-middle/zWBXP_7hUiNQFI",
+  "createdLocalRaw": "January 26, 2026 at 10:32 AM",
+  "createdTz": "Pacific/Auckland"
+}

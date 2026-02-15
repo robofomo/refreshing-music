@@ -5,12 +5,18 @@
     "import:inbox": "node tools/import-inbox.mjs",
     "idgen": "node tools/id-gen.mjs",
     "preprocess": "node tools/batch-preprocess.mjs",
+    "stems": "node tools/run-stems.mjs",
+    "beats": "node tools/run-beats.mjs",
+    "whisperx": "node tools/run-whisperx.mjs",
+    "preprocess:ai": "node tools/preprocess-ai.mjs",
     "dev": "npm --workspace apps/dev-viewer run dev",
     "recipes:validate": "node --input-type=module --eval \"import('./packages/recipes/resolveRecipe.mjs').then(m=>m.resolveRecipe({ albumId:'example-theme' })).then(r=>console.log(r.recipeId))\""
   },
   "workspaces": [
     "apps/*",
     "packages/*"
-  ]
+  ],
+  "dependencies": {
+    "yauzl": "^2.10.0"
+  }
 }
-

@@ -1,6 +1,7 @@
 import type { SectionType } from "../sections";
 
 type LyricTiming = { i?: number; t0Ms?: number; t1Ms?: number };
+type WordTiming = { i?: number; t0Ms?: number; t1Ms?: number; text?: string; conf?: number };
 
 type LyricLine = {
   i: number;
@@ -64,6 +65,36 @@ function buildLyricTimeline(track: any, tMs: number): LyricLine[] {
       t1Ms: t0 + span
     };
   });
+}
+
+function wordProgressForLine(track: any, cur: LyricLine, tMs: number) {
+  const words = Array.isArray(track?.timing?.words) ? (track.timing.words as WordTiming[]) : [];
+  if (!words.length) return null;
+
+  const lineWords = words
+    .filter((w) => {
+      if (typeof w?.i === "number") return w.i === cur.i;
+      const t0 = Number(w?.t0Ms);
+      return Number.isFinite(t0) && t0 >= cur.t0Ms && t0 <= cur.t1Ms + 1;
+    })
+    .filter((w) => Number.isFinite(Number(w?.t0Ms)))
+    .sort((a, b) => Number(a.t0Ms) - Number(b.t0Ms));
+  if (!lineWords.length) return null;
+
+  let done = 0;
+  for (const w of lineWords) {
+    const t0 = Number(w.t0Ms);
+    const t1 = Number.isFinite(Number(w.t1Ms)) ? Number(w.t1Ms) : t0 + 180;
+    if (tMs >= t1) {
+      done += 1;
+      continue;
+    }
+    if (tMs > t0) {
+      done += clamp01((tMs - t0) / Math.max(1, t1 - t0));
+    }
+    break;
+  }
+  return clamp01(done / lineWords.length);
 }
 
 function findCurrent(lines: LyricLine[], tMs: number) {
@@ -161,7 +192,9 @@ export function renderLyricsKaraoke({
   ctx.shadowBlur = 12 + glow * 12;
   ctx.fillText(cur.text, x, yCur, maxWidth);
 
-  const progress = clamp01((tMs - cur.t0Ms) / Math.max(1, cur.t1Ms - cur.t0Ms));
+  const wordProgress = wordProgressForLine(track, cur, tMs);
+  const progress =
+    wordProgress == null ? clamp01((tMs - cur.t0Ms) / Math.max(1, cur.t1Ms - cur.t0Ms)) : wordProgress;
   if (progress > 0) {
     const w = maxWidth * progress;
     const left = align === "left" ? x : align === "right" ? x - maxWidth : x - maxWidth * 0.5;

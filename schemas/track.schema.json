@@ -107,6 +107,20 @@
         "beatsMs": {
           "type": "array",
           "items": { "type": "number" }
+        },
+        "words": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "properties": {
+              "i": { "type": "integer" },
+              "t0Ms": { "type": "integer" },
+              "t1Ms": { "type": "integer" },
+              "text": { "type": "string" },
+              "conf": { "type": "number" }
+            },
+            "additionalProperties": true
+          }
         }
       },
       "additionalProperties": true

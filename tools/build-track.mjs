@@ -142,6 +142,113 @@ function findTimingPath(mp3Path) {
   return "";
 }
 
+function findAssetSidecar(mp3Path, filename) {
+  const p = path.join(path.dirname(mp3Path), filename);
+  return fs.existsSync(p) ? p : "";
+}
+
+function readJsonIfExists(filePath) {
+  if (!filePath) return null;
+  try {
+    return JSON.parse(fs.readFileSync(filePath, "utf8"));
+  } catch (err) {
+    console.warn(`Invalid JSON (${filePath}): ${err instanceof Error ? err.message : String(err)}`);
+    return null;
+  }
+}
+
+function tokenize(value) {
+  return String(value ?? "")
+    .toLowerCase()
+    .replace(/[^a-z0-9']+/g, " ")
+    .trim()
+    .split(/\s+/)
+    .filter(Boolean);
+}
+
+function buildLyricLinesFromWords(lyricsRawText, wordsPayload) {
+  const words = Array.isArray(wordsPayload?.words) ? wordsPayload.words : [];
+  if (!words.length) return [];
+  const rawLines = String(lyricsRawText ?? "").split(/\r?\n/);
+  const out = [];
+  let wordIdx = 0;
+
+  for (let i = 0; i < rawLines.length; i += 1) {
+    const text = rawLines[i]?.trim() ?? "";
+    if (!text) continue;
+    const target = tokenize(text);
+    if (!target.length) continue;
+
+    let matched = 0;
+    let startWord = -1;
+    let endWord = -1;
+    while (wordIdx < words.length && matched < target.length) {
+      const w = words[wordIdx];
+      const token = tokenize(w?.text).join(" ");
+      if (!token) {
+        wordIdx += 1;
+        continue;
+      }
+      if (token === target[matched]) {
+        if (startWord === -1) startWord = wordIdx;
+        endWord = wordIdx;
+        matched += 1;
+      }
+      wordIdx += 1;
+    }
+
+    if (startWord !== -1) {
+      const first = words[startWord];
+      const last = words[endWord];
+      const t0 = Number(first?.t0Ms);
+      const t1 = Number(last?.t1Ms);
+      if (Number.isFinite(t0)) {
+        out.push({
+          i,
+          t0Ms: Math.max(0, Math.round(t0)),
+          t1Ms: Number.isFinite(t1) ? Math.max(Math.round(t0), Math.round(t1)) : Math.round(t0) + 2200
+        });
+      }
+    }
+  }
+  return out;
+}
+
+function buildTimingFromAi(track, mp3Path, timingPath) {
+  const baseTiming = timingPath ? readJson5Lite(timingPath) : {};
+  const beatsPath = findAssetSidecar(mp3Path, "beats.json");
+  const wordsPath = findAssetSidecar(mp3Path, "words.json");
+  const beats = readJsonIfExists(beatsPath);
+  const words = readJsonIfExists(wordsPath);
+  const timing = { ...(baseTiming && typeof baseTiming === "object" ? baseTiming : {}) };
+
+  if ((!Array.isArray(timing.beatsMs) || timing.beatsMs.length === 0) && Array.isArray(beats?.beatTimesMs)) {
+    timing.beatsMs = beats.beatTimesMs
+      .map((n) => Number(n))
+      .filter((n) => Number.isFinite(n))
+      .map((n) => Math.max(0, Math.round(n)));
+  }
+
+  if ((!Array.isArray(timing.lyricsLines) || timing.lyricsLines.length === 0) && Array.isArray(words?.words)) {
+    const inferred = buildLyricLinesFromWords(track?.lyrics?.rawText ?? "", words);
+    if (inferred.length) timing.lyricsLines = inferred;
+  }
+
+  if (!Array.isArray(timing.words) && Array.isArray(words?.words)) {
+    timing.words = words.words
+      .map((w) => ({
+        i: Number.isInteger(w?.i) ? w.i : undefined,
+        t0Ms: Number.isFinite(Number(w?.t0Ms)) ? Math.max(0, Math.round(Number(w.t0Ms))) : undefined,
+        t1Ms: Number.isFinite(Number(w?.t1Ms)) ? Math.max(0, Math.round(Number(w.t1Ms))) : undefined,
+        text: String(w?.text ?? ""),
+        conf: Number.isFinite(Number(w?.conf)) ? Number(w.conf) : undefined
+      }))
+      .filter((w) => Number.isFinite(w.t0Ms) && w.text);
+  }
+
+  return Object.keys(timing).length > 0 ? timing : null;
+}
+
 function validateTiming(track, timing, timingPath) {
   const sectionIds = new Set((track.sections ?? []).map((s) => s.id));
   for (const s of timing?.sections ?? []) {
@@ -227,14 +334,14 @@ export function buildTrackWithOptions({
   if (created.createdLocalRaw) track.createdLocalRaw = created.createdLocalRaw;
   if (created.createdTz) track.createdTz = created.createdTz;
   const timingPath = findTimingPath(mp3Path);
-  if (timingPath) {
-    try {
-      const timing = readJson5Lite(timingPath);
+  try {
+    const timing = buildTimingFromAi(track, mp3Path, timingPath);
+    if (timing) {
       track.timing = timing;
-      validateTiming(track, timing, timingPath);
-    } catch (err) {
-      console.warn(err instanceof Error ? err.message : String(err));
+      validateTiming(track, timing, timingPath || path.join(path.dirname(mp3Path), "timing.json5"));
     }
+  } catch (err) {
+    console.warn(err instanceof Error ? err.message : String(err));
   }
 
   fs.writeFileSync(outPath, `${JSON.stringify(track, null, 2)}\n`, "utf8");

@@ -9,6 +9,13 @@ type Track = {
   trackId: string;
   slug: string;
   audio: { path: string; filename?: string };
+  assetPaths?: {
+    mix?: string;
+    stemsZip?: string;
+    instrumental?: string;
+    vocals?: string;
+    composer?: string;
+  };
   sections?: Array<{ id: string; labelRaw?: string }>;
   lyrics?: { rawText?: string };
   timing?: {
@@ -18,6 +25,8 @@ type Track = {
   };
   recipeRef?: { albumId?: string; trackOverrideId?: string };
 };
+
+type PlaybackMode = "mix" | "stems";
 
 type Particle = {
   x: number;
@@ -37,11 +46,16 @@ const nextBtn = document.getElementById("nextBtn") as HTMLButtonElement;
 const seedBtn = document.getElementById("seedBtn") as HTMLButtonElement;
 const hudBtn = document.getElementById("hudBtn") as HTMLButtonElement;
 const controls = document.getElementById("controls") as HTMLDivElement;
+const mixer = document.getElementById("mixer") as HTMLDivElement;
 const seek = document.getElementById("seek") as HTMLInputElement;
 const audio = document.getElementById("audio") as HTMLAudioElement;
+const audioVocals = document.createElement("audio");
 const ctx = canvas.getContext("2d");
 
 if (!ctx) throw new Error("Canvas2D not supported");
+
+audioVocals.preload = "metadata";
+audioVocals.crossOrigin = "anonymous";
 
 const palettes = [
   ["#0f172a", "#124e66", "#2f9c95"],
@@ -69,9 +83,18 @@ let pendingSeekRatio = 0;
 let wasPlayingBeforeSeek = false;
 let seekInFlight = false;
 const ampHistory: Array<{ tMs: number; amp: number }> = [];
+let playbackMode: PlaybackMode = "mix";
+const mixerState = {
+  mix: { volume: 1, muted: false },
+  backing: { volume: 1, muted: false },
+  vocals: { volume: 1, muted: false }
+};
 
 let audioCtx: AudioContext | null = null;
 let analyser: AnalyserNode | null = null;
+let masterGain: GainNode | null = null;
+let primaryGain: GainNode | null = null;
+let vocalsGain: GainNode | null = null;
 let audioData: Uint8Array<ArrayBuffer> | null = null;
 const DEBUG_AUDIO = false;
 let lastDebugLogTs = 0;
@@ -139,6 +162,100 @@ function setPlayButtonIcon() {
   playBtn.textContent = audio.paused ? "\u25B6" : "\u23F8";
 }
 
+function isStemsTrack(next: Track | null) {
+  return Boolean(next?.assetPaths?.instrumental && next?.assetPaths?.vocals);
+}
+
+function stemsActive() {
+  return playbackMode === "stems";
+}
+
+function activeAudioEls() {
+  return stemsActive() ? [audio, audioVocals] : [audio];
+}
+
+function syncStemTiming() {
+  if (!stemsActive() || !audioVocals.src) return;
+  const drift = Math.abs(audioVocals.currentTime - audio.currentTime);
+  if (drift > 0.08) audioVocals.currentTime = audio.currentTime;
+}
+
+function applyMixerGains() {
+  if (!primaryGain || !vocalsGain) return;
+  if (stemsActive()) {
+    const b = mixerState.backing;
+    const v = mixerState.vocals;
+    primaryGain.gain.value = b.muted ? 0 : b.volume;
+    vocalsGain.gain.value = v.muted ? 0 : v.volume;
+  } else {
+    const m = mixerState.mix;
+    primaryGain.gain.value = m.muted ? 0 : m.volume;
+    vocalsGain.gain.value = 0;
+  }
+}
+
+function createMixerRow(key: "mix" | "backing" | "vocals", label: string) {
+  const row = document.createElement("div");
+  row.className = "mixer-row";
+
+  const muteBtn = document.createElement("button");
+  muteBtn.className = "mute-btn";
+  muteBtn.textContent = "M";
+  muteBtn.title = `${label} mute`;
+
+  const title = document.createElement("div");
+  title.className = "mixer-label";
+  title.textContent = label;
+
+  const slider = document.createElement("input");
+  slider.type = "range";
+  slider.min = "0";
+  slider.max = "100";
+  slider.step = "1";
+  slider.value = String(Math.round(mixerState[key].volume * 100));
+
+  const refresh = () => {
+    muteBtn.classList.toggle("is-muted", mixerState[key].muted);
+    muteBtn.setAttribute("aria-pressed", mixerState[key].muted ? "true" : "false");
+  };
+  refresh();
+
+  muteBtn.addEventListener("click", () => {
+    mixerState[key].muted = !mixerState[key].muted;
+    refresh();
+    applyMixerGains();
+    showControlsTemporarily();
+  });
+
+  slider.addEventListener("input", () => {
+    mixerState[key].volume = Math.max(0, Math.min(1, Number(slider.value) / 100));
+    applyMixerGains();
+  });
+  slider.addEventListener("pointerdown", showControlsTemporarily);
+
+  row.append(muteBtn, title, slider);
+  return row;
+}
+
+function renderMixerControls() {
+  mixer.innerHTML = "";
+  if (stemsActive()) {
+    mixer.appendChild(createMixerRow("backing", "Backing"));
+    mixer.appendChild(createMixerRow("vocals", "Vocals"));
+  } else {
+    mixer.appendChild(createMixerRow("mix", "Mix"));
+  }
+}
+
+function resolveTrackAssetUrl(candidate: string, baseTrackUrl: string) {
+  const raw = String(candidate || "").trim();
+  if (!raw) return "";
+  if (/^https?:\/\//i.test(raw)) return raw;
+  if (raw.startsWith("/")) return new URL(raw, location.origin).toString();
+  if (raw.startsWith("assets/")) return new URL(`/${raw}`, location.origin).toString();
+  return new URL(raw, baseTrackUrl).toString();
+}
+
 function randomizeSeed() {
   const nextSeed = Math.floor(Math.random() * 2_000_000_000);
   buildScene(nextSeed);
@@ -160,9 +277,16 @@ async function togglePlayPause() {
     }
     ensureAudioGraph();
     await resumeAudioContext();
+    if (stemsActive()) {
+      audioVocals.currentTime = audio.currentTime;
+    }
     await audio.play().catch(() => undefined);
+    if (stemsActive()) {
+      await audioVocals.play().catch(() => undefined);
+    }
   } else {
     audio.pause();
+    if (stemsActive()) audioVocals.pause();
   }
   setPlayButtonIcon();
 }
@@ -206,16 +330,24 @@ function once(el: HTMLMediaElement, event: string) {
 }
 
 async function ensureMetadataLoaded() {
-  if (audio.readyState >= 1) return;
-  if (!audio.preload) audio.preload = "metadata";
-  audio.load();
-  await once(audio, "loadedmetadata");
+  if (audio.readyState < 1) {
+    if (!audio.preload) audio.preload = "metadata";
+    audio.load();
+    await once(audio, "loadedmetadata");
+  }
+  if (stemsActive() && audioVocals.readyState < 1) {
+    if (!audioVocals.preload) audioVocals.preload = "metadata";
+    audioVocals.load();
+    await once(audioVocals, "loadedmetadata");
+  }
 }
 
 async function seekToSeconds(seconds: number) {
   await ensureMetadataLoaded();
   audio.pause();
+  if (stemsActive()) audioVocals.pause();
   audio.currentTime = seconds;
+  if (stemsActive()) audioVocals.currentTime = seconds;
   await once(audio, "seeked");
 }
 
@@ -223,6 +355,7 @@ function beginSeek() {
   isSeeking = true;
   wasPlayingBeforeSeek = !audio.paused;
   audio.pause();
+  if (stemsActive()) audioVocals.pause();
   resetAmpHistory("seek-begin");
   logAudioState("seek-begin");
 }
@@ -248,10 +381,14 @@ async function finishSeek() {
     await resumeAudioContext();
 
     if (wasPlayingBeforeSeek) {
+      if (stemsActive()) audioVocals.currentTime = audio.currentTime;
       await audio.play().catch((err) => {
         logAudioState("play-resume-failed", { err: err instanceof Error ? err.message : String(err) });
         return undefined;
       });
+      if (stemsActive()) {
+        await audioVocals.play().catch(() => undefined);
+      }
     }
   } finally {
     isSeeking = false;
@@ -287,30 +424,35 @@ function amplitudeAt(tMs: number, fallbackAmp: number) {
 }
 
 function ensureAudioGraph() {
-  if (audioCtx) return;
+  if (audioCtx) {
+    applyMixerGains();
+    return;
+  }
   audioCtx = new AudioContext();
   analyser = audioCtx.createAnalyser();
   analyser.fftSize = 1024;
   audioData = new Uint8Array(new ArrayBuffer(analyser.fftSize));
-  const src = audioCtx.createMediaElementSource(audio);
-  src.connect(analyser);
+
+  masterGain = audioCtx.createGain();
+  primaryGain = audioCtx.createGain();
+  vocalsGain = audioCtx.createGain();
+
+  const primarySrc = audioCtx.createMediaElementSource(audio);
+  const vocalsSrc = audioCtx.createMediaElementSource(audioVocals);
+  primarySrc.connect(primaryGain);
+  vocalsSrc.connect(vocalsGain);
+  primaryGain.connect(masterGain);
+  vocalsGain.connect(masterGain);
+  masterGain.connect(analyser);
   analyser.connect(audioCtx.destination);
+  applyMixerGains();
 }
 
 function rebuildAudioGraph(reason: string) {
-  const now = performance.now();
-  if (now - lastGraphRebuildTs < 5000) return;
-  lastGraphRebuildTs = now;
-
-  const oldCtx = audioCtx;
-  audioCtx = null;
-  analyser = null;
-  audioData = null;
-  oldCtx?.close().catch(() => undefined);
-
+  void reason;
+  // Audio graph is intentionally stable because media element sources
+  // cannot be safely recreated multiple times across context resets.
   ensureAudioGraph();
-  void resumeAudioContext();
-  logAudioState("analyser-rebuilt", { reason });
 }
 
 function rmsAmplitude() {
@@ -385,6 +527,7 @@ function resizeCanvas() {
 
 function render() {
   if (!ctx) return;
+  if (stemsActive() && !audio.paused) syncStemTiming();
   const tAudioMs = audio.currentTime * 1000;
   const lastAmp = ampHistory.length ? ampHistory[ampHistory.length - 1] : null;
   if (lastAmp && tAudioMs + 250 < lastAmp.tMs) {
@@ -452,6 +595,7 @@ if (!isSeeking && Number.isFinite(audio.duration) && audio.duration > 0) {
     `seed: ${seed}`,
     `time: ${fmtMs(tAudioMs)}`,
     `offsetMs: ${renderOffsetMs}`,
+    `playback: ${playbackMode}`,
     `sectionId: ${sectionId || "-"}`,
     `sectionType: ${frameInfo?.sectionType ?? sectionType}`,
     `lyricIndex: ${lyricIndex}`,
@@ -496,10 +640,27 @@ async function loadTrack(nextIndex: number) {
     currentRecipe = { layers: [{ module: "bg.gradientField", params: { gradientStops: 3 } }] };
   }
 
-  const audioUrl = new URL(track.audio.path, trackUrl).toString();
+  const hasStems = isStemsTrack(track);
+  playbackMode = hasStems ? "stems" : "mix";
+  renderMixerControls();
+  const mixPath = track.assetPaths?.mix || track.audio.path;
+  const backingPath = track.assetPaths?.instrumental || mixPath;
+  const vocalsPath = track.assetPaths?.vocals || "";
+  const audioUrl = resolveTrackAssetUrl(hasStems ? backingPath : mixPath, trackUrl);
   const wasPlaying = !audio.paused;
+  audio.pause();
+  audioVocals.pause();
   audio.src = audioUrl;
   audio.load();
+  if (hasStems && vocalsPath) {
+    audioVocals.src = resolveTrackAssetUrl(vocalsPath, trackUrl);
+    audioVocals.load();
+  } else {
+    audioVocals.removeAttribute("src");
+    audioVocals.load();
+  }
+  ensureAudioGraph();
+  applyMixerGains();
 
   if (!Number.isInteger(seed)) {
     buildScene(hashStringToSeed(track.trackId || trackId));
@@ -509,7 +670,9 @@ async function loadTrack(nextIndex: number) {
   }
 
   if (wasPlaying) {
+    if (hasStems) audioVocals.currentTime = audio.currentTime;
     await audio.play().catch(() => undefined);
+    if (hasStems) await audioVocals.play().catch(() => undefined);
   }
   setPlayButtonIcon();
 }
@@ -547,6 +710,7 @@ async function goNextTrack() {
 async function goPrevTrackOrRestart() {
   if (audio.currentTime > 5) {
     audio.currentTime = 0;
+    if (stemsActive()) audioVocals.currentTime = 0;
     return;
   }
   await loadTrack(selectedIndex - 1);
@@ -622,12 +786,14 @@ window.addEventListener("keydown", async (e) => {
   if (e.code === "ArrowLeft") {
     e.preventDefault();
     audio.currentTime = Math.max(0, audio.currentTime - 5);
+    if (stemsActive()) audioVocals.currentTime = audio.currentTime;
     return;
   }
   if (e.code === "ArrowRight") {
     e.preventDefault();
     const maxT = Number.isFinite(audio.duration) ? audio.duration : audio.currentTime + 5;
     audio.currentTime = Math.min(maxT, audio.currentTime + 5);
+    if (stemsActive()) audioVocals.currentTime = audio.currentTime;
     return;
   }
   if (e.key.toLowerCase() === "n" || e.key === "." || e.key === ">") {
@@ -694,25 +860,36 @@ canvas.addEventListener("dblclick", () => {
 audio.addEventListener("play", () => { 
   ensureAudioGraph();
   void resumeAudioContext();
+  if (stemsActive() && audioVocals.paused) {
+    audioVocals.currentTime = audio.currentTime;
+    void audioVocals.play().catch(() => undefined);
+  }
   logAudioState("play");
   setPlayButtonIcon();
 });
 audio.addEventListener("seeking", () => {
   void resumeAudioContext();
+  if (stemsActive()) audioVocals.currentTime = audio.currentTime;
   logAudioState("seeking");
 });
 audio.addEventListener("seeked", () => {
   logAudioState("seeked");
 });
 audio.addEventListener("pause", () => {
+  if (stemsActive()) audioVocals.pause();
   logAudioState("pause");
   setPlayButtonIcon();
 });
 audio.addEventListener("ended", async () => {
+  if (stemsActive()) audioVocals.pause();
   await goNextTrack();
   ensureAudioGraph();
   await resumeAudioContext();
   await audio.play().catch(() => undefined);
+  if (stemsActive()) {
+    audioVocals.currentTime = audio.currentTime;
+    await audioVocals.play().catch(() => undefined);
+  }
 });
 document.addEventListener("visibilitychange", () => {
   if (!document.hidden) {

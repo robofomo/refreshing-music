@@ -16,11 +16,39 @@ Local-first Canvas2D visualizer with:
 - tracks/<trackId>.track.json (tracked): small generated track metadata
 
 ## Workflow (Inbox -> Assets -> Tracks)
-1. Drop new files into `inbox/` (mp3/txt/json5/zip).  
-2. Run `npm run import:inbox` to move grouped files into `assets/<workId>/<trackId>/` and create/update `tracks/<trackId>.track.json`.
-3. Edit `assets/<workId>/<trackId>/composer.txt` stubs as needed.
-4. Run `npm run preprocess` to refresh track JSON data + embedded timing.
-5. Run `npm run dev` for the dev viewer.
+1. Drop new files into `inbox/` (mp3/txt/json5/zip).
+2. Run `npm run import:inbox`.
+3. Import groups are resolved as:
+   - folder groups: each top-level folder in `inbox/` is one group
+   - loose-file groups: root files are grouped by best-effort basename prefix
+4. `workId` resolution order:
+   - optional override file in group (`*work-id*.txt` or `*work-id*.json5` with `workId`)
+   - filename tag (for example `[work:my-work]` or `work_my-work`)
+   - filename-derived work id from mp3/zip (or group title)
+   - fallback `work_YYYYMMDD`
+5. Importer creates/updates:
+   - `assets/<workId>/<trackId>/`
+   - canonical stems from `stems.zip` when present (`instrumental.mp3`, `vocals.mp3`, best-effort filename matching)
+   - canonical `mix.mp3` (created from `instrumental.mp3` first, then fallback audio)
+   - `composer.txt` stub if missing
+   - `tracks/<trackId>.track.json` with catalog/import metadata, including hash source details (`instrumental.mp3` preferred when available)
+6. Consumed groups are archived under `inbox/_done/<YYYY-MM-DD>/...`.
+7. Run `npm run preprocess` to refresh track JSON data + embedded timing.
+8. Run `npm run dev` for the dev viewer.
+
+### Import Flags
+- `npm run import:inbox -- --dry-run`
+  - Plan only; no file writes/moves.
+- `npm run import:inbox -- --overwrite`
+  - Allow replacing conflicting files in target asset folders.
+- `npm run import:inbox -- --json`
+  - Print detailed import report JSON to stdout.
+- `npm run import:inbox -- --json reports/import.json`
+  - Write report JSON to a file.
+
+### Smoke Test
+- `npm run import:inbox:smoke`
+  - Runs a local fixture import in a temp directory and verifies expected track/import outputs (no AI preprocess required).
 
 ## AI Preprocess (Beats + Words)
 These steps write sidecar files in each asset track folder:

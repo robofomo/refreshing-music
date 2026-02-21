@@ -1,0 +1,96 @@
+{
+  "workId": "static-turns-to-dawn",
+  "trackId": "01KHYRDANTE8PH26FADR",
+  "recipeRef": {
+    "albumId": "sky",
+    "trackOverrideId": "01KHYRDANTE8PH26FADR"
+  },
+  "createdAt": "2026-02-20T23:49:36.932Z",
+  "slug": "static-turns-to-dawn",
+  "title": "Static Turns to Dawn",
+  "audio": {
+    "filename": "mix.mp3",
+    "path": "../assets/static-turns-to-dawn/01KHYRDANTE8PH26FADR/mix.mp3",
+    "cidOrTx": "",
+    "mime": "audio/mpeg",
+    "bytes": 4229806
+  },
+  "composer": {
+    "rawText": "[SongTitle: Static Turns to Dawn]\r\n[Style: alternative rock, cinematic hybrid, clean studio recording, expressive male vocal]\r\n[Caption: Noise settles, direction appears.]\r\n[Image: Faded horizon clearing into sharp morning light.]\r\n[Refresh Title: Early Morning Walk]\r\n[Theme: Sky]\r\n[Gradients: 4]\r\n[Rank: 33]\r\n[TitleRarityPct: 2.19]\r\n[Seeds: 682, A:47, B:87, C:35, D:21]\r\n[Composer Version: v2.0]\r\n\r\n[Plan]\r\n[Perspective: i_reflect]\r\n[Concept: Finding calm motion after restless noise.]\r\n[Topic: Sky & Perspective → storm_then_clear]\r\n[GenreBias: alternative rock]\r\n[StyleChange: none]\r\n[Modulation: none]\r\n[HookProminence: medium]\r\n[Deviation: none]\r\n\r\n[Intro]\r\n[MelodicConcept: long-tone release]\r\nMorning hums behind my eyes,\r\nGrey light stretching through the lines.\r\n\r\n[Verse]\r\n[MelodicConcept: conversational contour]\r\nI walked with static in my head,\r\nEvery thought half-born, half-said.\r\nThe street was quiet, breath held thin,\r\nLike it knew the day would bend.\r\n\r\n[Verse]\r\n[MelodicConcept: stepwise triad stairs]\r\nEach step aligned my pace with time,\r\nCracks in concrete, beat by beat.\r\nThe noise fell off, a coat of night,\r\nLeft at the corner of the street.\r\n\r\n[Bridge]\r\n[MelodicConcept: asymmetric phrasing]\r\nClouds pulled back without a sound,\r\nThe city softened, slowed me down.\r\nNo sudden truth, no grand reveal,\r\nJust space enough to breathe and feel.\r\n\r\n[Chorus]\r\n[MelodicConcept: call-and-answer hook]\r\nAnd I’m clear now, clearer than before,\r\nThe sky repeats what I ignored.\r\nI’m clear now, standing in the calm,\r\nNothing missing, nothing wrong.\r\n\r\n[Final Chorus]\r\n[MelodicConcept: register swap]\r\nI’m clear now, daylight on my skin,\r\nThe quiet lets the signal in.\r\nI’m clear now, hear the morning say,\r\nYou don’t need more to start the day.\r\n\r\n[Ending]\r\n[MelodicConcept: gentle sequence]\r\nThe road goes on, the doubt is gone,\r\nStatic turns to dawn.\r\n",
+    "headerMap": {
+      "SongTitle": "Static Turns to Dawn",
+      "Style": "alternative rock, cinematic hybrid, clean studio recording, expressive male vocal",
+      "Caption": "Noise settles, direction appears.",
+      "Image": "Faded horizon clearing into sharp morning light.",
+      "Refresh Title": "Early Morning Walk",
+      "Theme": "Sky",
+      "Gradients": "4",
+      "Rank": "33",
+      "TitleRarityPct": "2.19",
+      "Seeds": "682, A:47, B:87, C:35, D:21",
+      "Composer Version": "v2.0"
+    }
+  },
+  "sections": [
+    {
+      "id": "plan-1",
+      "labelRaw": "Plan",
+      "notesRaw": "Perspective: i_reflect\nConcept: Finding calm motion after restless noise.\nTopic: Sky & Perspective → storm_then_clear\nGenreBias: alternative rock\nStyleChange: none\nModulation: none\nHookProminence: medium\nDeviation: none"
+    },
+    {
+      "id": "intro-1",
+      "labelRaw": "Intro",
+      "notesRaw": "MelodicConcept: long-tone release"
+    },
+    {
+      "id": "verse-1",
+      "labelRaw": "Verse",
+      "notesRaw": "MelodicConcept: conversational contour"
+    },
+    {
+      "id": "verse-2",
+      "labelRaw": "Verse",
+      "notesRaw": "MelodicConcept: stepwise triad stairs"
+    },
+    {
+      "id": "bridge-1",
+      "labelRaw": "Bridge",
+      "notesRaw": "MelodicConcept: asymmetric phrasing"
+    },
+    {
+      "id": "chorus-1",
+      "labelRaw": "Chorus",
+      "notesRaw": "MelodicConcept: call-and-answer hook"
+    },
+    {
+      "id": "final-chorus-1",
+      "labelRaw": "Final Chorus",
+      "notesRaw": "MelodicConcept: register swap"
+    },
+    {
+      "id": "ending-1",
+      "labelRaw": "Ending",
+      "notesRaw": "MelodicConcept: gentle sequence"
+    }
+  ],
+  "lyrics": {
+    "rawText": "\nMorning hums behind my eyes,\nGrey light stretching through the lines.\n\nI walked with static in my head,\nEvery thought half-born, half-said.\nThe street was quiet, breath held thin,\nLike it knew the day would bend.\n\nEach step aligned my pace with time,\nCracks in concrete, beat by beat.\nThe noise fell off, a coat of night,\nLeft at the corner of the street.\n\nClouds pulled back without a sound,\nThe city softened, slowed me down.\nNo sudden truth, no grand reveal,\nJust space enough to breathe and feel.\n\nAnd I’m clear now, clearer than before,\nThe sky repeats what I ignored.\nI’m clear now, standing in the calm,\nNothing missing, nothing wrong.\n\nI’m clear now, daylight on my skin,\nThe quiet lets the signal in.\nI’m clear now, hear the morning say,\nYou don’t need more to start the day.\n\nThe road goes on, the doubt is gone,\nStatic turns to dawn.\n"
+  },
+  "sourceGroupKey": "loose:static-turns-to-dawn",
+  "assetDir": "assets/static-turns-to-dawn/01KHYRDANTE8PH26FADR",
+  "assetPaths": {
+    "mix": "assets/static-turns-to-dawn/01KHYRDANTE8PH26FADR/mix.mp3",
+    "stemsZip": "",
+    "composer": "assets/static-turns-to-dawn/01KHYRDANTE8PH26FADR/composer.txt"
+  },
+  "import": {
+    "firstImportedAt": "2026-02-21T00:08:23.482Z",
+    "lastImportedAt": "2026-02-21T00:08:23.482Z",
+    "inputHashes": {
+      "Static Turns to Dawn.mp3": "019fbe722584dbd8516b4d7281d039ce01e91e6642af86446150be7586f53b77",
+      "Static Turns to Dawn.txt": "49a63ae971d8eb473480660db342cae26e34faee649f08930133265b425b7d73"
+    },
+    "sourceGroupKey": "loose:static-turns-to-dawn",
+    "archivedTo": "D:/seva/FOMO/Songs/the-refresh/refreshing-music/inbox/_done/2026-02-21/loose/static-turns-to-dawn/consumed.json"
+  }
+}

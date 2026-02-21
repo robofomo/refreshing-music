@@ -1,0 +1,110 @@
+{
+  "workId": "lanterns-on-the-refresh-line",
+  "trackId": "01KHYRXRJESTY903ZCJ3",
+  "recipeRef": {
+    "albumId": "community-picked",
+    "trackOverrideId": "01KHYRXRJESTY903ZCJ3"
+  },
+  "createdAt": "2026-02-21T00:17:23.250Z",
+  "slug": "lanterns-on-the-refresh-line",
+  "title": "Lanterns on the Refresh Line",
+  "audio": {
+    "filename": "mix.mp3",
+    "path": "../assets/lanterns-on-the-refresh-line/01KHYRXRJESTY903ZCJ3/mix.mp3",
+    "cidOrTx": "",
+    "mime": "audio/mpeg",
+    "bytes": 4213556
+  },
+  "composer": {
+    "rawText": "[SongTitle: Lanterns on the Refresh Line]\r\n[Style: downtempo, rap, hip-hop, clean studio recording, expressive conversational male vocal, key-change]\r\n[Caption: Low-tempo bars for the builders, jokers, and friends who refresh together.]\r\n[Image: Cozy neon lounge, soft grid glow, community chat bubbles, gentle motion trails, hopeful midnight palette.]\r\n[Refresh Title: The Joker]\r\n[Theme: Community Picked]\r\n[Gradients: 8]\r\n[Rank: 2]\r\n[TitleRarityPct: 0.30]\r\n[Seeds: 428, A:85, B:9, C:69, D:27]\r\n[Composer Version: v2.0]\r\n\r\n[Plan]\r\n[Perspective: first-person plural, community voice]\r\n[Concept: we refresh, we return, we keep it kind]\r\n[Topic: Programmatic Art & Play → bingo nights, shared pulls, new variations]\r\n[GenreBias: downtempo rap]\r\n[StyleChange: none]\r\n[Modulation: lift up a whole step into Final Chorus]\r\n[HookProminence: medium]\r\n[Deviation: Stripped Chorus Once]\r\n\r\n[Intro]\r\n[conversational contour]\r\n[808s breathe; soft keys shimmer; tape-warm drums settle in]\r\nWe tap refresh and share the sign,\r\nWe hold the thread and keep it kind.\r\n\r\n[Verse]\r\n[asymmetric phrasing]\r\nWe chase the frame, then name the glow,\r\nA quiet pull the night can show.\r\nWe mark the squares, we call the win,\r\nA bright new set we’re standing in.\r\n\r\n[Pre-Chorus]\r\n[long-tone release]\r\nThe room stays calm, the signal clear,\r\nWe lean in close and lose the fear.\r\n\r\n[Chorus]\r\n[call-and-answer hook]\r\nWe press refresh, we press refresh,\r\nA rising light, a steady breath.\r\nWe press refresh, we press refresh,\r\nWe build it bright, we build it fresh.\r\n\r\n[Verse]\r\n[motif rotation]\r\nA screenshot saved, a laugh that lands,\r\nA wave of pings from distant lands.\r\nNo chasing noise, no empty race,\r\nJust honest craft in shared space.\r\n\r\n[Chorus]\r\n[register swap]\r\n[Stripped Chorus: drop drums to hats + bass; keep hook clear]\r\nWe press refresh, we press refresh,\r\nA rising light, a steady breath.\r\nWe press refresh, we press refresh,\r\nWe build it bright, we build it fresh.\r\n\r\n[Bridge]\r\n[stepwise triad stairs]\r\n[Half-time pocket; airy pads widen; crowd-chant textures low]\r\nWe trade our time for tools that last,\r\nWe plant the flag, we learn it fast.\r\nA gentle joke, a guiding hand,\r\nWe keep the rhythm, line by line.\r\n\r\n[Final Chorus]\r\n[call-and-answer hook]\r\n[Key Change: lift up a whole step into Final Chorus]\r\n[Full groove returns; cinematic strings lift; brighter synth top-line]\r\nWe press refresh, we press refresh,\r\nA higher road, a deeper breath.\r\nWe press refresh, we press refresh,\r\nWe build it bright, we build it fresh.\r\n\r\n[Ending]\r\n[gentle sequence]\r\n[Loop-ready fade; hats soften; keys glow out]\r\nWe press refresh and hold the line,\r\nWe press refresh and keep it kind.",
+    "headerMap": {
+      "SongTitle": "Lanterns on the Refresh Line",
+      "Style": "downtempo, rap, hip-hop, clean studio recording, expressive conversational male vocal, key-change",
+      "Caption": "Low-tempo bars for the builders, jokers, and friends who refresh together.",
+      "Image": "Cozy neon lounge, soft grid glow, community chat bubbles, gentle motion trails, hopeful midnight palette.",
+      "Refresh Title": "The Joker",
+      "Theme": "Community Picked",
+      "Gradients": "8",
+      "Rank": "2",
+      "TitleRarityPct": "0.30",
+      "Seeds": "428, A:85, B:9, C:69, D:27",
+      "Composer Version": "v2.0"
+    }
+  },
+  "sections": [
+    {
+      "id": "plan-1",
+      "labelRaw": "Plan",
+      "notesRaw": "Perspective: first-person plural, community voice\nConcept: we refresh, we return, we keep it kind\nTopic: Programmatic Art & Play → bingo nights, shared pulls, new variations\nGenreBias: downtempo rap\nStyleChange: none\nModulation: lift up a whole step into Final Chorus\nHookProminence: medium\nDeviation: Stripped Chorus Once"
+    },
+    {
+      "id": "intro-1",
+      "labelRaw": "Intro",
+      "notesRaw": "conversational contour\n808s breathe; soft keys shimmer; tape-warm drums settle in"
+    },
+    {
+      "id": "verse-1",
+      "labelRaw": "Verse",
+      "notesRaw": "asymmetric phrasing"
+    },
+    {
+      "id": "pre-chorus-1",
+      "labelRaw": "Pre-Chorus",
+      "notesRaw": "long-tone release"
+    },
+    {
+      "id": "chorus-1",
+      "labelRaw": "Chorus",
+      "notesRaw": "call-and-answer hook"
+    },
+    {
+      "id": "verse-2",
+      "labelRaw": "Verse",
+      "notesRaw": "motif rotation"
+    },
+    {
+      "id": "chorus-2",
+      "labelRaw": "Chorus",
+      "notesRaw": "register swap\nStripped Chorus: drop drums to hats + bass; keep hook clear"
+    },
+    {
+      "id": "bridge-1",
+      "labelRaw": "Bridge",
+      "notesRaw": "stepwise triad stairs\nHalf-time pocket; airy pads widen; crowd-chant textures low"
+    },
+    {
+      "id": "final-chorus-1",
+      "labelRaw": "Final Chorus",
+      "notesRaw": "call-and-answer hook\nKey Change: lift up a whole step into Final Chorus\nFull groove returns; cinematic strings lift; brighter synth top-line"
+    },
+    {
+      "id": "ending-1",
+      "labelRaw": "Ending",
+      "notesRaw": "gentle sequence\nLoop-ready fade; hats soften; keys glow out"
+    }
+  ],
+  "lyrics": {
+    "rawText": "\nWe tap refresh and share the sign,\nWe hold the thread and keep it kind.\n\nWe chase the frame, then name the glow,\nA quiet pull the night can show.\nWe mark the squares, we call the win,\nA bright new set we’re standing in.\n\nThe room stays calm, the signal clear,\nWe lean in close and lose the fear.\n\nWe press refresh, we press refresh,\nA rising light, a steady breath.\nWe press refresh, we press refresh,\nWe build it bright, we build it fresh.\n\nA screenshot saved, a laugh that lands,\nA wave of pings from distant lands.\nNo chasing noise, no empty race,\nJust honest craft in shared space.\n\nWe press refresh, we press refresh,\nA rising light, a steady breath.\nWe press refresh, we press refresh,\nWe build it bright, we build it fresh.\n\nWe trade our time for tools that last,\nWe plant the flag, we learn it fast.\nA gentle joke, a guiding hand,\nWe keep the rhythm, line by line.\n\nWe press refresh, we press refresh,\nA higher road, a deeper breath.\nWe press refresh, we press refresh,\nWe build it bright, we build it fresh.\n\nWe press refresh and hold the line,\nWe press refresh and keep it kind."
+  },
+  "sourceGroupKey": "loose:lanterns-on-the-refresh-line",
+  "assetDir": "assets/lanterns-on-the-refresh-line/01KHYRXRJESTY903ZCJ3",
+  "assetPaths": {
+    "mix": "assets/lanterns-on-the-refresh-line/01KHYRXRJESTY903ZCJ3/mix.mp3",
+    "stemsZip": "assets/lanterns-on-the-refresh-line/01KHYRXRJESTY903ZCJ3/stems.zip",
+    "instrumental": "assets/lanterns-on-the-refresh-line/01KHYRXRJESTY903ZCJ3/instrumental.mp3",
+    "vocals": "assets/lanterns-on-the-refresh-line/01KHYRXRJESTY903ZCJ3/vocals.mp3",
+    "composer": "assets/lanterns-on-the-refresh-line/01KHYRXRJESTY903ZCJ3/composer.txt"
+  },
+  "import": {
+    "firstImportedAt": "2026-02-21T00:17:21.997Z",
+    "lastImportedAt": "2026-02-21T00:17:21.997Z",
+    "inputHashes": {
+      "Lanterns on the Refresh Line Stems.zip": "773fd3ca60f3e16ecdc0174c2c8f28d612793d197fcbe312a9fc549064215de5",
+      "Lanterns on the Refresh Line.txt": "b44fdcb8507fdc70e8d91a0e798007b4ea3a59af5ee7c00d9e27116e35daca3f"
+    },
+    "hashSource": "assets/lanterns-on-the-refresh-line/01KHYRXRJESTY903ZCJ3/instrumental.mp3",
+    "hashSourceSha256": "177b77cb828e96cab02137b73e54d4d4c6ef53b33feb36fb9ac71e30e1aeaaa6",
+    "sourceGroupKey": "loose:lanterns-on-the-refresh-line",
+    "archivedTo": "D:/seva/FOMO/Songs/the-refresh/refreshing-music/inbox/_done/2026-02-21/loose/lanterns-on-the-refresh-line/consumed.json"
+  }
+}

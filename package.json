@@ -3,6 +3,7 @@
   "private": true,
   "scripts": {
     "import:inbox": "node tools/import-inbox.mjs",
+    "import:inbox:smoke": "node tools/smoke-import-inbox.mjs",
     "idgen": "node tools/id-gen.mjs",
     "preprocess": "node tools/batch-preprocess.mjs",
     "stems": "node tools/run-stems.mjs",

@@ -294,7 +294,7 @@ export function buildTrackWithOptions({
   const trackId = trackIdOverride || ids.trackId;
   const workId = workIdOverride || ids.workId;
 
-  const tracksDir = path.resolve("tracks");
+  const tracksDir = trackJsonPath ? path.resolve(path.dirname(trackJsonPath)) : path.resolve("tracks");
   const defaultSlug = ids.slugBase || slugify(title) || "untitled";
   const slug = trackJsonPath ? defaultSlug : uniqueSlug(tracksDir, defaultSlug, trackId);
   const outPath = trackJsonPath ? path.resolve(trackJsonPath) : path.join(tracksDir, slug, `${trackId}.track.json`);

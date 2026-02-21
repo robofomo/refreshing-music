@@ -38,7 +38,7 @@ body,
   left: 50%;
   right: auto;
   transform: translateX(-50%);
-  width: min(250px, calc(100% - 24px));
+  width: min(430px, calc(100% - 24px));
   bottom: calc(12px + env(safe-area-inset-bottom));
   display: flex;
   flex-wrap: wrap;
@@ -70,6 +70,44 @@ body,
 #seek {
   order: 2;
   flex: 1 0 100%;
+}
+
+#mixer {
+  order: 3;
+  flex: 1 0 100%;
+  display: grid;
+  gap: 6px;
+}
+
+.mixer-row {
+  display: grid;
+  grid-template-columns: auto auto 1fr;
+  gap: 6px;
+  align-items: center;
+}
+
+.mixer-row .mute-btn {
+  min-width: 34px;
+  padding: 6px 8px;
+  font-size: 12px;
+  line-height: 1;
+}
+
+#controls .mixer-row .mute-btn.is-muted {
+  background: #1e6dff;
+  border-color: #5fa0ff;
+  color: #ffffff;
+}
+
+.mixer-row .mixer-label {
+  font-size: 12px;
+  opacity: 0.9;
+  min-width: 56px;
+  text-align: left;
+}
+
+.mixer-row input[type="range"] {
+  width: 100%;
 }
 
 #hud {

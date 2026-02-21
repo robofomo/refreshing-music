@@ -397,6 +397,30 @@ function chooseStemFiles(entries) {
   };
 }
 
+async function listZipEntriesPortable(zipPath) {
+  try {
+    return await listMp3ZipEntries(zipPath);
+  } catch (err) {
+    const msg = err instanceof Error ? err.message : String(err);
+    if (msg.toLowerCase().includes("multi-disk zip")) {
+      return listMp3ZipEntriesPython(zipPath);
+    }
+    throw err;
+  }
+}
+
+async function zipLooksLikeStems(zipPath) {
+  if (!fs.existsSync(zipPath)) return false;
+  const entries = await listZipEntriesPortable(zipPath);
+  if (!entries.length) return false;
+  const picks = chooseStemFiles(entries);
+  if (picks.instrumental || picks.vocals) return true;
+  const names = entries.map((e) => path.posix.basename(e).toLowerCase());
+  const hasInst = names.some((n) => n.includes("instrumental") || n.includes("inst"));
+  const hasVocals = names.some((n) => n.includes("vocals") || n.includes("lead"));
+  return hasInst && hasVocals;
+}
+
 function extractZipEntryToFile(zipPath, entryRelPath, outPath, overwrite) {
   return new Promise((resolve, reject) => {
     yauzl.open(zipPath, { lazyEntries: true }, (openErr, zip) => {
@@ -476,17 +500,7 @@ async function extractStemAudioFromZip(assetDir, overwrite, dryRun) {
   const zipPath = path.join(assetDir, "stems.zip");
   if (!fs.existsSync(zipPath)) return { ok: false, reason: "no-stems-zip", extracted: {} };
 
-  let entries = [];
-  try {
-    entries = await listMp3ZipEntries(zipPath);
-  } catch (err) {
-    const msg = err instanceof Error ? err.message : String(err);
-    if (msg.toLowerCase().includes("multi-disk zip")) {
-      entries = listMp3ZipEntriesPython(zipPath);
-    } else {
-      throw err;
-    }
-  }
+  const entries = await listZipEntriesPortable(zipPath);
   if (!entries.length) return { ok: false, reason: "no-mp3-in-stems-zip", extracted: {} };
 
   const picks = chooseStemFiles(entries);
@@ -720,7 +734,20 @@ async function main() {
     };
 
     const audio = chooseAudio(group.items);
-    const stemsInput = group.items.find((x) => x.role === "stems");
+    let stemsInput = group.items.find((x) => x.role === "stems") || null;
+    if (!audio && !stemsInput) {
+      const zipCandidates = group.items.filter((x) => x.ext === ".zip");
+      for (const z of zipCandidates) {
+        try {
+          if (await zipLooksLikeStems(z.absPath)) {
+            stemsInput = z;
+            break;
+          }
+        } catch (err) {
+          groupReport.warnings.push(`zip inspection failed (${z.name}): ${err instanceof Error ? err.message : String(err)}`);
+        }
+      }
+    }
     if (!audio && !stemsInput) {
       groupReport.reason = "no-audio";
       report.skipped += 1;
@@ -747,26 +774,41 @@ async function main() {
     if (!args.dryRun) fs.mkdirSync(assetDir, { recursive: true });
 
     const movable = group.items.filter((x) => x.role !== "workIdOverride");
+    let stemsUpdated = false;
     for (const item of movable) {
       if (!fs.existsSync(item.absPath)) continue;
       const hashKey = toPosix(item.relPath);
       inputHashes[hashKey] = sha256FileSync(item.absPath);
-      const destName = targetNameForRole(item.role, item.name);
+      let role = item.role;
+      if (item.ext === ".zip" && role !== "stems") {
+        try {
+          if (await zipLooksLikeStems(item.absPath)) role = "stems";
+        } catch (err) {
+          groupReport.warnings.push(`zip inspection failed (${item.name}): ${err instanceof Error ? err.message : String(err)}`);
+        }
+      }
+      const destName = targetNameForRole(role, item.name);
       const dst = path.join(assetDir, destName);
+      const itemOverwrite = args.overwrite || (Boolean(existingEntry) && role === "stems");
       const res = moveOrCopy({
         src: item.absPath,
         dst,
-        overwrite: args.overwrite,
+        overwrite: itemOverwrite,
         dryRun: args.dryRun
       });
       if (!res.ok) groupReport.warnings.push(`Skipped existing file: ${toPosix(dst)}`);
+      if (role === "stems" && res.ok && !res.skipped) stemsUpdated = true;
     }
 
     const composerPath = ensureComposerStub(assetDir, args.dryRun);
     const stemsZipPath = path.join(assetDir, "stems.zip");
     if (fs.existsSync(stemsZipPath)) {
       try {
-        const stemExtraction = await extractStemAudioFromZip(assetDir, args.overwrite, args.dryRun);
+        const stemExtraction = await extractStemAudioFromZip(
+          assetDir,
+          args.overwrite || Boolean(existingEntry) || stemsUpdated,
+          args.dryRun
+        );
         if (stemExtraction.ok) {
           if (stemExtraction.extracted?.instrumental) {
             groupReport.warnings.push(`instrumental.mp3 sourced from stems.zip entry: ${stemExtraction.extracted.instrumental}`);
@@ -817,6 +859,16 @@ async function main() {
         });
         if (!copy.ok) groupReport.warnings.push(`Could not create mix.mp3 from ${anyMp3}`);
       }
+    }
+    if ((stemsUpdated || Boolean(existingEntry)) && fs.existsSync(path.join(assetDir, "instrumental.mp3"))) {
+      const forceMix = moveOrCopy({
+        src: path.join(assetDir, "instrumental.mp3"),
+        dst: mixPath,
+        overwrite: true,
+        dryRun: args.dryRun,
+        forceCopy: true
+      });
+      if (!forceMix.ok) groupReport.warnings.push("Could not refresh mix.mp3 from instrumental.mp3");
     }
     if (!args.dryRun && !fs.existsSync(mixPath)) {
       groupReport.reason = "mix-missing-after-import";

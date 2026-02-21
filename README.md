@@ -88,6 +88,25 @@ WhisperX model weights are cached on first run (typically under your user cache 
   - Override policy with `-- --force-whisperx`
 - `npm run preprocess:ai`
   - Runs stems, then beats, then whisperx
+  - Shows stage start/finish progress logs
+  - `beats`/`whisperx` skip existing `beats.json`/`words.json` by default
+  - Use `-- --overwrite-ai` to regenerate existing AI outputs
+
+### WSL Launchers (Linux AI stack from PowerShell or WSL)
+Use these when Essentia/WhisperX are installed in WSL (for example in conda env `refresh-ai`).
+
+- From WSL:
+  - `bash tools/wsl/run-ai.sh preprocess-ai`
+  - `bash tools/wsl/run-ai.sh beats -- --trackId <trackId>`
+  - `bash tools/wsl/run-ai.sh whisperx -- --trackId <trackId> --device cpu --model small --language en`
+- From PowerShell (calls WSL):
+  - `.\tools\wsl\run-ai.ps1 -Task preprocess-ai`
+  - `.\tools\wsl\run-ai.ps1 -Task beats -- --trackId <trackId>`
+  - `.\tools\wsl\run-ai.ps1 -Task whisperx -- --trackId <trackId> --device cpu --model small --language en`
+
+Notes:
+- Default conda env is `refresh-ai` (override via `-CondaEnv <name>` in PowerShell or `CONDA_ENV_NAME=<name>` in WSL).
+- Use `-SkipConda` (PowerShell) or `SKIP_CONDA=1` (WSL) if Python deps are already in PATH without conda activation.
 
 Optional filters:
 - `npm run stems -- --trackId <trackId>`

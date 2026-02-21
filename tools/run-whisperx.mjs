@@ -38,6 +38,7 @@ function main() {
   const args = parseArgs(process.argv.slice(2));
   const onlyTrackId = typeof args.trackId === "string" ? args.trackId : "";
   const force = Boolean(args["force-whisperx"]);
+  const overwriteAi = Boolean(args["overwrite-ai"] || args.overwrite);
   const language = typeof args.language === "string" ? args.language : "en";
   const device = typeof args.device === "string" ? args.device : "cpu";
   const model = typeof args.model === "string" ? args.model : "small";
@@ -48,11 +49,15 @@ function main() {
   let ok = 0;
   let failed = 0;
   let skipped = 0;
+  let idx = 0;
   for (const t of tracks) {
+    idx += 1;
+    const outPath = path.join(t.assetDir, "words.json");
     const composerPath = path.join(t.assetDir, "composer.txt");
     const allow = force || hasLyricalContent(composerPath);
     if (!allow) {
       skipped += 1;
+      console.log(`whisperx [${idx}/${tracks.length}] skip ${t.trackId} (no lyric lines)`);
       updateTrackLog(t.assetDir, {
         whisperx: {
           status: "skipped",
@@ -65,6 +70,7 @@ function main() {
     const audioPath = pickAudioForWhisperx(t.assetDir);
     if (!audioPath) {
       skipped += 1;
+      console.log(`whisperx [${idx}/${tracks.length}] skip ${t.trackId} (no audio)`);
       updateTrackLog(t.assetDir, {
         whisperx: {
           status: "skipped",
@@ -74,9 +80,26 @@ function main() {
       continue;
     }
 
+    if (!overwriteAi && fs.existsSync(outPath)) {
+      skipped += 1;
+      console.log(`whisperx [${idx}/${tracks.length}] skip ${t.trackId} (words.json exists)`);
+      updateTrackLog(t.assetDir, {
+        whisperx: {
+          status: "skipped",
+          reason: "words.json exists (use --overwrite-ai to regenerate)",
+          audioPath,
+          language,
+          device,
+          model
+        }
+      });
+      continue;
+    }
+
     const r = runWhisperx(audioPath, { language, device, model });
     if (r.status !== 0) {
       failed += 1;
+      console.log(`whisperx [${idx}/${tracks.length}] error ${t.trackId}`);
       updateTrackLog(t.assetDir, {
         whisperx: {
           status: "error",
@@ -89,8 +112,9 @@ function main() {
 
     try {
       const parsed = JSON.parse((r.stdout || "").trim() || "{}");
-      writeJson(path.join(t.assetDir, "words.json"), parsed);
+      writeJson(outPath, parsed);
       ok += 1;
+      console.log(`whisperx [${idx}/${tracks.length}] ok ${t.trackId}`);
       updateTrackLog(t.assetDir, {
         whisperx: {
           status: "ok",

@@ -22,6 +22,7 @@ type Track = {
     sections?: TimingSection[];
     lyricsLines?: TimingLyric[];
     beatsMs?: number[];
+    downbeatTimesMs?: number[];
   };
   recipeRef?: { albumId?: string; trackOverrideId?: string };
 };
@@ -69,6 +70,8 @@ let selectedIndex = 0;
 let track: Track | null = null;
 let trackUrl = "";
 let lyricsLines: string[] = [];
+let pulseBeatTimesMs: number[] = [];
+let pulseDownbeatTimesMs: number[] = [];
 
 let seed = 1;
 const DEFAULT_RENDER_OFFSET_MS = -240;
@@ -254,6 +257,42 @@ function resolveTrackAssetUrl(candidate: string, baseTrackUrl: string) {
   if (raw.startsWith("/")) return new URL(raw, location.origin).toString();
   if (raw.startsWith("assets/")) return new URL(`/${raw}`, location.origin).toString();
   return new URL(raw, baseTrackUrl).toString();
+}
+
+function normalizeMsList(value: unknown) {
+  if (!Array.isArray(value)) return [];
+  return value
+    .map((n) => Number(n))
+    .filter((n) => Number.isFinite(n))
+    .map((n) => Math.max(0, Math.round(n)));
+}
+
+async function loadBeatGuidance(nextTrack: Track, baseTrackUrl: string) {
+  const trackBeats = normalizeMsList(nextTrack?.timing?.beatsMs);
+  const trackDownbeats = normalizeMsList(nextTrack?.timing?.downbeatTimesMs);
+  pulseBeatTimesMs = trackBeats;
+  pulseDownbeatTimesMs = trackDownbeats;
+
+  const samplePath =
+    nextTrack.assetPaths?.instrumental ||
+    nextTrack.assetPaths?.mix ||
+    nextTrack.audio?.path ||
+    "";
+  if (!samplePath) return;
+
+  const baseAssetPath = String(samplePath).replace(/[^/\\]+$/, "beats.json");
+  const beatsUrl = resolveTrackAssetUrl(baseAssetPath, baseTrackUrl);
+  try {
+    const r = await fetch(beatsUrl);
+    if (!r.ok) return;
+    const j = await r.json();
+    const beats = normalizeMsList(j?.beatTimesMs);
+    const downbeats = normalizeMsList(j?.downbeatTimesMs);
+    if (beats.length) pulseBeatTimesMs = beats;
+    if (downbeats.length) pulseDownbeatTimesMs = downbeats;
+  } catch {
+    // Non-fatal: pulse falls back to timing embedded in track json.
+  }
 }
 
 function randomizeSeed() {
@@ -497,15 +536,69 @@ function findCurrentLyricLine(currentTimeMs: number) {
   return best;
 }
 
-function beatPulse(currentTimeMs: number) {
-  const beats = track?.timing?.beatsMs ?? [];
-  if (!beats.length) return 0;
+function nearestPulse(currentTimeMs: number, times: number[], cutoffMs: number, decayMs: number) {
+  if (!times.length) return 0;
   let nearest = Infinity;
-  for (const b of beats) {
-    const d = Math.abs(b - currentTimeMs);
+  for (const t of times) {
+    const d = Math.abs(t - currentTimeMs);
     if (d < nearest) nearest = d;
   }
-  return nearest > 220 ? 0 : Math.exp(-nearest / 90);
+  return nearest > cutoffMs ? 0 : Math.exp(-nearest / decayMs);
+}
+
+function inferredDownbeats(beats: number[]) {
+  if (!beats.length) return [];
+  if (beats.length < 4) return [beats[0]];
+  return beats.filter((_, i) => i % 4 === 0);
+}
+
+function beatPulseInfo(currentTimeMs: number) {
+  const beats = pulseBeatTimesMs;
+  const downbeats = (pulseDownbeatTimesMs?.length
+    ? pulseDownbeatTimesMs
+    : inferredDownbeats(beats)) ?? [];
+  return {
+    beat: nearestPulse(currentTimeMs, beats, 220, 90),
+    downbeat: nearestPulse(currentTimeMs, downbeats, 280, 110)
+  };
+}
+
+function hasLyricTiming() {
+  return Boolean((track?.timing?.lyricsLines ?? []).some((x) => typeof x?.t0Ms === "number"));
+}
+
+function drawBeatOrb(beat: number, downbeat: number) {
+  const w = canvas.width;
+  const h = canvas.height;
+  const minDim = Math.min(w, h);
+  const base = minDim * 0.048;
+  const radius = base * (1 + beat * 0.18 + downbeat * 0.42);
+  const x = w * 0.5;
+  const y = h * 0.5;
+
+  ctx.save();
+  ctx.globalCompositeOperation = "screen";
+
+  const glowR = radius * (2.2 + beat * 1.1 + downbeat * 1.6);
+  const glow = ctx.createRadialGradient(x, y, Math.max(1, radius * 0.2), x, y, glowR);
+  glow.addColorStop(0, `rgba(108, 177, 255, ${0.42 + beat * 0.18 + downbeat * 0.22})`);
+  glow.addColorStop(1, "rgba(108, 177, 255, 0)");
+  ctx.fillStyle = glow;
+  ctx.beginPath();
+  ctx.arc(x, y, glowR, 0, Math.PI * 2);
+  ctx.fill();
+
+  ctx.fillStyle = `rgba(120, 190, 255, ${0.48 + beat * 0.2 + downbeat * 0.2})`;
+  ctx.beginPath();
+  ctx.arc(x, y, radius, 0, Math.PI * 2);
+  ctx.fill();
+
+  ctx.strokeStyle = `rgba(184, 225, 255, ${0.38 + beat * 0.22 + downbeat * 0.18})`;
+  ctx.lineWidth = Math.max(1.2, radius * 0.09);
+  ctx.beginPath();
+  ctx.arc(x, y, radius * 1.18, 0, Math.PI * 2);
+  ctx.stroke();
+  ctx.restore();
 }
 
 function buildScene(nextSeed: number) {
@@ -557,6 +650,7 @@ function render() {
   const sec = findCurrentSection(tRenderMs);
   const sectionId = sec?.id ?? "";
   const sectionType = classifySection(sectionId || sec?.id || "");
+  const pulse = beatPulseInfo(tRenderMs);
   const controlsRect = controls.getBoundingClientRect();
   const viewportHeightPx = window.visualViewport?.height ?? window.innerHeight;
   const frameInfo = engine.renderFrame({
@@ -567,13 +661,14 @@ function render() {
     energy: amp,
     recipe: currentRecipe,
     track,
-    lyricsEnabled,
+    lyricsEnabled: lyricsEnabled && hasLyricTiming(),
     lyricMode,
     uiLayout: {
       controlsTopPx: controlsRect.top,
       viewportHeightPx
     }
   });
+  drawBeatOrb(pulse.beat, pulse.downbeat);
 
 if (!isSeeking && Number.isFinite(audio.duration) && audio.duration > 0) {
   seek.value = String(
@@ -623,6 +718,7 @@ async function loadTrack(nextIndex: number) {
   const resp = await fetch(trackUrl);
   if (!resp.ok) throw new Error(`Failed to load track json: ${entry}`);
   track = (await resp.json()) as Track;
+  await loadBeatGuidance(track, trackUrl);
   resetAmpHistory("track-load");
   logAudioState("track-loaded", { trackId });
   lyricsLines = String(track.lyrics?.rawText ?? "").split("\n");

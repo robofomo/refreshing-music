@@ -1,0 +1,1495 @@
+{
+  "workId": "consensus-of-ash",
+  "trackId": "01KJ25PGKKP7KXH8R6PD",
+  "recipeRef": {
+    "albumId": "random",
+    "trackOverrideId": "01KJ25PGKKP7KXH8R6PD"
+  },
+  "createdAt": "2026-02-22T07:58:26.015Z",
+  "slug": "consensus-of-ash",
+  "title": "Consensus Of Ash",
+  "audio": {
+    "filename": "mix.mp3",
+    "path": "../assets/consensus-of-ash/01KJ25PGKKP7KXH8R6PD/mix.mp3",
+    "cidOrTx": "",
+    "mime": "audio/mpeg",
+    "bytes": 5154703
+  },
+  "composer": {
+    "rawText": "[SongTitle: Consensus of Ash]\r\n[Style: metal, clean studio recording, harsh male vocal, confident]\r\n[Caption: Decentralization under pressure.]\r\n[Image: Fractured stone blocks locking together in firelight.]\r\n[Refresh Title: Random 6]\r\n[Theme: Random]\r\n[Gradients: 6]\r\n[Rank: 4]\r\n[TitleRarityPct: 0.65]\r\n[Seeds: 911, A:34, B:90, C:16, D:40]\r\n[Composer Version: v2.0]\r\n\r\n[Plan]\r\n[Perspective: system_voice]\r\n[Concept: trust forged through resistance, not hype]\r\n[Topic: Crypto & Decentralization → proof_of_stake_patience]\r\n[GenreBias: metal]\r\n[StyleChange: none]\r\n[Modulation: none]\r\n[HookProminence: medium]\r\n[Deviation: abstraction spike]\r\n\r\n[Intro]\r\n[Jagged riff emerges, palm-muted and tense.]\r\nSilent nodes begin to wake  \r\nPressure tests what we can take  \r\n\r\n[Verse]\r\n[Harsh, rhythmic delivery with tight syncopation.]\r\nWeight of truth in every block  \r\nNo king crowned, no ticking clock  \r\nRules are steel, not hollow cries  \r\nHistory etched where reason lies  \r\n\r\n[Verse]\r\n[Low growl, slight register climb.]\r\nCold validation, earned not sold  \r\nTime decides what chains can hold  \r\nThrough delay and grinding strain  \r\nSignal cuts through noise and pain  \r\n\r\n[Chorus]\r\n[Chanted hook, gang-vocal feel.]\r\nHold the line, don’t bend the frame  \r\nTrust is slow, but stays the same  \r\nBurn the hype, endure the test  \r\nWhat survives deserves the rest  \r\n\r\n[Verse]\r\n[Sharper attack, shorter phrasing.]\r\nForks and failures mark the road  \r\nEvery loss a deeper code  \r\nNo retreat to easy lies  \r\nWe scale truth at human size  \r\n\r\n[Bridge]\r\n[Breakdown bridge, half-time crush.]\r\nStrip it down to what is real  \r\nConsensus forged in will and steel  \r\nNo escape, no central throne  \r\nStrength is found in standing alone  \r\n\r\n[Final Chorus]\r\n[Return to full tempo, expanded shouts.]\r\nHold the line, don’t bend the frame  \r\nTrust is slow, but stays the same  \r\nFrom the ash, the blocks align  \r\nDecentralized by design  \r\n\r\n[Ending]\r\n[Feedback swell, final hit cuts hard.]\r\nWhen the dust has cleared away  \r\nOnly tested chains remain  \r\n",
+    "headerMap": {
+      "SongTitle": "Consensus of Ash",
+      "Style": "metal, clean studio recording, harsh male vocal, confident",
+      "Caption": "Decentralization under pressure.",
+      "Image": "Fractured stone blocks locking together in firelight.",
+      "Refresh Title": "Random 6",
+      "Theme": "Random",
+      "Gradients": "6",
+      "Rank": "4",
+      "TitleRarityPct": "0.65",
+      "Seeds": "911, A:34, B:90, C:16, D:40",
+      "Composer Version": "v2.0"
+    }
+  },
+  "sections": [
+    {
+      "id": "plan-1",
+      "labelRaw": "Plan",
+      "notesRaw": "Perspective: system_voice\nConcept: trust forged through resistance, not hype\nTopic: Crypto & Decentralization → proof_of_stake_patience\nGenreBias: metal\nStyleChange: none\nModulation: none\nHookProminence: medium\nDeviation: abstraction spike"
+    },
+    {
+      "id": "intro-1",
+      "labelRaw": "Intro",
+      "notesRaw": "Jagged riff emerges, palm-muted and tense."
+    },
+    {
+      "id": "verse-1",
+      "labelRaw": "Verse",
+      "notesRaw": "Harsh, rhythmic delivery with tight syncopation."
+    },
+    {
+      "id": "verse-2",
+      "labelRaw": "Verse",
+      "notesRaw": "Low growl, slight register climb."
+    },
+    {
+      "id": "chorus-1",
+      "labelRaw": "Chorus",
+      "notesRaw": "Chanted hook, gang-vocal feel."
+    },
+    {
+      "id": "verse-3",
+      "labelRaw": "Verse",
+      "notesRaw": "Sharper attack, shorter phrasing."
+    },
+    {
+      "id": "bridge-1",
+      "labelRaw": "Bridge",
+      "notesRaw": "Breakdown bridge, half-time crush."
+    },
+    {
+      "id": "final-chorus-1",
+      "labelRaw": "Final Chorus",
+      "notesRaw": "Return to full tempo, expanded shouts."
+    },
+    {
+      "id": "ending-1",
+      "labelRaw": "Ending",
+      "notesRaw": "Feedback swell, final hit cuts hard."
+    }
+  ],
+  "lyrics": {
+    "rawText": "\nSilent nodes begin to wake  \nPressure tests what we can take  \n\nWeight of truth in every block  \nNo king crowned, no ticking clock  \nRules are steel, not hollow cries  \nHistory etched where reason lies  \n\nCold validation, earned not sold  \nTime decides what chains can hold  \nThrough delay and grinding strain  \nSignal cuts through noise and pain  \n\nHold the line, don’t bend the frame  \nTrust is slow, but stays the same  \nBurn the hype, endure the test  \nWhat survives deserves the rest  \n\nForks and failures mark the road  \nEvery loss a deeper code  \nNo retreat to easy lies  \nWe scale truth at human size  \n\nStrip it down to what is real  \nConsensus forged in will and steel  \nNo escape, no central throne  \nStrength is found in standing alone  \n\nHold the line, don’t bend the frame  \nTrust is slow, but stays the same  \nFrom the ash, the blocks align  \nDecentralized by design  \n\nWhen the dust has cleared away  \nOnly tested chains remain  \n"
+  },
+  "sourceGroupKey": "loose:consensus-of-ash",
+  "assetDir": "assets/consensus-of-ash/01KJ25PGKKP7KXH8R6PD",
+  "timing": {
+    "beatsMs": [
+      557,
+      1126,
+      1707,
+      2299,
+      2891,
+      3483,
+      4075,
+      4679,
+      5283,
+      5886,
+      6490,
+      7082,
+      7686,
+      8290,
+      8882,
+      9474,
+      10077,
+      10681,
+      11285,
+      11889,
+      12481,
+      13084,
+      13677,
+      14280,
+      14884,
+      15488,
+      16091,
+      16684,
+      17276,
+      17868,
+      18460,
+      19064,
+      19667,
+      20271,
+      20875,
+      21478,
+      22082,
+      22686,
+      23290,
+      23893,
+      24485,
+      25078,
+      25681,
+      26285,
+      26889,
+      27481,
+      28085,
+      28677,
+      29280,
+      29884,
+      30488,
+      31092,
+      31684,
+      32276,
+      32879,
+      33483,
+      34087,
+      34691,
+      35283,
+      35875,
+      36479,
+      37082,
+      37686,
+      38290,
+      38893,
+      39486,
+      40078,
+      40681,
+      41285,
+      41889,
+      42493,
+      43096,
+      43688,
+      44280,
+      44884,
+      45488,
+      46092,
+      46684,
+      47287,
+      47880,
+      48483,
+      49087,
+      49691,
+      50294,
+      50887,
+      51479,
+      52082,
+      52686,
+      53290,
+      53882,
+      54474,
+      55078,
+      55681,
+      56285,
+      56889,
+      57493,
+      58085,
+      58677,
+      59281,
+      59884,
+      60488,
+      61092,
+      61684,
+      62276,
+      62880,
+      63483,
+      64087,
+      64691,
+      65283,
+      65875,
+      66479,
+      67082,
+      67686,
+      68278,
+      68882,
+      69474,
+      70078,
+      70682,
+      71285,
+      71889,
+      72481,
+      73073,
+      73677,
+      74281,
+      74745,
+      75198,
+      75651,
+      76115,
+      76568,
+      77021,
+      77485,
+      77949,
+      78414,
+      78878,
+      79343,
+      79807,
+      80271,
+      80724,
+      81177,
+      81630,
+      82083,
+      82535,
+      82988,
+      83429,
+      83870,
+      84323,
+      84776,
+      85229,
+      85682,
+      86134,
+      86587,
+      87040,
+      87493,
+      87957,
+      88433,
+      88909,
+      89385,
+      89861,
+      90326,
+      90778,
+      91231,
+      91684,
+      92137,
+      92578,
+      93031,
+      93484,
+      94087,
+      94691,
+      95283,
+      95887,
+      96479,
+      97083,
+      97686,
+      98290,
+      98882,
+      99474,
+      100078,
+      100682,
+      101285,
+      101889,
+      102481,
+      103073,
+      103677,
+      104281,
+      104885,
+      105488,
+      106080,
+      106672,
+      107276,
+      107880,
+      108484,
+      109087,
+      109691,
+      110283,
+      110875,
+      111479,
+      112083,
+      112686,
+      113290,
+      113882,
+      114486,
+      115078,
+      115682,
+      116274,
+      116878,
+      117470,
+      118073,
+      118677,
+      119281,
+      119885,
+      120488,
+      121080,
+      121673,
+      122125,
+      122578,
+      123031,
+      123484,
+      123937,
+      124389,
+      124842,
+      125295,
+      125736,
+      126177,
+      126630,
+      127083,
+      127524,
+      127965,
+      128418,
+      128871,
+      129324,
+      129776,
+      130217,
+      130670,
+      131123,
+      131576,
+      132029,
+      132493,
+      132934,
+      133375,
+      133828,
+      134281,
+      134722,
+      135175,
+      135628,
+      136081,
+      136533,
+      136986,
+      137439,
+      137892,
+      138344,
+      138786,
+      139238,
+      139691,
+      140132,
+      140574,
+      141026,
+      141479,
+      141932,
+      142385,
+      142838,
+      143279,
+      143732,
+      144173,
+      144625,
+      145078,
+      145531,
+      145984,
+      146437,
+      146889,
+      147331,
+      147783,
+      148236,
+      148677,
+      149130,
+      149583,
+      150036,
+      150489,
+      150930,
+      151382,
+      151824,
+      152276,
+      152729,
+      153182,
+      153635,
+      154088,
+      154529,
+      154982,
+      155423,
+      155876,
+      156317,
+      156770,
+      157222,
+      157675,
+      158128,
+      158581,
+      159033,
+      159486,
+      159939,
+      160392,
+      160845,
+      161309,
+      161773,
+      162249,
+      162725,
+      163201,
+      163677,
+      164165,
+      164641,
+      165117,
+      165593,
+      166069,
+      166522,
+      166975,
+      167427,
+      167880,
+      168333,
+      168786,
+      169227,
+      169680,
+      170133,
+      170574,
+      171027,
+      171479,
+      171932,
+      172385,
+      172849,
+      173337,
+      173801,
+      174266,
+      174730,
+      175195,
+      175659,
+      176123,
+      176576,
+      177029,
+      177482,
+      177923,
+      178376,
+      178828,
+      179281,
+      179734,
+      180187,
+      180651,
+      181116,
+      181580,
+      182044,
+      182509,
+      182985,
+      183461,
+      183925,
+      184378,
+      184831,
+      185284,
+      185736,
+      186178,
+      186630,
+      187083,
+      187536,
+      187989,
+      188442,
+      188906,
+      189382,
+      189846,
+      190311,
+      190787,
+      191263,
+      191727,
+      192180,
+      192633,
+      193086,
+      193538,
+      193979,
+      194432,
+      194885,
+      195338,
+      195791,
+      196243,
+      196685,
+      197137,
+      197579,
+      198031,
+      198484,
+      198925,
+      199378,
+      199831,
+      200272,
+      200725,
+      201178,
+      201630,
+      202083,
+      202536,
+      202977,
+      203430,
+      203883,
+      204324,
+      204777,
+      205230,
+      205682,
+      206135,
+      206588,
+      207029,
+      207494,
+      207935,
+      208387,
+      208840,
+      209293,
+      209746,
+      210187,
+      210640,
+      211093,
+      211534,
+      211987,
+      212439,
+      212881,
+      213322,
+      213763,
+      214216
+    ],
+    "lyricsLines": [
+      {
+        "i": 1,
+        "t0Ms": 38978,
+        "t1Ms": 43384
+      },
+      {
+        "i": 2,
+        "t0Ms": 43985,
+        "t1Ms": 47791
+      },
+      {
+        "i": 4,
+        "t0Ms": 48472,
+        "t1Ms": 50535
+      },
+      {
+        "i": 5,
+        "t0Ms": 50615,
+        "t1Ms": 51156
+      }
+    ],
+    "words": [
+      {
+        "t0Ms": 38978,
+        "t1Ms": 39759,
+        "text": "Silent",
+        "conf": 0.815
+      },
+      {
+        "t0Ms": 39979,
+        "t1Ms": 40280,
+        "text": "nodes",
+        "conf": 0.722
+      },
+      {
+        "t0Ms": 40420,
+        "t1Ms": 41502,
+        "text": "begin",
+        "conf": 0.85
+      },
+      {
+        "t0Ms": 41562,
+        "t1Ms": 42083,
+        "text": "to",
+        "conf": 0.93
+      },
+      {
+        "t0Ms": 42503,
+        "t1Ms": 43384,
+        "text": "wake",
+        "conf": 0.676
+      },
+      {
+        "t0Ms": 43985,
+        "t1Ms": 44486,
+        "text": "Pressure",
+        "conf": 0.564
+      },
+      {
+        "t0Ms": 44766,
+        "t1Ms": 45027,
+        "text": "tests",
+        "conf": 0.865
+      },
+      {
+        "t0Ms": 45147,
+        "t1Ms": 45648,
+        "text": "what",
+        "conf": 0.718
+      },
+      {
+        "t0Ms": 45808,
+        "t1Ms": 46229,
+        "text": "we",
+        "conf": 0.954
+      },
+      {
+        "t0Ms": 46349,
+        "t1Ms": 46890,
+        "text": "can",
+        "conf": 0.84
+      },
+      {
+        "t0Ms": 46970,
+        "t1Ms": 47791,
+        "text": "take",
+        "conf": 0.876
+      },
+      {
+        "t0Ms": 48472,
+        "t1Ms": 48792,
+        "text": "Weight",
+        "conf": 0.366
+      },
+      {
+        "t0Ms": 48892,
+        "t1Ms": 49033,
+        "text": "of",
+        "conf": 0.694
+      },
+      {
+        "t0Ms": 49073,
+        "t1Ms": 49453,
+        "text": "truth",
+        "conf": 0.767
+      },
+      {
+        "t0Ms": 49473,
+        "t1Ms": 49553,
+        "text": "in",
+        "conf": 0.662
+      },
+      {
+        "t0Ms": 49694,
+        "t1Ms": 50074,
+        "text": "every",
+        "conf": 0.784
+      },
+      {
+        "t0Ms": 50154,
+        "t1Ms": 50535,
+        "text": "block",
+        "conf": 0.848
+      },
+      {
+        "t0Ms": 50615,
+        "t1Ms": 50855,
+        "text": "No",
+        "conf": 0.85
+      },
+      {
+        "t0Ms": 50895,
+        "t1Ms": 51156,
+        "text": "king",
+        "conf": 0.72
+      },
+      {
+        "t0Ms": 51216,
+        "t1Ms": 51637,
+        "text": "crown,",
+        "conf": 0.697
+      },
+      {
+        "t0Ms": 51677,
+        "t1Ms": 51897,
+        "text": "no",
+        "conf": 0.906
+      },
+      {
+        "t0Ms": 51957,
+        "t1Ms": 52498,
+        "text": "ticking",
+        "conf": 0.472
+      },
+      {
+        "t0Ms": 52558,
+        "t1Ms": 52958,
+        "text": "clock",
+        "conf": 0.798
+      },
+      {
+        "t0Ms": 53379,
+        "t1Ms": 53599,
+        "text": "Rules",
+        "conf": 0.49
+      },
+      {
+        "t0Ms": 53700,
+        "t1Ms": 53800,
+        "text": "are",
+        "conf": 0.714
+      },
+      {
+        "t0Ms": 53860,
+        "t1Ms": 54180,
+        "text": "still",
+        "conf": 0.602
+      },
+      {
+        "t0Ms": 54220,
+        "t1Ms": 54421,
+        "text": "not",
+        "conf": 0.716
+      },
+      {
+        "t0Ms": 54681,
+        "t1Ms": 54861,
+        "text": "hollow",
+        "conf": 0.316
+      },
+      {
+        "t0Ms": 54921,
+        "t1Ms": 55442,
+        "text": "cries",
+        "conf": 0.599
+      },
+      {
+        "t0Ms": 55462,
+        "t1Ms": 56363,
+        "text": "History",
+        "conf": 0.663
+      },
+      {
+        "t0Ms": 56383,
+        "t1Ms": 56524,
+        "text": "etch",
+        "conf": 0.237
+      },
+      {
+        "t0Ms": 56544,
+        "t1Ms": 56724,
+        "text": "where",
+        "conf": 0.287
+      },
+      {
+        "t0Ms": 56784,
+        "t1Ms": 57265,
+        "text": "reason",
+        "conf": 0.448
+      },
+      {
+        "t0Ms": 57365,
+        "t1Ms": 58046,
+        "text": "lies",
+        "conf": 0.862
+      },
+      {
+        "t0Ms": 58386,
+        "t1Ms": 59929,
+        "text": "Covalidation,",
+        "conf": 0.906
+      },
+      {
+        "t0Ms": 59989,
+        "t1Ms": 60690,
+        "text": "earth",
+        "conf": 0.316
+      },
+      {
+        "t0Ms": 60830,
+        "t1Ms": 61211,
+        "text": "not",
+        "conf": 0.913
+      },
+      {
+        "t0Ms": 61391,
+        "t1Ms": 62552,
+        "text": "sold",
+        "conf": 0.692
+      },
+      {
+        "t0Ms": 63213,
+        "t1Ms": 63634,
+        "text": "Time",
+        "conf": 0.744
+      },
+      {
+        "t0Ms": 64095,
+        "t1Ms": 64335,
+        "text": "decides",
+        "conf": 0.244
+      },
+      {
+        "t0Ms": 64435,
+        "t1Ms": 64836,
+        "text": "what",
+        "conf": 0.714
+      },
+      {
+        "t0Ms": 64996,
+        "t1Ms": 65557,
+        "text": "chains",
+        "conf": 0.5
+      },
+      {
+        "t0Ms": 65597,
+        "t1Ms": 67520,
+        "text": "can",
+        "conf": 0.933
+      },
+      {
+        "t0Ms": 67640,
+        "t1Ms": 67720,
+        "text": "hold",
+        "conf": 0.25
+      },
+      {
+        "t0Ms": 67700,
+        "t1Ms": 68262,
+        "text": "Through",
+        "conf": 0.844
+      },
+      {
+        "t0Ms": 68322,
+        "t1Ms": 69205,
+        "text": "delay",
+        "conf": 0.928
+      },
+      {
+        "t0Ms": 69546,
+        "t1Ms": 69686,
+        "text": "and",
+        "conf": 0.739
+      },
+      {
+        "t0Ms": 69787,
+        "t1Ms": 70910,
+        "text": "grinding",
+        "conf": 0.813
+      },
+      {
+        "t0Ms": 70970,
+        "t1Ms": 72094,
+        "text": "strain",
+        "conf": 0.646
+      },
+      {
+        "t0Ms": 72475,
+        "t1Ms": 73338,
+        "text": "Signal",
+        "conf": 0.829
+      },
+      {
+        "t0Ms": 73378,
+        "t1Ms": 73799,
+        "text": "cuts",
+        "conf": 0.632
+      },
+      {
+        "t0Ms": 73920,
+        "t1Ms": 74441,
+        "text": "through",
+        "conf": 0.661
+      },
+      {
+        "t0Ms": 74622,
+        "t1Ms": 75164,
+        "text": "noise",
+        "conf": 0.839
+      },
+      {
+        "t0Ms": 75485,
+        "t1Ms": 75685,
+        "text": "and",
+        "conf": 0.849
+      },
+      {
+        "t0Ms": 76448,
+        "t1Ms": 76528,
+        "text": "pain",
+        "conf": 0.25
+      },
+      {
+        "t0Ms": 77032,
+        "t1Ms": 80878,
+        "text": "Hold",
+        "conf": 0.297
+      },
+      {
+        "t0Ms": 80898,
+        "t1Ms": 81679,
+        "text": "the",
+        "conf": 0.656
+      },
+      {
+        "t0Ms": 81699,
+        "t1Ms": 81879,
+        "text": "light,",
+        "conf": 0.228
+      },
+      {
+        "t0Ms": 81899,
+        "t1Ms": 82760,
+        "text": "open",
+        "conf": 0.298
+      },
+      {
+        "t0Ms": 82780,
+        "t1Ms": 82841,
+        "text": "the",
+        "conf": 0.109
+      },
+      {
+        "t0Ms": 82861,
+        "t1Ms": 82961,
+        "text": "front",
+        "conf": 0.001
+      },
+      {
+        "t0Ms": 82981,
+        "t1Ms": 83682,
+        "text": "Trust",
+        "conf": 0.313
+      },
+      {
+        "t0Ms": 83802,
+        "t1Ms": 85344,
+        "text": "is",
+        "conf": 0.719
+      },
+      {
+        "t0Ms": 85364,
+        "t1Ms": 85464,
+        "text": "slow,",
+        "conf": 0.027
+      },
+      {
+        "t0Ms": 85484,
+        "t1Ms": 85545,
+        "text": "but",
+        "conf": 0.031
+      },
+      {
+        "t0Ms": 85565,
+        "t1Ms": 86286,
+        "text": "stays",
+        "conf": 0.557
+      },
+      {
+        "t0Ms": 86306,
+        "t1Ms": 86486,
+        "text": "the",
+        "conf": 0.634
+      },
+      {
+        "t0Ms": 89390,
+        "t1Ms": 92274,
+        "text": "same",
+        "conf": 0.517
+      },
+      {
+        "t0Ms": 92294,
+        "t1Ms": 92375,
+        "text": "Burn",
+        "conf": 0
+      },
+      {
+        "t0Ms": 92395,
+        "t1Ms": 93556,
+        "text": "the",
+        "conf": 0.404
+      },
+      {
+        "t0Ms": 93576,
+        "t1Ms": 94237,
+        "text": "hype,",
+        "conf": 0.362
+      },
+      {
+        "t0Ms": 94257,
+        "t1Ms": 95179,
+        "text": "enjoy",
+        "conf": 0.379
+      },
+      {
+        "t0Ms": 95279,
+        "t1Ms": 98704,
+        "text": "the",
+        "conf": 0.321
+      },
+      {
+        "t0Ms": 98724,
+        "t1Ms": 98804,
+        "text": "test",
+        "conf": 0
+      },
+      {
+        "t0Ms": 98824,
+        "t1Ms": 98904,
+        "text": "What",
+        "conf": 0
+      },
+      {
+        "t0Ms": 98924,
+        "t1Ms": 99084,
+        "text": "survives",
+        "conf": 0
+      },
+      {
+        "t0Ms": 99105,
+        "t1Ms": 99265,
+        "text": "deserves",
+        "conf": 0
+      },
+      {
+        "t0Ms": 99285,
+        "t1Ms": 99345,
+        "text": "the",
+        "conf": 0
+      },
+      {
+        "t0Ms": 99365,
+        "t1Ms": 99445,
+        "text": "rest",
+        "conf": 0.25
+      },
+      {
+        "t0Ms": 105955,
+        "t1Ms": 106355,
+        "text": "Forge",
+        "conf": 0.518
+      },
+      {
+        "t0Ms": 106475,
+        "t1Ms": 106616,
+        "text": "and",
+        "conf": 0.766
+      },
+      {
+        "t0Ms": 106676,
+        "t1Ms": 107136,
+        "text": "failures",
+        "conf": 0.51
+      },
+      {
+        "t0Ms": 107156,
+        "t1Ms": 107396,
+        "text": "mark",
+        "conf": 0.636
+      },
+      {
+        "t0Ms": 107436,
+        "t1Ms": 107697,
+        "text": "the",
+        "conf": 0.542
+      },
+      {
+        "t0Ms": 107757,
+        "t1Ms": 108197,
+        "text": "road",
+        "conf": 0.74
+      },
+      {
+        "t0Ms": 108237,
+        "t1Ms": 108878,
+        "text": "Every",
+        "conf": 0.745
+      },
+      {
+        "t0Ms": 108938,
+        "t1Ms": 109178,
+        "text": "loss",
+        "conf": 0.583
+      },
+      {
+        "t0Ms": 109338,
+        "t1Ms": 109458,
+        "text": "a",
+        "conf": 0.751
+      },
+      {
+        "t0Ms": 109558,
+        "t1Ms": 110059,
+        "text": "deeper",
+        "conf": 0.588
+      },
+      {
+        "t0Ms": 110339,
+        "t1Ms": 110599,
+        "text": "code",
+        "conf": 0.674
+      },
+      {
+        "t0Ms": 110639,
+        "t1Ms": 111360,
+        "text": "No",
+        "conf": 0.394
+      },
+      {
+        "t0Ms": 111380,
+        "t1Ms": 111720,
+        "text": "retreat",
+        "conf": 0.419
+      },
+      {
+        "t0Ms": 111741,
+        "t1Ms": 111941,
+        "text": "to",
+        "conf": 0.61
+      },
+      {
+        "t0Ms": 112281,
+        "t1Ms": 112461,
+        "text": "easy",
+        "conf": 0.395
+      },
+      {
+        "t0Ms": 112541,
+        "t1Ms": 113002,
+        "text": "lies",
+        "conf": 0.248
+      },
+      {
+        "t0Ms": 113022,
+        "t1Ms": 113162,
+        "text": "We",
+        "conf": 0.838
+      },
+      {
+        "t0Ms": 113222,
+        "t1Ms": 113662,
+        "text": "scale",
+        "conf": 0.836
+      },
+      {
+        "t0Ms": 113702,
+        "t1Ms": 114123,
+        "text": "truth",
+        "conf": 0.365
+      },
+      {
+        "t0Ms": 114143,
+        "t1Ms": 114383,
+        "text": "as",
+        "conf": 0.559
+      },
+      {
+        "t0Ms": 114403,
+        "t1Ms": 114843,
+        "text": "human",
+        "conf": 0.572
+      },
+      {
+        "t0Ms": 115284,
+        "t1Ms": 115624,
+        "text": "size",
+        "conf": 0.507
+      },
+      {
+        "t0Ms": 115804,
+        "t1Ms": 116305,
+        "text": "Strip",
+        "conf": 0.825
+      },
+      {
+        "t0Ms": 116405,
+        "t1Ms": 116525,
+        "text": "it",
+        "conf": 0.968
+      },
+      {
+        "t0Ms": 116605,
+        "t1Ms": 117106,
+        "text": "down",
+        "conf": 0.85
+      },
+      {
+        "t0Ms": 117166,
+        "t1Ms": 117706,
+        "text": "to",
+        "conf": 0.726
+      },
+      {
+        "t0Ms": 117766,
+        "t1Ms": 118447,
+        "text": "what",
+        "conf": 0.695
+      },
+      {
+        "t0Ms": 118727,
+        "t1Ms": 118907,
+        "text": "is",
+        "conf": 0.711
+      },
+      {
+        "t0Ms": 119007,
+        "t1Ms": 120149,
+        "text": "real",
+        "conf": 0.643
+      },
+      {
+        "t0Ms": 120189,
+        "t1Ms": 121230,
+        "text": "Consensus",
+        "conf": 0.858
+      },
+      {
+        "t0Ms": 121370,
+        "t1Ms": 122210,
+        "text": "forged",
+        "conf": 0.294
+      },
+      {
+        "t0Ms": 122230,
+        "t1Ms": 122471,
+        "text": "in",
+        "conf": 0.916
+      },
+      {
+        "t0Ms": 122591,
+        "t1Ms": 123492,
+        "text": "will",
+        "conf": 0.43
+      },
+      {
+        "t0Ms": 123512,
+        "t1Ms": 123672,
+        "text": "and",
+        "conf": 0.886
+      },
+      {
+        "t0Ms": 123752,
+        "t1Ms": 125233,
+        "text": "steel",
+        "conf": 0.543
+      },
+      {
+        "t0Ms": 125333,
+        "t1Ms": 125774,
+        "text": "No",
+        "conf": 0.926
+      },
+      {
+        "t0Ms": 126374,
+        "t1Ms": 126775,
+        "text": "escape,",
+        "conf": 0.417
+      },
+      {
+        "t0Ms": 126795,
+        "t1Ms": 127195,
+        "text": "no",
+        "conf": 0.746
+      },
+      {
+        "t0Ms": 127636,
+        "t1Ms": 128476,
+        "text": "central",
+        "conf": 0.589
+      },
+      {
+        "t0Ms": 128577,
+        "t1Ms": 129738,
+        "text": "throne",
+        "conf": 0.555
+      },
+      {
+        "t0Ms": 130278,
+        "t1Ms": 130679,
+        "text": "Strength",
+        "conf": 0.212
+      },
+      {
+        "t0Ms": 130699,
+        "t1Ms": 130879,
+        "text": "is",
+        "conf": 0.688
+      },
+      {
+        "t0Ms": 130979,
+        "t1Ms": 131880,
+        "text": "found",
+        "conf": 0.345
+      },
+      {
+        "t0Ms": 131900,
+        "t1Ms": 132080,
+        "text": "in",
+        "conf": 0.798
+      },
+      {
+        "t0Ms": 132180,
+        "t1Ms": 134222,
+        "text": "standing",
+        "conf": 0.609
+      },
+      {
+        "t0Ms": 134242,
+        "t1Ms": 134342,
+        "text": "alone",
+        "conf": 0.089
+      },
+      {
+        "t0Ms": 137157,
+        "t1Ms": 137491,
+        "text": "Oh",
+        "conf": 0.851
+      },
+      {
+        "t0Ms": 137993,
+        "t1Ms": 138056,
+        "text": "no!",
+        "conf": 0.333
+      },
+      {
+        "t0Ms": 158504,
+        "t1Ms": 160007,
+        "text": "Don't",
+        "conf": 0.579
+      },
+      {
+        "t0Ms": 160087,
+        "t1Ms": 160869,
+        "text": "bend",
+        "conf": 0.672
+      },
+      {
+        "t0Ms": 160889,
+        "t1Ms": 160949,
+        "text": "the",
+        "conf": 0
+      },
+      {
+        "t0Ms": 160969,
+        "t1Ms": 161310,
+        "text": "frame",
+        "conf": 0.575
+      },
+      {
+        "t0Ms": 161690,
+        "t1Ms": 162412,
+        "text": "Trust",
+        "conf": 0.556
+      },
+      {
+        "t0Ms": 162432,
+        "t1Ms": 162893,
+        "text": "is",
+        "conf": 0.826
+      },
+      {
+        "t0Ms": 163033,
+        "t1Ms": 163995,
+        "text": "slow,",
+        "conf": 0.25
+      },
+      {
+        "t0Ms": 164015,
+        "t1Ms": 164837,
+        "text": "but",
+        "conf": 0.532
+      },
+      {
+        "t0Ms": 164857,
+        "t1Ms": 165458,
+        "text": "stays",
+        "conf": 0.744
+      },
+      {
+        "t0Ms": 165518,
+        "t1Ms": 165699,
+        "text": "the",
+        "conf": 0.889
+      },
+      {
+        "t0Ms": 165779,
+        "t1Ms": 167863,
+        "text": "same",
+        "conf": 0.892
+      },
+      {
+        "t0Ms": 170228,
+        "t1Ms": 170308,
+        "text": "From",
+        "conf": 0
+      },
+      {
+        "t0Ms": 170328,
+        "t1Ms": 171911,
+        "text": "the",
+        "conf": 0.295
+      },
+      {
+        "t0Ms": 171931,
+        "t1Ms": 172933,
+        "text": "edge,",
+        "conf": 0.355
+      },
+      {
+        "t0Ms": 173795,
+        "t1Ms": 173855,
+        "text": "the",
+        "conf": 0.002
+      },
+      {
+        "t0Ms": 173875,
+        "t1Ms": 173975,
+        "text": "parts",
+        "conf": 0.005
+      },
+      {
+        "t0Ms": 173995,
+        "t1Ms": 174095,
+        "text": "align",
+        "conf": 0.007
+      },
+      {
+        "t0Ms": 174116,
+        "t1Ms": 178625,
+        "text": "Decentralize",
+        "conf": 0.224
+      },
+      {
+        "t0Ms": 178645,
+        "t1Ms": 178685,
+        "text": "by",
+        "conf": 0.003
+      },
+      {
+        "t0Ms": 178705,
+        "t1Ms": 178825,
+        "text": "design",
+        "conf": 0.164
+      },
+      {
+        "t0Ms": 185504,
+        "t1Ms": 186045,
+        "text": "When",
+        "conf": 0.255
+      },
+      {
+        "t0Ms": 186065,
+        "t1Ms": 186125,
+        "text": "the",
+        "conf": 0.271
+      },
+      {
+        "t0Ms": 186185,
+        "t1Ms": 186987,
+        "text": "dust",
+        "conf": 0.899
+      },
+      {
+        "t0Ms": 187007,
+        "t1Ms": 187408,
+        "text": "has",
+        "conf": 0.799
+      },
+      {
+        "t0Ms": 187428,
+        "t1Ms": 188590,
+        "text": "cleared",
+        "conf": 0.346
+      },
+      {
+        "t0Ms": 189471,
+        "t1Ms": 189652,
+        "text": "away,",
+        "conf": 0.441
+      },
+      {
+        "t0Ms": 190553,
+        "t1Ms": 190874,
+        "text": "Only",
+        "conf": 0.969
+      },
+      {
+        "t0Ms": 190974,
+        "t1Ms": 192056,
+        "text": "tested",
+        "conf": 0.817
+      },
+      {
+        "t0Ms": 192156,
+        "t1Ms": 193619,
+        "text": "chains",
+        "conf": 0.704
+      },
+      {
+        "t0Ms": 194841,
+        "t1Ms": 199530,
+        "text": "remain",
+        "conf": 0.436
+      }
+    ]
+  },
+  "import": {
+    "firstImportedAt": "2026-02-22T07:58:19.250Z",
+    "lastImportedAt": "2026-02-22T07:58:19.250Z",
+    "inputHashes": {
+      "Consensus of Ash Stems.zip": "0a2d88c70275e07d368206093fdeec116eb9657b9f2a7e51f85edb5d3eac2fed",
+      "Consensus of Ash.txt": "41461045f57e72dcb36d3a9f43acbedc4367d93d8cf882c4949e717a637c80e3"
+    },
+    "hashSource": "assets/consensus-of-ash/01KJ25PGKKP7KXH8R6PD/instrumental.wav",
+    "hashSourceSha256": "380f11d7382b0e6a20a93a91eabebfed3175fc49daaba045eead229273fd973f",
+    "sourceGroupKey": "loose:consensus-of-ash",
+    "archivedTo": "D:/seva/FOMO/Songs/the-refresh/refreshing-music/inbox/_done/2026-02-22/loose/consensus-of-ash/consumed.json"
+  },
+  "assetPaths": {
+    "mix": "assets/consensus-of-ash/01KJ25PGKKP7KXH8R6PD/mix.mp3",
+    "mixWav": "",
+    "stemsZip": "assets/consensus-of-ash/01KJ25PGKKP7KXH8R6PD/stems.zip",
+    "instrumental": "assets/consensus-of-ash/01KJ25PGKKP7KXH8R6PD/instrumental.mp3",
+    "instrumentalWav": "assets/consensus-of-ash/01KJ25PGKKP7KXH8R6PD/instrumental.wav",
+    "vocals": "assets/consensus-of-ash/01KJ25PGKKP7KXH8R6PD/vocals.mp3",
+    "vocalsWav": "assets/consensus-of-ash/01KJ25PGKKP7KXH8R6PD/vocals.wav",
+    "composer": "assets/consensus-of-ash/01KJ25PGKKP7KXH8R6PD/composer.txt"
+  }
+}

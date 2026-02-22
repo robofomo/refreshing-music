@@ -16,7 +16,7 @@ Local-first Canvas2D visualizer with:
 - tracks/<trackId>.track.json (tracked): small generated track metadata
 
 ## Workflow (Inbox -> Assets -> Tracks)
-1. Drop new files into `inbox/` (mp3/txt/json5/zip).
+1. Drop new files into `inbox/` (mp3/wav/txt/json5/zip).
 2. Run `npm run import:inbox`.
 3. Import groups are resolved as:
    - folder groups: each top-level folder in `inbox/` is one group
@@ -24,16 +24,20 @@ Local-first Canvas2D visualizer with:
 4. `workId` resolution order:
    - optional override file in group (`*work-id*.txt` or `*work-id*.json5` with `workId`)
    - filename tag (for example `[work:my-work]` or `work_my-work`)
+   - composer metadata title (`[Title: ...]` / `[Song Title: ...]`, with trailing `Stems` stripped)
    - filename-derived work id from mp3/zip (or group title)
    - fallback `work_YYYYMMDD`
 5. Importer creates/updates:
    - `assets/<workId>/<trackId>/`
-   - canonical stems from `stems.zip` when present (`instrumental.mp3`, `vocals.mp3`, best-effort filename matching)
+   - canonical stems from `stems.zip` when present (`instrumental.(wav|mp3)`, `vocals.(wav|mp3)`, best-effort filename matching with WAV preference)
+   - playback MP3s generated/normalized from WAV stems when needed (`instrumental.mp3`, `vocals.mp3`, `mix.mp3`)
    - canonical `mix.mp3` (created from `instrumental.mp3` first, then fallback audio)
    - `composer.txt` stub if missing
    - `tracks/<trackId>.track.json` with catalog/import metadata, including hash source details (`instrumental.mp3` preferred when available)
 6. Consumed groups are archived under `inbox/_done/<YYYY-MM-DD>/...`.
-7. Run `npm run preprocess` to refresh track JSON data + embedded timing.
+7. `import:inbox` automatically runs post-import processing for newly imported track IDs:
+   - `preprocess:ai` (stems -> beats -> whisperx)
+   - `preprocess` (embeds generated AI timing into `tracks/<trackId>.track.json`)
 8. Run `npm run dev` for the dev viewer.
 
 ### Import Flags
@@ -45,6 +49,10 @@ Local-first Canvas2D visualizer with:
   - Print detailed import report JSON to stdout.
 - `npm run import:inbox -- --json reports/import.json`
   - Write report JSON to a file.
+- `npm run import:inbox -- --no-post`
+  - Import only; skip post-import AI + track rebuild.
+- `npm run import:inbox:raw`
+  - Direct importer invocation without post-import processing wrapper.
 
 ### Smoke Test
 - `npm run import:inbox:smoke`
@@ -73,17 +81,20 @@ WhisperX model weights are cached on first run (typically under your user cache 
   - Zip-slip protected extraction
   - Picks canonical stem files:
     - exact-name preference:
-      - `0 Lead Vocals.mp3` -> `vocals.mp3`
-      - `1 Instrumental.mp3` -> `instrumental.mp3`
+      - `0 Lead Vocals.(wav|mp3)` -> `vocals.(wav|mp3)`
+      - `1 Instrumental.(wav|mp3)` -> `instrumental.(wav|mp3)`
     - fallback heuristics:
       - vocals: filename contains `vocals` or `lead` (tie-break prefers starting with `0`)
       - instrumental: filename contains `instrumental` or `inst` (tie-break prefers starting with `1`)
   - Root canonical files are not overwritten unless `-- --overwrite-stems`
+  - Generates/normalizes canonical playback `instrumental.mp3` + `vocals.mp3` to seek-safe MP3s (48kHz stereo, CBR 192k, Xing header) when `ffmpeg` is available
+  - On Windows, if local `ffmpeg` is not found, tries `wsl ffmpeg`
+  - If no `ffmpeg` is available, normalization is skipped and recorded in `stems.json`
   - Writes `stems.json` manifest in the track folder
 - `npm run beats`
-  - Uses `instrumental.mp3` if present, else `mix.mp3`
+  - Uses `instrumental.wav` if present, else `instrumental.mp3`, else `mix.wav`, else `mix.mp3`
 - `npm run whisperx`
-  - Uses `vocals.mp3` if present, else `mix.mp3`
+  - Uses `vocals.wav` if present, else `vocals.mp3`, else `mix.wav`, else `mix.mp3`
   - Skips tracks unless `composer.txt` has non-empty lyric lines
   - Override policy with `-- --force-whisperx`
 - `npm run preprocess:ai`

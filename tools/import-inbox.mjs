@@ -5,7 +5,7 @@ import { spawnSync } from "node:child_process";
 import yauzl from "yauzl";
 import { buildTrack } from "./build-track.mjs";
 
-const SUPPORTED_EXTS = new Set([".mp3", ".txt", ".json5", ".zip"]);
+const SUPPORTED_EXTS = new Set([".mp3", ".wav", ".txt", ".json5", ".zip"]);
 const AUDIO_PRIORITY = ["mix", "instrumental", "vocals", "audio"];
 
 function toPosix(p) {
@@ -81,7 +81,7 @@ function detectRole(stem, ext) {
   const s = stem.toLowerCase();
   if (ext === ".txt" && /(?:^|[\s._-])work[-_]?id(?:$|[\s._-])/.test(s)) return "workIdOverride";
   if (ext === ".json5" && /(?:^|[\s._-])work[-_]?id(?:$|[\s._-])/.test(s)) return "workIdOverride";
-  if (ext === ".mp3") {
+  if (ext === ".mp3" || ext === ".wav") {
     if (/\bmix\b/.test(s)) return "mix";
     if (/\binstrumental\b|\binst\b/.test(s)) return "instrumental";
     if (/\bvocals?\b/.test(s)) return "vocals";
@@ -99,6 +99,13 @@ function baseTitleFromStem(stem) {
   out = out.replace(/(?:[\s_-]+)(mix|instrumental|inst|vocals?|stems?|composer|timing|work[-_]?id)$/i, "");
   out = stripCopySuffix(out);
   return titleCaseFromRaw(out);
+}
+
+function stripStemsSuffixTitle(value) {
+  const raw = String(value ?? "").trim();
+  if (!raw) return "";
+  const noParen = raw.replace(/\s*\((?:stems?)\)\s*$/i, "").trim();
+  return noParen.replace(/(?:[\s_-]+)stems?$/i, "").trim();
 }
 
 function basenamePrefix(stem) {
@@ -287,9 +294,32 @@ function workIdFromInputName(group, audio, stemsInput) {
     group?.items?.[0]?.stem ||
     group?.baseTitle ||
     "";
-  const title = candidate ? baseTitleFromStem(String(candidate)) : "";
+  const title = candidate ? stripStemsSuffixTitle(baseTitleFromStem(String(candidate))) : "";
   const derived = normalizeWorkId(kebab(title || String(group?.baseTitle || "")));
   return derived || "";
+}
+
+function titleFromComposerFile(filePath) {
+  try {
+    const raw = fs.readFileSync(filePath, "utf8");
+    const lines = raw.split(/\r?\n/);
+    for (const line of lines) {
+      const m = line.match(/^\s*\[\s*(title|song title)\s*:\s*(.+?)\s*\]\s*$/i);
+      if (m) return stripStemsSuffixTitle(m[2] || "");
+    }
+  } catch {}
+  return "";
+}
+
+function workIdFromComposer(group) {
+  const composers = group?.items?.filter((x) => x.role === "composer") || [];
+  for (const c of composers) {
+    if (!c?.absPath || !fs.existsSync(c.absPath)) continue;
+    const title = titleFromComposerFile(c.absPath);
+    const id = normalizeWorkId(kebab(title));
+    if (id) return id;
+  }
+  return "";
 }
 
 function chooseAudio(items) {
@@ -312,7 +342,7 @@ function safeNormalizeZipPath(fileName) {
   return normalized;
 }
 
-function listMp3ZipEntries(zipPath) {
+function listAudioZipEntries(zipPath) {
   return new Promise((resolve, reject) => {
     const out = [];
     yauzl.open(zipPath, { lazyEntries: true }, (openErr, zip) => {
@@ -324,7 +354,7 @@ function listMp3ZipEntries(zipPath) {
       zip.readEntry();
       zip.on("entry", (entry) => {
         const safeRel = safeNormalizeZipPath(entry.fileName);
-        if (safeRel && safeRel.toLowerCase().endsWith(".mp3")) out.push(safeRel);
+        if (safeRel && /\.(mp3|wav)$/i.test(safeRel)) out.push(safeRel);
         zip.readEntry();
       });
       zip.on("end", () => resolve(out));
@@ -333,7 +363,7 @@ function listMp3ZipEntries(zipPath) {
   });
 }
 
-function listMp3ZipEntriesPython(zipPath) {
+function listAudioZipEntriesPython(zipPath) {
   const py = process.env.PYTHON || "python";
   const pyCode = `
 import json, pathlib, sys, zipfile
@@ -347,7 +377,7 @@ with zipfile.ZipFile(zip_path, "r") as zf:
     p = pathlib.PurePosixPath(name)
     if p.is_absolute() or ".." in p.parts:
       raise RuntimeError(f"Unsafe zip entry: {name}")
-    if name.lower().endswith(".mp3"):
+    if name.lower().endswith(".mp3") or name.lower().endswith(".wav"):
       out.append("/".join(p.parts))
 print(json.dumps(out))
 `;
@@ -365,6 +395,7 @@ function pickExact(entries, exactName) {
 
 function scoreStemCandidate(relPath, role) {
   const b = path.posix.basename(relPath).toLowerCase();
+  const ext = path.posix.extname(b);
   let score = 0;
   if (role === "instrumental") {
     if (b.includes("instrumental")) score += 20;
@@ -375,7 +406,8 @@ function scoreStemCandidate(relPath, role) {
     if (b.includes("lead")) score += 12;
     if (/^0\b|^0[ _-]/.test(b)) score += 7;
   }
-  if (b.endsWith(".mp3")) score += 5;
+  if (ext === ".wav") score += 8;
+  if (ext === ".mp3") score += 5;
   return score;
 }
 
@@ -389,8 +421,8 @@ function pickByHeuristic(entries, role) {
 }
 
 function chooseStemFiles(entries) {
-  const exactVocals = pickExact(entries, "0 Lead Vocals.mp3");
-  const exactInst = pickExact(entries, "1 Instrumental.mp3");
+  const exactVocals = pickExact(entries, "0 Lead Vocals.wav") || pickExact(entries, "0 Lead Vocals.mp3");
+  const exactInst = pickExact(entries, "1 Instrumental.wav") || pickExact(entries, "1 Instrumental.mp3");
   return {
     vocals: exactVocals || pickByHeuristic(entries, "vocals"),
     instrumental: exactInst || pickByHeuristic(entries, "instrumental")
@@ -399,11 +431,11 @@ function chooseStemFiles(entries) {
 
 async function listZipEntriesPortable(zipPath) {
   try {
-    return await listMp3ZipEntries(zipPath);
+    return await listAudioZipEntries(zipPath);
   } catch (err) {
     const msg = err instanceof Error ? err.message : String(err);
     if (msg.toLowerCase().includes("multi-disk zip")) {
-      return listMp3ZipEntriesPython(zipPath);
+      return listAudioZipEntriesPython(zipPath);
     }
     throw err;
   }
@@ -419,6 +451,39 @@ async function zipLooksLikeStems(zipPath) {
   const hasInst = names.some((n) => n.includes("instrumental") || n.includes("inst"));
   const hasVocals = names.some((n) => n.includes("vocals") || n.includes("lead"));
   return hasInst && hasVocals;
+}
+
+function runCmd(bin, args) {
+  const r = spawnSync(bin, args, { encoding: "utf8" });
+  return { ok: r.status === 0, stdout: String(r.stdout || ""), stderr: String(r.stderr || "") };
+}
+
+function toWslPath(absPath) {
+  const p = path.resolve(absPath).replace(/\\/g, "/");
+  const m = p.match(/^([A-Za-z]):\/(.*)$/);
+  if (!m) return p;
+  return `/mnt/${m[1].toLowerCase()}/${m[2]}`;
+}
+
+function chooseFfmpegBackend() {
+  if (runCmd("ffmpeg", ["-version"]).ok) return "local";
+  if (process.platform === "win32" && runCmd("wsl", ["ffmpeg", "-version"]).ok) return "wsl";
+  return "";
+}
+
+function transcodeAudioToMp3(srcPath, dstPath, overwrite) {
+  if (fs.existsSync(dstPath) && !overwrite) return { ok: true, skipped: true };
+  const backend = chooseFfmpegBackend();
+  if (!backend) return { ok: false, skipped: true, reason: "ffmpeg-not-found" };
+  const inPath = backend === "wsl" ? toWslPath(srcPath) : srcPath;
+  const outPath = backend === "wsl" ? toWslPath(dstPath) : dstPath;
+  const cmd = backend === "wsl" ? "wsl" : "ffmpeg";
+  const args = backend === "wsl"
+    ? ["ffmpeg", "-y", "-hide_banner", "-loglevel", "error", "-i", inPath, "-vn", "-ar", "48000", "-ac", "2", "-c:a", "libmp3lame", "-b:a", "192k", "-write_xing", "1", outPath]
+    : ["-y", "-hide_banner", "-loglevel", "error", "-i", inPath, "-vn", "-ar", "48000", "-ac", "2", "-c:a", "libmp3lame", "-b:a", "192k", "-write_xing", "1", outPath];
+  const r = runCmd(cmd, args);
+  if (!r.ok) return { ok: false, skipped: false, reason: (r.stderr || r.stdout || "ffmpeg failed").trim() };
+  return { ok: true, skipped: false };
 }
 
 function extractZipEntryToFile(zipPath, entryRelPath, outPath, overwrite) {
@@ -506,31 +571,50 @@ async function extractStemAudioFromZip(assetDir, overwrite, dryRun) {
   const picks = chooseStemFiles(entries);
   const out = {
     instrumental: "",
-    vocals: ""
+    vocals: "",
+    instrumentalExt: "",
+    vocalsExt: ""
   };
   const steps = [
-    { rel: picks.instrumental, file: "instrumental.mp3", key: "instrumental" },
-    { rel: picks.vocals, file: "vocals.mp3", key: "vocals" }
+    { rel: picks.instrumental, base: "instrumental", key: "instrumental" },
+    { rel: picks.vocals, base: "vocals", key: "vocals" }
   ];
 
   for (const step of steps) {
     if (!step.rel) continue;
-    const dst = path.join(assetDir, step.file);
+    const ext = path.posix.extname(step.rel).toLowerCase();
+    const fileExt = ext === ".wav" ? ".wav" : ".mp3";
+    const dst = path.join(assetDir, `${step.base}${fileExt}`);
     if (dryRun) {
       out[step.key] = step.rel;
+      out[`${step.key}Ext`] = fileExt;
       continue;
     }
     try {
       await extractZipEntryToFile(zipPath, step.rel, dst, overwrite);
       out[step.key] = step.rel;
+      out[`${step.key}Ext`] = fileExt;
     } catch (err) {
       const msg = err instanceof Error ? err.message : String(err);
       if (msg.toLowerCase().includes("multi-disk zip")) {
         extractZipEntryToFilePython(zipPath, step.rel, dst, overwrite);
         out[step.key] = step.rel;
+        out[`${step.key}Ext`] = fileExt;
       } else {
         throw err;
       }
+    }
+  }
+  if (!dryRun) {
+    const wavToMp3Pairs = [
+      ["instrumental.wav", "instrumental.mp3"],
+      ["vocals.wav", "vocals.mp3"]
+    ];
+    for (const [srcName, dstName] of wavToMp3Pairs) {
+      const src = path.join(assetDir, srcName);
+      const dst = path.join(assetDir, dstName);
+      if (!fs.existsSync(src)) continue;
+      transcodeAudioToMp3(src, dst, overwrite);
     }
   }
   return { ok: true, reason: "stems-extracted", extracted: out };
@@ -634,6 +718,14 @@ function ensureComposerStub(assetDir, dryRun) {
   const composerPath = path.join(assetDir, "composer.txt");
   if (!fs.existsSync(composerPath) && !dryRun) fs.writeFileSync(composerPath, "", "utf8");
   return composerPath;
+}
+
+function pickBestSource(assetDir, names) {
+  for (const n of names) {
+    const p = path.join(assetDir, n);
+    if (fs.existsSync(p)) return p;
+  }
+  return "";
 }
 
 function toRepoRel(repoRoot, absPath) {
@@ -758,10 +850,11 @@ async function main() {
     const overrideFile = group.items.find((x) => x.role === "workIdOverride");
     const overrideWorkId = overrideFile && fs.existsSync(overrideFile.absPath) ? parseWorkIdOverride(overrideFile.absPath) : "";
     const taggedWorkId = workIdFromNameTags(group.items);
+    const composerWorkId = workIdFromComposer(group);
     const nameBasedWorkId = workIdFromInputName(group, audio, stemsInput);
     const legacyKey = group.key.replace(/^(?:folder|loose):/, "");
     const existingEntry = catalog.bySourceGroupKey.get(group.key) || catalog.bySourceGroupKey.get(legacyKey);
-    const workId = existingEntry?.workId || overrideWorkId || taggedWorkId || nameBasedWorkId || fallbackWorkId(new Date());
+    const workId = existingEntry?.workId || overrideWorkId || taggedWorkId || composerWorkId || nameBasedWorkId || fallbackWorkId(new Date());
     const trackId = existingEntry?.trackId || generateTrackId();
     const assetDir = path.join(assetsRoot, workId, trackId);
     const trackJsonPath = existingEntry?.filePath || path.join(tracksDir, `${trackId}.track.json`);
@@ -826,17 +919,19 @@ async function main() {
 
     let mixPath = path.join(assetDir, "mix.mp3");
     if (!fs.existsSync(mixPath)) {
-      const candidates = ["instrumental.mp3", "vocals.mp3"];
+      const candidates = ["instrumental.mp3", "instrumental.wav", "vocals.mp3", "vocals.wav"];
       for (const name of candidates) {
         const p = path.join(assetDir, name);
         if (fs.existsSync(p)) {
-          const copy = moveOrCopy({
-            src: p,
-            dst: mixPath,
-            overwrite: args.overwrite,
-            dryRun: args.dryRun,
-            forceCopy: true
-          });
+          const copy = name.endsWith(".wav")
+            ? (args.dryRun ? { ok: true } : transcodeAudioToMp3(p, mixPath, args.overwrite))
+            : moveOrCopy({
+              src: p,
+              dst: mixPath,
+              overwrite: args.overwrite,
+              dryRun: args.dryRun,
+              forceCopy: true
+            });
           if (!copy.ok) {
             groupReport.warnings.push(`Could not create mix.mp3 from ${name}`);
           }
@@ -845,29 +940,34 @@ async function main() {
       }
     }
     if (!fs.existsSync(mixPath)) {
-      const anyMp3 = fs.existsSync(assetDir)
-        ? fs.readdirSync(assetDir).find((name) => name.toLowerCase().endsWith(".mp3"))
+      const anyAudio = fs.existsSync(assetDir)
+        ? fs.readdirSync(assetDir).find((name) => /\.(mp3|wav)$/i.test(name))
         : "";
-      if (anyMp3) {
-        const src = path.join(assetDir, anyMp3);
-        const copy = moveOrCopy({
-          src,
+      if (anyAudio) {
+        const src = path.join(assetDir, anyAudio);
+        const copy = anyAudio.toLowerCase().endsWith(".wav")
+          ? (args.dryRun ? { ok: true } : transcodeAudioToMp3(src, mixPath, args.overwrite))
+          : moveOrCopy({
+            src,
+            dst: mixPath,
+            overwrite: args.overwrite,
+            dryRun: args.dryRun,
+            forceCopy: true
+          });
+        if (!copy.ok) groupReport.warnings.push(`Could not create mix.mp3 from ${anyAudio}`);
+      }
+    }
+    const instForMix = pickBestSource(assetDir, ["instrumental.mp3", "instrumental.wav"]);
+    if ((stemsUpdated || Boolean(existingEntry)) && instForMix) {
+      const forceMix = instForMix.endsWith(".wav")
+        ? (args.dryRun ? { ok: true } : transcodeAudioToMp3(instForMix, mixPath, true))
+        : moveOrCopy({
+          src: instForMix,
           dst: mixPath,
-          overwrite: args.overwrite,
+          overwrite: true,
           dryRun: args.dryRun,
           forceCopy: true
         });
-        if (!copy.ok) groupReport.warnings.push(`Could not create mix.mp3 from ${anyMp3}`);
-      }
-    }
-    if ((stemsUpdated || Boolean(existingEntry)) && fs.existsSync(path.join(assetDir, "instrumental.mp3"))) {
-      const forceMix = moveOrCopy({
-        src: path.join(assetDir, "instrumental.mp3"),
-        dst: mixPath,
-        overwrite: true,
-        dryRun: args.dryRun,
-        forceCopy: true
-      });
       if (!forceMix.ok) groupReport.warnings.push("Could not refresh mix.mp3 from instrumental.mp3");
     }
     if (!args.dryRun && !fs.existsSync(mixPath)) {
@@ -898,9 +998,7 @@ async function main() {
         track = {};
       }
       const prevImport = track?.import ?? {};
-      const hashSourcePath = fs.existsSync(path.join(assetDir, "instrumental.mp3"))
-        ? path.join(assetDir, "instrumental.mp3")
-        : mixPath;
+      const hashSourcePath = pickBestSource(assetDir, ["instrumental.wav", "instrumental.mp3", "mix.wav", "mix.mp3"]) || mixPath;
 
       track.trackId = trackId;
       track.workId = workId;
@@ -908,11 +1006,20 @@ async function main() {
       track.assetPaths = {
         mix: toRepoRel(repoRoot, mixPath),
         stemsZip: fs.existsSync(stemsZipPath) ? toRepoRel(repoRoot, stemsZipPath) : "",
+        mixWav: fs.existsSync(path.join(assetDir, "mix.wav"))
+          ? toRepoRel(repoRoot, path.join(assetDir, "mix.wav"))
+          : "",
         instrumental: fs.existsSync(path.join(assetDir, "instrumental.mp3"))
           ? toRepoRel(repoRoot, path.join(assetDir, "instrumental.mp3"))
           : "",
+        instrumentalWav: fs.existsSync(path.join(assetDir, "instrumental.wav"))
+          ? toRepoRel(repoRoot, path.join(assetDir, "instrumental.wav"))
+          : "",
         vocals: fs.existsSync(path.join(assetDir, "vocals.mp3"))
           ? toRepoRel(repoRoot, path.join(assetDir, "vocals.mp3"))
+          : "",
+        vocalsWav: fs.existsSync(path.join(assetDir, "vocals.wav"))
+          ? toRepoRel(repoRoot, path.join(assetDir, "vocals.wav"))
           : "",
         composer: toRepoRel(repoRoot, composerPath)
       };

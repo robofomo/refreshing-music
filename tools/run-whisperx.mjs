@@ -34,6 +34,51 @@ function runWhisperx(audioPath, { language, device, model }) {
   );
 }
 
+function parseJsonFromNoisyOutput(stdout, stderr) {
+  const direct = String(stdout || "").trim();
+  if (direct) {
+    try {
+      return JSON.parse(direct);
+    } catch {
+      // Continue with relaxed extraction below.
+    }
+  }
+
+  const merged = `${String(stdout || "")}\n${String(stderr || "")}`;
+  const start = merged.indexOf("{");
+  if (start >= 0) {
+    let depth = 0;
+    let inStr = false;
+    let esc = false;
+    for (let i = start; i < merged.length; i += 1) {
+      const ch = merged[i];
+      if (inStr) {
+        if (esc) {
+          esc = false;
+        } else if (ch === "\\") {
+          esc = true;
+        } else if (ch === "\"") {
+          inStr = false;
+        }
+        continue;
+      }
+      if (ch === "\"") {
+        inStr = true;
+        continue;
+      }
+      if (ch === "{") depth += 1;
+      if (ch === "}") {
+        depth -= 1;
+        if (depth === 0) {
+          const slice = merged.slice(start, i + 1);
+          return JSON.parse(slice);
+        }
+      }
+    }
+  }
+  throw new Error("No JSON payload found in WhisperX output");
+}
+
 function main() {
   const args = parseArgs(process.argv.slice(2));
   const onlyTrackId = typeof args.trackId === "string" ? args.trackId : "";
@@ -74,7 +119,7 @@ function main() {
       updateTrackLog(t.assetDir, {
         whisperx: {
           status: "skipped",
-          reason: "No vocals.mp3 or mix.mp3 found"
+          reason: "No vocals.(wav|mp3) or mix.(wav|mp3) found"
         }
       });
       continue;
@@ -111,7 +156,7 @@ function main() {
     }
 
     try {
-      const parsed = JSON.parse((r.stdout || "").trim() || "{}");
+      const parsed = parseJsonFromNoisyOutput(r.stdout, r.stderr);
       writeJson(outPath, parsed);
       ok += 1;
       console.log(`whisperx [${idx}/${tracks.length}] ok ${t.trackId}`);

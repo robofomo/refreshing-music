@@ -45,7 +45,7 @@ export function listAssetTracks(assetsRoot) {
 }
 
 export function pickAudioForBeats(assetDir) {
-  const candidates = ["instrumental.mp3", "mix.mp3"];
+  const candidates = ["instrumental.wav", "instrumental.mp3", "mix.wav", "mix.mp3"];
   for (const name of candidates) {
     const p = path.join(assetDir, name);
     if (fs.existsSync(p)) return p;
@@ -54,7 +54,7 @@ export function pickAudioForBeats(assetDir) {
 }
 
 export function pickAudioForWhisperx(assetDir) {
-  const candidates = ["vocals.mp3", "mix.mp3"];
+  const candidates = ["vocals.wav", "vocals.mp3", "mix.wav", "mix.mp3"];
   for (const name of candidates) {
     const p = path.join(assetDir, name);
     if (fs.existsSync(p)) return p;

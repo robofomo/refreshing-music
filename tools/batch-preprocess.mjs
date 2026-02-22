@@ -2,6 +2,22 @@ import fs from "node:fs";
 import path from "node:path";
 import { buildTrack } from "./build-track.mjs";
 
+function parseArgs(argv) {
+  const out = { trackIds: new Set() };
+  for (let i = 0; i < argv.length; i += 1) {
+    const a = argv[i];
+    if (a === "--trackId") {
+      const next = argv[i + 1] || "";
+      i += 1;
+      for (const part of String(next).split(",")) {
+        const v = part.trim();
+        if (v) out.trackIds.add(v);
+      }
+    }
+  }
+  return out;
+}
+
 function slugify(value) {
   return String(value ?? "")
     .trim()
@@ -46,6 +62,8 @@ function toPosix(relPath) {
 }
 
 try {
+  const args = parseArgs(process.argv.slice(2));
+  const filterTrackIds = args.trackIds;
   const assetsRoot = path.resolve("assets");
   if (!fs.existsSync(assetsRoot)) {
     console.log("Generated 0 track file(s). Created blank composer files: 0.");
@@ -62,11 +80,11 @@ try {
     const trackDirs = fs.readdirSync(workPath, { withFileTypes: true }).filter((e) => e.isDirectory());
     for (const trackDir of trackDirs) {
       const trackId = trackDir.name;
+      if (filterTrackIds.size > 0 && !filterTrackIds.has(trackId)) continue;
       const assetDir = path.join(workPath, trackDir.name);
       const mp3Path = pickAudio(assetDir);
       if (!mp3Path) continue;
       const { composerPath, created } = ensureComposer(assetDir);
-      const sourceGroupKey = workId;
       const trackJsonPath = path.join(path.resolve("tracks"), `${trackId}.track.json`);
 
       buildTrack({
@@ -76,7 +94,6 @@ try {
         trackJsonPath,
         workIdOverride: workId,
         trackIdOverride: trackId,
-        sourceGroupKey,
         assetDir: toPosix(path.relative(path.resolve("."), assetDir))
       });
 

@@ -2,7 +2,8 @@
   "name": "gen-music-visualizer",
   "private": true,
   "scripts": {
-    "import:inbox": "node tools/import-inbox.mjs",
+    "import:inbox": "node tools/import-inbox-runner.mjs",
+    "import:inbox:raw": "node tools/import-inbox.mjs",
     "import:inbox:smoke": "node tools/smoke-import-inbox.mjs",
     "idgen": "node tools/id-gen.mjs",
     "preprocess": "node tools/batch-preprocess.mjs",

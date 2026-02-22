@@ -37,7 +37,7 @@ function main() {
       updateTrackLog(t.assetDir, {
         beats: {
           status: "skipped",
-          reason: "No instrumental.mp3 or mix.mp3 found"
+          reason: "No instrumental.(wav|mp3) or mix.(wav|mp3) found"
         }
       });
       continue;

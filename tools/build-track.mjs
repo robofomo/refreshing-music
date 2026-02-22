@@ -83,6 +83,30 @@ function toPosix(relPath) {
   return relPath.split(path.sep).join("/");
 }
 
+function readJsonObjectIfExists(filePath) {
+  if (!filePath || !fs.existsSync(filePath)) return null;
+  try {
+    const v = JSON.parse(fs.readFileSync(filePath, "utf8"));
+    return v && typeof v === "object" ? v : null;
+  } catch {
+    return null;
+  }
+}
+
+function deriveAssetPaths(repoRoot, assetDirAbs, composerPath) {
+  const toRel = (p) => toPosix(path.relative(repoRoot, p));
+  const has = (name) => fs.existsSync(path.join(assetDirAbs, name));
+  const mix = has("mix.mp3") ? toRel(path.join(assetDirAbs, "mix.mp3")) : "";
+  const mixWav = has("mix.wav") ? toRel(path.join(assetDirAbs, "mix.wav")) : "";
+  const stemsZip = has("stems.zip") ? toRel(path.join(assetDirAbs, "stems.zip")) : "";
+  const instrumental = has("instrumental.mp3") ? toRel(path.join(assetDirAbs, "instrumental.mp3")) : "";
+  const instrumentalWav = has("instrumental.wav") ? toRel(path.join(assetDirAbs, "instrumental.wav")) : "";
+  const vocals = has("vocals.mp3") ? toRel(path.join(assetDirAbs, "vocals.mp3")) : "";
+  const vocalsWav = has("vocals.wav") ? toRel(path.join(assetDirAbs, "vocals.wav")) : "";
+  const composer = composerPath && fs.existsSync(composerPath) ? toRel(composerPath) : "";
+  return { mix, mixWav, stemsZip, instrumental, instrumentalWav, vocals, vocalsWav, composer };
+}
+
 function upsertTracksIndex(tracksDir) {
   const byTrackId = new Map();
   const walk = (dir) => {
@@ -300,6 +324,7 @@ export function buildTrackWithOptions({
   const outPath = trackJsonPath ? path.resolve(trackJsonPath) : path.join(tracksDir, slug, `${trackId}.track.json`);
   const outDir = path.dirname(outPath);
   fs.mkdirSync(outDir, { recursive: true });
+  const existing = readJsonObjectIfExists(outPath);
 
   const audioStat = fs.statSync(mp3Path);
   const audioPath = toPosix(path.relative(outDir, mp3Path));
@@ -329,7 +354,14 @@ export function buildTrackWithOptions({
     }
   };
   if (sourceGroupKey) track.sourceGroupKey = sourceGroupKey;
+  else if (typeof existing?.sourceGroupKey === "string" && existing.sourceGroupKey) {
+    track.sourceGroupKey = existing.sourceGroupKey;
+  }
+
   if (assetDir) track.assetDir = toPosix(assetDir);
+  else if (typeof existing?.assetDir === "string" && existing.assetDir) {
+    track.assetDir = existing.assetDir;
+  }
 
   if (created.createdLocalRaw) track.createdLocalRaw = created.createdLocalRaw;
   if (created.createdTz) track.createdTz = created.createdTz;
@@ -343,6 +375,16 @@ export function buildTrackWithOptions({
   } catch (err) {
     console.warn(err instanceof Error ? err.message : String(err));
   }
+
+  // Preserve import metadata across preprocess runs.
+  if (existing?.import && typeof existing.import === "object") {
+    track.import = existing.import;
+  }
+
+  // Keep asset path metadata current so runtime can discover stems/mix channels.
+  const repoRoot = path.resolve(".");
+  const assetDirAbs = path.dirname(mp3Path);
+  track.assetPaths = deriveAssetPaths(repoRoot, assetDirAbs, composerPath);
 
   fs.writeFileSync(outPath, `${JSON.stringify(track, null, 2)}\n`, "utf8");
   upsertTracksIndex(tracksDir);

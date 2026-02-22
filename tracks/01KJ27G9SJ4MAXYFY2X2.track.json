@@ -1,0 +1,1058 @@
+{
+  "workId": "offset-that-wouldn-t-clear",
+  "trackId": "01KJ27G9SJ4MAXYFY2X2",
+  "recipeRef": {
+    "albumId": "random",
+    "trackOverrideId": "01KJ27G9SJ4MAXYFY2X2"
+  },
+  "createdAt": "2026-02-22T08:29:57.391Z",
+  "slug": "offset-that-wouldn-t-clear",
+  "title": "Offset That Wouldn’t Clear",
+  "audio": {
+    "filename": "mix.mp3",
+    "path": "../assets/offset-that-wouldn-t-clear/01KJ27G9SJ4MAXYFY2X2/mix.mp3",
+    "cidOrTx": "",
+    "mime": "audio/mpeg",
+    "bytes": 3119695
+  },
+  "composer": {
+    "rawText": "[Song Title: Offset That Wouldn’t Clear]\r\n[Style: math rock, electronic hybrid, glitch-forward, clean studio recording, interlocking clean guitars, odd-meter live drums, tight bass, modular synth glitches, bitcrush artifacts, sparse expressive male vocal, intentional errors, misfires, dropouts]\r\n[Caption: The mistake repeats until it becomes the rule.]\r\n[Image: A waveform with one recurring spike slightly out of place.]\r\n[Refresh Title: Random 5]\r\n[Theme: Random]\r\n[Gradients: 5]\r\n[Rank: 22]\r\n[Title Rarity: 1.12]\r\n[Seeds: intentionally unstable]\r\n[Perspective: system_voice]\r\n[Concept: A process encounters an error it cannot fully resolve—and keeps going anyway.]\r\n[Topic: System & Process → error_persistence]\r\n[Genre Bias: math_rock → electro_modern]\r\n[Style Change: none]\r\n[Modulation: none]\r\n[Hook Prominence: low]\r\n[Deviation: error-driven composition]\r\n[Composer Version: v2.3]\r\n\r\n[Intro]\r\n[Guitars enter clean in 4, drums enter late in 7.]\r\n[A synth click fires one beat early—this is unintentional, but repeats.]\r\n[NOTE (unsung clue): the system logs the error but does not halt.]\r\n\r\n[Section A]\r\n[Drums lock into 13/8; guitars phrase confidently in 12.]\r\n[Bass follows the drums, not the guitars.]\r\n[A short digital glitch appears at the end of every second bar.]\r\nI lined it up, I checked it twice  \r\nStill something slipped between  \r\nThe numbers said it should be fine  \r\nBut that’s not what I’m seeing\r\n\r\n[Section A’]\r\n[Same as Section A, but the glitch occurs every bar now.]\r\n[Guitars drop one note consistently in the same place.]\r\n[Synth briefly mutes for exactly one beat, every loop.]\r\nIt wasn’t wrong enough to fail  \r\nIt wasn’t right enough to pass  \r\nSo it stayed inside the system  \r\nLike a question I can’t ask\r\n\r\n[Section B]\r\n[Sudden shift to 9/8 without transition.]\r\n[Drums and bass align; guitars lag by half a beat.]\r\n[A buffer crackle appears whenever vocals stop.]\r\nI tried to roll it back again  \r\nBut every copy kept the scar  \r\nThe fix just taught the fault  \r\nExactly where the limits are\r\n\r\n[Interference]\r\n[All instruments drop except a looping glitch fragment.]\r\n[The fragment is five beats long against implied four.]\r\n[NOTE (unsung clue): this fragment is the original error, isolated.]\r\n\r\n[Section C]\r\n[Full band returns, but everything feels slightly misaligned.]\r\n[Drums accent the wrong beat on purpose.]\r\n[Guitars mirror the error fragment as a motif.]\r\nIt doesn’t crash, it doesn’t end  \r\nIt just repeats another way  \r\nLike something learned the wrong lesson  \r\nAnd refuses to unlearn the day\r\n\r\n[Break]\r\n[Hard cut—silence for less than a full bar.]\r\n[Restart is one tick late.]\r\n[NOTE (unsung clue): timing reference has drifted.]\r\n\r\n[Final Section]\r\n[All parts layer densely; glitches now feel intentional.]\r\n[The original error becomes the rhythmic anchor.]\r\n[Nothing resolves, but everything stabilizes.]\r\nI stopped trying to correct it  \r\nLet the fault define the frame  \r\nIf it runs, it runs imperfect  \r\nBut it runs the same\r\n\r\n[Ending]\r\n[Instruments drop out randomly, not by section order.]\r\n[Final sound is the glitch fragment, clean and centered.]\r\n[NOTE (unsung clue): the bug has been promoted to feature.]\r\n",
+    "headerMap": {
+      "Song Title": "Offset That Wouldn’t Clear",
+      "Style": "math rock, electronic hybrid, glitch-forward, clean studio recording, interlocking clean guitars, odd-meter live drums, tight bass, modular synth glitches, bitcrush artifacts, sparse expressive male vocal, intentional errors, misfires, dropouts",
+      "Caption": "The mistake repeats until it becomes the rule.",
+      "Image": "A waveform with one recurring spike slightly out of place.",
+      "Refresh Title": "Random 5",
+      "Theme": "Random",
+      "Gradients": "5",
+      "Rank": "22",
+      "Title Rarity": "1.12",
+      "Seeds": "intentionally unstable",
+      "Perspective": "system_voice",
+      "Concept": "A process encounters an error it cannot fully resolve—and keeps going anyway.",
+      "Topic": "System & Process → error_persistence",
+      "Genre Bias": "math_rock → electro_modern",
+      "Style Change": "none",
+      "Modulation": "none",
+      "Hook Prominence": "low",
+      "Deviation": "error-driven composition",
+      "Composer Version": "v2.3"
+    }
+  },
+  "sections": [
+    {
+      "id": "intro-1",
+      "labelRaw": "Intro",
+      "notesRaw": "Guitars enter clean in 4, drums enter late in 7.\nA synth click fires one beat early—this is unintentional, but repeats.\nNOTE (unsung clue): the system logs the error but does not halt."
+    },
+    {
+      "id": "section-a-1",
+      "labelRaw": "Section A",
+      "notesRaw": "Drums lock into 13/8; guitars phrase confidently in 12.\nBass follows the drums, not the guitars.\nA short digital glitch appears at the end of every second bar."
+    },
+    {
+      "id": "section-a-2",
+      "labelRaw": "Section A’",
+      "notesRaw": "Same as Section A, but the glitch occurs every bar now.\nGuitars drop one note consistently in the same place.\nSynth briefly mutes for exactly one beat, every loop."
+    },
+    {
+      "id": "section-b-1",
+      "labelRaw": "Section B",
+      "notesRaw": "Sudden shift to 9/8 without transition.\nDrums and bass align; guitars lag by half a beat.\nA buffer crackle appears whenever vocals stop."
+    },
+    {
+      "id": "interference-1",
+      "labelRaw": "Interference",
+      "notesRaw": "All instruments drop except a looping glitch fragment.\nThe fragment is five beats long against implied four.\nNOTE (unsung clue): this fragment is the original error, isolated."
+    },
+    {
+      "id": "section-c-1",
+      "labelRaw": "Section C",
+      "notesRaw": "Full band returns, but everything feels slightly misaligned.\nDrums accent the wrong beat on purpose.\nGuitars mirror the error fragment as a motif."
+    },
+    {
+      "id": "break-1",
+      "labelRaw": "Break",
+      "notesRaw": "Hard cut—silence for less than a full bar.\nRestart is one tick late.\nNOTE (unsung clue): timing reference has drifted."
+    },
+    {
+      "id": "final-section-1",
+      "labelRaw": "Final Section",
+      "notesRaw": "All parts layer densely; glitches now feel intentional.\nThe original error becomes the rhythmic anchor.\nNothing resolves, but everything stabilizes."
+    },
+    {
+      "id": "ending-1",
+      "labelRaw": "Ending",
+      "notesRaw": "Instruments drop out randomly, not by section order.\nFinal sound is the glitch fragment, clean and centered.\nNOTE (unsung clue): the bug has been promoted to feature."
+    }
+  ],
+  "lyrics": {
+    "rawText": "\nI lined it up, I checked it twice  \nStill something slipped between  \nThe numbers said it should be fine  \nBut that’s not what I’m seeing\n\nIt wasn’t wrong enough to fail  \nIt wasn’t right enough to pass  \nSo it stayed inside the system  \nLike a question I can’t ask\n\nI tried to roll it back again  \nBut every copy kept the scar  \nThe fix just taught the fault  \nExactly where the limits are\n\n\nIt doesn’t crash, it doesn’t end  \nIt just repeats another way  \nLike something learned the wrong lesson  \nAnd refuses to unlearn the day\n\n\nI stopped trying to correct it  \nLet the fault define the frame  \nIf it runs, it runs imperfect  \nBut it runs the same\n\n"
+  },
+  "sourceGroupKey": "loose:offset-that-wouldn-t-clear",
+  "assetDir": "assets/offset-that-wouldn-t-clear/01KJ27G9SJ4MAXYFY2X2",
+  "timing": {
+    "beatsMs": [
+      650,
+      1324,
+      1997,
+      2601,
+      3239,
+      3878,
+      4516,
+      5155,
+      5782,
+      6409,
+      7036,
+      7674,
+      8313,
+      8940,
+      9567,
+      10217,
+      10844,
+      11471,
+      12098,
+      12748,
+      13375,
+      14002,
+      14629,
+      15256,
+      15894,
+      16533,
+      17160,
+      17786,
+      18413,
+      19040,
+      19667,
+      20317,
+      20944,
+      21571,
+      22198,
+      22825,
+      23464,
+      24102,
+      24729,
+      25356,
+      25983,
+      26633,
+      27260,
+      27887,
+      28514,
+      29141,
+      29791,
+      30418,
+      31045,
+      31672,
+      32322,
+      32949,
+      33576,
+      34203,
+      34830,
+      35480,
+      36107,
+      36734,
+      37361,
+      37988,
+      38626,
+      39265,
+      39892,
+      40542,
+      41192,
+      41808,
+      42423,
+      43050,
+      43677,
+      44304,
+      44942,
+      45581,
+      46208,
+      46835,
+      47473,
+      48112,
+      48739,
+      49377,
+      49993,
+      50619,
+      51270,
+      51885,
+      52524,
+      53150,
+      53777,
+      54428,
+      55055,
+      55693,
+      56308,
+      56935,
+      57574,
+      58212,
+      58839,
+      59466,
+      60093,
+      60743,
+      61370,
+      61997,
+      62624,
+      63251,
+      63901,
+      64528,
+      65155,
+      65782,
+      66409,
+      67048,
+      67686,
+      68313,
+      68940,
+      69567,
+      70217,
+      70844,
+      71471,
+      72098,
+      72725,
+      73363,
+      74002,
+      74629,
+      75256,
+      75883,
+      76533,
+      77160,
+      77787,
+      78414,
+      79041,
+      79691,
+      80318,
+      80945,
+      81572,
+      82199,
+      82826,
+      83476,
+      84103,
+      84730,
+      85357,
+      85995,
+      86634,
+      87261,
+      87899,
+      88526,
+      89165,
+      89792,
+      90419,
+      91045,
+      91672,
+      92299,
+      92938,
+      93576,
+      94215,
+      94854,
+      95480,
+      96107,
+      96734,
+      97361,
+      97988,
+      98615,
+      99265,
+      99892,
+      100519,
+      101146,
+      101773,
+      102423,
+      103050,
+      103677,
+      104304,
+      104931,
+      105570,
+      106208,
+      106835,
+      107462,
+      108089,
+      108739,
+      109366,
+      109993,
+      110620,
+      111258,
+      111897,
+      112524,
+      113151,
+      113801,
+      114428,
+      115055,
+      115682,
+      116309,
+      116936,
+      117574,
+      118213,
+      118840,
+      119478,
+      120105,
+      120744,
+      121371,
+      121998,
+      122625,
+      123263,
+      123902,
+      124529,
+      125156,
+      125782,
+      126433,
+      127060,
+      127687,
+      128313,
+      128940,
+      129591
+    ],
+    "lyricsLines": [
+      {
+        "i": 1,
+        "t0Ms": 19842,
+        "t1Ms": 21791
+      },
+      {
+        "i": 2,
+        "t0Ms": 22354,
+        "t1Ms": 24323
+      },
+      {
+        "i": 3,
+        "t0Ms": 24343,
+        "t1Ms": 25067
+      }
+    ],
+    "words": [
+      {
+        "t0Ms": 19842,
+        "t1Ms": 20023,
+        "text": "I",
+        "conf": 0.63
+      },
+      {
+        "t0Ms": 20043,
+        "t1Ms": 20224,
+        "text": "lined",
+        "conf": 0.66
+      },
+      {
+        "t0Ms": 20304,
+        "t1Ms": 20364,
+        "text": "it",
+        "conf": 0.949
+      },
+      {
+        "t0Ms": 20505,
+        "t1Ms": 20585,
+        "text": "up,",
+        "conf": 0.868
+      },
+      {
+        "t0Ms": 20867,
+        "t1Ms": 20927,
+        "text": "I",
+        "conf": 0.977
+      },
+      {
+        "t0Ms": 20947,
+        "t1Ms": 21148,
+        "text": "checked",
+        "conf": 0.868
+      },
+      {
+        "t0Ms": 21208,
+        "t1Ms": 21249,
+        "text": "it",
+        "conf": 0.97
+      },
+      {
+        "t0Ms": 21289,
+        "t1Ms": 21791,
+        "text": "twice",
+        "conf": 0.819
+      },
+      {
+        "t0Ms": 22354,
+        "t1Ms": 22615,
+        "text": "Still",
+        "conf": 0.878
+      },
+      {
+        "t0Ms": 22715,
+        "t1Ms": 23218,
+        "text": "something",
+        "conf": 0.9
+      },
+      {
+        "t0Ms": 23298,
+        "t1Ms": 23620,
+        "text": "slipped",
+        "conf": 0.518
+      },
+      {
+        "t0Ms": 23700,
+        "t1Ms": 24323,
+        "text": "between",
+        "conf": 0.876
+      },
+      {
+        "t0Ms": 24343,
+        "t1Ms": 25067,
+        "text": "The",
+        "conf": 0.627
+      },
+      {
+        "t0Ms": 25107,
+        "t1Ms": 25368,
+        "text": "number",
+        "conf": 0.918
+      },
+      {
+        "t0Ms": 25408,
+        "t1Ms": 25689,
+        "text": "said",
+        "conf": 0.734
+      },
+      {
+        "t0Ms": 25710,
+        "t1Ms": 25750,
+        "text": "it",
+        "conf": 0.5
+      },
+      {
+        "t0Ms": 26011,
+        "t1Ms": 26192,
+        "text": "should",
+        "conf": 0.749
+      },
+      {
+        "t0Ms": 26232,
+        "t1Ms": 26312,
+        "text": "be",
+        "conf": 0.956
+      },
+      {
+        "t0Ms": 26373,
+        "t1Ms": 26734,
+        "text": "fine",
+        "conf": 0.933
+      },
+      {
+        "t0Ms": 27136,
+        "t1Ms": 27257,
+        "text": "But",
+        "conf": 0.886
+      },
+      {
+        "t0Ms": 27317,
+        "t1Ms": 27578,
+        "text": "that's",
+        "conf": 0.937
+      },
+      {
+        "t0Ms": 27639,
+        "t1Ms": 27880,
+        "text": "not",
+        "conf": 0.637
+      },
+      {
+        "t0Ms": 27960,
+        "t1Ms": 28141,
+        "text": "what",
+        "conf": 0.877
+      },
+      {
+        "t0Ms": 28181,
+        "t1Ms": 28322,
+        "text": "I'm",
+        "conf": 0.932
+      },
+      {
+        "t0Ms": 28402,
+        "t1Ms": 29025,
+        "text": "seeing",
+        "conf": 0.668
+      },
+      {
+        "t0Ms": 29849,
+        "t1Ms": 30089,
+        "text": "It",
+        "conf": 0.944
+      },
+      {
+        "t0Ms": 30170,
+        "t1Ms": 30450,
+        "text": "wasn't",
+        "conf": 0.982
+      },
+      {
+        "t0Ms": 30490,
+        "t1Ms": 30831,
+        "text": "wrong",
+        "conf": 0.805
+      },
+      {
+        "t0Ms": 30891,
+        "t1Ms": 31191,
+        "text": "enough",
+        "conf": 0.58
+      },
+      {
+        "t0Ms": 31251,
+        "t1Ms": 31331,
+        "text": "to",
+        "conf": 0.906
+      },
+      {
+        "t0Ms": 31412,
+        "t1Ms": 31852,
+        "text": "fail",
+        "conf": 0.583
+      },
+      {
+        "t0Ms": 31892,
+        "t1Ms": 32634,
+        "text": "It",
+        "conf": 0.967
+      },
+      {
+        "t0Ms": 32694,
+        "t1Ms": 32954,
+        "text": "wasn't",
+        "conf": 0.88
+      },
+      {
+        "t0Ms": 33034,
+        "t1Ms": 33355,
+        "text": "right",
+        "conf": 0.917
+      },
+      {
+        "t0Ms": 33415,
+        "t1Ms": 33695,
+        "text": "enough",
+        "conf": 0.704
+      },
+      {
+        "t0Ms": 33755,
+        "t1Ms": 33876,
+        "text": "to",
+        "conf": 0.758
+      },
+      {
+        "t0Ms": 33936,
+        "t1Ms": 34657,
+        "text": "pass",
+        "conf": 0.949
+      },
+      {
+        "t0Ms": 35017,
+        "t1Ms": 35158,
+        "text": "So",
+        "conf": 0.996
+      },
+      {
+        "t0Ms": 35218,
+        "t1Ms": 35298,
+        "text": "it",
+        "conf": 0.694
+      },
+      {
+        "t0Ms": 35318,
+        "t1Ms": 35719,
+        "text": "stayed",
+        "conf": 0.544
+      },
+      {
+        "t0Ms": 35799,
+        "t1Ms": 36320,
+        "text": "inside",
+        "conf": 0.582
+      },
+      {
+        "t0Ms": 36360,
+        "t1Ms": 36500,
+        "text": "the",
+        "conf": 0.914
+      },
+      {
+        "t0Ms": 36600,
+        "t1Ms": 37201,
+        "text": "system",
+        "conf": 0.951
+      },
+      {
+        "t0Ms": 37321,
+        "t1Ms": 37542,
+        "text": "Like",
+        "conf": 0.881
+      },
+      {
+        "t0Ms": 37682,
+        "t1Ms": 37742,
+        "text": "a",
+        "conf": 0.629
+      },
+      {
+        "t0Ms": 37842,
+        "t1Ms": 38483,
+        "text": "question",
+        "conf": 0.932
+      },
+      {
+        "t0Ms": 38503,
+        "t1Ms": 38523,
+        "text": "I",
+        "conf": 0.889
+      },
+      {
+        "t0Ms": 38824,
+        "t1Ms": 39204,
+        "text": "can't",
+        "conf": 0.764
+      },
+      {
+        "t0Ms": 39385,
+        "t1Ms": 39585,
+        "text": "ask",
+        "conf": 0.916
+      },
+      {
+        "t0Ms": 39805,
+        "t1Ms": 39865,
+        "text": "I",
+        "conf": 0.639
+      },
+      {
+        "t0Ms": 39905,
+        "t1Ms": 40206,
+        "text": "tried",
+        "conf": 0.649
+      },
+      {
+        "t0Ms": 40226,
+        "t1Ms": 40366,
+        "text": "to",
+        "conf": 0.724
+      },
+      {
+        "t0Ms": 40546,
+        "t1Ms": 40907,
+        "text": "roll",
+        "conf": 0.809
+      },
+      {
+        "t0Ms": 40987,
+        "t1Ms": 41067,
+        "text": "it",
+        "conf": 0.546
+      },
+      {
+        "t0Ms": 41087,
+        "t1Ms": 41368,
+        "text": "back",
+        "conf": 0.941
+      },
+      {
+        "t0Ms": 41448,
+        "t1Ms": 42129,
+        "text": "again",
+        "conf": 0.868
+      },
+      {
+        "t0Ms": 42189,
+        "t1Ms": 42389,
+        "text": "But",
+        "conf": 0.815
+      },
+      {
+        "t0Ms": 42510,
+        "t1Ms": 42970,
+        "text": "every",
+        "conf": 0.936
+      },
+      {
+        "t0Ms": 43091,
+        "t1Ms": 43551,
+        "text": "copy",
+        "conf": 0.705
+      },
+      {
+        "t0Ms": 43611,
+        "t1Ms": 43952,
+        "text": "kept",
+        "conf": 0.654
+      },
+      {
+        "t0Ms": 43972,
+        "t1Ms": 44032,
+        "text": "a",
+        "conf": 0.844
+      },
+      {
+        "t0Ms": 44092,
+        "t1Ms": 44813,
+        "text": "scar",
+        "conf": 0.89
+      },
+      {
+        "t0Ms": 45314,
+        "t1Ms": 45414,
+        "text": "The",
+        "conf": 0.88
+      },
+      {
+        "t0Ms": 45495,
+        "t1Ms": 46015,
+        "text": "fixtures",
+        "conf": 0.806
+      },
+      {
+        "t0Ms": 46116,
+        "t1Ms": 46456,
+        "text": "taught",
+        "conf": 0.577
+      },
+      {
+        "t0Ms": 46496,
+        "t1Ms": 46616,
+        "text": "the",
+        "conf": 0.348
+      },
+      {
+        "t0Ms": 46717,
+        "t1Ms": 47137,
+        "text": "fault",
+        "conf": 0.841
+      },
+      {
+        "t0Ms": 47237,
+        "t1Ms": 47898,
+        "text": "Exactly",
+        "conf": 0.941
+      },
+      {
+        "t0Ms": 48019,
+        "t1Ms": 48459,
+        "text": "where",
+        "conf": 0.785
+      },
+      {
+        "t0Ms": 48499,
+        "t1Ms": 48620,
+        "text": "the",
+        "conf": 0.952
+      },
+      {
+        "t0Ms": 48700,
+        "t1Ms": 49181,
+        "text": "limits",
+        "conf": 0.873
+      },
+      {
+        "t0Ms": 49701,
+        "t1Ms": 50102,
+        "text": "are",
+        "conf": 0.284
+      },
+      {
+        "t0Ms": 59617,
+        "t1Ms": 59798,
+        "text": "It",
+        "conf": 0.701
+      },
+      {
+        "t0Ms": 59838,
+        "t1Ms": 60098,
+        "text": "doesn't",
+        "conf": 0.788
+      },
+      {
+        "t0Ms": 60139,
+        "t1Ms": 60600,
+        "text": "crash,",
+        "conf": 0.973
+      },
+      {
+        "t0Ms": 60680,
+        "t1Ms": 60740,
+        "text": "it",
+        "conf": 0.984
+      },
+      {
+        "t0Ms": 60780,
+        "t1Ms": 61121,
+        "text": "doesn't",
+        "conf": 0.62
+      },
+      {
+        "t0Ms": 61302,
+        "t1Ms": 61442,
+        "text": "end",
+        "conf": 0.824
+      },
+      {
+        "t0Ms": 61944,
+        "t1Ms": 62004,
+        "text": "It",
+        "conf": 0.941
+      },
+      {
+        "t0Ms": 62064,
+        "t1Ms": 62305,
+        "text": "just",
+        "conf": 0.875
+      },
+      {
+        "t0Ms": 62385,
+        "t1Ms": 62847,
+        "text": "repeats",
+        "conf": 0.936
+      },
+      {
+        "t0Ms": 62887,
+        "t1Ms": 63649,
+        "text": "another",
+        "conf": 0.801
+      },
+      {
+        "t0Ms": 63769,
+        "t1Ms": 64171,
+        "text": "way",
+        "conf": 0.85
+      },
+      {
+        "t0Ms": 64271,
+        "t1Ms": 64451,
+        "text": "Like",
+        "conf": 0.739
+      },
+      {
+        "t0Ms": 64552,
+        "t1Ms": 65133,
+        "text": "something",
+        "conf": 0.89
+      },
+      {
+        "t0Ms": 65234,
+        "t1Ms": 65675,
+        "text": "learned,",
+        "conf": 0.612
+      },
+      {
+        "t0Ms": 65695,
+        "t1Ms": 65775,
+        "text": "the",
+        "conf": 0.777
+      },
+      {
+        "t0Ms": 65856,
+        "t1Ms": 66257,
+        "text": "wrong",
+        "conf": 0.865
+      },
+      {
+        "t0Ms": 66317,
+        "t1Ms": 66959,
+        "text": "lesson",
+        "conf": 0.885
+      },
+      {
+        "t0Ms": 67119,
+        "t1Ms": 67240,
+        "text": "And",
+        "conf": 0.806
+      },
+      {
+        "t0Ms": 67320,
+        "t1Ms": 68102,
+        "text": "refuses",
+        "conf": 0.854
+      },
+      {
+        "t0Ms": 68183,
+        "t1Ms": 68443,
+        "text": "to",
+        "conf": 0.963
+      },
+      {
+        "t0Ms": 68483,
+        "t1Ms": 69306,
+        "text": "unlearn",
+        "conf": 0.619
+      },
+      {
+        "t0Ms": 69346,
+        "t1Ms": 69426,
+        "text": "the",
+        "conf": 0.968
+      },
+      {
+        "t0Ms": 69486,
+        "t1Ms": 70369,
+        "text": "day",
+        "conf": 0.791
+      },
+      {
+        "t0Ms": 87815,
+        "t1Ms": 88016,
+        "text": "But",
+        "conf": 0.265
+      },
+      {
+        "t0Ms": 88036,
+        "t1Ms": 88317,
+        "text": "it's",
+        "conf": 0.576
+      },
+      {
+        "t0Ms": 88337,
+        "t1Ms": 88598,
+        "text": "always",
+        "conf": 0.477
+      },
+      {
+        "t0Ms": 88619,
+        "t1Ms": 89020,
+        "text": "wanting",
+        "conf": 0.516
+      },
+      {
+        "t0Ms": 89081,
+        "t1Ms": 89302,
+        "text": "to",
+        "conf": 0.776
+      },
+      {
+        "t0Ms": 89362,
+        "t1Ms": 89884,
+        "text": "correct",
+        "conf": 0.924
+      },
+      {
+        "t0Ms": 89964,
+        "t1Ms": 90045,
+        "text": "it",
+        "conf": 0.936
+      },
+      {
+        "t0Ms": 90627,
+        "t1Ms": 90828,
+        "text": "Let",
+        "conf": 0.896
+      },
+      {
+        "t0Ms": 90888,
+        "t1Ms": 90969,
+        "text": "the",
+        "conf": 0.913
+      },
+      {
+        "t0Ms": 91069,
+        "t1Ms": 91411,
+        "text": "fault",
+        "conf": 0.847
+      },
+      {
+        "t0Ms": 91431,
+        "t1Ms": 91833,
+        "text": "define",
+        "conf": 0.735
+      },
+      {
+        "t0Ms": 91893,
+        "t1Ms": 91973,
+        "text": "the",
+        "conf": 0.965
+      },
+      {
+        "t0Ms": 92054,
+        "t1Ms": 92435,
+        "text": "frame",
+        "conf": 0.84
+      },
+      {
+        "t0Ms": 93359,
+        "t1Ms": 93440,
+        "text": "If",
+        "conf": 0.978
+      },
+      {
+        "t0Ms": 93540,
+        "t1Ms": 93600,
+        "text": "it",
+        "conf": 0.99
+      },
+      {
+        "t0Ms": 93681,
+        "t1Ms": 93982,
+        "text": "runs,",
+        "conf": 0.916
+      },
+      {
+        "t0Ms": 94042,
+        "t1Ms": 94103,
+        "text": "it",
+        "conf": 0.984
+      },
+      {
+        "t0Ms": 94163,
+        "t1Ms": 94444,
+        "text": "runs",
+        "conf": 0.867
+      },
+      {
+        "t0Ms": 94544,
+        "t1Ms": 95348,
+        "text": "imperfect",
+        "conf": 0.977
+      },
+      {
+        "t0Ms": 95529,
+        "t1Ms": 95750,
+        "text": "But",
+        "conf": 0.944
+      },
+      {
+        "t0Ms": 95810,
+        "t1Ms": 95890,
+        "text": "it",
+        "conf": 0.671
+      },
+      {
+        "t0Ms": 96031,
+        "t1Ms": 96513,
+        "text": "runs",
+        "conf": 0.826
+      },
+      {
+        "t0Ms": 96654,
+        "t1Ms": 96935,
+        "text": "the",
+        "conf": 0.787
+      },
+      {
+        "t0Ms": 97076,
+        "t1Ms": 97437,
+        "text": "same",
+        "conf": 0.872
+      }
+    ]
+  },
+  "import": {
+    "firstImportedAt": "2026-02-22T08:29:52.816Z",
+    "lastImportedAt": "2026-02-22T08:29:52.816Z",
+    "inputHashes": {
+      "Offset That Wouldn’t Clear Stems.txt": "5420e3fbd06ab3b96d0726397ddef571fc0bae2d7872999d2bff455dbeeb2cca",
+      "Offset That Wouldn’t Clear Stems.zip": "8f55cd7dad9e66db4c29999ae0b31eec96d5b6fa8d5c9cd5adf19b45ae3c2cc1"
+    },
+    "hashSource": "assets/offset-that-wouldn-t-clear/01KJ27G9SJ4MAXYFY2X2/instrumental.wav",
+    "hashSourceSha256": "c07ce0ad8d95d0b37baaec7a69d2f6969ea5ed11739345a4064b8fa1c51c0d0b",
+    "sourceGroupKey": "loose:offset-that-wouldn-t-clear",
+    "archivedTo": "D:/seva/FOMO/Songs/the-refresh/refreshing-music/inbox/_done/2026-02-22/loose/offset-that-wouldn-t-clear/consumed.json"
+  },
+  "assetPaths": {
+    "mix": "assets/offset-that-wouldn-t-clear/01KJ27G9SJ4MAXYFY2X2/mix.mp3",
+    "mixWav": "",
+    "stemsZip": "assets/offset-that-wouldn-t-clear/01KJ27G9SJ4MAXYFY2X2/stems.zip",
+    "instrumental": "assets/offset-that-wouldn-t-clear/01KJ27G9SJ4MAXYFY2X2/instrumental.mp3",
+    "instrumentalWav": "assets/offset-that-wouldn-t-clear/01KJ27G9SJ4MAXYFY2X2/instrumental.wav",
+    "vocals": "assets/offset-that-wouldn-t-clear/01KJ27G9SJ4MAXYFY2X2/vocals.mp3",
+    "vocalsWav": "assets/offset-that-wouldn-t-clear/01KJ27G9SJ4MAXYFY2X2/vocals.wav",
+    "composer": "assets/offset-that-wouldn-t-clear/01KJ27G9SJ4MAXYFY2X2/composer.txt"
+  }
+}

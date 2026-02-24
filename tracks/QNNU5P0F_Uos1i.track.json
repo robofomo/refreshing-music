@@ -493,6 +493,9 @@
     "instrumentalWav": "",
     "vocals": "",
     "vocalsWav": "",
-    "composer": "assets/channels-of-light/QNNU5P0F_Uos1i/composer.txt"
-  }
+    "composer": "assets/channels-of-light/QNNU5P0F_Uos1i/composer.txt",
+    "effective": "assets/channels-of-light/QNNU5P0F_Uos1i/effective.json"
+  },
+  "hasUserHints": false,
+  "lastHintAt": ""
 }

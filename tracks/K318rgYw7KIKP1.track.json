@@ -315,6 +315,9 @@
     "instrumentalWav": "",
     "vocals": "",
     "vocalsWav": "",
-    "composer": "assets/loop-with-a-smile/K318rgYw7KIKP1/composer.txt"
-  }
+    "composer": "assets/loop-with-a-smile/K318rgYw7KIKP1/composer.txt",
+    "effective": "assets/loop-with-a-smile/K318rgYw7KIKP1/effective.json"
+  },
+  "hasUserHints": false,
+  "lastHintAt": ""
 }

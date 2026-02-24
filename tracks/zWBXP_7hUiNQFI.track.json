@@ -394,6 +394,9 @@
     "instrumentalWav": "",
     "vocals": "",
     "vocalsWav": "",
-    "composer": "assets/checksum-in-the-middle/zWBXP_7hUiNQFI/composer.txt"
-  }
+    "composer": "assets/checksum-in-the-middle/zWBXP_7hUiNQFI/composer.txt",
+    "effective": "assets/checksum-in-the-middle/zWBXP_7hUiNQFI/effective.json"
+  },
+  "hasUserHints": true,
+  "lastHintAt": "2026-02-24T06:56:57.631Z"
 }

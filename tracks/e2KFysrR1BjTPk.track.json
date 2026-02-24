@@ -1021,6 +1021,9 @@
     "instrumentalWav": "",
     "vocals": "",
     "vocalsWav": "",
-    "composer": "assets/salt-on-the-northern-wind/e2KFysrR1BjTPk/composer.txt"
-  }
+    "composer": "assets/salt-on-the-northern-wind/e2KFysrR1BjTPk/composer.txt",
+    "effective": "assets/salt-on-the-northern-wind/e2KFysrR1BjTPk/effective.json"
+  },
+  "hasUserHints": false,
+  "lastHintAt": ""
 }

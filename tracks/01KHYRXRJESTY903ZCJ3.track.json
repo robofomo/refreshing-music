@@ -1894,6 +1894,9 @@
     "instrumentalWav": "",
     "vocals": "assets/lanterns-on-the-refresh-line/01KHYRXRJESTY903ZCJ3/vocals.mp3",
     "vocalsWav": "",
-    "composer": "assets/lanterns-on-the-refresh-line/01KHYRXRJESTY903ZCJ3/composer.txt"
-  }
+    "composer": "assets/lanterns-on-the-refresh-line/01KHYRXRJESTY903ZCJ3/composer.txt",
+    "effective": "assets/lanterns-on-the-refresh-line/01KHYRXRJESTY903ZCJ3/effective.json"
+  },
+  "hasUserHints": false,
+  "lastHintAt": ""
 }

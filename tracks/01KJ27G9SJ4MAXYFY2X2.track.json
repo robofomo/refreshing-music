@@ -1128,6 +1128,9 @@
     "instrumentalWav": "assets/offset-that-wouldn-t-clear/01KJ27G9SJ4MAXYFY2X2/instrumental.wav",
     "vocals": "assets/offset-that-wouldn-t-clear/01KJ27G9SJ4MAXYFY2X2/vocals.mp3",
     "vocalsWav": "assets/offset-that-wouldn-t-clear/01KJ27G9SJ4MAXYFY2X2/vocals.wav",
-    "composer": "assets/offset-that-wouldn-t-clear/01KJ27G9SJ4MAXYFY2X2/composer.txt"
-  }
+    "composer": "assets/offset-that-wouldn-t-clear/01KJ27G9SJ4MAXYFY2X2/composer.txt",
+    "effective": "assets/offset-that-wouldn-t-clear/01KJ27G9SJ4MAXYFY2X2/effective.json"
+  },
+  "hasUserHints": false,
+  "lastHintAt": ""
 }

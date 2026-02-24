@@ -335,6 +335,9 @@
     "instrumentalWav": "",
     "vocals": "",
     "vocalsWav": "",
-    "composer": "assets/pressure-systems-drifting-east/5BRc7B-kKG8eF9/composer.txt"
-  }
+    "composer": "assets/pressure-systems-drifting-east/5BRc7B-kKG8eF9/composer.txt",
+    "effective": "assets/pressure-systems-drifting-east/5BRc7B-kKG8eF9/effective.json"
+  },
+  "hasUserHints": false,
+  "lastHintAt": ""
 }

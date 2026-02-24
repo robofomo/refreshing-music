@@ -300,6 +300,9 @@
     "instrumentalWav": "",
     "vocals": "",
     "vocalsWav": "",
-    "composer": "assets/clock-drift-over-static-fields/sFpA3Hngbfsv6p/composer.txt"
-  }
+    "composer": "assets/clock-drift-over-static-fields/sFpA3Hngbfsv6p/composer.txt",
+    "effective": "assets/clock-drift-over-static-fields/sFpA3Hngbfsv6p/effective.json"
+  },
+  "hasUserHints": false,
+  "lastHintAt": ""
 }

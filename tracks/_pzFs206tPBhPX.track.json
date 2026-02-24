@@ -2289,6 +2289,9 @@
     "instrumentalWav": "",
     "vocals": "assets/static-in-the-ultraviolet/_pzFs206tPBhPX/vocals.mp3",
     "vocalsWav": "",
-    "composer": "assets/static-in-the-ultraviolet/_pzFs206tPBhPX/composer.txt"
-  }
+    "composer": "assets/static-in-the-ultraviolet/_pzFs206tPBhPX/composer.txt",
+    "effective": "assets/static-in-the-ultraviolet/_pzFs206tPBhPX/effective.json"
+  },
+  "hasUserHints": false,
+  "lastHintAt": ""
 }

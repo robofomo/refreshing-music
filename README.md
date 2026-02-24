@@ -127,3 +127,22 @@ Optional filters:
 Per-track failures do not abort the whole run; errors are written to:
 - `assets/<workId>/<trackId>/ai-preprocess.log.json`
 
+## Hint Events + Effective State
+Authoring mode supports lightweight beat/downbeat hint events from the dev viewer.
+
+- Local-only track files:
+  - `assets/<workId>/<trackId>/events.jsonl` (append-only hint events)
+  - `assets/<workId>/<trackId>/effective.json` (reduced effective timing/overlay state)
+- Dev viewer hint hotkeys:
+  - `d`: downbeat hint at current playhead
+  - `b`: beat hint at current playhead
+  - `1`/`2`/`3`/`4`: bar-beat hint (`beatInBar`)
+- Authoring persistence:
+  - Hints are written via local dev API and reduced with debounce.
+  - Reducer also runs after `beats` / `whisperx` updates.
+- Release mode:
+  - Viewer is read-only for hints (no event writes).
+  - Use deterministic reducer before release:
+    - `npm run reduce:effective`
+    - `npm run build:release`
+

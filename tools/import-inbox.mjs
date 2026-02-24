@@ -1006,6 +1006,9 @@ async function main() {
       track.assetPaths = {
         mix: toRepoRel(repoRoot, mixPath),
         stemsZip: fs.existsSync(stemsZipPath) ? toRepoRel(repoRoot, stemsZipPath) : "",
+        effective: fs.existsSync(path.join(assetDir, "effective.json"))
+          ? toRepoRel(repoRoot, path.join(assetDir, "effective.json"))
+          : "",
         mixWav: fs.existsSync(path.join(assetDir, "mix.wav"))
           ? toRepoRel(repoRoot, path.join(assetDir, "mix.wav"))
           : "",

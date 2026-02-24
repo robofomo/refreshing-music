@@ -8,6 +8,7 @@ import {
   updateTrackLog,
   writeJson
 } from "./preprocess-ai-lib.mjs";
+import { reduceTrackToEffective } from "./effective-state.mjs";
 
 function runPythonBeat(audioPath) {
   const py = process.env.PYTHON || "python";
@@ -81,6 +82,21 @@ function main() {
           audioPath
         }
       });
+      try {
+        reduceTrackToEffective({
+          repoRoot: path.resolve("."),
+          trackId: t.trackId,
+          workId: t.workId,
+          assetDir: t.assetDir
+        });
+      } catch (err) {
+        updateTrackLog(t.assetDir, {
+          effective: {
+            status: "error",
+            error: err instanceof Error ? err.message : String(err)
+          }
+        });
+      }
     } catch (err) {
       failed += 1;
       console.log(`beats [${idx}/${tracks.length}] error ${t.trackId}`);

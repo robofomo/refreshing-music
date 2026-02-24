@@ -9,6 +9,7 @@ import {
   updateTrackLog,
   writeJson
 } from "./preprocess-ai-lib.mjs";
+import { reduceTrackToEffective } from "./effective-state.mjs";
 
 function hasLyricalContent(composerPath) {
   if (!composerPath || !fs.existsSync(composerPath)) return false;
@@ -169,6 +170,21 @@ function main() {
           model
         }
       });
+      try {
+        reduceTrackToEffective({
+          repoRoot: path.resolve("."),
+          trackId: t.trackId,
+          workId: t.workId,
+          assetDir: t.assetDir
+        });
+      } catch (err) {
+        updateTrackLog(t.assetDir, {
+          effective: {
+            status: "error",
+            error: err instanceof Error ? err.message : String(err)
+          }
+        });
+      }
     } catch (err) {
       failed += 1;
       updateTrackLog(t.assetDir, {

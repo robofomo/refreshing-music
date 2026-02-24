@@ -84,6 +84,11 @@ function main() {
   if (rebuild.status !== 0) {
     process.exit(rebuild.status || 1);
   }
+
+  const reduce = runNode("tools/reduce-effective-all.mjs", ["--trackId", trackIdCsv], { stdio: "inherit" });
+  if (reduce.status !== 0) {
+    process.exit(reduce.status || 1);
+  }
 }
 
 main();

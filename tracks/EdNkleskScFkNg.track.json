@@ -109,6 +109,9 @@
     "instrumentalWav": "",
     "vocals": "",
     "vocalsWav": "",
-    "composer": "assets/two-tones-one-reset/EdNkleskScFkNg/composer.txt"
-  }
+    "composer": "assets/two-tones-one-reset/EdNkleskScFkNg/composer.txt",
+    "effective": "assets/two-tones-one-reset/EdNkleskScFkNg/effective.json"
+  },
+  "hasUserHints": false,
+  "lastHintAt": ""
 }

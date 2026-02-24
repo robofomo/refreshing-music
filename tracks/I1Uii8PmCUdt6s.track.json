@@ -199,6 +199,9 @@
     "instrumentalWav": "",
     "vocals": "",
     "vocalsWav": "",
-    "composer": "assets/lime-dust-on-neon-concrete/I1Uii8PmCUdt6s/composer.txt"
-  }
+    "composer": "assets/lime-dust-on-neon-concrete/I1Uii8PmCUdt6s/composer.txt",
+    "effective": "assets/lime-dust-on-neon-concrete/I1Uii8PmCUdt6s/effective.json"
+  },
+  "hasUserHints": false,
+  "lastHintAt": ""
 }

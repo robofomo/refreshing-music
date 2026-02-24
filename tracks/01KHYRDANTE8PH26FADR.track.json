@@ -559,6 +559,9 @@
     "instrumentalWav": "",
     "vocals": "",
     "vocalsWav": "",
-    "composer": "assets/static-turns-to-dawn/01KHYRDANTE8PH26FADR/composer.txt"
-  }
+    "composer": "assets/static-turns-to-dawn/01KHYRDANTE8PH26FADR/composer.txt",
+    "effective": "assets/static-turns-to-dawn/01KHYRDANTE8PH26FADR/effective.json"
+  },
+  "hasUserHints": false,
+  "lastHintAt": ""
 }

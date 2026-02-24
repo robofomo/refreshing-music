@@ -1575,6 +1575,9 @@
     "instrumentalWav": "assets/consensus-of-ash/01KJ25PGKKP7KXH8R6PD/instrumental.wav",
     "vocals": "assets/consensus-of-ash/01KJ25PGKKP7KXH8R6PD/vocals.mp3",
     "vocalsWav": "assets/consensus-of-ash/01KJ25PGKKP7KXH8R6PD/vocals.wav",
-    "composer": "assets/consensus-of-ash/01KJ25PGKKP7KXH8R6PD/composer.txt"
-  }
+    "composer": "assets/consensus-of-ash/01KJ25PGKKP7KXH8R6PD/composer.txt",
+    "effective": "assets/consensus-of-ash/01KJ25PGKKP7KXH8R6PD/effective.json"
+  },
+  "hasUserHints": false,
+  "lastHintAt": ""
 }

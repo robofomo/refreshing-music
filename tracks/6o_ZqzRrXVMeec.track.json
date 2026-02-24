@@ -301,6 +301,9 @@
     "instrumentalWav": "",
     "vocals": "",
     "vocalsWav": "",
-    "composer": "assets/off-by-one-still-true/6o_ZqzRrXVMeec/composer.txt"
-  }
+    "composer": "assets/off-by-one-still-true/6o_ZqzRrXVMeec/composer.txt",
+    "effective": "assets/off-by-one-still-true/6o_ZqzRrXVMeec/effective.json"
+  },
+  "hasUserHints": false,
+  "lastHintAt": ""
 }

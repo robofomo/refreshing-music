@@ -2,12 +2,28 @@ import "./style.css";
 import { createEngine, hashStringToSeed } from "../../../packages/engine/src/index";
 import { classifySection } from "../../../packages/engine/src/sections";
 
+declare const __AUTHORING_MODE__: boolean;
+declare const __RELEASE_MODE__: boolean;
+
 type TimingSection = { id?: string; t0Ms?: number; t1Ms?: number };
 type TimingLyric = { i?: number; t0Ms?: number; t1Ms?: number };
 type TimingWord = { i?: number; t0Ms?: number; t1Ms?: number; text?: string; conf?: number };
+type HintOverlay = {
+  type: "hint/downbeat" | "hint/beat" | "hint/barBeat";
+  tSec: number;
+  payload?: { beatInBar?: number };
+  at?: string;
+  actor?: string;
+};
+type EffectiveState = {
+  effective?: { beatsMs?: number[]; downbeatTimesMs?: number[] };
+  hints?: { eventsCount?: number };
+  overlays?: HintOverlay[];
+};
 type Track = {
   title: string;
   trackId: string;
+  workId?: string;
   slug: string;
   audio: { path: string; filename?: string };
   assetPaths?: {
@@ -18,6 +34,7 @@ type Track = {
     instrumentalWav?: string;
     vocals?: string;
     vocalsWav?: string;
+    effective?: string;
     composer?: string;
   };
   sections?: Array<{ id: string; labelRaw?: string }>;
@@ -78,6 +95,14 @@ let trackUrl = "";
 let lyricsLines: string[] = [];
 let pulseBeatTimesMs: number[] = [];
 let pulseDownbeatTimesMs: number[] = [];
+let hintOverlays: HintOverlay[] = [];
+let activeHintCount = 0;
+let hintPersistTimer = 0;
+const pendingHintEvents: Array<{
+  type: "hint/downbeat" | "hint/beat" | "hint/barBeat";
+  tSec: number;
+  payload?: { beatInBar?: number };
+}> = [];
 
 let seed = 1;
 const DEFAULT_RENDER_OFFSET_MS = -240;
@@ -338,6 +363,101 @@ function resolveTrackAssetUrl(candidate: string, baseTrackUrl: string) {
   return new URL(raw, baseTrackUrl).toString();
 }
 
+function resolveAssetDirUrl(nextTrack: Track, baseTrackUrl: string) {
+  const rel = String(nextTrack.assetDir || "").trim();
+  if (rel) return resolveTrackAssetUrl(rel, baseTrackUrl).replace(/\/+$/, "");
+  const mixish = nextTrack.assetPaths?.mix || nextTrack.audio?.path || "";
+  return resolveTrackAssetUrl(String(mixish).replace(/[^/\\]+$/, ""), baseTrackUrl).replace(/\/+$/, "");
+}
+
+function mergeHintOverlays(overlays: HintOverlay[]) {
+  hintOverlays = overlays
+    .filter((x) => Number.isFinite(Number(x?.tSec)) && Number(x.tSec) >= 0)
+    .map((x) => ({
+      type: x.type,
+      tSec: Number(x.tSec),
+      payload: x.payload && typeof x.payload === "object" ? x.payload : undefined,
+      at: x.at,
+      actor: x.actor
+    }))
+    .sort((a, b) => a.tSec - b.tSec);
+  activeHintCount = hintOverlays.length;
+}
+
+function applyHintEventOptimistic(event: { type: "hint/downbeat" | "hint/beat" | "hint/barBeat"; tSec: number; payload?: { beatInBar?: number } }) {
+  const tMs = Math.max(0, Math.round(event.tSec * 1000));
+  if (event.type === "hint/beat" || event.type === "hint/barBeat") {
+    pulseBeatTimesMs = normalizeMsList([...pulseBeatTimesMs, tMs]);
+  }
+  if (event.type === "hint/downbeat" || (event.type === "hint/barBeat" && Number(event.payload?.beatInBar) === 1)) {
+    pulseDownbeatTimesMs = normalizeMsList([...pulseDownbeatTimesMs, tMs]);
+  }
+  hintOverlays.push({ type: event.type, tSec: event.tSec, payload: event.payload, actor: "user", at: new Date().toISOString() });
+  hintOverlays.sort((a, b) => a.tSec - b.tSec);
+  activeHintCount = hintOverlays.length;
+}
+
+async function postAuthoringHintEvents(events: Array<{ type: "hint/downbeat" | "hint/beat" | "hint/barBeat"; tSec: number; payload?: { beatInBar?: number } }>) {
+  if (!events.length || !track?.trackId || !track?.workId) return;
+  const activeTrackId = track.trackId;
+  const activeWorkId = track.workId;
+  for (const ev of events) {
+    await fetch("/authoring/events", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({
+        actor: "user",
+        type: ev.type,
+        trackId: track.trackId,
+        workId: track.workId,
+        tSec: ev.tSec,
+        payload: ev.payload || {}
+      })
+    }).catch(() => undefined);
+  }
+  await fetch("/authoring/reduce", {
+    method: "POST",
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify({ trackId: activeTrackId, workId: activeWorkId })
+  }).catch(() => undefined);
+  if (track?.trackId === activeTrackId && track?.workId === activeWorkId) {
+    await loadEffectiveGuidance(track, trackUrl);
+  }
+}
+
+function queueHintEvent(event: { type: "hint/downbeat" | "hint/beat" | "hint/barBeat"; tSec: number; payload?: { beatInBar?: number } }) {
+  if (!__AUTHORING_MODE__) return;
+  pendingHintEvents.push(event);
+  if (hintPersistTimer) window.clearTimeout(hintPersistTimer);
+  hintPersistTimer = window.setTimeout(() => {
+    const batch = pendingHintEvents.splice(0, pendingHintEvents.length);
+    void postAuthoringHintEvents(batch);
+  }, 320);
+}
+
+function currentHintCaptureSec() {
+  const base = Number(audio.currentTime) || 0;
+  const shifted = base + renderOffsetMs / 1000;
+  return Math.max(0, shifted);
+}
+
+async function clearHintEventsForCurrentTrack() {
+  if (!__AUTHORING_MODE__ || !track?.trackId || !track?.workId) return;
+  pendingHintEvents.splice(0, pendingHintEvents.length);
+  if (hintPersistTimer) {
+    window.clearTimeout(hintPersistTimer);
+    hintPersistTimer = 0;
+  }
+  hintOverlays = [];
+  activeHintCount = 0;
+  await fetch("/authoring/events/clear", {
+    method: "POST",
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify({ trackId: track.trackId, workId: track.workId })
+  }).catch(() => undefined);
+  if (track) await loadEffectiveGuidance(track, trackUrl);
+}
+
 function dirnamePosix(p: string) {
   const s = String(p || "").replace(/\\/g, "/");
   const i = s.lastIndexOf("/");
@@ -395,31 +515,70 @@ function normalizeMsList(value: unknown) {
     .map((n) => Math.max(0, Math.round(n)));
 }
 
-async function loadBeatGuidance(nextTrack: Track, baseTrackUrl: string) {
+async function loadEffectiveGuidance(nextTrack: Track, baseTrackUrl: string) {
   const trackBeats = normalizeMsList(nextTrack?.timing?.beatsMs);
-  const trackDownbeats = normalizeMsList(nextTrack?.timing?.downbeatTimesMs);
   pulseBeatTimesMs = trackBeats;
-  pulseDownbeatTimesMs = trackDownbeats;
+  pulseDownbeatTimesMs = [];
+  hintOverlays = [];
+  activeHintCount = 0;
 
-  const samplePath =
-    nextTrack.assetPaths?.instrumental ||
-    nextTrack.assetPaths?.mix ||
-    nextTrack.audio?.path ||
-    "";
-  if (!samplePath) return;
+  const assetDirUrl = resolveAssetDirUrl(nextTrack, baseTrackUrl);
+  if (!assetDirUrl) return;
 
-  const baseAssetPath = String(samplePath).replace(/[^/\\]+$/, "beats.json");
-  const beatsUrl = resolveTrackAssetUrl(baseAssetPath, baseTrackUrl);
+  const effectiveUrl = nextTrack.assetPaths?.effective
+    ? resolveTrackAssetUrl(nextTrack.assetPaths.effective, baseTrackUrl)
+    : `${assetDirUrl}/effective.json`;
   try {
-    const r = await fetch(beatsUrl);
-    if (!r.ok) return;
-    const j = await r.json();
-    const beats = normalizeMsList(j?.beatTimesMs);
-    const downbeats = normalizeMsList(j?.downbeatTimesMs);
-    if (beats.length) pulseBeatTimesMs = beats;
-    if (downbeats.length) pulseDownbeatTimesMs = downbeats;
+    const r = await fetch(effectiveUrl, { cache: "no-store" });
+    if (r.ok) {
+      const j = (await r.json()) as EffectiveState;
+      const beats = normalizeMsList(j?.effective?.beatsMs);
+      const downbeats = normalizeMsList(j?.effective?.downbeatTimesMs);
+      if (beats.length) pulseBeatTimesMs = beats;
+      if (downbeats.length) pulseDownbeatTimesMs = downbeats;
+      mergeHintOverlays(Array.isArray(j?.overlays) ? j.overlays : []);
+      activeHintCount = Number.isFinite(Number(j?.hints?.eventsCount))
+        ? Math.max(0, Math.round(Number(j?.hints?.eventsCount)))
+        : hintOverlays.length;
+      return;
+    }
   } catch {
-    // Non-fatal: pulse falls back to timing embedded in track json.
+    // Non-fatal: fall through to raw sidecars.
+  }
+
+  try {
+    const beatsResp = await fetch(`${assetDirUrl}/beats.json`, { cache: "no-store" });
+    if (beatsResp.ok) {
+      const beatsJson = await beatsResp.json();
+      const beats = normalizeMsList(beatsJson?.beatTimesMs);
+      if (beats.length) pulseBeatTimesMs = beats;
+    }
+  } catch {
+    // Keep existing track timing fallback.
+  }
+
+  if (!Array.isArray(nextTrack?.timing?.words) || nextTrack.timing.words.length === 0) {
+    try {
+      const wordsResp = await fetch(`${assetDirUrl}/words.json`, { cache: "no-store" });
+      if (wordsResp.ok) {
+        const wordsJson = await wordsResp.json();
+        const words = Array.isArray(wordsJson?.words)
+          ? wordsJson.words
+            .map((w: any) => ({
+              i: Number.isInteger(w?.i) ? w.i : undefined,
+              t0Ms: Number.isFinite(Number(w?.t0Ms)) ? Math.max(0, Math.round(Number(w?.t0Ms))) : undefined,
+              t1Ms: Number.isFinite(Number(w?.t1Ms)) ? Math.max(0, Math.round(Number(w?.t1Ms))) : undefined,
+              text: String(w?.text ?? ""),
+              conf: Number.isFinite(Number(w?.conf)) ? Number(w.conf) : undefined
+            }))
+            .filter((w: any) => Number.isFinite(w.t0Ms) && w.text)
+          : [];
+        if (!nextTrack.timing) nextTrack.timing = {};
+        if (words.length) nextTrack.timing.words = words;
+      }
+    } catch {
+      // Optional fallback only.
+    }
   }
 }
 
@@ -668,17 +827,9 @@ function nearestPulse(currentTimeMs: number, times: number[], cutoffMs: number, 
   return nearest > cutoffMs ? 0 : Math.exp(-nearest / decayMs);
 }
 
-function inferredDownbeats(beats: number[]) {
-  if (!beats.length) return [];
-  if (beats.length < 4) return [beats[0]];
-  return beats.filter((_, i) => i % 4 === 0);
-}
-
 function beatPulseInfo(currentTimeMs: number) {
   const beats = pulseBeatTimesMs;
-  const downbeats = (pulseDownbeatTimesMs?.length
-    ? pulseDownbeatTimesMs
-    : inferredDownbeats(beats)) ?? [];
+  const downbeats = pulseDownbeatTimesMs ?? [];
   return {
     beat: nearestPulse(currentTimeMs, beats, 220, 90),
     downbeat: nearestPulse(currentTimeMs, downbeats, 280, 110)
@@ -721,6 +872,32 @@ function drawBeatOrb(beat: number, downbeat: number) {
   ctx.beginPath();
   ctx.arc(x, y, radius * 1.18, 0, Math.PI * 2);
   ctx.stroke();
+  ctx.restore();
+}
+
+function drawHintOverlays() {
+  if (!hintOverlays.length) return;
+  const durationSec = Number(audio.duration);
+  if (!Number.isFinite(durationSec) || durationSec <= 0) return;
+  const y0 = canvas.height - 44;
+  const y1 = canvas.height - 8;
+  ctx.save();
+  ctx.globalAlpha = 0.9;
+  for (const h of hintOverlays) {
+    const x = Math.max(0, Math.min(canvas.width, (h.tSec / durationSec) * canvas.width));
+    let color = "#7CC8FF";
+    if (h.type === "hint/downbeat") color = "#54E38E";
+    if (h.type === "hint/barBeat") {
+      const beatInBar = Number(h?.payload?.beatInBar || 0);
+      color = beatInBar === 1 ? "#54E38E" : "#9DB3FF";
+    }
+    ctx.strokeStyle = color;
+    ctx.lineWidth = h.type === "hint/downbeat" || Number(h?.payload?.beatInBar) === 1 ? 3 : 2;
+    ctx.beginPath();
+    ctx.moveTo(x, y0);
+    ctx.lineTo(x, y1);
+    ctx.stroke();
+  }
   ctx.restore();
 }
 
@@ -792,6 +969,7 @@ function render() {
     }
   });
   drawBeatOrb(pulse.beat, pulse.downbeat);
+  drawHintOverlays();
 
 if (!isSeeking && Number.isFinite(audio.duration) && audio.duration > 0) {
   seek.value = String(
@@ -814,6 +992,7 @@ if (!isSeeking && Number.isFinite(audio.duration) && audio.duration > 0) {
     `time: ${fmtMs(tAudioMs)}`,
     `offsetMs: ${renderOffsetMs}`,
     `playback: ${playbackMode}`,
+    `hints: ${activeHintCount}`,
     `sectionId: ${sectionId || "-"}`,
     `sectionType: ${frameInfo?.sectionType ?? sectionType}`,
     `lyricIndex: ${lyricIndex}`,
@@ -821,6 +1000,9 @@ if (!isSeeking && Number.isFinite(audio.duration) && audio.duration > 0) {
     ``,
     `keys: space/k play`,
     `      left/right seek`,
+    `      d or 1 = downbeat hint`,
+    `      b/2/3/4 = beat hints`,
+    `      c clear hints`,
     `      [ ] offset`,
     `      \\ reset offset`,
     `      h/? hud`,
@@ -841,7 +1023,14 @@ async function loadTrack(nextIndex: number) {
   const resp = await fetch(trackUrl);
   if (!resp.ok) throw new Error(`Failed to load track json: ${entry}`);
   track = (await resp.json()) as Track;
-  await loadBeatGuidance(track, trackUrl);
+  await loadEffectiveGuidance(track, trackUrl);
+  if (__AUTHORING_MODE__ && track.workId && track.trackId) {
+    void fetch("/authoring/reduce", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ workId: track.workId, trackId: track.trackId })
+    }).catch(() => undefined);
+  }
   resetAmpHistory("track-load");
   logAudioState("track-loaded", { trackId });
   lyricsLines = String(track.lyrics?.rawText ?? "").split("\n");
@@ -1011,6 +1200,25 @@ window.addEventListener("keydown", async (e) => {
     if (stemsActive()) audioVocals.currentTime = audio.currentTime;
     return;
   }
+  if (!e.repeat && (e.key.toLowerCase() === "d" || e.key.toLowerCase() === "b" || ["1", "2", "3", "4"].includes(e.key))) {
+    const tSec = currentHintCaptureSec();
+    if (e.key.toLowerCase() === "d") {
+      applyHintEventOptimistic({ type: "hint/downbeat", tSec });
+      queueHintEvent({ type: "hint/downbeat", tSec });
+      return;
+    }
+    if (e.key.toLowerCase() === "b") {
+      applyHintEventOptimistic({ type: "hint/beat", tSec });
+      queueHintEvent({ type: "hint/beat", tSec });
+      return;
+    }
+    const beatInBar = Number(e.key);
+    if (Number.isInteger(beatInBar) && beatInBar >= 1 && beatInBar <= 4) {
+      applyHintEventOptimistic({ type: "hint/barBeat", tSec, payload: { beatInBar } });
+      queueHintEvent({ type: "hint/barBeat", tSec, payload: { beatInBar } });
+      return;
+    }
+  }
   if (e.key.toLowerCase() === "n" || e.key === "." || e.key === ">") {
     e.preventDefault();
     await goNextTrack();
@@ -1036,6 +1244,11 @@ window.addEventListener("keydown", async (e) => {
     e.preventDefault();
     lyricMode = lyricMode === "fixed" ? "center" : lyricMode === "center" ? "off" : "fixed";
     updateUrlParam("lyricMode", lyricMode);
+    return;
+  }
+  if (e.key.toLowerCase() === "c" && !e.repeat) {
+    e.preventDefault();
+    await clearHintEventsForCurrentTrack();
     return;
   }
   if (e.code === "BracketLeft") {

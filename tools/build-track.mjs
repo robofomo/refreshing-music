@@ -99,12 +99,13 @@ function deriveAssetPaths(repoRoot, assetDirAbs, composerPath) {
   const mix = has("mix.mp3") ? toRel(path.join(assetDirAbs, "mix.mp3")) : "";
   const mixWav = has("mix.wav") ? toRel(path.join(assetDirAbs, "mix.wav")) : "";
   const stemsZip = has("stems.zip") ? toRel(path.join(assetDirAbs, "stems.zip")) : "";
+  const effective = has("effective.json") ? toRel(path.join(assetDirAbs, "effective.json")) : "";
   const instrumental = has("instrumental.mp3") ? toRel(path.join(assetDirAbs, "instrumental.mp3")) : "";
   const instrumentalWav = has("instrumental.wav") ? toRel(path.join(assetDirAbs, "instrumental.wav")) : "";
   const vocals = has("vocals.mp3") ? toRel(path.join(assetDirAbs, "vocals.mp3")) : "";
   const vocalsWav = has("vocals.wav") ? toRel(path.join(assetDirAbs, "vocals.wav")) : "";
   const composer = composerPath && fs.existsSync(composerPath) ? toRel(composerPath) : "";
-  return { mix, mixWav, stemsZip, instrumental, instrumentalWav, vocals, vocalsWav, composer };
+  return { mix, mixWav, stemsZip, effective, instrumental, instrumentalWav, vocals, vocalsWav, composer };
 }
 
 function upsertTracksIndex(tracksDir) {

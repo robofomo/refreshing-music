@@ -2,6 +2,7 @@ import fs from "node:fs";
 import path from "node:path";
 import { defineConfig } from "vite";
 import { resolveRecipe } from "../../packages/recipes/resolveRecipe.mjs";
+import { appendEventJsonl, buildHintEvent, reduceTrackToEffective } from "../../tools/effective-state.mjs";
 
 const repoRoot = path.resolve(__dirname, "..", "..");
 const tracksRoot = path.join(repoRoot, "tracks");
@@ -52,55 +53,186 @@ function resolveStaticPath(urlPath: string, mount: string, root: string) {
   return abs;
 }
 
-export default defineConfig({
-  server: {
-    fs: {
-      allow: [repoRoot]
-    }
-  },
-  plugins: [
-    {
-      name: "repo-static-mounts",
-      configureServer(server) {
-        server.middlewares.use((req, res, next) => {
-          const fullUrl = req.url ?? "";
-          const reqPath = fullUrl.split("?")[0];
-          if (reqPath === "/recipes/resolve") {
-            const url = new URL(fullUrl, "http://localhost");
-            const albumId = url.searchParams.get("albumId") ?? "";
-            const trackOverrideId = url.searchParams.get("trackOverrideId") ?? "";
-            try {
-              const resolved = resolveRecipe({ albumId, trackOverrideId: trackOverrideId || undefined });
-              res.statusCode = 200;
-              res.setHeader("Content-Type", "application/json; charset=utf-8");
-              res.end(JSON.stringify(resolved));
-            } catch (err) {
-              res.statusCode = 400;
-              res.setHeader("Content-Type", "application/json; charset=utf-8");
-              res.end(JSON.stringify({ error: err instanceof Error ? err.message : String(err) }));
-            }
-            return;
-          }
+function sendJson(res: any, statusCode: number, payload: any) {
+  res.statusCode = statusCode;
+  res.setHeader("Content-Type", "application/json; charset=utf-8");
+  res.end(JSON.stringify(payload));
+}
 
-          const trackFile = resolveStaticPath(reqPath, "/tracks", tracksRoot);
-          if (trackFile && fs.existsSync(trackFile) && fs.statSync(trackFile).isFile()) {
-            sendFile(req, res, trackFile);
-            return;
-          }
-
-          const assetFile = resolveStaticPath(reqPath, "/assets", assetsRoot);
-          if (assetFile && fs.existsSync(assetFile) && fs.statSync(assetFile).isFile()) {
-            sendFile(req, res, assetFile);
-            return;
-          }
-          const legacyAssetFile = resolveStaticPath(reqPath, "/dev-assets", legacyAssetsRoot);
-          if (legacyAssetFile && fs.existsSync(legacyAssetFile) && fs.statSync(legacyAssetFile).isFile()) {
-            sendFile(req, res, legacyAssetFile);
-            return;
-          }
-          next();
-        });
+function readReqJson(req: any): Promise<any> {
+  return new Promise((resolve, reject) => {
+    let raw = "";
+    req.on("data", (chunk: Buffer | string) => {
+      raw += String(chunk || "");
+      if (raw.length > 1_000_000) reject(new Error("Request too large"));
+    });
+    req.on("end", () => {
+      try {
+        resolve(raw ? JSON.parse(raw) : {});
+      } catch (err) {
+        reject(err);
       }
-    }
-  ]
+    });
+    req.on("error", reject);
+  });
+}
+
+function clearEventsFile(eventsPath: string) {
+  fs.mkdirSync(path.dirname(eventsPath), { recursive: true });
+  fs.writeFileSync(eventsPath, "", "utf8");
+}
+
+export default defineConfig(({ mode }) => {
+  const authoringMode = mode !== "release";
+  const releaseMode = !authoringMode;
+  const reduceTimers = new Map<string, NodeJS.Timeout>();
+  const scheduleReduce = (trackId: string, workId: string, delayMs = 350) => {
+    const key = `${workId}/${trackId}`;
+    const prior = reduceTimers.get(key);
+    if (prior) clearTimeout(prior);
+    const timer = setTimeout(() => {
+      reduceTimers.delete(key);
+      try {
+        reduceTrackToEffective({
+          repoRoot,
+          trackId,
+          workId,
+          assetDir: path.join(assetsRoot, workId, trackId)
+        });
+      } catch (err) {
+        console.warn(`authoring reduce failed (${key}): ${err instanceof Error ? err.message : String(err)}`);
+      }
+    }, delayMs);
+    reduceTimers.set(key, timer);
+  };
+
+  return {
+    define: {
+      __AUTHORING_MODE__: JSON.stringify(authoringMode),
+      __RELEASE_MODE__: JSON.stringify(releaseMode)
+    },
+    server: {
+      fs: {
+        allow: [repoRoot]
+      }
+    },
+    plugins: [
+      {
+        name: "repo-static-mounts",
+        configureServer(server) {
+          server.middlewares.use(async (req, res, next) => {
+            const fullUrl = req.url ?? "";
+            const reqPath = fullUrl.split("?")[0];
+
+            if (authoringMode && reqPath === "/authoring/events" && req.method === "POST") {
+              try {
+                const body = await readReqJson(req);
+                const trackId = String(body?.trackId || "");
+                const workId = String(body?.workId || "");
+                if (!trackId || !workId) {
+                  sendJson(res, 400, { error: "trackId and workId are required" });
+                  return;
+                }
+                const assetDir = path.join(assetsRoot, workId, trackId);
+                if (!assetDir.startsWith(assetsRoot)) {
+                  sendJson(res, 400, { error: "Invalid asset path" });
+                  return;
+                }
+                fs.mkdirSync(assetDir, { recursive: true });
+                const event = buildHintEvent(body);
+                appendEventJsonl(path.join(assetDir, "events.jsonl"), event);
+                scheduleReduce(trackId, workId);
+                sendJson(res, 200, { ok: true, event });
+              } catch (err) {
+                sendJson(res, 400, { error: err instanceof Error ? err.message : String(err) });
+              }
+              return;
+            }
+
+            if (authoringMode && reqPath === "/authoring/reduce" && req.method === "POST") {
+              try {
+                const body = await readReqJson(req);
+                const trackId = String(body?.trackId || "");
+                const workId = String(body?.workId || "");
+                if (!trackId || !workId) {
+                  sendJson(res, 400, { error: "trackId and workId are required" });
+                  return;
+                }
+                const out = reduceTrackToEffective({
+                  repoRoot,
+                  trackId,
+                  workId,
+                  assetDir: path.join(assetsRoot, workId, trackId)
+                });
+                sendJson(res, 200, { ok: true, ...out });
+              } catch (err) {
+                sendJson(res, 400, { error: err instanceof Error ? err.message : String(err) });
+              }
+              return;
+            }
+
+            if (authoringMode && reqPath === "/authoring/events/clear" && req.method === "POST") {
+              try {
+                const body = await readReqJson(req);
+                const trackId = String(body?.trackId || "");
+                const workId = String(body?.workId || "");
+                if (!trackId || !workId) {
+                  sendJson(res, 400, { error: "trackId and workId are required" });
+                  return;
+                }
+                const assetDir = path.join(assetsRoot, workId, trackId);
+                const eventsPath = path.join(assetDir, "events.jsonl");
+                clearEventsFile(eventsPath);
+                const out = reduceTrackToEffective({
+                  repoRoot,
+                  trackId,
+                  workId,
+                  assetDir
+                });
+                sendJson(res, 200, { ok: true, ...out });
+              } catch (err) {
+                sendJson(res, 400, { error: err instanceof Error ? err.message : String(err) });
+              }
+              return;
+            }
+
+            if (reqPath === "/recipes/resolve") {
+              const url = new URL(fullUrl, "http://localhost");
+              const albumId = url.searchParams.get("albumId") ?? "";
+              const trackOverrideId = url.searchParams.get("trackOverrideId") ?? "";
+              try {
+                const resolved = resolveRecipe({ albumId, trackOverrideId: trackOverrideId || undefined });
+                res.statusCode = 200;
+                res.setHeader("Content-Type", "application/json; charset=utf-8");
+                res.end(JSON.stringify(resolved));
+              } catch (err) {
+                res.statusCode = 400;
+                res.setHeader("Content-Type", "application/json; charset=utf-8");
+                res.end(JSON.stringify({ error: err instanceof Error ? err.message : String(err) }));
+              }
+              return;
+            }
+
+            const trackFile = resolveStaticPath(reqPath, "/tracks", tracksRoot);
+            if (trackFile && fs.existsSync(trackFile) && fs.statSync(trackFile).isFile()) {
+              sendFile(req, res, trackFile);
+              return;
+            }
+
+            const assetFile = resolveStaticPath(reqPath, "/assets", assetsRoot);
+            if (assetFile && fs.existsSync(assetFile) && fs.statSync(assetFile).isFile()) {
+              sendFile(req, res, assetFile);
+              return;
+            }
+            const legacyAssetFile = resolveStaticPath(reqPath, "/dev-assets", legacyAssetsRoot);
+            if (legacyAssetFile && fs.existsSync(legacyAssetFile) && fs.statSync(legacyAssetFile).isFile()) {
+              sendFile(req, res, legacyAssetFile);
+              return;
+            }
+            next();
+          });
+        }
+      }
+    ]
+  };
 });

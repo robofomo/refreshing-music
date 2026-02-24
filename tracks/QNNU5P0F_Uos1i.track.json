@@ -484,5 +484,15 @@
       178236,
       178736
     ]
+  },
+  "assetPaths": {
+    "mix": "assets/channels-of-light/QNNU5P0F_Uos1i/mix.mp3",
+    "mixWav": "",
+    "stemsZip": "",
+    "instrumental": "",
+    "instrumentalWav": "",
+    "vocals": "",
+    "vocalsWav": "",
+    "composer": "assets/channels-of-light/QNNU5P0F_Uos1i/composer.txt"
   }
 }

@@ -306,5 +306,15 @@
       143557,
       144080
     ]
+  },
+  "assetPaths": {
+    "mix": "assets/loop-with-a-smile/K318rgYw7KIKP1/mix.mp3",
+    "mixWav": "",
+    "stemsZip": "",
+    "instrumental": "",
+    "instrumentalWav": "",
+    "vocals": "",
+    "vocalsWav": "",
+    "composer": "assets/loop-with-a-smile/K318rgYw7KIKP1/composer.txt"
   }
 }

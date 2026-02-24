@@ -292,5 +292,15 @@
       164885,
       165512
     ]
+  },
+  "assetPaths": {
+    "mix": "assets/off-by-one-still-true/6o_ZqzRrXVMeec/mix.mp3",
+    "mixWav": "",
+    "stemsZip": "",
+    "instrumental": "",
+    "instrumentalWav": "",
+    "vocals": "",
+    "vocalsWav": "",
+    "composer": "assets/off-by-one-still-true/6o_ZqzRrXVMeec/composer.txt"
   }
 }

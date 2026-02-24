@@ -2,12 +2,12 @@
   "workId": "sweat-between-the-colors",
   "trackId": "yRfijVFI9HFSZX",
   "recipeRef": {
-    "albumId": "example-theme",
+    "albumId": "colors",
     "trackOverrideId": "yRfijVFI9HFSZX"
   },
   "createdAt": "2026-02-13T01:52:23.500Z",
   "slug": "sweat-between-the-colors",
-  "title": "Sweat Between The Colors",
+  "title": "Sweat Between the Colors",
   "audio": {
     "filename": "mix.mp3",
     "path": "../assets/sweat-between-the-colors/yRfijVFI9HFSZX/mix.mp3",
@@ -16,12 +16,63 @@
     "bytes": 3939503
   },
   "composer": {
-    "rawText": "",
-    "headerMap": {}
+    "rawText": "[Title: Sweat Between the Colors]\r\n[Style: funk, clean studio recording, drum kit, bass guitar, electric guitar, clavinet, brass ensemble, synth pad, confident male vocalist]\r\n[Caption: A tight groove that smiles while it moves.]\r\n[Image: Saturated neon shapes bending into rhythm.]\r\n[Refresh Title: What the Funk]\r\n[Theme: Colors]\r\n[Gradients: 5]\r\n[Seed: 67]\r\n[Composer Version: v1.5]\r\n\r\n[Intro]\r\n[Syncopated rhythmic hook with immediate groove focus.]\r\nI step into the beat like a door swung wide,  \r\nThe night leans in with a knowing pride.  \r\n\r\n[Verse]\r\n[Conversational melody with gentle forward motion.]\r\nThe floor is warm with a polished shine,  \r\nEach moving shadow keeps perfect time.  \r\nThe bassline speaks in a rounded tone,  \r\nIt laughs out loud but it’s fully grown.  \r\n\r\n[Chorus]\r\n[Memorable melodic hook with emotional clarity.]\r\nWhat the funk, let the moment decide,  \r\nLet the colors spill, let them collide.  \r\nWhat the funk, feel the pulse align,  \r\nEvery step says this beat is mine.  \r\n\r\n[Verse]\r\n[Evolving melody that shifts subtly line by line.]\r\nA sideways glance, then a subtle grin,  \r\nThe rhythm pulls every dancer in.  \r\nNo heavy words, just space to move,  \r\nThe truth is hiding inside the groove.  \r\n\r\n[Chorus]\r\n[Broader melodic shape and confident delivery.]\r\nWhat the funk, let the moment decide,  \r\nLet the colors spill, let them collide.  \r\nWhat the funk, feel the pulse align,  \r\nEvery step says this beat is mine.  \r\n\r\n[Bridge]\r\n[A new melodic idea with contrasting shape.]\r\nWe drop it down till the room breathes slow,  \r\nThen snap it back with a brassy glow.  \r\nNo explanation, no second guess,  \r\nThe funk arrives fully self-possessed.  \r\n\r\n[Final Chorus]\r\n[Renewed melodic energy with expanded range.]\r\nWhat the funk, hear the ceiling rise,  \r\nSee reflections dance in your eyes.  \r\nWhat the funk, stay until it’s done,  \r\nWhen the night resets, we’ve just begun.  \r\n\r\n[Ending]\r\n[Melody gently resolves with clarity.]\r\nThe groove rolls on, no need to fade,  \r\nA loop of joy that we gladly made.  \r\n",
+    "headerMap": {
+      "Title": "Sweat Between the Colors",
+      "Style": "funk, clean studio recording, drum kit, bass guitar, electric guitar, clavinet, brass ensemble, synth pad, confident male vocalist",
+      "Caption": "A tight groove that smiles while it moves.",
+      "Image": "Saturated neon shapes bending into rhythm.",
+      "Refresh Title": "What the Funk",
+      "Theme": "Colors",
+      "Gradients": "5",
+      "Seed": "67",
+      "Composer Version": "v1.5"
+    }
   },
-  "sections": [],
+  "sections": [
+    {
+      "id": "intro-1",
+      "labelRaw": "Intro",
+      "notesRaw": "Syncopated rhythmic hook with immediate groove focus."
+    },
+    {
+      "id": "verse-1",
+      "labelRaw": "Verse",
+      "notesRaw": "Conversational melody with gentle forward motion."
+    },
+    {
+      "id": "chorus-1",
+      "labelRaw": "Chorus",
+      "notesRaw": "Memorable melodic hook with emotional clarity."
+    },
+    {
+      "id": "verse-2",
+      "labelRaw": "Verse",
+      "notesRaw": "Evolving melody that shifts subtly line by line."
+    },
+    {
+      "id": "chorus-2",
+      "labelRaw": "Chorus",
+      "notesRaw": "Broader melodic shape and confident delivery."
+    },
+    {
+      "id": "bridge-1",
+      "labelRaw": "Bridge",
+      "notesRaw": "A new melodic idea with contrasting shape."
+    },
+    {
+      "id": "final-chorus-1",
+      "labelRaw": "Final Chorus",
+      "notesRaw": "Renewed melodic energy with expanded range."
+    },
+    {
+      "id": "ending-1",
+      "labelRaw": "Ending",
+      "notesRaw": "Melody gently resolves with clarity."
+    }
+  ],
   "lyrics": {
-    "rawText": ""
+    "rawText": "I step into the beat like a door swung wide,  \nThe night leans in with a knowing pride.  \n\nThe floor is warm with a polished shine,  \nEach moving shadow keeps perfect time.  \nThe bassline speaks in a rounded tone,  \nIt laughs out loud but it’s fully grown.  \n\nWhat the funk, let the moment decide,  \nLet the colors spill, let them collide.  \nWhat the funk, feel the pulse align,  \nEvery step says this beat is mine.  \n\nA sideways glance, then a subtle grin,  \nThe rhythm pulls every dancer in.  \nNo heavy words, just space to move,  \nThe truth is hiding inside the groove.  \n\nWhat the funk, let the moment decide,  \nLet the colors spill, let them collide.  \nWhat the funk, feel the pulse align,  \nEvery step says this beat is mine.  \n\nWe drop it down till the room breathes slow,  \nThen snap it back with a brassy glow.  \nNo explanation, no second guess,  \nThe funk arrives fully self-possessed.  \n\nWhat the funk, hear the ceiling rise,  \nSee reflections dance in your eyes.  \nWhat the funk, stay until it’s done,  \nWhen the night resets, we’ve just begun.  \n\nThe groove rolls on, no need to fade,  \nA loop of joy that we gladly made.  \n"
   },
   "sourceGroupKey": "sweat-between-the-colors",
   "assetDir": "assets/sweat-between-the-colors/yRfijVFI9HFSZX",
@@ -371,6 +422,1293 @@
       170678,
       171061,
       171433
+    ],
+    "lyricsLines": [
+      {
+        "i": 0,
+        "t0Ms": 16568,
+        "t1Ms": 20718
+      },
+      {
+        "i": 1,
+        "t0Ms": 20919,
+        "t1Ms": 23185
+      },
+      {
+        "i": 3,
+        "t0Ms": 23225,
+        "t1Ms": 27235
+      },
+      {
+        "i": 4,
+        "t0Ms": 29441,
+        "t1Ms": 33210
+      },
+      {
+        "i": 5,
+        "t0Ms": 33190,
+        "t1Ms": 36835
+      },
+      {
+        "i": 6,
+        "t0Ms": 37496,
+        "t1Ms": 41501
+      },
+      {
+        "i": 8,
+        "t0Ms": 41521,
+        "t1Ms": 44345
+      },
+      {
+        "i": 9,
+        "t0Ms": 45066,
+        "t1Ms": 48831
+      },
+      {
+        "i": 10,
+        "t0Ms": 49432,
+        "t1Ms": 53317
+      },
+      {
+        "i": 11,
+        "t0Ms": 53337,
+        "t1Ms": 56802
+      },
+      {
+        "i": 13,
+        "t0Ms": 62030,
+        "t1Ms": 65637
+      },
+      {
+        "i": 14,
+        "t0Ms": 65897,
+        "t1Ms": 69343
+      },
+      {
+        "i": 15,
+        "t0Ms": 70446,
+        "t1Ms": 73852
+      },
+      {
+        "i": 16,
+        "t0Ms": 73972,
+        "t1Ms": 77759
+      },
+      {
+        "i": 21,
+        "t0Ms": 88338,
+        "t1Ms": 94989
+      },
+      {
+        "i": 23,
+        "t0Ms": 103022,
+        "t1Ms": 105145
+      },
+      {
+        "i": 25,
+        "t0Ms": 111338,
+        "t1Ms": 114862
+      },
+      {
+        "i": 26,
+        "t0Ms": 114882,
+        "t1Ms": 119907
+      },
+      {
+        "i": 28,
+        "t0Ms": 120548,
+        "t1Ms": 123951
+      },
+      {
+        "i": 29,
+        "t0Ms": 124332,
+        "t1Ms": 128156
+      },
+      {
+        "i": 30,
+        "t0Ms": 128837,
+        "t1Ms": 131640
+      },
+      {
+        "i": 33,
+        "t0Ms": 153998,
+        "t1Ms": 161716
+      },
+      {
+        "i": 34,
+        "t0Ms": 162358,
+        "t1Ms": 168312
+      }
+    ],
+    "words": [
+      {
+        "t0Ms": 16568,
+        "t1Ms": 17029,
+        "text": "I",
+        "conf": 0.756
+      },
+      {
+        "t0Ms": 17049,
+        "t1Ms": 17711,
+        "text": "step",
+        "conf": 0.72
+      },
+      {
+        "t0Ms": 17731,
+        "t1Ms": 18112,
+        "text": "into",
+        "conf": 0.841
+      },
+      {
+        "t0Ms": 18152,
+        "t1Ms": 18292,
+        "text": "the",
+        "conf": 0.872
+      },
+      {
+        "t0Ms": 18393,
+        "t1Ms": 18733,
+        "text": "beat",
+        "conf": 0.874
+      },
+      {
+        "t0Ms": 18894,
+        "t1Ms": 19134,
+        "text": "like",
+        "conf": 0.802
+      },
+      {
+        "t0Ms": 19215,
+        "t1Ms": 19235,
+        "text": "a",
+        "conf": 0.912
+      },
+      {
+        "t0Ms": 19375,
+        "t1Ms": 19676,
+        "text": "door",
+        "conf": 0.411
+      },
+      {
+        "t0Ms": 19696,
+        "t1Ms": 20077,
+        "text": "swung",
+        "conf": 0.775
+      },
+      {
+        "t0Ms": 20177,
+        "t1Ms": 20718,
+        "text": "wide",
+        "conf": 0.681
+      },
+      {
+        "t0Ms": 20919,
+        "t1Ms": 21039,
+        "text": "The",
+        "conf": 0.978
+      },
+      {
+        "t0Ms": 21200,
+        "t1Ms": 21541,
+        "text": "night",
+        "conf": 0.529
+      },
+      {
+        "t0Ms": 21721,
+        "t1Ms": 22182,
+        "text": "leans",
+        "conf": 0.965
+      },
+      {
+        "t0Ms": 22443,
+        "t1Ms": 22864,
+        "text": "in",
+        "conf": 0.851
+      },
+      {
+        "t0Ms": 22944,
+        "t1Ms": 23185,
+        "text": "with",
+        "conf": 0.758
+      },
+      {
+        "t0Ms": 23225,
+        "t1Ms": 23325,
+        "text": "the",
+        "conf": 0.799
+      },
+      {
+        "t0Ms": 23425,
+        "t1Ms": 24167,
+        "text": "knowing",
+        "conf": 0.872
+      },
+      {
+        "t0Ms": 24247,
+        "t1Ms": 24709,
+        "text": "pride",
+        "conf": 0.952
+      },
+      {
+        "t0Ms": 25230,
+        "t1Ms": 25290,
+        "text": "The",
+        "conf": 0.252
+      },
+      {
+        "t0Ms": 26132,
+        "t1Ms": 26273,
+        "text": "floor",
+        "conf": 0.391
+      },
+      {
+        "t0Ms": 26333,
+        "t1Ms": 26433,
+        "text": "is",
+        "conf": 0.895
+      },
+      {
+        "t0Ms": 26513,
+        "t1Ms": 26974,
+        "text": "warm",
+        "conf": 0.916
+      },
+      {
+        "t0Ms": 27054,
+        "t1Ms": 27235,
+        "text": "with",
+        "conf": 0.756
+      },
+      {
+        "t0Ms": 27456,
+        "t1Ms": 27516,
+        "text": "the",
+        "conf": 0
+      },
+      {
+        "t0Ms": 27536,
+        "t1Ms": 28197,
+        "text": "polish",
+        "conf": 0.835
+      },
+      {
+        "t0Ms": 28258,
+        "t1Ms": 28638,
+        "text": "shine",
+        "conf": 0.824
+      },
+      {
+        "t0Ms": 29441,
+        "t1Ms": 29701,
+        "text": "Each",
+        "conf": 0.691
+      },
+      {
+        "t0Ms": 29862,
+        "t1Ms": 30443,
+        "text": "moving",
+        "conf": 0.841
+      },
+      {
+        "t0Ms": 30503,
+        "t1Ms": 31185,
+        "text": "shadow",
+        "conf": 0.905
+      },
+      {
+        "t0Ms": 31245,
+        "t1Ms": 31486,
+        "text": "keeps",
+        "conf": 0.94
+      },
+      {
+        "t0Ms": 31626,
+        "t1Ms": 32268,
+        "text": "perfect",
+        "conf": 0.749
+      },
+      {
+        "t0Ms": 32368,
+        "t1Ms": 33210,
+        "text": "time",
+        "conf": 0.894
+      },
+      {
+        "t0Ms": 33190,
+        "t1Ms": 33470,
+        "text": "The",
+        "conf": 0.834
+      },
+      {
+        "t0Ms": 33591,
+        "t1Ms": 34492,
+        "text": "baseline",
+        "conf": 0.799
+      },
+      {
+        "t0Ms": 34612,
+        "t1Ms": 35093,
+        "text": "speaks",
+        "conf": 0.852
+      },
+      {
+        "t0Ms": 35273,
+        "t1Ms": 35413,
+        "text": "in",
+        "conf": 0.934
+      },
+      {
+        "t0Ms": 35513,
+        "t1Ms": 35613,
+        "text": "a",
+        "conf": 0.779
+      },
+      {
+        "t0Ms": 35633,
+        "t1Ms": 36274,
+        "text": "rounded",
+        "conf": 0.845
+      },
+      {
+        "t0Ms": 36394,
+        "t1Ms": 36835,
+        "text": "tone",
+        "conf": 0.904
+      },
+      {
+        "t0Ms": 37496,
+        "t1Ms": 37596,
+        "text": "It",
+        "conf": 0.829
+      },
+      {
+        "t0Ms": 37676,
+        "t1Ms": 38057,
+        "text": "laughs",
+        "conf": 0.834
+      },
+      {
+        "t0Ms": 38257,
+        "t1Ms": 38337,
+        "text": "out",
+        "conf": 0.55
+      },
+      {
+        "t0Ms": 38437,
+        "t1Ms": 39218,
+        "text": "loud,",
+        "conf": 0.818
+      },
+      {
+        "t0Ms": 39238,
+        "t1Ms": 39499,
+        "text": "but",
+        "conf": 0.914
+      },
+      {
+        "t0Ms": 39599,
+        "t1Ms": 39739,
+        "text": "it's",
+        "conf": 0.876
+      },
+      {
+        "t0Ms": 40079,
+        "t1Ms": 40400,
+        "text": "fully",
+        "conf": 0.648
+      },
+      {
+        "t0Ms": 40480,
+        "t1Ms": 41501,
+        "text": "grown",
+        "conf": 0.532
+      },
+      {
+        "t0Ms": 41521,
+        "t1Ms": 41601,
+        "text": "What",
+        "conf": 0.01
+      },
+      {
+        "t0Ms": 41621,
+        "t1Ms": 41682,
+        "text": "the",
+        "conf": 0.174
+      },
+      {
+        "t0Ms": 42002,
+        "t1Ms": 42322,
+        "text": "funk?",
+        "conf": 0.325
+      },
+      {
+        "t0Ms": 42342,
+        "t1Ms": 42483,
+        "text": "Let",
+        "conf": 0.606
+      },
+      {
+        "t0Ms": 42523,
+        "t1Ms": 42643,
+        "text": "the",
+        "conf": 0.821
+      },
+      {
+        "t0Ms": 42763,
+        "t1Ms": 43284,
+        "text": "moment",
+        "conf": 0.826
+      },
+      {
+        "t0Ms": 44225,
+        "t1Ms": 44345,
+        "text": "decide",
+        "conf": 0.166
+      },
+      {
+        "t0Ms": 45066,
+        "t1Ms": 45286,
+        "text": "Let",
+        "conf": 0.62
+      },
+      {
+        "t0Ms": 45847,
+        "t1Ms": 45907,
+        "text": "the",
+        "conf": 0.004
+      },
+      {
+        "t0Ms": 45927,
+        "t1Ms": 46308,
+        "text": "colors",
+        "conf": 0.419
+      },
+      {
+        "t0Ms": 46788,
+        "t1Ms": 46909,
+        "text": "spill,",
+        "conf": 0.026
+      },
+      {
+        "t0Ms": 46929,
+        "t1Ms": 47069,
+        "text": "let",
+        "conf": 0.514
+      },
+      {
+        "t0Ms": 47209,
+        "t1Ms": 47289,
+        "text": "them",
+        "conf": 0.233
+      },
+      {
+        "t0Ms": 47549,
+        "t1Ms": 48831,
+        "text": "collide",
+        "conf": 0.541
+      },
+      {
+        "t0Ms": 49432,
+        "t1Ms": 49612,
+        "text": "What",
+        "conf": 0.496
+      },
+      {
+        "t0Ms": 49672,
+        "t1Ms": 49813,
+        "text": "the",
+        "conf": 0.853
+      },
+      {
+        "t0Ms": 49893,
+        "t1Ms": 50373,
+        "text": "funk?",
+        "conf": 0.688
+      },
+      {
+        "t0Ms": 50393,
+        "t1Ms": 50674,
+        "text": "Feel",
+        "conf": 0.92
+      },
+      {
+        "t0Ms": 50714,
+        "t1Ms": 50814,
+        "text": "the",
+        "conf": 0.959
+      },
+      {
+        "t0Ms": 50914,
+        "t1Ms": 51635,
+        "text": "pulse",
+        "conf": 0.394
+      },
+      {
+        "t0Ms": 51655,
+        "t1Ms": 53317,
+        "text": "align",
+        "conf": 0.81
+      },
+      {
+        "t0Ms": 53337,
+        "t1Ms": 53618,
+        "text": "Every",
+        "conf": 0.888
+      },
+      {
+        "t0Ms": 53698,
+        "t1Ms": 54138,
+        "text": "step",
+        "conf": 0.662
+      },
+      {
+        "t0Ms": 54719,
+        "t1Ms": 54919,
+        "text": "says",
+        "conf": 0.577
+      },
+      {
+        "t0Ms": 55040,
+        "t1Ms": 55220,
+        "text": "this",
+        "conf": 0.462
+      },
+      {
+        "t0Ms": 55260,
+        "t1Ms": 55580,
+        "text": "beat",
+        "conf": 0.405
+      },
+      {
+        "t0Ms": 55600,
+        "t1Ms": 55660,
+        "text": "is",
+        "conf": 0.752
+      },
+      {
+        "t0Ms": 55761,
+        "t1Ms": 56802,
+        "text": "mine",
+        "conf": 0.476
+      },
+      {
+        "t0Ms": 62030,
+        "t1Ms": 62511,
+        "text": "A",
+        "conf": 0.848
+      },
+      {
+        "t0Ms": 62531,
+        "t1Ms": 63072,
+        "text": "sideways",
+        "conf": 0.892
+      },
+      {
+        "t0Ms": 63112,
+        "t1Ms": 63573,
+        "text": "glance,",
+        "conf": 0.907
+      },
+      {
+        "t0Ms": 63633,
+        "t1Ms": 63853,
+        "text": "then",
+        "conf": 0.912
+      },
+      {
+        "t0Ms": 63873,
+        "t1Ms": 63893,
+        "text": "a",
+        "conf": 0.975
+      },
+      {
+        "t0Ms": 64334,
+        "t1Ms": 65016,
+        "text": "subtle",
+        "conf": 0.515
+      },
+      {
+        "t0Ms": 65116,
+        "t1Ms": 65637,
+        "text": "grin",
+        "conf": 0.859
+      },
+      {
+        "t0Ms": 65897,
+        "t1Ms": 66098,
+        "text": "The",
+        "conf": 0.838
+      },
+      {
+        "t0Ms": 66178,
+        "t1Ms": 66739,
+        "text": "rhythm",
+        "conf": 0.465
+      },
+      {
+        "t0Ms": 66919,
+        "t1Ms": 67640,
+        "text": "pulls",
+        "conf": 0.716
+      },
+      {
+        "t0Ms": 67821,
+        "t1Ms": 68121,
+        "text": "every",
+        "conf": 0.912
+      },
+      {
+        "t0Ms": 68181,
+        "t1Ms": 69043,
+        "text": "dancer",
+        "conf": 0.811
+      },
+      {
+        "t0Ms": 69063,
+        "t1Ms": 69343,
+        "text": "in",
+        "conf": 0.732
+      },
+      {
+        "t0Ms": 70446,
+        "t1Ms": 70686,
+        "text": "No",
+        "conf": 0.898
+      },
+      {
+        "t0Ms": 70766,
+        "t1Ms": 71147,
+        "text": "heavy",
+        "conf": 0.902
+      },
+      {
+        "t0Ms": 71247,
+        "t1Ms": 71848,
+        "text": "words,",
+        "conf": 0.678
+      },
+      {
+        "t0Ms": 71908,
+        "t1Ms": 72109,
+        "text": "just",
+        "conf": 0.59
+      },
+      {
+        "t0Ms": 72249,
+        "t1Ms": 72870,
+        "text": "space",
+        "conf": 0.822
+      },
+      {
+        "t0Ms": 72930,
+        "t1Ms": 73050,
+        "text": "to",
+        "conf": 0.986
+      },
+      {
+        "t0Ms": 73251,
+        "t1Ms": 73852,
+        "text": "move",
+        "conf": 0.929
+      },
+      {
+        "t0Ms": 73972,
+        "t1Ms": 74132,
+        "text": "The",
+        "conf": 0.87
+      },
+      {
+        "t0Ms": 74253,
+        "t1Ms": 74673,
+        "text": "truth",
+        "conf": 0.925
+      },
+      {
+        "t0Ms": 74894,
+        "t1Ms": 75014,
+        "text": "is",
+        "conf": 0.849
+      },
+      {
+        "t0Ms": 75074,
+        "t1Ms": 75996,
+        "text": "hiding",
+        "conf": 0.822
+      },
+      {
+        "t0Ms": 76076,
+        "t1Ms": 76797,
+        "text": "inside",
+        "conf": 0.732
+      },
+      {
+        "t0Ms": 76958,
+        "t1Ms": 77058,
+        "text": "the",
+        "conf": 0.405
+      },
+      {
+        "t0Ms": 77098,
+        "t1Ms": 77759,
+        "text": "groove",
+        "conf": 0.75
+      },
+      {
+        "t0Ms": 78460,
+        "t1Ms": 78520,
+        "text": "Let",
+        "conf": 0.01
+      },
+      {
+        "t0Ms": 78540,
+        "t1Ms": 78601,
+        "text": "the",
+        "conf": 0.022
+      },
+      {
+        "t0Ms": 78621,
+        "t1Ms": 78841,
+        "text": "fun,",
+        "conf": 0.421
+      },
+      {
+        "t0Ms": 78861,
+        "t1Ms": 79102,
+        "text": "let",
+        "conf": 0.868
+      },
+      {
+        "t0Ms": 79142,
+        "t1Ms": 79242,
+        "text": "the",
+        "conf": 0.941
+      },
+      {
+        "t0Ms": 79402,
+        "t1Ms": 79963,
+        "text": "moment",
+        "conf": 0.861
+      },
+      {
+        "t0Ms": 80785,
+        "t1Ms": 80945,
+        "text": "decide",
+        "conf": 0.504
+      },
+      {
+        "t0Ms": 81746,
+        "t1Ms": 81887,
+        "text": "Let",
+        "conf": 0.507
+      },
+      {
+        "t0Ms": 81907,
+        "t1Ms": 82528,
+        "text": "the",
+        "conf": 0.307
+      },
+      {
+        "t0Ms": 82548,
+        "t1Ms": 82949,
+        "text": "colors",
+        "conf": 0.653
+      },
+      {
+        "t0Ms": 83089,
+        "t1Ms": 83490,
+        "text": "fill,",
+        "conf": 0.77
+      },
+      {
+        "t0Ms": 83570,
+        "t1Ms": 83690,
+        "text": "let",
+        "conf": 0.413
+      },
+      {
+        "t0Ms": 83730,
+        "t1Ms": 83890,
+        "text": "them",
+        "conf": 0.748
+      },
+      {
+        "t0Ms": 84191,
+        "t1Ms": 85894,
+        "text": "collide",
+        "conf": 0.709
+      },
+      {
+        "t0Ms": 88338,
+        "t1Ms": 90161,
+        "text": "Every",
+        "conf": 0.569
+      },
+      {
+        "t0Ms": 90261,
+        "t1Ms": 90622,
+        "text": "step",
+        "conf": 0.676
+      },
+      {
+        "t0Ms": 90782,
+        "t1Ms": 91503,
+        "text": "says",
+        "conf": 0.731
+      },
+      {
+        "t0Ms": 91563,
+        "t1Ms": 91784,
+        "text": "this",
+        "conf": 0.614
+      },
+      {
+        "t0Ms": 91844,
+        "t1Ms": 92124,
+        "text": "beat",
+        "conf": 0.659
+      },
+      {
+        "t0Ms": 92204,
+        "t1Ms": 92264,
+        "text": "is",
+        "conf": 0.792
+      },
+      {
+        "t0Ms": 92345,
+        "t1Ms": 94989,
+        "text": "mine",
+        "conf": 0.445
+      },
+      {
+        "t0Ms": 99096,
+        "t1Ms": 99196,
+        "text": "Are",
+        "conf": 0.491
+      },
+      {
+        "t0Ms": 99476,
+        "t1Ms": 100478,
+        "text": "you",
+        "conf": 0.544
+      },
+      {
+        "t0Ms": 100498,
+        "t1Ms": 100558,
+        "text": "out",
+        "conf": 0
+      },
+      {
+        "t0Ms": 100578,
+        "t1Ms": 100718,
+        "text": "of",
+        "conf": 0.619
+      },
+      {
+        "t0Ms": 100758,
+        "t1Ms": 101219,
+        "text": "my",
+        "conf": 0.766
+      },
+      {
+        "t0Ms": 102040,
+        "t1Ms": 102120,
+        "text": "mind",
+        "conf": 0.006
+      },
+      {
+        "t0Ms": 102141,
+        "t1Ms": 102201,
+        "text": "for",
+        "conf": 0.258
+      },
+      {
+        "t0Ms": 102521,
+        "t1Ms": 103002,
+        "text": "sure?",
+        "conf": 0.388
+      },
+      {
+        "t0Ms": 103022,
+        "t1Ms": 103242,
+        "text": "We",
+        "conf": 0.871
+      },
+      {
+        "t0Ms": 103302,
+        "t1Ms": 103543,
+        "text": "drop",
+        "conf": 0.825
+      },
+      {
+        "t0Ms": 103643,
+        "t1Ms": 103743,
+        "text": "it",
+        "conf": 0.91
+      },
+      {
+        "t0Ms": 103803,
+        "t1Ms": 104264,
+        "text": "down",
+        "conf": 0.414
+      },
+      {
+        "t0Ms": 104324,
+        "t1Ms": 104544,
+        "text": "till",
+        "conf": 0.814
+      },
+      {
+        "t0Ms": 104585,
+        "t1Ms": 104785,
+        "text": "the",
+        "conf": 0.496
+      },
+      {
+        "t0Ms": 104845,
+        "t1Ms": 105145,
+        "text": "room",
+        "conf": 0.609
+      },
+      {
+        "t0Ms": 105185,
+        "t1Ms": 105546,
+        "text": "breaks",
+        "conf": 0.692
+      },
+      {
+        "t0Ms": 105626,
+        "t1Ms": 106127,
+        "text": "low",
+        "conf": 0.718
+      },
+      {
+        "t0Ms": 111338,
+        "t1Ms": 111879,
+        "text": "No",
+        "conf": 0.852
+      },
+      {
+        "t0Ms": 112199,
+        "t1Ms": 112739,
+        "text": "explanation,",
+        "conf": 0.292
+      },
+      {
+        "t0Ms": 112760,
+        "t1Ms": 112900,
+        "text": "no",
+        "conf": 0.584
+      },
+      {
+        "t0Ms": 113140,
+        "t1Ms": 114742,
+        "text": "second",
+        "conf": 0.68
+      },
+      {
+        "t0Ms": 114762,
+        "t1Ms": 114862,
+        "text": "guess",
+        "conf": 0
+      },
+      {
+        "t0Ms": 114882,
+        "t1Ms": 114942,
+        "text": "The",
+        "conf": 0
+      },
+      {
+        "t0Ms": 114962,
+        "t1Ms": 115603,
+        "text": "funk",
+        "conf": 0.418
+      },
+      {
+        "t0Ms": 115623,
+        "t1Ms": 116363,
+        "text": "arrives",
+        "conf": 0.589
+      },
+      {
+        "t0Ms": 116604,
+        "t1Ms": 116884,
+        "text": "fully",
+        "conf": 0.601
+      },
+      {
+        "t0Ms": 116964,
+        "t1Ms": 119907,
+        "text": "self-possessed",
+        "conf": 0.531
+      },
+      {
+        "t0Ms": 120548,
+        "t1Ms": 120768,
+        "text": "What",
+        "conf": 0.855
+      },
+      {
+        "t0Ms": 120828,
+        "t1Ms": 120948,
+        "text": "the",
+        "conf": 0.989
+      },
+      {
+        "t0Ms": 121048,
+        "t1Ms": 121389,
+        "text": "funk",
+        "conf": 0.922
+      },
+      {
+        "t0Ms": 121569,
+        "t1Ms": 121809,
+        "text": "hear",
+        "conf": 0.716
+      },
+      {
+        "t0Ms": 121869,
+        "t1Ms": 121949,
+        "text": "the",
+        "conf": 0.982
+      },
+      {
+        "t0Ms": 122069,
+        "t1Ms": 122790,
+        "text": "ceiling",
+        "conf": 0.822
+      },
+      {
+        "t0Ms": 123591,
+        "t1Ms": 123951,
+        "text": "rise",
+        "conf": 0.631
+      },
+      {
+        "t0Ms": 124332,
+        "t1Ms": 124592,
+        "text": "See",
+        "conf": 0.965
+      },
+      {
+        "t0Ms": 124652,
+        "t1Ms": 125813,
+        "text": "reflections",
+        "conf": 0.824
+      },
+      {
+        "t0Ms": 125873,
+        "t1Ms": 126394,
+        "text": "dance",
+        "conf": 0.74
+      },
+      {
+        "t0Ms": 126534,
+        "t1Ms": 126634,
+        "text": "in",
+        "conf": 0.904
+      },
+      {
+        "t0Ms": 126674,
+        "t1Ms": 126874,
+        "text": "your",
+        "conf": 0.979
+      },
+      {
+        "t0Ms": 127896,
+        "t1Ms": 128156,
+        "text": "eyes",
+        "conf": 0.731
+      },
+      {
+        "t0Ms": 128837,
+        "t1Ms": 128917,
+        "text": "What",
+        "conf": 0.001
+      },
+      {
+        "t0Ms": 128937,
+        "t1Ms": 129077,
+        "text": "the",
+        "conf": 0.909
+      },
+      {
+        "t0Ms": 129177,
+        "t1Ms": 129617,
+        "text": "funk",
+        "conf": 0.82
+      },
+      {
+        "t0Ms": 129697,
+        "t1Ms": 130138,
+        "text": "stay",
+        "conf": 0.671
+      },
+      {
+        "t0Ms": 130178,
+        "t1Ms": 130618,
+        "text": "until",
+        "conf": 0.633
+      },
+      {
+        "t0Ms": 130719,
+        "t1Ms": 130839,
+        "text": "it's",
+        "conf": 0.189
+      },
+      {
+        "t0Ms": 130979,
+        "t1Ms": 131640,
+        "text": "done",
+        "conf": 0.914
+      },
+      {
+        "t0Ms": 132520,
+        "t1Ms": 132761,
+        "text": "When",
+        "conf": 0.98
+      },
+      {
+        "t0Ms": 132941,
+        "t1Ms": 133001,
+        "text": "the",
+        "conf": 0
+      },
+      {
+        "t0Ms": 133021,
+        "t1Ms": 133401,
+        "text": "night",
+        "conf": 0.719
+      },
+      {
+        "t0Ms": 133542,
+        "t1Ms": 134423,
+        "text": "resets",
+        "conf": 0.72
+      },
+      {
+        "t0Ms": 134543,
+        "t1Ms": 134943,
+        "text": "we",
+        "conf": 0.853
+      },
+      {
+        "t0Ms": 135063,
+        "t1Ms": 135444,
+        "text": "just",
+        "conf": 0.761
+      },
+      {
+        "t0Ms": 135564,
+        "t1Ms": 135844,
+        "text": "be",
+        "conf": 0.824
+      },
+      {
+        "t0Ms": 153998,
+        "t1Ms": 158288,
+        "text": "The",
+        "conf": 0.962
+      },
+      {
+        "t0Ms": 158429,
+        "t1Ms": 158910,
+        "text": "groove",
+        "conf": 0.66
+      },
+      {
+        "t0Ms": 158970,
+        "t1Ms": 159651,
+        "text": "rolls,",
+        "conf": 0.746
+      },
+      {
+        "t0Ms": 159671,
+        "t1Ms": 159852,
+        "text": "oh",
+        "conf": 0.9
+      },
+      {
+        "t0Ms": 159972,
+        "t1Ms": 160333,
+        "text": "no",
+        "conf": 0.938
+      },
+      {
+        "t0Ms": 160473,
+        "t1Ms": 160914,
+        "text": "need",
+        "conf": 0.937
+      },
+      {
+        "t0Ms": 160995,
+        "t1Ms": 161115,
+        "text": "to",
+        "conf": 0.973
+      },
+      {
+        "t0Ms": 161195,
+        "t1Ms": 161716,
+        "text": "fade",
+        "conf": 0.632
+      },
+      {
+        "t0Ms": 162358,
+        "t1Ms": 162398,
+        "text": "A",
+        "conf": 0.754
+      },
+      {
+        "t0Ms": 162498,
+        "t1Ms": 163060,
+        "text": "loop",
+        "conf": 0.893
+      },
+      {
+        "t0Ms": 163300,
+        "t1Ms": 163461,
+        "text": "of",
+        "conf": 0.858
+      },
+      {
+        "t0Ms": 163541,
+        "t1Ms": 164303,
+        "text": "joy",
+        "conf": 0.857
+      },
+      {
+        "t0Ms": 164363,
+        "t1Ms": 164643,
+        "text": "that",
+        "conf": 0.78
+      },
+      {
+        "t0Ms": 164683,
+        "t1Ms": 164864,
+        "text": "we",
+        "conf": 0.871
+      },
+      {
+        "t0Ms": 164944,
+        "t1Ms": 166267,
+        "text": "gladly",
+        "conf": 0.9
+      },
+      {
+        "t0Ms": 166428,
+        "t1Ms": 168312,
+        "text": "made",
+        "conf": 0.277
+      }
     ]
+  },
+  "assetPaths": {
+    "mix": "assets/sweat-between-the-colors/yRfijVFI9HFSZX/mix.mp3",
+    "mixWav": "",
+    "stemsZip": "",
+    "instrumental": "",
+    "instrumentalWav": "",
+    "vocals": "",
+    "vocalsWav": "",
+    "composer": "assets/sweat-between-the-colors/yRfijVFI9HFSZX/composer.txt"
   }
 }

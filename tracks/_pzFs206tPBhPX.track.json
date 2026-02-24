@@ -875,7 +875,87 @@
       {
         "i": 0,
         "t0Ms": 26221,
-        "t1Ms": 27923
+        "t1Ms": 29445
+      },
+      {
+        "i": 1,
+        "t0Ms": 31947,
+        "t1Ms": 35071
+      },
+      {
+        "i": 3,
+        "t0Ms": 35111,
+        "t1Ms": 38194
+      },
+      {
+        "i": 5,
+        "t0Ms": 41938,
+        "t1Ms": 44361
+      },
+      {
+        "i": 8,
+        "t0Ms": 48886,
+        "t1Ms": 52330
+      },
+      {
+        "i": 9,
+        "t0Ms": 54402,
+        "t1Ms": 57586
+      },
+      {
+        "i": 10,
+        "t0Ms": 59008,
+        "t1Ms": 61532
+      },
+      {
+        "i": 11,
+        "t0Ms": 61592,
+        "t1Ms": 71045
+      },
+      {
+        "i": 13,
+        "t0Ms": 149797,
+        "t1Ms": 154646
+      },
+      {
+        "i": 14,
+        "t0Ms": 155688,
+        "t1Ms": 160638
+      },
+      {
+        "i": 15,
+        "t0Ms": 161239,
+        "t1Ms": 165547
+      },
+      {
+        "i": 16,
+        "t0Ms": 166729,
+        "t1Ms": 172480
+      },
+      {
+        "i": 28,
+        "t0Ms": 216858,
+        "t1Ms": 220865
+      },
+      {
+        "i": 29,
+        "t0Ms": 220885,
+        "t1Ms": 227457
+      },
+      {
+        "i": 30,
+        "t0Ms": 228138,
+        "t1Ms": 232005
+      },
+      {
+        "i": 31,
+        "t0Ms": 233648,
+        "t1Ms": 239018
+      },
+      {
+        "i": 34,
+        "t0Ms": 269472,
+        "t1Ms": 275350
       }
     ],
     "words": [
@@ -2203,9 +2283,12 @@
   },
   "assetPaths": {
     "mix": "assets/static-in-the-ultraviolet/_pzFs206tPBhPX/mix.mp3",
+    "mixWav": "",
     "stemsZip": "assets/static-in-the-ultraviolet/_pzFs206tPBhPX/stems.zip",
     "instrumental": "assets/static-in-the-ultraviolet/_pzFs206tPBhPX/instrumental.mp3",
+    "instrumentalWav": "",
     "vocals": "assets/static-in-the-ultraviolet/_pzFs206tPBhPX/vocals.mp3",
+    "vocalsWav": "",
     "composer": "assets/static-in-the-ultraviolet/_pzFs206tPBhPX/composer.txt"
   }
 }

@@ -326,5 +326,15 @@
       158697,
       159219
     ]
+  },
+  "assetPaths": {
+    "mix": "assets/pressure-systems-drifting-east/5BRc7B-kKG8eF9/mix.mp3",
+    "mixWav": "",
+    "stemsZip": "",
+    "instrumental": "",
+    "instrumentalWav": "",
+    "vocals": "",
+    "vocalsWav": "",
+    "composer": "assets/pressure-systems-drifting-east/5BRc7B-kKG8eF9/composer.txt"
   }
 }

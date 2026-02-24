@@ -291,5 +291,15 @@
       166301,
       166940
     ]
+  },
+  "assetPaths": {
+    "mix": "assets/clock-drift-over-static-fields/sFpA3Hngbfsv6p/mix.mp3",
+    "mixWav": "",
+    "stemsZip": "",
+    "instrumental": "",
+    "instrumentalWav": "",
+    "vocals": "",
+    "vocalsWav": "",
+    "composer": "assets/clock-drift-over-static-fields/sFpA3Hngbfsv6p/composer.txt"
   }
 }

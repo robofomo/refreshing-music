@@ -1012,5 +1012,15 @@
         "t0Ms": 231008
       }
     ]
+  },
+  "assetPaths": {
+    "mix": "assets/salt-on-the-northern-wind/e2KFysrR1BjTPk/mix.mp3",
+    "mixWav": "",
+    "stemsZip": "",
+    "instrumental": "",
+    "instrumentalWav": "",
+    "vocals": "",
+    "vocalsWav": "",
+    "composer": "assets/salt-on-the-northern-wind/e2KFysrR1BjTPk/composer.txt"
   }
 }

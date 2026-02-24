@@ -184,18 +184,66 @@ function readJsonIfExists(filePath) {
 function tokenize(value) {
   return String(value ?? "")
     .toLowerCase()
+    .replace(/[’`]/g, "'")
     .replace(/[^a-z0-9']+/g, " ")
     .trim()
     .split(/\s+/)
     .filter(Boolean);
 }
 
+function normalizeToken(token) {
+  const t = String(token ?? "").toLowerCase().replace(/[’`]/g, "'").replace(/^'+|'+$/g, "");
+  if (t.length > 4 && t.endsWith("s")) return t.slice(0, -1);
+  return t;
+}
+
+function tokenSimilarity(a, b) {
+  const x = normalizeToken(a);
+  const y = normalizeToken(b);
+  if (!x || !y) return 0;
+  if (x === y) return 1;
+  if ((x.length >= 4 && y.includes(x)) || (y.length >= 4 && x.includes(y))) return 0.86;
+  if (Math.abs(x.length - y.length) <= 1) {
+    let mismatches = 0;
+    const n = Math.min(x.length, y.length);
+    for (let i = 0; i < n; i += 1) if (x[i] !== y[i]) mismatches += 1;
+    mismatches += Math.abs(x.length - y.length);
+    if (mismatches <= 1) return 0.8;
+  }
+  return 0;
+}
+
+function evaluateLineWindow(wordTokens, words, target, start, end, cursor) {
+  let ti = 0;
+  let matched = 0;
+  let strongMatches = 0;
+  let firstMatched = -1;
+  let lastMatched = -1;
+  for (let wi = start; wi <= end && ti < target.length; wi += 1) {
+    const score = tokenSimilarity(wordTokens[wi], target[ti]);
+    if (score <= 0) continue;
+    if (firstMatched === -1) firstMatched = wi;
+    lastMatched = wi;
+    matched += score;
+    if (score >= 0.95) strongMatches += 1;
+    ti += 1;
+  }
+  if (firstMatched === -1) return null;
+  const coverage = matched / Math.max(1, target.length);
+  const gapPenalty = Math.max(0, start - cursor) * 0.002;
+  const spanLen = lastMatched - firstMatched + 1;
+  const spanPenalty = Math.abs(spanLen - target.length) * 0.007;
+  const score = coverage - gapPenalty - spanPenalty;
+  return { score, coverage, strongMatches, firstMatched, lastMatched };
+}
+
 function buildLyricLinesFromWords(lyricsRawText, wordsPayload) {
   const words = Array.isArray(wordsPayload?.words) ? wordsPayload.words : [];
   if (!words.length) return [];
   const rawLines = String(lyricsRawText ?? "").split(/\r?\n/);
+  const wordTokens = words.map((w) => tokenize(w?.text).join(" "));
   const out = [];
-  let wordIdx = 0;
+  let cursor = 0;
 
   for (let i = 0; i < rawLines.length; i += 1) {
     const text = rawLines[i]?.trim() ?? "";
@@ -203,27 +251,22 @@ function buildLyricLinesFromWords(lyricsRawText, wordsPayload) {
     const target = tokenize(text);
     if (!target.length) continue;
 
-    let matched = 0;
-    let startWord = -1;
-    let endWord = -1;
-    while (wordIdx < words.length && matched < target.length) {
-      const w = words[wordIdx];
-      const token = tokenize(w?.text).join(" ");
-      if (!token) {
-        wordIdx += 1;
-        continue;
+    const lookahead = Math.min(words.length - 1, cursor + 140);
+    const baseWindow = Math.max(6, Math.min(28, target.length + 8));
+    let best = null;
+    for (let start = cursor; start <= lookahead; start += 1) {
+      const maxEnd = Math.min(words.length - 1, start + baseWindow);
+      for (let end = start; end <= maxEnd; end += 1) {
+        const candidate = evaluateLineWindow(wordTokens, words, target, start, end, cursor);
+        if (!candidate) continue;
+        if (!best || candidate.score > best.score) best = candidate;
       }
-      if (token === target[matched]) {
-        if (startWord === -1) startWord = wordIdx;
-        endWord = wordIdx;
-        matched += 1;
-      }
-      wordIdx += 1;
     }
 
-    if (startWord !== -1) {
-      const first = words[startWord];
-      const last = words[endWord];
+    const minStrong = target.length <= 3 ? 1 : 2;
+    if (best && best.coverage >= 0.58 && best.strongMatches >= minStrong) {
+      const first = words[best.firstMatched];
+      const last = words[best.lastMatched];
       const t0 = Number(first?.t0Ms);
       const t1 = Number(last?.t1Ms);
       if (Number.isFinite(t0)) {
@@ -232,6 +275,7 @@ function buildLyricLinesFromWords(lyricsRawText, wordsPayload) {
           t0Ms: Math.max(0, Math.round(t0)),
           t1Ms: Number.isFinite(t1) ? Math.max(Math.round(t0), Math.round(t1)) : Math.round(t0) + 2200
         });
+        cursor = Math.max(cursor, best.lastMatched + 1);
       }
     }
   }

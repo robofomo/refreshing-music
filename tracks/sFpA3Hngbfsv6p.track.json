@@ -303,6 +303,6 @@
     "composer": "assets/clock-drift-over-static-fields/sFpA3Hngbfsv6p/composer.txt",
     "effective": "assets/clock-drift-over-static-fields/sFpA3Hngbfsv6p/effective.json"
   },
-  "hasUserHints": false,
-  "lastHintAt": ""
+  "hasUserHints": true,
+  "lastHintAt": "2026-02-25T07:54:10.000Z"
 }

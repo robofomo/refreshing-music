@@ -16,8 +16,14 @@ type HintOverlay = {
   actor?: string;
 };
 type EffectiveState = {
-  effective?: { beatsMs?: number[]; downbeatTimesMs?: number[] };
-  hints?: { eventsCount?: number };
+  effective?: {
+    beatsMs?: number[];
+    downbeatTimesMs?: number[];
+    beatMarkers?: Array<{ tMs?: number; source?: "hint" | "inferred" | "ai" }>;
+    downbeatMarkers?: Array<{ tMs?: number; source?: "hint" | "inferred" | "ai" }>;
+    aiDownbeatMarkers?: Array<{ tMs?: number; source?: "ai" }>;
+  };
+  hints?: { eventsCount?: number; beatFusionMode?: string };
   overlays?: HintOverlay[];
 };
 type Track = {
@@ -95,14 +101,25 @@ let trackUrl = "";
 let lyricsLines: string[] = [];
 let pulseBeatTimesMs: number[] = [];
 let pulseDownbeatTimesMs: number[] = [];
+let beatMarkers: Array<{ tMs: number; source: "hint" | "inferred" | "ai" }> = [];
+let downbeatMarkers: Array<{ tMs: number; source: "hint" | "inferred" | "ai" }> = [];
+let aiDownbeatMarkers: Array<{ tMs: number; source: "ai" }> = [];
 let hintOverlays: HintOverlay[] = [];
 let activeHintCount = 0;
+let beatFusionModeLabel = "-";
+let lastSeekTargetSec = 0;
+let lastSeekActualSec = 0;
+let lastSeekErrorMs = 0;
 let hintPersistTimer = 0;
+let hintRevision = 0;
+let latestQueuedBatchRevision = 0;
+const HINT_PERSIST_DEBOUNCE_MS = 1000;
 const pendingHintEvents: Array<{
   type: "hint/downbeat" | "hint/beat" | "hint/barBeat";
   tSec: number;
-  payload?: { beatInBar?: number };
+  payload?: { beatInBar?: number; groupId?: string };
 }> = [];
+const SEEK_SCALE = 100000;
 
 let seed = 1;
 const DEFAULT_RENDER_OFFSET_MS = -240;
@@ -119,10 +136,13 @@ let seekInFlight = false;
 const ampHistory: Array<{ tMs: number; amp: number }> = [];
 let playbackMode: PlaybackMode = "mix";
 const mixerState = {
-  mix: { volume: 1, muted: false },
-  backing: { volume: 1, muted: false },
-  vocals: { volume: 1, muted: false }
+  mix: { volume: 0.85, muted: false },
+  backing: { volume: 0.85, muted: false },
+  vocals: { volume: 0.85, muted: false }
 };
+seek.min = "0";
+seek.max = String(SEEK_SCALE);
+seek.step = "1";
 
 let audioCtx: AudioContext | null = null;
 let analyser: AnalyserNode | null = null;
@@ -138,6 +158,7 @@ const CONTROLS_HIDE_MS = 5000;
 let controlsHideTimer = 0;
 let canvasClickTimer = 0;
 let stemResyncTimer = 0;
+let stemForceSyncUntilMs = 0;
 let currentRecipe: any = null;
 const engine = createEngine({
   canvas,
@@ -221,7 +242,19 @@ function syncStemTiming() {
   if (audioVocals.readyState < 2) return;
   const drift = audio.currentTime - audioVocals.currentTime;
   const absDrift = Math.abs(drift);
-  if (absDrift > 0.06) audioVocals.currentTime = audio.currentTime;
+  const now = performance.now();
+  const inForceWindow = now < stemForceSyncUntilMs;
+  const hardSnapThreshold = inForceWindow ? 0.018 : 0.06;
+  if (absDrift > hardSnapThreshold) {
+    audioVocals.currentTime = audio.currentTime;
+    audioVocals.playbackRate = 1;
+    return;
+  }
+  if (inForceWindow && absDrift > 0.004) {
+    const adjust = Math.max(-0.04, Math.min(0.04, drift * 0.65));
+    audioVocals.playbackRate = 1 + adjust;
+    return;
+  }
   audioVocals.playbackRate = 1;
 }
 
@@ -229,6 +262,7 @@ function scheduleStemResyncWindow(durationMs = 1400) {
   if (!stemsActive()) return;
   clearStemResyncTimer();
   const t0 = performance.now();
+  stemForceSyncUntilMs = t0 + durationMs;
   stemResyncTimer = window.setInterval(() => {
     if (!stemsActive() || audio.paused) {
       clearStemResyncTimer();
@@ -284,7 +318,7 @@ async function playSynced() {
     });
   }
   syncStemTiming();
-  scheduleStemResyncWindow();
+  scheduleStemResyncWindow(3500);
 }
 
 function applyMixerGains() {
@@ -384,20 +418,67 @@ function mergeHintOverlays(overlays: HintOverlay[]) {
   activeHintCount = hintOverlays.length;
 }
 
-function applyHintEventOptimistic(event: { type: "hint/downbeat" | "hint/beat" | "hint/barBeat"; tSec: number; payload?: { beatInBar?: number } }) {
+function addOrUpdateMarker(
+  markers: Array<{ tMs: number; source: "hint" | "inferred" | "ai" }>,
+  tMs: number,
+  source: "hint" | "inferred" | "ai",
+  tolMs = 90
+) {
+  const ms = Math.max(0, Math.round(Number(tMs) || 0));
+  for (let i = 0; i < markers.length; i += 1) {
+    if (Math.abs(markers[i].tMs - ms) <= tolMs) {
+      markers[i] = {
+        tMs: ms,
+        source: source === "hint" || markers[i].source === "hint" ? "hint" : markers[i].source
+      };
+      return;
+    }
+  }
+  markers.push({ tMs: ms, source });
+}
+
+function removeMarkerNear(
+  markers: Array<{ tMs: number; source: "hint" | "inferred" | "ai" }>,
+  tMs: number,
+  tolMs = 120
+) {
+  const ms = Math.max(0, Math.round(Number(tMs) || 0));
+  for (let i = markers.length - 1; i >= 0; i -= 1) {
+    if (Math.abs(markers[i].tMs - ms) <= tolMs) markers.splice(i, 1);
+  }
+}
+
+function makeHintGroupId() {
+  if (typeof crypto !== "undefined" && typeof crypto.randomUUID === "function") {
+    return crypto.randomUUID();
+  }
+  return `grp_${Date.now()}_${Math.floor(Math.random() * 1_000_000)}`;
+}
+
+function applyHintEventOptimistic(event: { type: "hint/downbeat" | "hint/beat" | "hint/barBeat"; tSec: number; payload?: { beatInBar?: number; groupId?: string } }) {
   const tMs = Math.max(0, Math.round(event.tSec * 1000));
-  if (event.type === "hint/beat" || event.type === "hint/barBeat") {
+  if (event.type === "hint/beat" || event.type === "hint/barBeat" || event.type === "hint/downbeat") {
     pulseBeatTimesMs = normalizeMsList([...pulseBeatTimesMs, tMs]);
+    addOrUpdateMarker(beatMarkers, tMs, "hint");
   }
   if (event.type === "hint/downbeat" || (event.type === "hint/barBeat" && Number(event.payload?.beatInBar) === 1)) {
     pulseDownbeatTimesMs = normalizeMsList([...pulseDownbeatTimesMs, tMs]);
+    addOrUpdateMarker(downbeatMarkers, tMs, "hint");
+  }
+  if (event.type === "hint/beat") {
+    // In authoring semantics, 'b' on a downbeat clears it.
+    removeMarkerNear(downbeatMarkers, tMs, 140);
+    pulseDownbeatTimesMs = normalizeMsList(downbeatMarkers.map((m) => m.tMs));
   }
   hintOverlays.push({ type: event.type, tSec: event.tSec, payload: event.payload, actor: "user", at: new Date().toISOString() });
   hintOverlays.sort((a, b) => a.tSec - b.tSec);
   activeHintCount = hintOverlays.length;
 }
 
-async function postAuthoringHintEvents(events: Array<{ type: "hint/downbeat" | "hint/beat" | "hint/barBeat"; tSec: number; payload?: { beatInBar?: number } }>) {
+async function postAuthoringHintEvents(
+  events: Array<{ type: "hint/downbeat" | "hint/beat" | "hint/barBeat"; tSec: number; payload?: { beatInBar?: number; groupId?: string } }>,
+  batchRevision: number
+) {
   if (!events.length || !track?.trackId || !track?.workId) return;
   const activeTrackId = track.trackId;
   const activeWorkId = track.workId;
@@ -420,19 +501,54 @@ async function postAuthoringHintEvents(events: Array<{ type: "hint/downbeat" | "
     headers: { "Content-Type": "application/json" },
     body: JSON.stringify({ trackId: activeTrackId, workId: activeWorkId })
   }).catch(() => undefined);
-  if (track?.trackId === activeTrackId && track?.workId === activeWorkId) {
+  if (
+    track?.trackId === activeTrackId &&
+    track?.workId === activeWorkId &&
+    batchRevision === latestQueuedBatchRevision
+  ) {
     await loadEffectiveGuidance(track, trackUrl);
   }
 }
 
-function queueHintEvent(event: { type: "hint/downbeat" | "hint/beat" | "hint/barBeat"; tSec: number; payload?: { beatInBar?: number } }) {
+function queueHintEvent(event: { type: "hint/downbeat" | "hint/beat" | "hint/barBeat"; tSec: number; payload?: { beatInBar?: number; groupId?: string } }) {
   if (!__AUTHORING_MODE__) return;
+  hintRevision += 1;
   pendingHintEvents.push(event);
   if (hintPersistTimer) window.clearTimeout(hintPersistTimer);
   hintPersistTimer = window.setTimeout(() => {
     const batch = pendingHintEvents.splice(0, pendingHintEvents.length);
-    void postAuthoringHintEvents(batch);
-  }, 320);
+    if (!batch.length) return;
+    const groupId = makeHintGroupId();
+    for (const item of batch) {
+      item.payload = { ...(item.payload || {}), groupId };
+    }
+    const batchRevision = hintRevision;
+    latestQueuedBatchRevision = batchRevision;
+    void postAuthoringHintEvents(batch, batchRevision);
+  }, HINT_PERSIST_DEBOUNCE_MS);
+}
+
+async function undoLastHintGroupForCurrentTrack() {
+  if (!__AUTHORING_MODE__ || !track?.trackId || !track?.workId) return;
+  if (hintPersistTimer) {
+    window.clearTimeout(hintPersistTimer);
+    hintPersistTimer = 0;
+  }
+  if (pendingHintEvents.length > 0) {
+    pendingHintEvents.splice(0, pendingHintEvents.length);
+    hintRevision += 1;
+    latestQueuedBatchRevision = hintRevision;
+    if (track) await loadEffectiveGuidance(track, trackUrl);
+    return;
+  }
+  hintRevision += 1;
+  latestQueuedBatchRevision = hintRevision;
+  await fetch("/authoring/events/undo", {
+    method: "POST",
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify({ trackId: track.trackId, workId: track.workId })
+  }).catch(() => undefined);
+  if (track) await loadEffectiveGuidance(track, trackUrl);
 }
 
 function currentHintCaptureSec() {
@@ -444,11 +560,15 @@ function currentHintCaptureSec() {
 async function clearHintEventsForCurrentTrack() {
   if (!__AUTHORING_MODE__ || !track?.trackId || !track?.workId) return;
   pendingHintEvents.splice(0, pendingHintEvents.length);
+  latestQueuedBatchRevision = hintRevision;
   if (hintPersistTimer) {
     window.clearTimeout(hintPersistTimer);
     hintPersistTimer = 0;
   }
   hintOverlays = [];
+  beatMarkers = [];
+  downbeatMarkers = [];
+  aiDownbeatMarkers = [];
   activeHintCount = 0;
   await fetch("/authoring/events/clear", {
     method: "POST",
@@ -519,8 +639,12 @@ async function loadEffectiveGuidance(nextTrack: Track, baseTrackUrl: string) {
   const trackBeats = normalizeMsList(nextTrack?.timing?.beatsMs);
   pulseBeatTimesMs = trackBeats;
   pulseDownbeatTimesMs = [];
+  beatMarkers = [];
+  downbeatMarkers = [];
+  aiDownbeatMarkers = [];
   hintOverlays = [];
   activeHintCount = 0;
+  beatFusionModeLabel = "-";
 
   const assetDirUrl = resolveAssetDirUrl(nextTrack, baseTrackUrl);
   if (!assetDirUrl) return;
@@ -536,6 +660,39 @@ async function loadEffectiveGuidance(nextTrack: Track, baseTrackUrl: string) {
       const downbeats = normalizeMsList(j?.effective?.downbeatTimesMs);
       if (beats.length) pulseBeatTimesMs = beats;
       if (downbeats.length) pulseDownbeatTimesMs = downbeats;
+      beatMarkers = Array.isArray(j?.effective?.beatMarkers)
+        ? j.effective.beatMarkers
+          .map((m) => ({
+            tMs: Math.max(0, Math.round(Number(m?.tMs))),
+            source: m?.source === "hint"
+              ? "hint" as const
+              : m?.source === "ai"
+                ? "ai" as const
+                : "inferred" as const
+          }))
+          .filter((m) => Number.isFinite(m.tMs))
+        : [];
+      downbeatMarkers = Array.isArray(j?.effective?.downbeatMarkers)
+        ? j.effective.downbeatMarkers
+          .map((m) => ({
+            tMs: Math.max(0, Math.round(Number(m?.tMs))),
+            source: m?.source === "hint"
+              ? "hint" as const
+              : m?.source === "ai"
+                ? "ai" as const
+                : "inferred" as const
+          }))
+          .filter((m) => Number.isFinite(m.tMs))
+        : [];
+      aiDownbeatMarkers = Array.isArray(j?.effective?.aiDownbeatMarkers)
+        ? j.effective.aiDownbeatMarkers
+          .map((m) => ({
+            tMs: Math.max(0, Math.round(Number(m?.tMs))),
+            source: "ai" as const
+          }))
+          .filter((m) => Number.isFinite(m.tMs))
+        : [];
+      beatFusionModeLabel = String(j?.hints?.beatFusionMode || "-");
       mergeHintOverlays(Array.isArray(j?.overlays) ? j.overlays : []);
       activeHintCount = Number.isFinite(Number(j?.hints?.eventsCount))
         ? Math.max(0, Math.round(Number(j?.hints?.eventsCount)))
@@ -665,16 +822,32 @@ async function ensureMetadataLoaded() {
 async function seekToSeconds(seconds: number) {
   await ensureMetadataLoaded();
   audio.pause();
-  if (stemsActive()) audioVocals.pause();
+  const stemsNow = stemsActive();
+  if (stemsNow) audioVocals.pause();
   const waitPrimary = once(audio, "seeked");
-  const waitVocals = stemsActive() ? once(audioVocals, "seeked") : Promise.resolve();
+  const waitVocals = stemsNow ? once(audioVocals, "seeked") : Promise.resolve();
   audio.currentTime = seconds;
-  if (stemsActive()) audioVocals.currentTime = seconds;
+  if (stemsNow) audioVocals.currentTime = seconds;
   await Promise.all([waitPrimary, waitVocals]);
-  if (stemsActive()) {
-    await Promise.all([waitForCanPlay(audio), waitForCanPlay(audioVocals)]);
+
+  // Some browsers land compressed-audio seeks slightly off target; nudge once if needed.
+  if (Math.abs((Number(audio.currentTime) || 0) - seconds) > 0.03) {
+    const waitPrimaryNudge = once(audio, "seeked");
+    audio.currentTime = seconds;
+    await waitPrimaryNudge;
+  }
+
+  if (stemsNow && Math.abs((Number(audioVocals.currentTime) || 0) - seconds) > 0.03) {
+    const waitVocalsNudge = once(audioVocals, "seeked");
+    audioVocals.currentTime = seconds;
+    await waitVocalsNudge;
+  }
+
+  await waitForCanPlay(audio);
+  if (stemsNow) {
+    await waitForCanPlay(audioVocals);
     syncStemTiming();
-    scheduleStemResyncWindow();
+    scheduleStemResyncWindow(6000);
   }
 }
 
@@ -688,7 +861,8 @@ function beginSeek() {
 }
 
 function applySeekFromSlider() {
-  pendingSeekRatio = Number(seek.value) / 1000;
+  const max = Math.max(1, Number(seek.max) || SEEK_SCALE);
+  pendingSeekRatio = Math.max(0, Math.min(1, Number(seek.value) / max));
 }
 
 async function finishSeek() {
@@ -701,8 +875,11 @@ async function finishSeek() {
   audio.pause();
   try {
     await seekToSeconds(target);
+    lastSeekTargetSec = target;
+    lastSeekActualSec = Number(audio.currentTime) || 0;
+    lastSeekErrorMs = Math.round((lastSeekActualSec - lastSeekTargetSec) * 1000);
     resetAmpHistory("seek-complete");
-    logAudioState("seek-complete", { target });
+    logAudioState("seek-complete", { target, actual: lastSeekActualSec, errorMs: lastSeekErrorMs });
 
     ensureAudioGraph();
     await resumeAudioContext();
@@ -827,9 +1004,64 @@ function nearestPulse(currentTimeMs: number, times: number[], cutoffMs: number, 
   return nearest > cutoffMs ? 0 : Math.exp(-nearest / decayMs);
 }
 
+function resolveDisplayDownbeatSourceByBeat(
+  effectiveBeats: Array<{ tMs: number; source: "hint" | "inferred" | "ai" }>,
+  effectiveDownbeats: Array<{ tMs: number; source: "hint" | "inferred" | "ai" }>,
+  aiOnlyDownbeats: Array<{ tMs: number; source: "ai" }>
+) {
+  const aiDownbeatMs = aiOnlyDownbeats.map((d) => Math.max(0, Math.round(d.tMs)));
+  const hintDownbeatMs = effectiveDownbeats
+    .filter((d) => d.source === "hint")
+    .map((d) => Math.max(0, Math.round(d.tMs)));
+  const inferredDownbeatMs = effectiveDownbeats
+    .filter((d) => d.source !== "hint")
+    .map((d) => Math.max(0, Math.round(d.tMs)));
+  const beatSteps: number[] = [];
+  for (let i = 1; i < effectiveBeats.length; i += 1) {
+    const d = Math.max(0, Math.round(effectiveBeats[i].tMs) - Math.round(effectiveBeats[i - 1].tMs));
+    if (d > 40 && d < 5000) beatSteps.push(d);
+  }
+  beatSteps.sort((a, b) => a - b);
+  const beatStepMs = beatSteps.length ? beatSteps[Math.floor(beatSteps.length / 2)] : 500;
+  const snapConflictWindowMs = Math.max(220, Math.round(beatStepMs * 1.35));
+  const hasNear = (xs: number[], target: number, tol: number) => {
+    for (const x of xs) if (Math.abs(x - target) <= tol) return true;
+    return false;
+  };
+  const sourceByMs = new Map<number, "hint" | "ai" | "inferred">();
+  for (const b of effectiveBeats) {
+    const ms = Math.max(0, Math.round(Number(b.tMs)));
+    let downbeatSource: "hint" | "ai" | "inferred" | undefined;
+    // Explicit hint beats lock intent. If user hinted this beat and it is not a hinted
+    // downbeat, do not allow AI/inferred downbeat overlays on top of it.
+    if (b.source === "hint") {
+      if (hasNear(hintDownbeatMs, ms, 90)) {
+        downbeatSource = "hint";
+      } else {
+        downbeatSource = undefined;
+      }
+    } else if (hasNear(hintDownbeatMs, ms, 90)) {
+      downbeatSource = "hint";
+    } else if (hasNear(aiDownbeatMs, ms, 90)) {
+      downbeatSource = "ai";
+    } else if (hasNear(inferredDownbeatMs, ms, 90)) {
+      downbeatSource = hasNear(aiDownbeatMs, ms, snapConflictWindowMs) ? undefined : "inferred";
+    }
+    if (downbeatSource) sourceByMs.set(ms, downbeatSource);
+  }
+  return sourceByMs;
+}
+
 function beatPulseInfo(currentTimeMs: number) {
   const beats = pulseBeatTimesMs;
-  const downbeats = pulseDownbeatTimesMs ?? [];
+  const effectiveBeats = beatMarkers.length
+    ? beatMarkers
+    : (pulseBeatTimesMs ?? []).map((tMs) => ({ tMs: Number(tMs), source: "inferred" as const }));
+  const effectiveDownbeats = downbeatMarkers.length
+    ? downbeatMarkers
+    : (pulseDownbeatTimesMs ?? []).map((tMs) => ({ tMs: Number(tMs), source: "inferred" as const }));
+  const downbeatSourceByMs = resolveDisplayDownbeatSourceByBeat(effectiveBeats, effectiveDownbeats, aiDownbeatMarkers);
+  const downbeats = Array.from(downbeatSourceByMs.keys());
   return {
     beat: nearestPulse(currentTimeMs, beats, 220, 90),
     downbeat: nearestPulse(currentTimeMs, downbeats, 280, 110)
@@ -876,28 +1108,59 @@ function drawBeatOrb(beat: number, downbeat: number) {
 }
 
 function drawHintOverlays() {
-  if (!hintOverlays.length) return;
   const durationSec = Number(audio.duration);
   if (!Number.isFinite(durationSec) || durationSec <= 0) return;
   const y0 = canvas.height - 44;
   const y1 = canvas.height - 8;
+  const effectiveBeats = beatMarkers.length
+    ? beatMarkers
+    : (pulseBeatTimesMs ?? []).map((tMs) => ({ tMs: Number(tMs), source: "inferred" as const }));
+  const effectiveDownbeats = downbeatMarkers.length
+    ? downbeatMarkers
+    : (pulseDownbeatTimesMs ?? []).map((tMs) => ({ tMs: Number(tMs), source: "inferred" as const }));
+  const downbeatSourceByMs = resolveDisplayDownbeatSourceByBeat(effectiveBeats, effectiveDownbeats, aiDownbeatMarkers);
+
   ctx.save();
-  ctx.globalAlpha = 0.9;
-  for (const h of hintOverlays) {
-    const x = Math.max(0, Math.min(canvas.width, (h.tSec / durationSec) * canvas.width));
-    let color = "#7CC8FF";
-    if (h.type === "hint/downbeat") color = "#54E38E";
-    if (h.type === "hint/barBeat") {
-      const beatInBar = Number(h?.payload?.beatInBar || 0);
-      color = beatInBar === 1 ? "#54E38E" : "#9DB3FF";
+  ctx.globalAlpha = 0.85;
+  for (const m of effectiveBeats) {
+    const ms = Math.max(0, Math.round(Number(m.tMs)));
+    const tSecRaw = Number(ms) / 1000;
+    const tSec = Math.max(0, Math.min(durationSec, tSecRaw + renderOffsetMs / 1000));
+    const x = Math.max(0, Math.min(canvas.width, (tSec / durationSec) * canvas.width));
+    const downbeatSource = downbeatSourceByMs.get(ms);
+    const isDownbeat = downbeatSource !== undefined;
+    const markerSource = downbeatSource === "hint" ? "hint" : downbeatSource === "ai" ? "ai" : m.source;
+    if (markerSource === "hint") {
+      ctx.strokeStyle = isDownbeat ? "#54E38E" : "#9DB3FF";
+      ctx.lineWidth = isDownbeat ? 3 : 2;
+      ctx.globalAlpha = 0.95;
+    } else if (markerSource === "ai") {
+      ctx.strokeStyle = isDownbeat ? "#FFD84D" : "#777777";
+      ctx.lineWidth = isDownbeat ? 2 : 1;
+      ctx.globalAlpha = 0.9;
+    } else {
+      ctx.strokeStyle = isDownbeat ? "#C8C8C8" : "#777777";
+      ctx.lineWidth = isDownbeat ? 2 : 1;
+      ctx.globalAlpha = 0.85;
     }
-    ctx.strokeStyle = color;
-    ctx.lineWidth = h.type === "hint/downbeat" || Number(h?.payload?.beatInBar) === 1 ? 3 : 2;
     ctx.beginPath();
-    ctx.moveTo(x, y0);
+    ctx.moveTo(x, y0 + 4);
     ctx.lineTo(x, y1);
     ctx.stroke();
   }
+
+  const seekPreviewSec = (isSeeking || seekInFlight)
+    ? Math.max(0, Math.min(durationSec, durationSec * pendingSeekRatio))
+    : Math.max(0, Number(audio.currentTime) || 0);
+  const playheadSec = Math.max(0, Math.min(durationSec, seekPreviewSec + renderOffsetMs / 1000));
+  const playheadX = Math.max(0, Math.min(canvas.width, (playheadSec / durationSec) * canvas.width));
+  ctx.globalAlpha = 1;
+  ctx.strokeStyle = "#000000";
+  ctx.lineWidth = 2;
+  ctx.beginPath();
+  ctx.moveTo(playheadX, y0 - 2);
+  ctx.lineTo(playheadX, y1 + 2);
+  ctx.stroke();
   ctx.restore();
 }
 
@@ -972,8 +1235,9 @@ function render() {
   drawHintOverlays();
 
 if (!isSeeking && Number.isFinite(audio.duration) && audio.duration > 0) {
+  const max = Math.max(1, Number(seek.max) || SEEK_SCALE);
   seek.value = String(
-    Math.min(1000, Math.max(0, (audio.currentTime / audio.duration) * 1000))
+    Math.min(max, Math.max(0, Math.round((audio.currentTime / audio.duration) * max)))
   );
 }
 
@@ -991,8 +1255,15 @@ if (!isSeeking && Number.isFinite(audio.duration) && audio.duration > 0) {
     `seed: ${seed}`,
     `time: ${fmtMs(tAudioMs)}`,
     `offsetMs: ${renderOffsetMs}`,
+    `seekTarget: ${lastSeekTargetSec.toFixed(3)}s`,
+    `seekActual: ${lastSeekActualSec.toFixed(3)}s`,
+    `seekErrorMs: ${lastSeekErrorMs}`,
     `playback: ${playbackMode}`,
     `hints: ${activeHintCount}`,
+    `fusion: ${beatFusionModeLabel}`,
+    `beats: ${pulseBeatTimesMs.length}`,
+    `downbeats: ${downbeatMarkers.length || pulseDownbeatTimesMs.length}`,
+    `aiDownbeats: ${aiDownbeatMarkers.length}`,
     `sectionId: ${sectionId || "-"}`,
     `sectionType: ${frameInfo?.sectionType ?? sectionType}`,
     `lyricIndex: ${lyricIndex}`,
@@ -1000,8 +1271,10 @@ if (!isSeeking && Number.isFinite(audio.duration) && audio.duration > 0) {
     ``,
     `keys: space/k play`,
     `      left/right seek`,
-    `      d or 1 = downbeat hint`,
-    `      b/2/3/4 = beat hints`,
+    `      d = downbeat anchor (keep established tempo)`,
+    `      1/2/3/4 = measure tempo hints`,
+    `      b = single beat hint`,
+    `      u undo last hint group`,
     `      c clear hints`,
     `      [ ] offset`,
     `      \\ reset offset`,
@@ -1134,19 +1407,30 @@ nextBtn.addEventListener("click", async () => {
   await goNextTrack();
 });
 
+function setSeekRatioFromPointerX(clientX: number) {
+  const r = seek.getBoundingClientRect();
+  const x = Math.min(r.width, Math.max(0, clientX - r.left));
+  const ratio = r.width ? x / r.width : 0;
+  pendingSeekRatio = Math.max(0, Math.min(1, ratio));
+  const max = Math.max(1, Number(seek.max) || SEEK_SCALE);
+  seek.value = String(Math.round(pendingSeekRatio * max));
+}
+
 seek.addEventListener("pointerdown", (e) => {
   seek.setPointerCapture(e.pointerId);
   beginSeek();
-  const r = seek.getBoundingClientRect();
-  const x = Math.min(r.width, Math.max(0, e.clientX - r.left));
-  const ratio = r.width ? x / r.width : 0;
-  seek.value = String(Math.round(ratio * 1000));
-  applySeekFromSlider();
+  setSeekRatioFromPointerX(e.clientX);
+});
+
+seek.addEventListener("pointermove", (e) => {
+  if (!isSeeking) return;
+  setSeekRatioFromPointerX(e.clientX);
 });
 // seek.addEventListener("mousedown", beginSeek);
 // seek.addEventListener("touchstart", beginSeek, { passive: true });
 
 seek.addEventListener("pointerup", (e) => {
+  if (isSeeking) setSeekRatioFromPointerX(e.clientX);
   try { seek.releasePointerCapture(e.pointerId); } catch {}
   void finishSeek();
 });
@@ -1160,12 +1444,6 @@ seek.addEventListener("input", applySeekFromSlider);
 seek.addEventListener("change", () => {
   if (isSeeking || seekInFlight) return;
   wasPlayingBeforeSeek = !audio.paused;
-  void finishSeek();
-});
-seek.addEventListener("click", () => {
-  if (isSeeking || seekInFlight) return;
-  wasPlayingBeforeSeek = !audio.paused;
-  applySeekFromSlider();
   void finishSeek();
 });
 
@@ -1190,14 +1468,22 @@ window.addEventListener("keydown", async (e) => {
   if (e.code === "ArrowLeft") {
     e.preventDefault();
     audio.currentTime = Math.max(0, audio.currentTime - 5);
-    if (stemsActive()) audioVocals.currentTime = audio.currentTime;
+    if (stemsActive()) {
+      audioVocals.currentTime = audio.currentTime;
+      syncStemTiming();
+      scheduleStemResyncWindow(2500);
+    }
     return;
   }
   if (e.code === "ArrowRight") {
     e.preventDefault();
     const maxT = Number.isFinite(audio.duration) ? audio.duration : audio.currentTime + 5;
     audio.currentTime = Math.min(maxT, audio.currentTime + 5);
-    if (stemsActive()) audioVocals.currentTime = audio.currentTime;
+    if (stemsActive()) {
+      audioVocals.currentTime = audio.currentTime;
+      syncStemTiming();
+      scheduleStemResyncWindow(2500);
+    }
     return;
   }
   if (!e.repeat && (e.key.toLowerCase() === "d" || e.key.toLowerCase() === "b" || ["1", "2", "3", "4"].includes(e.key))) {
@@ -1249,6 +1535,11 @@ window.addEventListener("keydown", async (e) => {
   if (e.key.toLowerCase() === "c" && !e.repeat) {
     e.preventDefault();
     await clearHintEventsForCurrentTrack();
+    return;
+  }
+  if (e.key.toLowerCase() === "u" && !e.repeat) {
+    e.preventDefault();
+    await undoLastHintGroupForCurrentTrack();
     return;
   }
   if (e.code === "BracketLeft") {

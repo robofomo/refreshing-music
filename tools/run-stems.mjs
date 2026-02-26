@@ -186,7 +186,7 @@ function normalizeMp3(filePath, outPath, useWsl) {
       "-c:a",
       "libmp3lame",
       "-b:a",
-      "192k",
+      "160k",
       "-write_xing",
       "1",
       outWsl
@@ -208,7 +208,7 @@ function normalizeMp3(filePath, outPath, useWsl) {
     "-c:a",
     "libmp3lame",
     "-b:a",
-    "192k",
+    "160k",
     "-write_xing",
     "1",
     outPath

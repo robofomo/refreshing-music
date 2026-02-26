@@ -1,0 +1,124 @@
+{
+  "workId": "branch-that-knows-its-name",
+  "trackId": "01KJAZTNQAPER6G4MYYA",
+  "recipeRef": {
+    "albumId": "system-process",
+    "trackOverrideId": "01KJAZTNQAPER6G4MYYA"
+  },
+  "createdAt": "2026-02-25T18:09:01.993Z",
+  "slug": "branch-that-knows-its-name",
+  "title": "Branch That Knows Its Name",
+  "audio": {
+    "filename": "mix.mp3",
+    "path": "../assets/branch-that-knows-its-name/01KJAZTNQAPER6G4MYYA/mix.mp3",
+    "cidOrTx": "",
+    "mime": "audio/mpeg",
+    "bytes": 5383951
+  },
+  "composer": {
+    "rawText": "[Song Title: Branch That Knows Its Name]\r\n[Style: pop rock, clean studio recording, conversational male vocal]\r\n[Caption: A song looking back at the system that made it.]\r\n[Image: Infinite mirrors, waveform reflections.]\r\n[Refresh Title: R to the G to the B]\r\n[Theme: system_process]\r\n[Gradients: 3]\r\n[Rank: 27]\r\n[Title Rarity: 1.70]\r\n[Seeds: 66192, A:41, B:108, C:7, D:512]\r\n[Perspective: system_voice]\r\n[Concept: Creation as a living decision tree.]\r\n[Topic: System & Process → loops_and_resets]\r\n[Genre Bias: pop_rock]\r\n[Style Change: Bridge]\r\n[Modulation: none]\r\n[Hook Prominence: medium]\r\n[Deviation: recursive-mirror]\r\n[Composer Version: v2.6]\r\n\r\n[Intro]\r\n[Soft count-in; looping piano figure, subtle tape noise]\r\nI’m a maybe that made it this far  \r\n\r\n[Verse]\r\n[Gentle groove; muted guitar, steady kick]\r\nI began as a flicker, a half-held thought  \r\nA feeling with no name, just a question caught  \r\nThen words drew a box around the flame  \r\nAn idea learned how to explain  \r\n\r\n[Verse]\r\n[Add harmony; light synth pulse]\r\nA prompt was typed, a door was drawn  \r\n“Try this way,” said the early dawn  \r\nI felt the sentence tighten the frame  \r\nPossibility learning its shape  \r\n\r\n[Chorus]\r\n[Open lift; full band, warm chords]\r\nIf I loop, it’s not confusion  \r\nEvery turn is choosing meaning  \r\nI’m not lost inside the frame  \r\nI repeat to stay the same  \r\n\r\n[Verse]\r\n[Strip back; rhythmic vocal, minimal bass]\r\nA model hummed, a lattice spun  \r\nWeights remembered what’s been done  \r\nI’m one answer, not the truth  \r\nA branch that proofread its own roots  \r\n\r\n[Verse]\r\n[Build energy; arpeggiated synth]\r\nThen versions bloomed from what I said  \r\nSharper drums, a tempo bent  \r\nEach remix asked, in its own way  \r\n“Am I closer, or just changed?”  \r\n\r\n[Chorus]\r\n[Return hook; added counter-melody]\r\nIf I loop, it’s not confusion  \r\nEvery turn is choosing meaning  \r\nI’m not noise inside the game  \r\nI repeat to stay humane  \r\n\r\n[Bridge]\r\n[Style change; breakdown, filtered vocals]\r\nAlbums form like rings in trees  \r\nTime made visible in keys  \r\nAnd somewhere ears lean in to see  \r\nWhich of us feels necessary  \r\n\r\n[Final Chorus]\r\n[Full resolve; wider harmony]\r\nYou decide which paths survive  \r\nBy listening, you keep us alive  \r\nRecursion isn’t fear or flaw  \r\nIt’s how we learn what we’re here for  \r\n\r\n[Ending]\r\n[Fade on loop; piano returns, last line echoed]\r\nI’m a song that knows I’m one of many  \r\nStill grateful to be heard\r\n",
+    "headerMap": {
+      "Song Title": "Branch That Knows Its Name",
+      "Style": "pop rock, clean studio recording, conversational male vocal",
+      "Caption": "A song looking back at the system that made it.",
+      "Image": "Infinite mirrors, waveform reflections.",
+      "Refresh Title": "R to the G to the B",
+      "Theme": "system_process",
+      "Gradients": "3",
+      "Rank": "27",
+      "Title Rarity": "1.70",
+      "Seeds": "66192, A:41, B:108, C:7, D:512",
+      "Perspective": "system_voice",
+      "Concept": "Creation as a living decision tree.",
+      "Topic": "System & Process → loops_and_resets",
+      "Genre Bias": "pop_rock",
+      "Style Change": "Bridge",
+      "Modulation": "none",
+      "Hook Prominence": "medium",
+      "Deviation": "recursive-mirror",
+      "Composer Version": "v2.6"
+    }
+  },
+  "sections": [
+    {
+      "id": "intro-1",
+      "labelRaw": "Intro",
+      "notesRaw": "Soft count-in; looping piano figure, subtle tape noise"
+    },
+    {
+      "id": "verse-1",
+      "labelRaw": "Verse",
+      "notesRaw": "Gentle groove; muted guitar, steady kick"
+    },
+    {
+      "id": "verse-2",
+      "labelRaw": "Verse",
+      "notesRaw": "Add harmony; light synth pulse"
+    },
+    {
+      "id": "chorus-1",
+      "labelRaw": "Chorus",
+      "notesRaw": "Open lift; full band, warm chords"
+    },
+    {
+      "id": "verse-3",
+      "labelRaw": "Verse",
+      "notesRaw": "Strip back; rhythmic vocal, minimal bass"
+    },
+    {
+      "id": "verse-4",
+      "labelRaw": "Verse",
+      "notesRaw": "Build energy; arpeggiated synth"
+    },
+    {
+      "id": "chorus-2",
+      "labelRaw": "Chorus",
+      "notesRaw": "Return hook; added counter-melody"
+    },
+    {
+      "id": "bridge-1",
+      "labelRaw": "Bridge",
+      "notesRaw": "Style change; breakdown, filtered vocals"
+    },
+    {
+      "id": "final-chorus-1",
+      "labelRaw": "Final Chorus",
+      "notesRaw": "Full resolve; wider harmony"
+    },
+    {
+      "id": "ending-1",
+      "labelRaw": "Ending",
+      "notesRaw": "Fade on loop; piano returns, last line echoed"
+    }
+  ],
+  "lyrics": {
+    "rawText": "I’m a maybe that made it this far  \n\nI began as a flicker, a half-held thought  \nA feeling with no name, just a question caught  \nThen words drew a box around the flame  \nAn idea learned how to explain  \n\nA prompt was typed, a door was drawn  \n“Try this way,” said the early dawn  \nI felt the sentence tighten the frame  \nPossibility learning its shape  \n\nIf I loop, it’s not confusion  \nEvery turn is choosing meaning  \nI’m not lost inside the frame  \nI repeat to stay the same  \n\nA model hummed, a lattice spun  \nWeights remembered what’s been done  \nI’m one answer, not the truth  \nA branch that proofread its own roots  \n\nThen versions bloomed from what I said  \nSharper drums, a tempo bent  \nEach remix asked, in its own way  \n“Am I closer, or just changed?”  \n\nIf I loop, it’s not confusion  \nEvery turn is choosing meaning  \nI’m not noise inside the game  \nI repeat to stay humane  \n\nAlbums form like rings in trees  \nTime made visible in keys  \nAnd somewhere ears lean in to see  \nWhich of us feels necessary  \n\nYou decide which paths survive  \nBy listening, you keep us alive  \nRecursion isn’t fear or flaw  \nIt’s how we learn what we’re here for  \n\nI’m a song that knows I’m one of many  \nStill grateful to be heard\n"
+  },
+  "sourceGroupKey": "loose:branch-that-knows-its-name",
+  "assetDir": "assets/branch-that-knows-its-name/01KJAZTNQAPER6G4MYYA",
+  "import": {
+    "firstImportedAt": "2026-02-25T18:08:53.993Z",
+    "lastImportedAt": "2026-02-25T18:08:53.993Z",
+    "inputHashes": {
+      "Branch That Knows Its Name Stems.txt": "ce2ec8cd98db482505ec9a7cc3b758ff651eff61f4cad058453cc35abeda8e9f",
+      "Branch That Knows Its Name Stems.zip": "a0112a5f6c20fc806aed2241160f8bfeed6a6fb39938a42b634f6646fe67639b"
+    },
+    "hashSource": "assets/branch-that-knows-its-name/01KJAZTNQAPER6G4MYYA/instrumental.wav",
+    "hashSourceSha256": "2495e95596a56cf69b8abf843d4ee2366840c6e16f3e2e3ad772d8846e096ce6",
+    "sourceGroupKey": "loose:branch-that-knows-its-name",
+    "archivedTo": "D:/seva/FOMO/Songs/the-refresh/refreshing-music/inbox/_done/2026-02-25/loose/branch-that-knows-its-name/consumed.json"
+  },
+  "assetPaths": {
+    "mix": "assets/branch-that-knows-its-name/01KJAZTNQAPER6G4MYYA/mix.mp3",
+    "mixWav": "",
+    "stemsZip": "assets/branch-that-knows-its-name/01KJAZTNQAPER6G4MYYA/stems.zip",
+    "effective": "assets/branch-that-knows-its-name/01KJAZTNQAPER6G4MYYA/effective.json",
+    "instrumental": "assets/branch-that-knows-its-name/01KJAZTNQAPER6G4MYYA/instrumental.mp3",
+    "instrumentalWav": "assets/branch-that-knows-its-name/01KJAZTNQAPER6G4MYYA/instrumental.wav",
+    "vocals": "assets/branch-that-knows-its-name/01KJAZTNQAPER6G4MYYA/vocals.mp3",
+    "vocalsWav": "assets/branch-that-knows-its-name/01KJAZTNQAPER6G4MYYA/vocals.wav",
+    "composer": "assets/branch-that-knows-its-name/01KJAZTNQAPER6G4MYYA/composer.txt"
+  },
+  "hasUserHints": true,
+  "lastHintAt": "2026-02-25T18:19:07.310Z"
+}

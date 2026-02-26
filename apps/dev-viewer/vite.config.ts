@@ -82,6 +82,49 @@ function clearEventsFile(eventsPath: string) {
   fs.writeFileSync(eventsPath, "", "utf8");
 }
 
+function undoLastEventGroup(eventsPath: string) {
+  if (!fs.existsSync(eventsPath)) return { removed: 0, groupId: "" };
+  const raw = fs.readFileSync(eventsPath, "utf8");
+  const lines = raw.split(/\r?\n/).filter((line) => line.trim().length > 0);
+  if (!lines.length) return { removed: 0, groupId: "" };
+
+  const parsed = lines.map((line) => {
+    try {
+      return JSON.parse(line);
+    } catch {
+      return null;
+    }
+  });
+  let groupId = "";
+  for (let i = parsed.length - 1; i >= 0; i -= 1) {
+    const g = String(parsed[i]?.payload?.groupId || "");
+    if (g) {
+      groupId = g;
+      break;
+    }
+  }
+
+  let keptLines = lines.slice();
+  let removed = 0;
+  if (groupId) {
+    keptLines = lines.filter((line, i) => {
+      const g = String(parsed[i]?.payload?.groupId || "");
+      if (g === groupId) {
+        removed += 1;
+        return false;
+      }
+      return true;
+    });
+  } else {
+    keptLines = lines.slice(0, -1);
+    removed = 1;
+  }
+  fs.mkdirSync(path.dirname(eventsPath), { recursive: true });
+  const next = keptLines.length ? `${keptLines.join("\n")}\n` : "";
+  fs.writeFileSync(eventsPath, next, "utf8");
+  return { removed, groupId };
+}
+
 export default defineConfig(({ mode }) => {
   const authoringMode = mode !== "release";
   const releaseMode = !authoringMode;
@@ -190,6 +233,31 @@ export default defineConfig(({ mode }) => {
                   assetDir
                 });
                 sendJson(res, 200, { ok: true, ...out });
+              } catch (err) {
+                sendJson(res, 400, { error: err instanceof Error ? err.message : String(err) });
+              }
+              return;
+            }
+
+            if (authoringMode && reqPath === "/authoring/events/undo" && req.method === "POST") {
+              try {
+                const body = await readReqJson(req);
+                const trackId = String(body?.trackId || "");
+                const workId = String(body?.workId || "");
+                if (!trackId || !workId) {
+                  sendJson(res, 400, { error: "trackId and workId are required" });
+                  return;
+                }
+                const assetDir = path.join(assetsRoot, workId, trackId);
+                const eventsPath = path.join(assetDir, "events.jsonl");
+                const undo = undoLastEventGroup(eventsPath);
+                const out = reduceTrackToEffective({
+                  repoRoot,
+                  trackId,
+                  workId,
+                  assetDir
+                });
+                sendJson(res, 200, { ok: true, undo, ...out });
               } catch (err) {
                 sendJson(res, 400, { error: err instanceof Error ? err.message : String(err) });
               }

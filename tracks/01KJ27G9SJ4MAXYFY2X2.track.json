@@ -5,7 +5,7 @@
     "albumId": "random",
     "trackOverrideId": "01KJ27G9SJ4MAXYFY2X2"
   },
-  "createdAt": "2026-02-22T08:29:57.391Z",
+  "createdAt": "2026-02-25T18:09:11.331Z",
   "slug": "offset-that-wouldn-t-clear",
   "title": "Offset That Wouldn’t Clear",
   "audio": {
@@ -1110,7 +1110,7 @@
   },
   "import": {
     "firstImportedAt": "2026-02-22T08:29:52.816Z",
-    "lastImportedAt": "2026-02-22T08:29:52.816Z",
+    "lastImportedAt": "2026-02-25T18:08:53.993Z",
     "inputHashes": {
       "Offset That Wouldn’t Clear Stems.txt": "5420e3fbd06ab3b96d0726397ddef571fc0bae2d7872999d2bff455dbeeb2cca",
       "Offset That Wouldn’t Clear Stems.zip": "8f55cd7dad9e66db4c29999ae0b31eec96d5b6fa8d5c9cd5adf19b45ae3c2cc1"
@@ -1118,19 +1118,19 @@
     "hashSource": "assets/offset-that-wouldn-t-clear/01KJ27G9SJ4MAXYFY2X2/instrumental.wav",
     "hashSourceSha256": "c07ce0ad8d95d0b37baaec7a69d2f6969ea5ed11739345a4064b8fa1c51c0d0b",
     "sourceGroupKey": "loose:offset-that-wouldn-t-clear",
-    "archivedTo": "D:/seva/FOMO/Songs/the-refresh/refreshing-music/inbox/_done/2026-02-22/loose/offset-that-wouldn-t-clear/consumed.json"
+    "archivedTo": "D:/seva/FOMO/Songs/the-refresh/refreshing-music/inbox/_done/2026-02-25/loose/offset-that-wouldn-t-clear/consumed.json"
   },
   "assetPaths": {
     "mix": "assets/offset-that-wouldn-t-clear/01KJ27G9SJ4MAXYFY2X2/mix.mp3",
     "mixWav": "",
     "stemsZip": "assets/offset-that-wouldn-t-clear/01KJ27G9SJ4MAXYFY2X2/stems.zip",
+    "effective": "assets/offset-that-wouldn-t-clear/01KJ27G9SJ4MAXYFY2X2/effective.json",
     "instrumental": "assets/offset-that-wouldn-t-clear/01KJ27G9SJ4MAXYFY2X2/instrumental.mp3",
     "instrumentalWav": "assets/offset-that-wouldn-t-clear/01KJ27G9SJ4MAXYFY2X2/instrumental.wav",
     "vocals": "assets/offset-that-wouldn-t-clear/01KJ27G9SJ4MAXYFY2X2/vocals.mp3",
     "vocalsWav": "assets/offset-that-wouldn-t-clear/01KJ27G9SJ4MAXYFY2X2/vocals.wav",
-    "composer": "assets/offset-that-wouldn-t-clear/01KJ27G9SJ4MAXYFY2X2/composer.txt",
-    "effective": "assets/offset-that-wouldn-t-clear/01KJ27G9SJ4MAXYFY2X2/effective.json"
+    "composer": "assets/offset-that-wouldn-t-clear/01KJ27G9SJ4MAXYFY2X2/composer.txt"
   },
-  "hasUserHints": false,
-  "lastHintAt": ""
+  "hasUserHints": true,
+  "lastHintAt": "2026-02-25T06:49:33.987Z"
 }

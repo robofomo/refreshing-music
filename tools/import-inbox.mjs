@@ -104,8 +104,17 @@ function baseTitleFromStem(stem) {
 function stripStemsSuffixTitle(value) {
   const raw = String(value ?? "").trim();
   if (!raw) return "";
-  const noParen = raw.replace(/\s*\((?:stems?)\)\s*$/i, "").trim();
+  const noTempo = raw.replace(/\s*\((?:\d{2,3}(?:\.\d+)?)\s*bpm\)\s*$/i, "").trim();
+  const noParen = noTempo.replace(/\s*\((?:stems?)\)\s*$/i, "").trim();
   return noParen.replace(/(?:[\s_-]+)stems?$/i, "").trim();
+}
+
+function extractBpmTag(value) {
+  const raw = String(value ?? "");
+  const m = raw.match(/\((\d{2,3}(?:\.\d+)?)\s*bpm\)/i) || raw.match(/(?:^|[\s_-])(\d{2,3}(?:\.\d+)?)\s*bpm(?:$|[\s_-])/i);
+  if (!m) return null;
+  const bpm = Number(m[1]);
+  return Number.isFinite(bpm) ? bpm : null;
 }
 
 function basenamePrefix(stem) {
@@ -299,6 +308,22 @@ function workIdFromInputName(group, audio, stemsInput) {
   return derived || "";
 }
 
+function bpmFromInputName(group, audio, stemsInput) {
+  const candidates = [
+    audio?.name,
+    audio?.stem,
+    stemsInput?.name,
+    stemsInput?.stem,
+    ...(group?.items || []).flatMap((x) => [x?.name, x?.stem]),
+    group?.baseTitle
+  ];
+  for (const c of candidates) {
+    const bpm = extractBpmTag(c);
+    if (bpm !== null) return bpm;
+  }
+  return null;
+}
+
 function titleFromComposerFile(filePath) {
   try {
     const raw = fs.readFileSync(filePath, "utf8");
@@ -479,8 +504,8 @@ function transcodeAudioToMp3(srcPath, dstPath, overwrite) {
   const outPath = backend === "wsl" ? toWslPath(dstPath) : dstPath;
   const cmd = backend === "wsl" ? "wsl" : "ffmpeg";
   const args = backend === "wsl"
-    ? ["ffmpeg", "-y", "-hide_banner", "-loglevel", "error", "-i", inPath, "-vn", "-ar", "48000", "-ac", "2", "-c:a", "libmp3lame", "-b:a", "192k", "-write_xing", "1", outPath]
-    : ["-y", "-hide_banner", "-loglevel", "error", "-i", inPath, "-vn", "-ar", "48000", "-ac", "2", "-c:a", "libmp3lame", "-b:a", "192k", "-write_xing", "1", outPath];
+    ? ["ffmpeg", "-y", "-hide_banner", "-loglevel", "error", "-i", inPath, "-vn", "-ar", "48000", "-ac", "2", "-c:a", "libmp3lame", "-b:a", "160k", "-write_xing", "1", outPath]
+    : ["-y", "-hide_banner", "-loglevel", "error", "-i", inPath, "-vn", "-ar", "48000", "-ac", "2", "-c:a", "libmp3lame", "-b:a", "160k", "-write_xing", "1", outPath];
   const r = runCmd(cmd, args);
   if (!r.ok) return { ok: false, skipped: false, reason: (r.stderr || r.stdout || "ffmpeg failed").trim() };
   return { ok: true, skipped: false };
@@ -852,6 +877,7 @@ async function main() {
     const taggedWorkId = workIdFromNameTags(group.items);
     const composerWorkId = workIdFromComposer(group);
     const nameBasedWorkId = workIdFromInputName(group, audio, stemsInput);
+    const filenameBpm = bpmFromInputName(group, audio, stemsInput);
     const legacyKey = group.key.replace(/^(?:folder|loose):/, "");
     const existingEntry = catalog.bySourceGroupKey.get(group.key) || catalog.bySourceGroupKey.get(legacyKey);
     const workId = existingEntry?.workId || overrideWorkId || taggedWorkId || composerWorkId || nameBasedWorkId || fallbackWorkId(new Date());
@@ -1032,6 +1058,7 @@ async function main() {
         inputHashes,
         hashSource: toRepoRel(repoRoot, hashSourcePath),
         hashSourceSha256: sha256FileSync(hashSourcePath),
+        filenameBpm: filenameBpm ?? prevImport.filenameBpm ?? null,
         sourceGroupKey: group.key,
         archivedTo: ""
       };

@@ -1,0 +1,63 @@
+{
+  "Version": "v2.2",
+  "Genres": [
+    { "GenreId": "melodic_house", "Label": "melodic deep house", "StyleTokens": ["melodic deep house"], "Compatibility": { "HarshVocalsAllowed": false }, "HintTokens": ["warm", "groovy", "evolving layers"] },
+    { "GenreId": "edm_melodic", "Label": "EDM", "StyleTokens": ["EDM"], "Compatibility": { "HarshVocalsAllowed": false }, "HintTokens": ["anthemic", "clean", "big lift"] },
+    { "GenreId": "dnb_liquid", "Label": "drum-and-bass", "StyleTokens": ["drum-and-bass"], "Compatibility": { "HarshVocalsAllowed": false }, "HintTokens": ["liquid", "atmospheric", "rolling"] },
+
+    { "GenreId": "funk_nu_disco", "Label": "funk / nu-disco", "StyleTokens": ["funk", "nu-disco"], "Compatibility": { "HarshVocalsAllowed": false }, "HintTokens": ["tight groove", "crisp bass", "party precision"] },
+
+    { "GenreId": "alt_rock", "Label": "alternative rock", "StyleTokens": ["alternative rock"], "Compatibility": { "HarshVocalsAllowed": false }, "HintTokens": ["driving", "clean crunch", "anthem verse"] },
+    { "GenreId": "prog_rock", "Label": "progressive rock", "StyleTokens": ["progressive rock"], "Compatibility": { "HarshVocalsAllowed": false }, "HintTokens": ["odd accents", "big arc", "sectional"] },
+    { "GenreId": "math_rock", "Label": "math rock", "StyleTokens": ["math rock"], "Compatibility": { "HarshVocalsAllowed": false }, "HintTokens": ["tapping", "polyrhythmic", "changing meter", "odd meter", "interlocking guitars"] },
+
+    { "GenreId": "metal", "Label": "metal", "StyleTokens": ["metal"], "Compatibility": { "HarshVocalsAllowed": true }, "HintTokens": ["tight", "powerful", "downpicked riffs"] },
+    { "GenreId": "prog_metal", "Label": "progressive metal", "StyleTokens": ["progressive metal"], "Compatibility": { "HarshVocalsAllowed": true }, "HintTokens": ["polyrhythmic", "precision riffs", "big dynamic swings"] },
+    { "GenreId": "power_metal", "Label": "power metal", "StyleTokens": ["power metal"], "Compatibility": { "HarshVocalsAllowed": true }, "HintTokens": ["uplifting riffs", "fast but clean", "anthem chorus"] },
+    { "GenreId": "thrash_metal", "Label": "thrash metal", "StyleTokens": ["thrash metal"], "Compatibility": { "HarshVocalsAllowed": true }, "HintTokens": ["speed riffs", "tight palm-mute", "aggressive groove"] },
+    { "GenreId": "doom_metal", "Label": "doom metal", "StyleTokens": ["doom metal"], "Compatibility": { "HarshVocalsAllowed": true }, "HintTokens": ["slow heavy", "massive tone", "dark harmonies"] },
+    { "GenreId": "tech_metal", "Label": "technical metal", "StyleTokens": ["technical metal"], "Compatibility": { "HarshVocalsAllowed": true }, "HintTokens": ["virtuosic", "tight ensemble", "metric shifts"] },
+
+    { "GenreId": "rap", "Label": "rap", "StyleTokens": ["rap"], "Compatibility": { "HarshVocalsAllowed": false }, "HintTokens": ["calm flow", "clear words", "pocket"] },
+    { "GenreId": "hip_hop", "Label": "hip-hop", "StyleTokens": ["hip-hop"], "Compatibility": { "HarshVocalsAllowed": false }, "HintTokens": ["laid back", "head nod", "warm drums"] },
+    { "GenreId": "trip_hop", "Label": "trip-hop / downtempo", "StyleTokens": ["trip-hop", "downtempo"], "Compatibility": { "HarshVocalsAllowed": false }, "HintTokens": ["smoky groove", "moody", "textured drums"] },
+
+    { "GenreId": "reggae_dub", "Label": "reggae / dub", "StyleTokens": ["reggae", "dub"], "Compatibility": { "HarshVocalsAllowed": false }, "HintTokens": ["deep bass", "space", "echo"] },
+
+    { "GenreId": "latin", "Label": "latin", "StyleTokens": ["latin"], "Compatibility": { "HarshVocalsAllowed": false }, "HintTokens": ["danceable", "hand percussion", "bright chords"] },
+    { "GenreId": "reggaeton", "Label": "reggaeton", "StyleTokens": ["reggaeton"], "Compatibility": { "HarshVocalsAllowed": false }, "HintTokens": ["club groove", "dem bow", "bounce"] },
+    { "GenreId": "tropical_house", "Label": "tropical house", "StyleTokens": ["tropical house"], "Compatibility": { "HarshVocalsAllowed": false }, "HintTokens": ["bright", "summer", "plucks"] },
+    { "GenreId": "afrobeat_modern", "Label": "modern afrobeat groove", "StyleTokens": ["afrobeat"], "Compatibility": { "HarshVocalsAllowed": false }, "HintTokens": ["percussive groove", "call-and-response", "syncopation"] },
+
+    { "GenreId": "cinematic_hybrid", "Label": "cinematic hybrid", "StyleTokens": ["cinematic", "orchestral", "hybrid"], "Compatibility": { "HarshVocalsAllowed": false }, "HintTokens": ["big lift", "clear motifs", "wide drums"] },
+    { "GenreId": "neo_classical", "Label": "neo-classical", "StyleTokens": ["neo-classical", "chamber"], "Compatibility": { "HarshVocalsAllowed": false }, "HintTokens": ["string focus", "piano motif", "dynamic phrasing"] },
+    { "GenreId": "orchestral_choral", "Label": "orchestral choral", "StyleTokens": ["orchestral", "choir"], "Compatibility": { "HarshVocalsAllowed": false }, "HintTokens": ["full ensemble", "choral swells", "majestic"] },
+
+    { "GenreId": "jazz_fusion_modern", "Label": "modern jazz fusion", "StyleTokens": ["modern jazz fusion"], "Compatibility": { "HarshVocalsAllowed": false }, "HintTokens": ["complex groove", "extended chords", "tight ensemble"] },
+    { "GenreId": "latin_jazz_big_band", "Label": "latin jazz big band", "StyleTokens": ["latin jazz", "big band"], "Compatibility": { "HarshVocalsAllowed": false }, "HintTokens": ["horn section", "salsa swing", "ensemble hits"] },
+    { "GenreId": "smooth_jazz", "Label": "smooth jazz", "StyleTokens": ["smooth jazz"], "Compatibility": { "HarshVocalsAllowed": false }, "HintTokens": ["mellow", "silky", "warm chords"] },
+    { "GenreId": "cool_jazz", "Label": "cool jazz", "StyleTokens": ["cool jazz"], "Compatibility": { "HarshVocalsAllowed": false }, "HintTokens": ["soft dynamics", "space", "subtle harmony"] },
+    { "GenreId": "bossa_nova", "Label": "bossa nova", "StyleTokens": ["bossa nova"], "Compatibility": { "HarshVocalsAllowed": false }, "HintTokens": ["gentle groove", "nylon guitar", "lush chords"] },
+
+    { "GenreId": "pop", "Label": "pop", "StyleTokens": ["pop"], "Compatibility": { "HarshVocalsAllowed": false }, "HintTokens": ["catchy", "clean hook", "bright"] },
+    { "GenreId": "pop_rock", "Label": "pop rock", "StyleTokens": ["pop rock"], "Compatibility": { "HarshVocalsAllowed": false }, "HintTokens": ["hooky", "band energy", "lift"] },
+
+    { "GenreId": "synthwave", "Label": "synthwave", "StyleTokens": ["synthwave"], "Compatibility": { "HarshVocalsAllowed": false }, "HintTokens": ["retro", "neon", "analog pads"] },
+    { "GenreId": "retro_arcade", "Label": "8-bit arcade", "StyleTokens": ["8-bit", "chiptune", "arcade"], "Compatibility": { "HarshVocalsAllowed": false }, "HintTokens": ["retro gaming", "arps", "pixel lead"] },
+
+    { "GenreId": "electro_modern", "Label": "modern electro", "StyleTokens": ["electro"], "Compatibility": { "HarshVocalsAllowed": false }, "HintTokens": ["snappy drums", "robotic funk", "clean synth bass"] },
+    { "GenreId": "breakbeat", "Label": "breakbeat", "StyleTokens": ["breakbeat"], "Compatibility": { "HarshVocalsAllowed": false }, "HintTokens": ["chopped drums", "forward motion", "swung energy"] },
+    { "GenreId": "uk_garage", "Label": "UK garage / 2-step", "StyleTokens": ["UK garage", "2-step"], "Compatibility": { "HarshVocalsAllowed": false }, "HintTokens": ["shuffle", "warm bass", "tight swing"] },
+    { "GenreId": "minimal_techno", "Label": "minimal techno (evolving)", "StyleTokens": ["minimal techno"], "Compatibility": { "HarshVocalsAllowed": false }, "HintTokens": ["micro-variation", "subtle lift", "not hypnotic-stale"] },
+    { "GenreId": "ambient_techno", "Label": "ambient techno (rhythmic)", "StyleTokens": ["ambient techno"], "Compatibility": { "HarshVocalsAllowed": false }, "HintTokens": ["focus-safe", "soft pulse", "gentle motion"] },
+
+    { "GenreId": "global_fusion", "Label": "global fusion", "StyleTokens": ["global fusion"], "Compatibility": { "HarshVocalsAllowed": false }, "HintTokens": ["modal color", "hybrid percussion", "tasteful"] }
+  ],
+
+  "VocalDeliveryDescriptors": {
+    "Forbidden": ["breathy", "tenor"],
+    "Preferred": ["expressive", "soulful", "conversational", "grounded", "confident"],
+    "Allowed": ["clean", "gritty"],
+    "Harsh": ["growl", "scream"]
+  }
+}

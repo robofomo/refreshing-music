@@ -86,8 +86,10 @@ function main() {
   const force = Boolean(args["force-whisperx"]);
   const overwriteAi = Boolean(args["overwrite-ai"] || args.overwrite);
   const language = typeof args.language === "string" ? args.language : "en";
-  const device = typeof args.device === "string" ? args.device : "cpu";
-  const model = typeof args.model === "string" ? args.model : "small";
+  const envDevice = typeof process.env.WHISPERX_DEVICE === "string" ? process.env.WHISPERX_DEVICE.trim() : "";
+  const envModel = typeof process.env.WHISPERX_MODEL === "string" ? process.env.WHISPERX_MODEL.trim() : "";
+  const device = typeof args.device === "string" ? args.device : (envDevice || "cpu");
+  const model = typeof args.model === "string" ? args.model : (envModel || "small");
   const assetsRoot = path.resolve("assets");
   const all = listAssetTracks(assetsRoot);
   const tracks = onlyTrackId ? all.filter((t) => t.trackId === onlyTrackId) : all;

@@ -391,6 +391,38 @@ function inAnyWindow(ms, windows) {
   return false;
 }
 
+function hasNearMs(sortedMs, targetMs, tolMs) {
+  if (!Array.isArray(sortedMs) || !sortedMs.length) return false;
+  const t = Math.max(0, Math.round(Number(targetMs) || 0));
+  const tol = Math.max(0, Math.round(Number(tolMs) || 0));
+  for (const ms of sortedMs) {
+    if (Math.abs(ms - t) <= tol) return true;
+  }
+  return false;
+}
+
+function blendAiWithTempoGridGlobal(beatsMs, gridMs, tempoMs) {
+  const ai = uniqSortedMs(beatsMs || []);
+  const grid = uniqSortedMs(gridMs || []);
+  if (!grid.length) return ai;
+  if (!ai.length) return grid;
+
+  const keepTol = Math.max(35, Math.round(tempoMs * 0.12));
+  const insertTol = Math.max(45, Math.round(tempoMs * 0.16));
+  const mixed = [];
+  for (const ms of ai) {
+    const g = nearestBeatMs(ms, grid);
+    mixed.push(Math.abs(ms - g) <= keepTol ? ms : g);
+  }
+  const out = uniqSortedMs(mixed);
+  for (const g of grid) {
+    if (!hasNearMs(ai, g, insertTol) && !hasNearMs(out, g, insertTol)) {
+      out.push(g);
+    }
+  }
+  return uniqSortedMs(out);
+}
+
 function hintOverlaysFromEvents(events) {
   const overlays = [];
   for (const e of events) {
@@ -416,7 +448,8 @@ export function reduceEffectiveState({
   workId,
   beats,
   words,
-  events
+  events,
+  lockedTempoBpm
 }) {
   const beatsMs = normalizeMsList(beats?.beatTimesMs);
   const downbeatMs = normalizeMsList(beats?.downbeatTimesMs);
@@ -439,6 +472,9 @@ export function reduceEffectiveState({
     return !best || at > best ? at : best;
   }, "");
   let establishedTempoMs = deriveTempoFromBarHints(rawHintEvents);
+  const lockedTempoMs = Number.isFinite(Number(lockedTempoBpm)) && Number(lockedTempoBpm) > 0
+    ? 60000 / Number(lockedTempoBpm)
+    : 0;
   const rawMinMs = rawHintEvents.length ? Math.min(...rawHintEvents.map((h) => Math.max(0, Math.round(Number(h.tSec) * 1000)))) : 0;
   const rawMaxMs = rawHintEvents.length ? Math.max(...rawHintEvents.map((h) => Math.max(0, Math.round(Number(h.tSec) * 1000)))) : 0;
   let tempoMode = rawBarHints.length >= 2 && establishedTempoMs > 0;
@@ -464,6 +500,12 @@ export function reduceEffectiveState({
     }
     canonicalBarHints = canonicalizeBarHintsByMeasure(rawHintEvents, establishedTempoMs, anchorDownbeatMs);
     tempoMode = canonicalBarHints.length >= 2 && establishedTempoMs > 0;
+  }
+  if (tempoMode && lockedTempoMs > 0 && establishedTempoMs > 0) {
+    const closeTol = Math.max(20, Math.round(establishedTempoMs * 0.06));
+    if (Math.abs(lockedTempoMs - establishedTempoMs) <= closeTol) {
+      establishedTempoMs = lockedTempoMs;
+    }
   }
 
   for (const h of rawHintEvents) {
@@ -539,7 +581,14 @@ export function reduceEffectiveState({
       const aiStepMs = medianBeatStepMs(beatsMs);
       const tempoCloseToAi = aiStepMs > 0
         && Math.abs(establishedTempoMs - aiStepMs) <= Math.max(40, aiStepMs * 0.12);
-      if (tempoCloseToAi && beatsMs.length > 0 && resolvedBarHints.length > 0) {
+      const hasStructuredMeasureHints = rawBarHints.some((h) => {
+        const b = Number(h?.payload?.beatInBar);
+        return Number.isInteger(b) && b >= 2 && b <= 4;
+      });
+      if (hasStructuredMeasureHints && beatsMs.length > 0) {
+        effectiveBeats = blendAiWithTempoGridGlobal(beatsMs, grid, establishedTempoMs);
+        beatFusionMode = "ai-tempo-overlay-global";
+      } else if (tempoCloseToAi && beatsMs.length > 0 && resolvedBarHints.length > 0) {
         const windows = clusterHintWindowsMs(resolvedBarHints, establishedTempoMs);
         const mixed = [];
         for (const ms of beatsMs) {
@@ -645,11 +694,19 @@ export function reduceEffectiveState({
     source: explicitHintBeatIdxSet.has(idx) ? "hint" : "inferred"
   }));
   const downbeatMarkers = [];
+  const aiAlignTol = Math.max(40, Math.round((establishedTempoMs || medianBeatStepMs(effectiveBeats) || 500) * 0.12));
   for (let i = 0; i < effectiveBeats.length; i += 1) {
     if (!downbeatMask[i]) continue;
+    const isHint = explicitSetDownbeatIdxSet.has(i);
+    const alignedToAi = hasNearMs(beatsMs, effectiveBeats[i], aiAlignTol);
+    let source = "inferred";
+    if (isHint) source = "hint";
+    else if (beatFusionMode === "ai-tempo-overlay-global" || beatFusionMode === "tempo-override-piecewise" || beatFusionMode === "tempo-override-grid") {
+      source = alignedToAi ? "ai" : "corrected";
+    }
     downbeatMarkers.push({
       tMs: effectiveBeats[i],
-      source: explicitSetDownbeatIdxSet.has(i) ? "hint" : "inferred"
+      source
     });
   }
   const aiDownbeatMarkers = [];
@@ -698,6 +755,7 @@ export function reduceEffectiveState({
       lastHintAt: lastHintAt || "",
       downbeatAnchorsCount: activeDownbeatAnchors.length,
       establishedTempoMs: establishedTempoMs || 0,
+      lockedTempoBpm: Number.isFinite(Number(lockedTempoBpm)) ? Number(lockedTempoBpm) : 0,
       beatFusionMode,
       beatsSec: hintBeatMs.map((ms) => ms / 1000),
       downbeatsSec: survivingHintDownbeats.map((ms) => ms / 1000),
@@ -734,14 +792,16 @@ export function reduceTrackToEffective({
   const wordsPath = path.join(assetDirAbs, "words.json");
   const eventsPath = path.join(assetDirAbs, "events.jsonl");
   const effectivePath = path.join(assetDirAbs, "effective.json");
+  const tracksRoot = path.join(path.resolve(repoRoot || "."), "tracks");
+  const trackPath = trackId ? path.join(tracksRoot, `${trackId}.track.json`) : "";
+  const trackMeta = trackPath && fs.existsSync(trackPath) ? (readJsonIfExists(trackPath) || {}) : {};
+  const lockedTempoBpm = Number(trackMeta?.import?.filenameBpm);
   const beats = readJsonIfExists(beatsPath) || {};
   const words = readJsonIfExists(wordsPath) || {};
   const events = readEventsJsonl(eventsPath);
-  const reduced = reduceEffectiveState({ trackId, workId, beats, words, events });
+  const reduced = reduceEffectiveState({ trackId, workId, beats, words, events, lockedTempoBpm });
   writeJson(effectivePath, reduced.effective);
 
-  const tracksRoot = path.join(path.resolve(repoRoot || "."), "tracks");
-  const trackPath = path.join(tracksRoot, `${trackId}.track.json`);
   if (trackId && fs.existsSync(trackPath)) {
     const track = readJsonIfExists(trackPath) || {};
     track.hasUserHints = Boolean(reduced.summary.hasUserHints);

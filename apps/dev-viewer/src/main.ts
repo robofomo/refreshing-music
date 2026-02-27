@@ -19,8 +19,8 @@ type EffectiveState = {
   effective?: {
     beatsMs?: number[];
     downbeatTimesMs?: number[];
-    beatMarkers?: Array<{ tMs?: number; source?: "hint" | "inferred" | "ai" }>;
-    downbeatMarkers?: Array<{ tMs?: number; source?: "hint" | "inferred" | "ai" }>;
+    beatMarkers?: Array<{ tMs?: number; source?: "hint" | "inferred" | "ai" | "corrected" }>;
+    downbeatMarkers?: Array<{ tMs?: number; source?: "hint" | "inferred" | "ai" | "corrected" }>;
     aiDownbeatMarkers?: Array<{ tMs?: number; source?: "ai" }>;
   };
   hints?: { eventsCount?: number; beatFusionMode?: string };
@@ -102,7 +102,7 @@ let lyricsLines: string[] = [];
 let pulseBeatTimesMs: number[] = [];
 let pulseDownbeatTimesMs: number[] = [];
 let beatMarkers: Array<{ tMs: number; source: "hint" | "inferred" | "ai" }> = [];
-let downbeatMarkers: Array<{ tMs: number; source: "hint" | "inferred" | "ai" }> = [];
+let downbeatMarkers: Array<{ tMs: number; source: "hint" | "inferred" | "ai" | "corrected" }> = [];
 let aiDownbeatMarkers: Array<{ tMs: number; source: "ai" }> = [];
 let hintOverlays: HintOverlay[] = [];
 let activeHintCount = 0;
@@ -1005,16 +1005,19 @@ function nearestPulse(currentTimeMs: number, times: number[], cutoffMs: number, 
 }
 
 function resolveDisplayDownbeatSourceByBeat(
-  effectiveBeats: Array<{ tMs: number; source: "hint" | "inferred" | "ai" }>,
-  effectiveDownbeats: Array<{ tMs: number; source: "hint" | "inferred" | "ai" }>,
+  effectiveBeats: Array<{ tMs: number; source: "hint" | "inferred" | "ai" | "corrected" }>,
+  effectiveDownbeats: Array<{ tMs: number; source: "hint" | "inferred" | "ai" | "corrected" }>,
   aiOnlyDownbeats: Array<{ tMs: number; source: "ai" }>
 ) {
   const aiDownbeatMs = aiOnlyDownbeats.map((d) => Math.max(0, Math.round(d.tMs)));
   const hintDownbeatMs = effectiveDownbeats
     .filter((d) => d.source === "hint")
     .map((d) => Math.max(0, Math.round(d.tMs)));
+  const correctedDownbeatMs = effectiveDownbeats
+    .filter((d) => d.source === "corrected")
+    .map((d) => Math.max(0, Math.round(d.tMs)));
   const inferredDownbeatMs = effectiveDownbeats
-    .filter((d) => d.source !== "hint")
+    .filter((d) => d.source === "inferred")
     .map((d) => Math.max(0, Math.round(d.tMs)));
   const beatSteps: number[] = [];
   for (let i = 1; i < effectiveBeats.length; i += 1) {
@@ -1028,10 +1031,10 @@ function resolveDisplayDownbeatSourceByBeat(
     for (const x of xs) if (Math.abs(x - target) <= tol) return true;
     return false;
   };
-  const sourceByMs = new Map<number, "hint" | "ai" | "inferred">();
+  const sourceByMs = new Map<number, "hint" | "ai" | "inferred" | "corrected">();
   for (const b of effectiveBeats) {
     const ms = Math.max(0, Math.round(Number(b.tMs)));
-    let downbeatSource: "hint" | "ai" | "inferred" | undefined;
+    let downbeatSource: "hint" | "ai" | "inferred" | "corrected" | undefined;
     // Explicit hint beats lock intent. If user hinted this beat and it is not a hinted
     // downbeat, do not allow AI/inferred downbeat overlays on top of it.
     if (b.source === "hint") {
@@ -1042,6 +1045,8 @@ function resolveDisplayDownbeatSourceByBeat(
       }
     } else if (hasNear(hintDownbeatMs, ms, 90)) {
       downbeatSource = "hint";
+    } else if (hasNear(correctedDownbeatMs, ms, 90)) {
+      downbeatSource = "corrected";
     } else if (hasNear(aiDownbeatMs, ms, 90)) {
       downbeatSource = "ai";
     } else if (hasNear(inferredDownbeatMs, ms, 90)) {
@@ -1129,11 +1134,21 @@ function drawHintOverlays() {
     const x = Math.max(0, Math.min(canvas.width, (tSec / durationSec) * canvas.width));
     const downbeatSource = downbeatSourceByMs.get(ms);
     const isDownbeat = downbeatSource !== undefined;
-    const markerSource = downbeatSource === "hint" ? "hint" : downbeatSource === "ai" ? "ai" : m.source;
+    const markerSource = downbeatSource === "hint"
+      ? "hint"
+      : downbeatSource === "ai"
+        ? "ai"
+        : downbeatSource === "corrected"
+          ? "corrected"
+          : m.source;
     if (markerSource === "hint") {
       ctx.strokeStyle = isDownbeat ? "#54E38E" : "#9DB3FF";
       ctx.lineWidth = isDownbeat ? 3 : 2;
       ctx.globalAlpha = 0.95;
+    } else if (markerSource === "corrected") {
+      ctx.strokeStyle = isDownbeat ? "#FF9F2F" : "#777777";
+      ctx.lineWidth = isDownbeat ? 2 : 1;
+      ctx.globalAlpha = 0.92;
     } else if (markerSource === "ai") {
       ctx.strokeStyle = isDownbeat ? "#FFD84D" : "#777777";
       ctx.lineWidth = isDownbeat ? 2 : 1;

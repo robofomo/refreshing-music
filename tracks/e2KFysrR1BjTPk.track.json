@@ -1005,11 +1005,7 @@
       {
         "i": 40,
         "t0Ms": 223108,
-        "t1Ms": 231008
-      },
-      {
-        "i": 40,
-        "t0Ms": 231008
+        "t1Ms": 233608
       }
     ]
   },
@@ -1017,12 +1013,12 @@
     "mix": "assets/salt-on-the-northern-wind/e2KFysrR1BjTPk/mix.mp3",
     "mixWav": "",
     "stemsZip": "",
+    "effective": "assets/salt-on-the-northern-wind/e2KFysrR1BjTPk/effective.json",
     "instrumental": "",
     "instrumentalWav": "",
     "vocals": "",
     "vocalsWav": "",
-    "composer": "assets/salt-on-the-northern-wind/e2KFysrR1BjTPk/composer.txt",
-    "effective": "assets/salt-on-the-northern-wind/e2KFysrR1BjTPk/effective.json"
+    "composer": "assets/salt-on-the-northern-wind/e2KFysrR1BjTPk/composer.txt"
   },
   "hasUserHints": true,
   "lastHintAt": "2026-02-25T07:47:55.962Z"

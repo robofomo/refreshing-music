@@ -296,12 +296,12 @@
     "mix": "assets/clock-drift-over-static-fields/sFpA3Hngbfsv6p/mix.mp3",
     "mixWav": "",
     "stemsZip": "",
+    "effective": "assets/clock-drift-over-static-fields/sFpA3Hngbfsv6p/effective.json",
     "instrumental": "",
     "instrumentalWav": "",
     "vocals": "",
     "vocalsWav": "",
-    "composer": "assets/clock-drift-over-static-fields/sFpA3Hngbfsv6p/composer.txt",
-    "effective": "assets/clock-drift-over-static-fields/sFpA3Hngbfsv6p/effective.json"
+    "composer": "assets/clock-drift-over-static-fields/sFpA3Hngbfsv6p/composer.txt"
   },
   "hasUserHints": true,
   "lastHintAt": "2026-02-25T07:54:10.000Z"

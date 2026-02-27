@@ -888,9 +888,19 @@
         "t1Ms": 38194
       },
       {
+        "i": 4,
+        "t0Ms": 39296,
+        "t1Ms": 41778
+      },
+      {
         "i": 5,
         "t0Ms": 41938,
         "t1Ms": 44361
+      },
+      {
+        "i": 6,
+        "t0Ms": 45002,
+        "t1Ms": 47365
       },
       {
         "i": 8,
@@ -914,23 +924,63 @@
       },
       {
         "i": 13,
-        "t0Ms": 149797,
-        "t1Ms": 154646
+        "t0Ms": 71445,
+        "t1Ms": 76512
       },
       {
         "i": 14,
-        "t0Ms": 155688,
-        "t1Ms": 160638
+        "t0Ms": 76930,
+        "t1Ms": 82199
       },
       {
         "i": 15,
-        "t0Ms": 161239,
-        "t1Ms": 165547
+        "t0Ms": 82680,
+        "t1Ms": 86867
       },
       {
         "i": 16,
-        "t0Ms": 166729,
-        "t1Ms": 172480
+        "t0Ms": 88289,
+        "t1Ms": 93859
+      },
+      {
+        "i": 18,
+        "t0Ms": 105044,
+        "t1Ms": 108451
+      },
+      {
+        "i": 19,
+        "t0Ms": 110656,
+        "t1Ms": 113984
+      },
+      {
+        "i": 20,
+        "t0Ms": 115307,
+        "t1Ms": 117752
+      },
+      {
+        "i": 21,
+        "t0Ms": 117872,
+        "t1Ms": 120538
+      },
+      {
+        "i": 23,
+        "t0Ms": 126695,
+        "t1Ms": 131645
+      },
+      {
+        "i": 24,
+        "t0Ms": 131965,
+        "t1Ms": 136955
+      },
+      {
+        "i": 25,
+        "t0Ms": 137336,
+        "t1Ms": 142927
+      },
+      {
+        "i": 26,
+        "t0Ms": 143368,
+        "t1Ms": 151300
       },
       {
         "i": 28,
@@ -953,6 +1003,11 @@
         "t1Ms": 239018
       },
       {
+        "i": 33,
+        "t0Ms": 266403,
+        "t1Ms": 269452
+      },
+      {
         "i": 34,
         "t0Ms": 269472,
         "t1Ms": 275350
@@ -960,120 +1015,140 @@
     ],
     "words": [
       {
+        "i": 0,
         "t0Ms": 26221,
         "t1Ms": 26621,
         "text": "The",
         "conf": 0.819
       },
       {
+        "i": 0,
         "t0Ms": 26842,
         "t1Ms": 27082,
         "text": "air",
         "conf": 0.846
       },
       {
+        "i": 0,
         "t0Ms": 27142,
         "t1Ms": 27222,
         "text": "is",
         "conf": 0.828
       },
       {
+        "i": 0,
         "t0Ms": 27322,
         "t1Ms": 27663,
         "text": "thick",
         "conf": 0.854
       },
       {
+        "i": 0,
         "t0Ms": 27723,
         "t1Ms": 27923,
         "text": "with",
         "conf": 0.846
       },
       {
+        "i": 0,
         "t0Ms": 28043,
         "t1Ms": 28463,
         "text": "color",
         "conf": 0.727
       },
       {
+        "i": 0,
         "t0Ms": 28544,
         "t1Ms": 29445,
         "text": "sound",
         "conf": 0.604
       },
       {
+        "i": 1,
         "t0Ms": 31947,
         "t1Ms": 32168,
         "text": "My",
         "conf": 0.936
       },
       {
+        "i": 1,
         "t0Ms": 32268,
         "t1Ms": 32568,
         "text": "feet",
         "conf": 0.868
       },
       {
+        "i": 1,
         "t0Ms": 32648,
         "t1Ms": 32888,
         "text": "lift",
         "conf": 0.708
       },
       {
+        "i": 1,
         "t0Ms": 32948,
         "t1Ms": 33509,
         "text": "slightly",
         "conf": 0.819
       },
       {
+        "i": 1,
         "t0Ms": 33709,
         "t1Ms": 33870,
         "text": "off",
         "conf": 0.899
       },
       {
+        "i": 1,
         "t0Ms": 33950,
         "t1Ms": 34110,
         "text": "the",
         "conf": 0.822
       },
       {
+        "i": 1,
         "t0Ms": 34230,
         "t1Ms": 35071,
         "text": "ground",
         "conf": 0.873
       },
       {
+        "i": 3,
         "t0Ms": 35111,
         "t1Ms": 36472,
         "text": "The",
         "conf": 0.847
       },
       {
+        "i": 3,
         "t0Ms": 36492,
         "t1Ms": 36773,
         "text": "walls",
         "conf": 0.871
       },
       {
+        "i": 3,
         "t0Ms": 36853,
         "t1Ms": 37013,
         "text": "all",
         "conf": 0.928
       },
       {
+        "i": 3,
         "t0Ms": 37053,
         "t1Ms": 37574,
         "text": "bend,",
         "conf": 0.891
       },
       {
+        "i": 3,
         "t0Ms": 37754,
         "t1Ms": 37854,
         "text": "the",
         "conf": 0.883
       },
       {
+        "i": 3,
         "t0Ms": 37914,
         "t1Ms": 38194,
         "text": "clock's",
@@ -1092,72 +1167,84 @@
         "conf": 0.905
       },
       {
+        "i": 4,
         "t0Ms": 39296,
         "t1Ms": 39756,
         "text": "Second",
         "conf": 0.829
       },
       {
+        "i": 4,
         "t0Ms": 39876,
         "t1Ms": 40397,
         "text": "sun",
         "conf": 0.928
       },
       {
+        "i": 4,
         "t0Ms": 40517,
         "t1Ms": 41178,
         "text": "inside",
         "conf": 0.639
       },
       {
+        "i": 4,
         "t0Ms": 41198,
         "t1Ms": 41238,
         "text": "my",
         "conf": 0.394
       },
       {
+        "i": 4,
         "t0Ms": 41298,
         "t1Ms": 41778,
         "text": "mind",
         "conf": 0.879
       },
       {
+        "i": 5,
         "t0Ms": 41938,
         "t1Ms": 42039,
         "text": "I",
         "conf": 0.806
       },
       {
+        "i": 5,
         "t0Ms": 42059,
         "t1Ms": 42319,
         "text": "reach",
         "conf": 0.9
       },
       {
+        "i": 5,
         "t0Ms": 42379,
         "t1Ms": 42639,
         "text": "for",
         "conf": 0.813
       },
       {
+        "i": 5,
         "t0Ms": 42719,
         "t1Ms": 43220,
         "text": "words",
         "conf": 0.873
       },
       {
+        "i": 5,
         "t0Ms": 43320,
         "t1Ms": 43440,
         "text": "that",
         "conf": 0.578
       },
       {
+        "i": 5,
         "t0Ms": 43520,
         "t1Ms": 44001,
         "text": "slide",
         "conf": 0.944
       },
       {
+        "i": 5,
         "t0Ms": 44061,
         "t1Ms": 44361,
         "text": "away",
@@ -1170,222 +1257,259 @@
         "conf": 0.611
       },
       {
+        "i": 6,
         "t0Ms": 45002,
         "t1Ms": 45222,
         "text": "melt",
         "conf": 0.779
       },
       {
+        "i": 6,
         "t0Ms": 45262,
         "t1Ms": 45422,
         "text": "like",
         "conf": 0.978
       },
       {
+        "i": 6,
         "t0Ms": 45462,
         "t1Ms": 46003,
         "text": "stars",
         "conf": 0.782
       },
       {
+        "i": 6,
         "t0Ms": 46103,
         "t1Ms": 46724,
         "text": "before",
         "conf": 0.901
       },
       {
+        "i": 6,
         "t0Ms": 46784,
         "t1Ms": 46884,
         "text": "the",
         "conf": 0.852
       },
       {
+        "i": 6,
         "t0Ms": 46964,
         "t1Ms": 47365,
         "text": "day",
         "conf": 0.962
       },
       {
+        "i": 8,
         "t0Ms": 48886,
         "t1Ms": 49146,
         "text": "The",
         "conf": 0.889
       },
       {
+        "i": 8,
         "t0Ms": 49247,
         "t1Ms": 49667,
         "text": "mirror",
         "conf": 0.799
       },
       {
+        "i": 8,
         "t0Ms": 49767,
         "t1Ms": 50308,
         "text": "hums,",
         "conf": 0.848
       },
       {
+        "i": 8,
         "t0Ms": 50368,
         "t1Ms": 50448,
         "text": "it",
         "conf": 0.471
       },
       {
+        "i": 8,
         "t0Ms": 50508,
         "t1Ms": 50788,
         "text": "knows",
         "conf": 0.834
       },
       {
+        "i": 8,
         "t0Ms": 50848,
         "t1Ms": 51089,
         "text": "my",
         "conf": 0.989
       },
       {
+        "i": 8,
         "t0Ms": 51870,
         "t1Ms": 52330,
         "text": "name",
         "conf": 0.476
       },
       {
+        "i": 9,
         "t0Ms": 54402,
         "t1Ms": 54722,
         "text": "It",
         "conf": 0.834
       },
       {
+        "i": 9,
         "t0Ms": 54783,
         "t1Ms": 55183,
         "text": "smiles",
         "conf": 0.856
       },
       {
+        "i": 9,
         "t0Ms": 55243,
         "t1Ms": 55503,
         "text": "but",
         "conf": 0.876
       },
       {
+        "i": 9,
         "t0Ms": 55584,
         "t1Ms": 55924,
         "text": "never",
         "conf": 0.918
       },
       {
+        "i": 9,
         "t0Ms": 56004,
         "t1Ms": 56445,
         "text": "stays",
         "conf": 0.99
       },
       {
+        "i": 9,
         "t0Ms": 56525,
         "t1Ms": 56645,
         "text": "the",
         "conf": 0.977
       },
       {
+        "i": 9,
         "t0Ms": 56765,
         "t1Ms": 57586,
         "text": "same",
         "conf": 0.914
       },
       {
+        "i": 10,
         "t0Ms": 59008,
         "t1Ms": 59028,
         "text": "I",
         "conf": 0.943
       },
       {
+        "i": 10,
         "t0Ms": 59088,
         "t1Ms": 59409,
         "text": "breathe",
         "conf": 0.707
       },
       {
+        "i": 10,
         "t0Ms": 59429,
         "t1Ms": 59529,
         "text": "in",
         "conf": 0.89
       },
       {
+        "i": 10,
         "t0Ms": 59629,
         "t1Ms": 60130,
         "text": "light,",
         "conf": 0.738
       },
       {
+        "i": 10,
         "t0Ms": 60150,
         "t1Ms": 60170,
         "text": "I",
         "conf": 0.905
       },
       {
+        "i": 10,
         "t0Ms": 60490,
         "t1Ms": 60751,
         "text": "breathe",
         "conf": 0.751
       },
       {
+        "i": 10,
         "t0Ms": 60831,
         "t1Ms": 60991,
         "text": "out",
         "conf": 0.891
       },
       {
+        "i": 10,
         "t0Ms": 61031,
         "t1Ms": 61532,
         "text": "doubt",
         "conf": 0.916
       },
       {
+        "i": 11,
         "t0Ms": 61592,
         "t1Ms": 61772,
         "text": "The",
         "conf": 0.874
       },
       {
+        "i": 11,
         "t0Ms": 61952,
         "t1Ms": 62313,
         "text": "edges",
         "conf": 0.876
       },
       {
+        "i": 11,
         "t0Ms": 62413,
         "t1Ms": 62954,
         "text": "blur",
         "conf": 0.828
       },
       {
+        "i": 11,
         "t0Ms": 63014,
         "t1Ms": 63214,
         "text": "then",
         "conf": 0.893
       },
       {
+        "i": 11,
         "t0Ms": 63314,
         "t1Ms": 63675,
         "text": "fade",
         "conf": 0.845
       },
       {
+        "i": 11,
         "t0Ms": 63715,
         "t1Ms": 63875,
         "text": "me",
         "conf": 0.952
       },
       {
+        "i": 11,
         "t0Ms": 70985,
         "t1Ms": 71045,
         "text": "out",
         "conf": 0.3
       },
       {
+        "i": 13,
         "t0Ms": 71445,
         "t1Ms": 71665,
         "text": "This",
         "conf": 0.922
       },
       {
+        "i": 13,
         "t0Ms": 71786,
         "t1Ms": 72467,
         "text": "purple",
@@ -1398,120 +1522,140 @@
         "conf": 0.699
       },
       {
+        "i": 13,
         "t0Ms": 73087,
         "t1Ms": 74149,
         "text": "won't",
         "conf": 0.343
       },
       {
+        "i": 13,
         "t0Ms": 74169,
         "t1Ms": 74229,
         "text": "let",
         "conf": 0.175
       },
       {
+        "i": 13,
         "t0Ms": 74289,
         "t1Ms": 74910,
         "text": "me",
         "conf": 0.934
       },
       {
+        "i": 13,
         "t0Ms": 74970,
         "t1Ms": 76512,
         "text": "go",
         "conf": 0.942
       },
       {
+        "i": 14,
         "t0Ms": 76930,
         "t1Ms": 77311,
         "text": "It",
         "conf": 0.908
       },
       {
+        "i": 14,
         "t0Ms": 77371,
         "t1Ms": 77711,
         "text": "pulls",
         "conf": 0.843
       },
       {
+        "i": 14,
         "t0Ms": 77771,
         "t1Ms": 77972,
         "text": "me",
         "conf": 0.954
       },
       {
+        "i": 14,
         "t0Ms": 78072,
         "t1Ms": 79034,
         "text": "where",
         "conf": 0.444
       },
       {
+        "i": 14,
         "t0Ms": 79054,
         "t1Ms": 79074,
         "text": "I",
         "conf": 0.854
       },
       {
+        "i": 14,
         "t0Ms": 79154,
         "t1Ms": 80176,
         "text": "don't",
         "conf": 0.52
       },
       {
+        "i": 14,
         "t0Ms": 80196,
         "t1Ms": 80496,
         "text": "yet",
         "conf": 0.877
       },
       {
+        "i": 14,
         "t0Ms": 80596,
         "t1Ms": 82199,
         "text": "know",
         "conf": 0.824
       },
       {
+        "i": 15,
         "t0Ms": 82680,
         "t1Ms": 83381,
         "text": "Between",
         "conf": 0.831
       },
       {
+        "i": 15,
         "t0Ms": 83441,
         "t1Ms": 83561,
         "text": "the",
         "conf": 0.961
       },
       {
+        "i": 15,
         "t0Ms": 83662,
         "t1Ms": 84062,
         "text": "truth",
         "conf": 0.822
       },
       {
+        "i": 15,
         "t0Ms": 84343,
         "t1Ms": 85805,
         "text": "and",
         "conf": 0.307
       },
       {
+        "i": 15,
         "t0Ms": 85825,
         "t1Ms": 86066,
         "text": "what",
         "conf": 0.404
       },
       {
+        "i": 15,
         "t0Ms": 86086,
         "t1Ms": 86106,
         "text": "I",
         "conf": 0.001
       },
       {
+        "i": 15,
         "t0Ms": 86126,
         "t1Ms": 86867,
         "text": "see",
         "conf": 0.918
       },
       {
+        "i": 16,
         "t0Ms": 88289,
         "t1Ms": 88510,
         "text": "The",
@@ -1524,336 +1668,392 @@
         "conf": 0.503
       },
       {
+        "i": 16,
         "t0Ms": 88971,
         "t1Ms": 89291,
         "text": "feels",
         "conf": 0.851
       },
       {
+        "i": 16,
         "t0Ms": 89532,
         "t1Ms": 90393,
         "text": "almost",
         "conf": 0.767
       },
       {
+        "i": 16,
         "t0Ms": 90413,
         "t1Ms": 90954,
         "text": "real",
         "conf": 0.8
       },
       {
+        "i": 16,
         "t0Ms": 91074,
         "t1Ms": 91575,
         "text": "to",
         "conf": 0.849
       },
       {
+        "i": 16,
         "t0Ms": 91816,
         "t1Ms": 93859,
         "text": "me",
         "conf": 0.961
       },
       {
+        "i": 18,
         "t0Ms": 105044,
         "t1Ms": 105305,
         "text": "The",
         "conf": 0.802
       },
       {
+        "i": 18,
         "t0Ms": 105425,
         "t1Ms": 105826,
         "text": "city",
         "conf": 0.998
       },
       {
+        "i": 18,
         "t0Ms": 105966,
         "t1Ms": 106467,
         "text": "sings",
         "conf": 0.801
       },
       {
+        "i": 18,
         "t0Ms": 106567,
         "t1Ms": 106648,
         "text": "in",
         "conf": 0.926
       },
       {
+        "i": 18,
         "t0Ms": 106728,
         "t1Ms": 107249,
         "text": "liquid",
         "conf": 0.875
       },
       {
+        "i": 18,
         "t0Ms": 107349,
         "t1Ms": 108451,
         "text": "tones",
         "conf": 0.86
       },
       {
+        "i": 19,
         "t0Ms": 110656,
         "t1Ms": 110997,
         "text": "Through",
         "conf": 0.827
       },
       {
+        "i": 19,
         "t0Ms": 111077,
         "t1Ms": 111518,
         "text": "borrowed",
         "conf": 0.711
       },
       {
+        "i": 19,
         "t0Ms": 111578,
         "t1Ms": 112059,
         "text": "thoughts",
         "conf": 0.649
       },
       {
+        "i": 19,
         "t0Ms": 112140,
         "t1Ms": 112240,
         "text": "and",
         "conf": 0.823
       },
       {
+        "i": 19,
         "t0Ms": 112300,
         "t1Ms": 112861,
         "text": "silent",
         "conf": 0.97
       },
       {
+        "i": 19,
         "t0Ms": 112981,
         "t1Ms": 113984,
         "text": "phones",
         "conf": 0.849
       },
       {
+        "i": 20,
         "t0Ms": 115307,
         "t1Ms": 115447,
         "text": "I'm",
         "conf": 0.709
       },
       {
+        "i": 20,
         "t0Ms": 115507,
         "t1Ms": 115707,
         "text": "not",
         "conf": 0.852
       },
       {
+        "i": 20,
         "t0Ms": 115808,
         "t1Ms": 116309,
         "text": "lost,",
         "conf": 0.868
       },
       {
+        "i": 20,
         "t0Ms": 116469,
         "t1Ms": 116629,
         "text": "I'm",
         "conf": 0.808
       },
       {
+        "i": 20,
         "t0Ms": 116670,
         "t1Ms": 116990,
         "text": "just",
         "conf": 0.917
       },
       {
+        "i": 20,
         "t0Ms": 117030,
         "t1Ms": 117752,
         "text": "delayed",
         "conf": 0.885
       },
       {
+        "i": 21,
         "t0Ms": 117872,
         "t1Ms": 118373,
         "text": "Inside",
         "conf": 0.913
       },
       {
+        "i": 21,
         "t0Ms": 118433,
         "t1Ms": 118554,
         "text": "the",
         "conf": 0.986
       },
       {
+        "i": 21,
         "t0Ms": 118594,
         "t1Ms": 119095,
         "text": "mess",
         "conf": 0.828
       },
       {
+        "i": 21,
         "t0Ms": 119135,
         "t1Ms": 119275,
         "text": "the",
         "conf": 0.944
       },
       {
+        "i": 21,
         "t0Ms": 119335,
         "t1Ms": 119676,
         "text": "mind",
         "conf": 0.882
       },
       {
+        "i": 21,
         "t0Ms": 119736,
         "t1Ms": 119897,
         "text": "has",
         "conf": 0.553
       },
       {
+        "i": 21,
         "t0Ms": 119997,
         "t1Ms": 120538,
         "text": "made",
         "conf": 0.628
       },
       {
+        "i": 23,
         "t0Ms": 126695,
         "t1Ms": 127036,
         "text": "If",
         "conf": 0.904
       },
       {
+        "i": 23,
         "t0Ms": 127136,
         "t1Ms": 128779,
         "text": "clarity",
         "conf": 0.711
       },
       {
+        "i": 23,
         "t0Ms": 128919,
         "t1Ms": 129440,
         "text": "comes",
         "conf": 0.52
       },
       {
+        "i": 23,
         "t0Ms": 129601,
         "t1Ms": 130883,
         "text": "crashing",
         "conf": 0.89
       },
       {
+        "i": 23,
         "t0Ms": 130983,
         "t1Ms": 131645,
         "text": "through,",
         "conf": 0.667
       },
       {
+        "i": 24,
         "t0Ms": 131965,
         "t1Ms": 132045,
         "text": "I",
         "conf": 0.959
       },
       {
+        "i": 24,
         "t0Ms": 132426,
         "t1Ms": 133408,
         "text": "hope",
         "conf": 0.411
       },
       {
+        "i": 24,
         "t0Ms": 133428,
         "t1Ms": 133629,
         "text": "it's",
         "conf": 0.42
       },
       {
+        "i": 24,
         "t0Ms": 133729,
         "t1Ms": 134530,
         "text": "strange",
         "conf": 0.888
       },
       {
+        "i": 24,
         "t0Ms": 134871,
         "t1Ms": 135051,
         "text": "and",
         "conf": 0.956
       },
       {
+        "i": 24,
         "t0Ms": 135151,
         "t1Ms": 136514,
         "text": "slightly",
         "conf": 0.801
       },
       {
+        "i": 24,
         "t0Ms": 136594,
         "t1Ms": 136955,
         "text": "blue.",
         "conf": 0.753
       },
       {
+        "i": 25,
         "t0Ms": 137336,
         "t1Ms": 137977,
         "text": "Don't",
         "conf": 0.763
       },
       {
+        "i": 25,
         "t0Ms": 138077,
         "t1Ms": 138638,
         "text": "wake",
         "conf": 0.831
       },
       {
+        "i": 25,
         "t0Ms": 138779,
         "t1Ms": 139340,
         "text": "me",
         "conf": 0.976
       },
       {
+        "i": 25,
         "t0Ms": 139440,
         "t1Ms": 140101,
         "text": "yet.",
         "conf": 0.916
       },
       {
+        "i": 25,
         "t0Ms": 140121,
         "t1Ms": 140682,
         "text": "Don't",
         "conf": 0.744
       },
       {
+        "i": 25,
         "t0Ms": 140843,
         "t1Ms": 141504,
         "text": "clear",
         "conf": 0.901
       },
       {
+        "i": 25,
         "t0Ms": 141564,
         "t1Ms": 142045,
         "text": "the",
         "conf": 0.863
       },
       {
+        "i": 25,
         "t0Ms": 142225,
         "t1Ms": 142927,
         "text": "phase",
         "conf": 0.666
       },
       {
+        "i": 26,
         "t0Ms": 143368,
         "t1Ms": 143528,
         "text": "I've",
         "conf": 0.746
       },
       {
+        "i": 26,
         "t0Ms": 143628,
         "t1Ms": 144229,
         "text": "learned",
         "conf": 0.649
       },
       {
+        "i": 26,
         "t0Ms": 144329,
         "t1Ms": 144690,
         "text": "to",
         "conf": 0.914
       },
       {
+        "i": 26,
         "t0Ms": 145071,
         "t1Ms": 146133,
         "text": "live",
         "conf": 0.447
       },
       {
+        "i": 26,
         "t0Ms": 146153,
         "t1Ms": 147235,
         "text": "inside.",
         "conf": 0.84
       },
       {
+        "i": 26,
         "t0Ms": 149797,
         "t1Ms": 150178,
         "text": "This",
@@ -1866,6 +2066,7 @@
         "conf": 0.748
       },
       {
+        "i": 26,
         "t0Ms": 151079,
         "t1Ms": 151300,
         "text": "haze",
@@ -2028,186 +2229,217 @@
         "conf": 0.988
       },
       {
+        "i": 28,
         "t0Ms": 216858,
         "t1Ms": 217239,
         "text": "This",
         "conf": 0.888
       },
       {
+        "i": 28,
         "t0Ms": 217359,
         "t1Ms": 217960,
         "text": "purple",
         "conf": 0.854
       },
       {
+        "i": 28,
         "t0Ms": 218160,
         "t1Ms": 218381,
         "text": "haze",
         "conf": 0.544
       },
       {
+        "i": 28,
         "t0Ms": 218541,
         "t1Ms": 218982,
         "text": "won't",
         "conf": 0.466
       },
       {
+        "i": 28,
         "t0Ms": 219102,
         "t1Ms": 219763,
         "text": "let",
         "conf": 0.982
       },
       {
+        "i": 28,
         "t0Ms": 219823,
         "t1Ms": 220164,
         "text": "me",
         "conf": 0.963
       },
       {
+        "i": 28,
         "t0Ms": 220485,
         "t1Ms": 220865,
         "text": "go",
         "conf": 0.995
       },
       {
+        "i": 29,
         "t0Ms": 220885,
         "t1Ms": 220925,
         "text": "It",
         "conf": 0.49
       },
       {
+        "i": 29,
         "t0Ms": 222909,
         "t1Ms": 223250,
         "text": "pulls",
         "conf": 0.795
       },
       {
+        "i": 29,
         "t0Ms": 223310,
         "t1Ms": 223490,
         "text": "me",
         "conf": 0.976
       },
       {
+        "i": 29,
         "t0Ms": 223610,
         "t1Ms": 224532,
         "text": "where",
         "conf": 0.361
       },
       {
+        "i": 29,
         "t0Ms": 224612,
         "t1Ms": 224632,
         "text": "I",
         "conf": 0
       },
       {
+        "i": 29,
         "t0Ms": 224652,
         "t1Ms": 225133,
         "text": "don't",
         "conf": 0.52
       },
       {
+        "i": 29,
         "t0Ms": 225313,
         "t1Ms": 225894,
         "text": "yet",
         "conf": 0.911
       },
       {
+        "i": 29,
         "t0Ms": 226055,
         "t1Ms": 227457,
         "text": "know",
         "conf": 0.957
       },
       {
+        "i": 30,
         "t0Ms": 228138,
         "t1Ms": 228760,
         "text": "Between",
         "conf": 0.922
       },
       {
+        "i": 30,
         "t0Ms": 228840,
         "t1Ms": 229020,
         "text": "the",
         "conf": 0.891
       },
       {
+        "i": 30,
         "t0Ms": 229100,
         "t1Ms": 229521,
         "text": "truth",
         "conf": 0.699
       },
       {
+        "i": 30,
         "t0Ms": 229721,
         "t1Ms": 230002,
         "text": "and",
         "conf": 0.751
       },
       {
+        "i": 30,
         "t0Ms": 231164,
         "t1Ms": 231244,
         "text": "what",
         "conf": 0.001
       },
       {
+        "i": 30,
         "t0Ms": 231264,
         "t1Ms": 231424,
         "text": "I",
         "conf": 0.89
       },
       {
+        "i": 30,
         "t0Ms": 231565,
         "t1Ms": 232005,
         "text": "see",
         "conf": 0.803
       },
       {
+        "i": 31,
         "t0Ms": 233648,
         "t1Ms": 233889,
         "text": "The",
         "conf": 0.902
       },
       {
+        "i": 31,
         "t0Ms": 234009,
         "t1Ms": 234310,
         "text": "blur",
         "conf": 0.776
       },
       {
+        "i": 31,
         "t0Ms": 234330,
         "t1Ms": 234710,
         "text": "feels",
         "conf": 0.675
       },
       {
+        "i": 31,
         "t0Ms": 234891,
         "t1Ms": 235712,
         "text": "almost",
         "conf": 0.669
       },
       {
+        "i": 31,
         "t0Ms": 235732,
         "t1Ms": 236313,
         "text": "real",
         "conf": 0.772
       },
       {
+        "i": 31,
         "t0Ms": 236393,
         "t1Ms": 236894,
         "text": "to",
         "conf": 0.97
       },
       {
+        "i": 31,
         "t0Ms": 237155,
         "t1Ms": 239018,
         "text": "me",
         "conf": 0.942
       },
       {
+        "i": 33,
         "t0Ms": 266403,
         "t1Ms": 266804,
         "text": "The",
         "conf": 0.846
       },
       {
+        "i": 33,
         "t0Ms": 266864,
         "t1Ms": 267346,
         "text": "colors",
@@ -2220,60 +2452,70 @@
         "conf": 0.944
       },
       {
+        "i": 33,
         "t0Ms": 267968,
         "t1Ms": 268148,
         "text": "the",
         "conf": 0.805
       },
       {
+        "i": 33,
         "t0Ms": 268309,
         "t1Ms": 268750,
         "text": "echoes",
         "conf": 0.699
       },
       {
+        "i": 33,
         "t0Ms": 268790,
         "t1Ms": 269452,
         "text": "stay",
         "conf": 0.937
       },
       {
+        "i": 34,
         "t0Ms": 269472,
         "t1Ms": 269492,
         "text": "A",
         "conf": 0.977
       },
       {
+        "i": 34,
         "t0Ms": 272421,
         "t1Ms": 273043,
         "text": "softer",
         "conf": 0.877
       },
       {
+        "i": 34,
         "t0Ms": 273103,
         "t1Ms": 273504,
         "text": "shade",
         "conf": 0.711
       },
       {
+        "i": 34,
         "t0Ms": 273585,
         "t1Ms": 273805,
         "text": "to",
         "conf": 0.92
       },
       {
+        "i": 34,
         "t0Ms": 273946,
         "t1Ms": 275129,
         "text": "end",
         "conf": 0.895
       },
       {
+        "i": 34,
         "t0Ms": 275149,
         "t1Ms": 275210,
         "text": "the",
         "conf": 0.33
       },
       {
+        "i": 34,
         "t0Ms": 275250,
         "t1Ms": 275350,
         "text": "day",
@@ -2285,13 +2527,13 @@
     "mix": "assets/static-in-the-ultraviolet/_pzFs206tPBhPX/mix.mp3",
     "mixWav": "",
     "stemsZip": "assets/static-in-the-ultraviolet/_pzFs206tPBhPX/stems.zip",
+    "effective": "assets/static-in-the-ultraviolet/_pzFs206tPBhPX/effective.json",
     "instrumental": "assets/static-in-the-ultraviolet/_pzFs206tPBhPX/instrumental.mp3",
     "instrumentalWav": "",
     "vocals": "assets/static-in-the-ultraviolet/_pzFs206tPBhPX/vocals.mp3",
     "vocalsWav": "",
-    "composer": "assets/static-in-the-ultraviolet/_pzFs206tPBhPX/composer.txt",
-    "effective": "assets/static-in-the-ultraviolet/_pzFs206tPBhPX/effective.json"
+    "composer": "assets/static-in-the-ultraviolet/_pzFs206tPBhPX/composer.txt"
   },
   "hasUserHints": true,
-  "lastHintAt": "2026-02-25T07:47:43.649Z"
+  "lastHintAt": "2026-02-27T08:08:51.211Z"
 }

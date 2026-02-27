@@ -1,0 +1,1672 @@
+{
+  "workId": "bronce-y-az-car",
+  "trackId": "01KJGDT3TZQRK50Z36NT",
+  "recipeRef": {
+    "albumId": "drinks",
+    "trackOverrideId": "01KJGDT3TZQRK50Z36NT"
+  },
+  "createdAt": "2026-01-27T08:28:00.000Z",
+  "slug": "bronce-y-az-car",
+  "title": "Bronce Y Az Car",
+  "audio": {
+    "filename": "mix.mp3",
+    "path": "../assets/bronce-y-az-car/01KJGDT3TZQRK50Z36NT/mix.mp3",
+    "cidOrTx": "",
+    "mime": "audio/mpeg",
+    "bytes": 3791636
+  },
+  "composer": {
+    "rawText": "[SongTitle: Bronce y Azúcar]\r\n[Style: latin, big band, Afro-Cuban jazz, clean studio recording, expressive male vocal]\r\n[Caption: Brass, rhythm, and heat in a Havana night.]\r\n[Image: Vintage Havana bar, brass section glowing under warm lights.]\r\n[Refresh Title: Cuba Libre]\r\n[Theme: Drinks]\r\n[Gradients: 6]\r\n[Rank: 6]\r\n[TitleRarityPct: 0.75]\r\n[Seeds: 596, A:89, B:85, C:81, D:75]\r\n[Created: January 27, 2026 at 9:28 PM]\r\n[Composer Version: v2.0]\r\n\r\n[Plan]\r\n[Perspective: we_community]\r\n[Concept: celebration, resilience, and shared rhythm over a classic drink]\r\n[Topic: Night & Social Energy → dance_floor_release]\r\n[GenreBias: latin → big band Cuban]\r\n[StyleChange: none]\r\n[Modulation: none]\r\n[HookProminence: high]\r\n[Deviation: brass-driven swing]\r\n\r\n[Intro]\r\n[Full brass fanfare, congas and timbales answer, walking bass locks in.]\r\nLa noche cae sobre el ron  \r\nBronce vibra en el salón  \r\n\r\n[Verse]\r\n[Syncopated melody, call-and-response with trumpets.]\r\nHielo canta en vaso corto  \r\nLima corta el calor roto  \r\nViejas risas, mesa fiel  \r\nSudor brilla en la pared  \r\n\r\n[Verse]\r\n[Trombones slide wide, rhythm section pushes forward.]\r\nManos juntas al compás  \r\nCada pena baila atrás  \r\nNo hay reloj que mande aquí  \r\nSolo el pulso y el maní  \r\n\r\n[Chorus]\r\n[Big band hits, stacked vocals, joyful release.]\r\nCuba Libre, fuego y son  \r\nAzúcar, ron y corazón  \r\nCuando el mundo pesa más  \r\nEste ritmo nos da paz  \r\n\r\n[Verse]\r\n[Lower register, swaggering phrasing.]\r\nCalles guardan lo que fue  \r\nSueños vivos otra vez  \r\nBrindis alto, voz sincera  \r\nHoy la pena no gobierna  \r\n\r\n[Bridge]\r\n[Break to percussion, then brass rebuilds in waves.]\r\nToca lento, deja arder  \r\nQue la noche sabe hacer  \r\n\r\n[Final Chorus]\r\n[Full ensemble, trumpets soar, trombones punch.]\r\nCuba Libre, fuego y son  \r\nAzúcar, ron y corazón  \r\nSi mañana quiere entrar  \r\nQue nos encuentre al bailar  \r\n\r\n[Ending]\r\n[Final brass hit, percussion flourish, crowd shout.]\r\nSalud, mi gente, hasta el sol  \r\nQue despierte este tambor  \r\n",
+    "headerMap": {
+      "SongTitle": "Bronce y Azúcar",
+      "Style": "latin, big band, Afro-Cuban jazz, clean studio recording, expressive male vocal",
+      "Caption": "Brass, rhythm, and heat in a Havana night.",
+      "Image": "Vintage Havana bar, brass section glowing under warm lights.",
+      "Refresh Title": "Cuba Libre",
+      "Theme": "Drinks",
+      "Gradients": "6",
+      "Rank": "6",
+      "TitleRarityPct": "0.75",
+      "Seeds": "596, A:89, B:85, C:81, D:75",
+      "Created": "January 27, 2026 at 9:28 PM",
+      "Composer Version": "v2.0"
+    }
+  },
+  "sections": [
+    {
+      "id": "plan-1",
+      "labelRaw": "Plan",
+      "notesRaw": "Perspective: we_community\nConcept: celebration, resilience, and shared rhythm over a classic drink\nTopic: Night & Social Energy → dance_floor_release\nGenreBias: latin → big band Cuban\nStyleChange: none\nModulation: none\nHookProminence: high\nDeviation: brass-driven swing"
+    },
+    {
+      "id": "intro-1",
+      "labelRaw": "Intro",
+      "notesRaw": "Full brass fanfare, congas and timbales answer, walking bass locks in."
+    },
+    {
+      "id": "verse-1",
+      "labelRaw": "Verse",
+      "notesRaw": "Syncopated melody, call-and-response with trumpets."
+    },
+    {
+      "id": "verse-2",
+      "labelRaw": "Verse",
+      "notesRaw": "Trombones slide wide, rhythm section pushes forward."
+    },
+    {
+      "id": "chorus-1",
+      "labelRaw": "Chorus",
+      "notesRaw": "Big band hits, stacked vocals, joyful release."
+    },
+    {
+      "id": "verse-3",
+      "labelRaw": "Verse",
+      "notesRaw": "Lower register, swaggering phrasing."
+    },
+    {
+      "id": "bridge-1",
+      "labelRaw": "Bridge",
+      "notesRaw": "Break to percussion, then brass rebuilds in waves."
+    },
+    {
+      "id": "final-chorus-1",
+      "labelRaw": "Final Chorus",
+      "notesRaw": "Full ensemble, trumpets soar, trombones punch."
+    },
+    {
+      "id": "ending-1",
+      "labelRaw": "Ending",
+      "notesRaw": "Final brass hit, percussion flourish, crowd shout."
+    }
+  ],
+  "lyrics": {
+    "rawText": "\nLa noche cae sobre el ron  \nBronce vibra en el salón  \n\nHielo canta en vaso corto  \nLima corta el calor roto  \nViejas risas, mesa fiel  \nSudor brilla en la pared  \n\nManos juntas al compás  \nCada pena baila atrás  \nNo hay reloj que mande aquí  \nSolo el pulso y el maní  \n\nCuba Libre, fuego y son  \nAzúcar, ron y corazón  \nCuando el mundo pesa más  \nEste ritmo nos da paz  \n\nCalles guardan lo que fue  \nSueños vivos otra vez  \nBrindis alto, voz sincera  \nHoy la pena no gobierna  \n\nToca lento, deja arder  \nQue la noche sabe hacer  \n\nCuba Libre, fuego y son  \nAzúcar, ron y corazón  \nSi mañana quiere entrar  \nQue nos encuentre al bailar  \n\nSalud, mi gente, hasta el sol  \nQue despierte este tambor  \n"
+  },
+  "sourceGroupKey": "loose:bronce-y-az-car-stems-105bpm",
+  "assetDir": "assets/bronce-y-az-car/01KJGDT3TZQRK50Z36NT",
+  "createdLocalRaw": "January 27, 2026 at 9:28 PM",
+  "createdTz": "Pacific/Auckland",
+  "timing": {
+    "beatsMs": [
+      557,
+      1138,
+      1718,
+      2299,
+      2879,
+      3471,
+      4075,
+      4679,
+      5271,
+      5851,
+      6432,
+      7024,
+      7628,
+      8243,
+      8824,
+      9404,
+      9985,
+      10588,
+      11169,
+      11749,
+      12260,
+      12783,
+      13375,
+      13955,
+      14536,
+      15116,
+      15697,
+      16266,
+      16834,
+      17403,
+      17972,
+      18553,
+      19145,
+      19760,
+      20364,
+      20944,
+      21537,
+      22129,
+      22709,
+      23290,
+      23859,
+      24427,
+      25008,
+      25588,
+      26146,
+      26715,
+      27283,
+      27864,
+      28433,
+      29002,
+      29571,
+      30139,
+      30697,
+      31277,
+      31858,
+      32427,
+      32996,
+      33564,
+      34133,
+      34714,
+      35283,
+      35852,
+      36420,
+      37001,
+      37570,
+      38139,
+      38708,
+      39288,
+      39845,
+      40403,
+      40972,
+      41540,
+      42086,
+      42643,
+      43189,
+      43746,
+      44304,
+      44861,
+      45418,
+      45976,
+      46556,
+      47125,
+      47694,
+      48263,
+      48832,
+      49412,
+      49981,
+      50550,
+      51119,
+      51688,
+      52268,
+      52837,
+      53418,
+      53986,
+      54555,
+      55124,
+      55705,
+      56274,
+      56842,
+      57411,
+      57980,
+      58561,
+      59130,
+      59699,
+      60267,
+      60836,
+      61405,
+      61974,
+      62555,
+      63123,
+      63692,
+      64261,
+      64830,
+      65411,
+      65979,
+      66548,
+      67129,
+      67709,
+      68290,
+      68859,
+      69428,
+      69985,
+      70554,
+      71123,
+      71703,
+      72272,
+      72841,
+      73421,
+      73990,
+      74559,
+      75128,
+      75697,
+      76266,
+      76835,
+      77415,
+      77996,
+      78576,
+      79145,
+      79714,
+      80283,
+      80852,
+      81421,
+      81990,
+      82559,
+      83127,
+      83696,
+      84265,
+      84846,
+      85426,
+      86007,
+      86576,
+      87156,
+      87725,
+      88305,
+      88886,
+      89501,
+      90117,
+      90720,
+      91336,
+      91939,
+      92555,
+      93147,
+      93716,
+      94296,
+      94865,
+      95434,
+      96003,
+      96572,
+      97152,
+      97721,
+      98290,
+      98871,
+      99428,
+      100008,
+      100577,
+      101146,
+      101715,
+      102284,
+      102864,
+      103445,
+      104014,
+      104583,
+      105140,
+      105720,
+      106289,
+      106858,
+      107439,
+      108019,
+      108611,
+      109227,
+      109830,
+      110434,
+      111038,
+      111653,
+      112257,
+      112837,
+      113406,
+      113987,
+      114556,
+      115125,
+      115705,
+      116274,
+      116843,
+      117412,
+      117981,
+      118549,
+      119118,
+      119687,
+      120256,
+      120837,
+      121417,
+      121986,
+      122555,
+      123124,
+      123693,
+      124273,
+      124842,
+      125411,
+      125991,
+      126572,
+      127152,
+      127710,
+      128290,
+      128859,
+      129428,
+      129997,
+      130577,
+      131181,
+      131796,
+      132377,
+      132981,
+      133550,
+      134130,
+      134711,
+      135279,
+      135860,
+      136417,
+      136986,
+      137555,
+      138136,
+      138704,
+      139273,
+      139842,
+      140411,
+      140980,
+      141549,
+      142129,
+      142710,
+      143279,
+      143848,
+      144428,
+      145009,
+      145566,
+      146123,
+      146704,
+      147284,
+      147865,
+      148445,
+      149002,
+      149571,
+      150140,
+      150698,
+      151255,
+      151835,
+      152404,
+      152973,
+      153542,
+      154111,
+      154691,
+      155272,
+      155852,
+      156421,
+      156990,
+      157571,
+      158139,
+      158708,
+      159289,
+      159858,
+      160427,
+      160996,
+      161564,
+      162145,
+      162714,
+      163283,
+      163852,
+      164421,
+      164989,
+      165558,
+      166139,
+      166719,
+      167288,
+      167857,
+      168426,
+      168995,
+      169575,
+      170144,
+      170713,
+      171294,
+      171851,
+      172420,
+      172989,
+      173569,
+      174150,
+      174719,
+      175287,
+      175868,
+      176448,
+      177041,
+      177633,
+      178225,
+      178794,
+      179363,
+      180024,
+      180674,
+      181313,
+      181963,
+      182613,
+      183252,
+      183890,
+      184552,
+      185179,
+      185818,
+      186456,
+      187095,
+      187733,
+      188372,
+      189010
+    ],
+    "lyricsLines": [
+      {
+        "i": 1,
+        "t0Ms": 31,
+        "t1Ms": 15178
+      },
+      {
+        "i": 2,
+        "t0Ms": 16601,
+        "t1Ms": 19947
+      },
+      {
+        "i": 4,
+        "t0Ms": 21209,
+        "t1Ms": 23614
+      },
+      {
+        "i": 5,
+        "t0Ms": 23634,
+        "t1Ms": 25538
+      },
+      {
+        "i": 6,
+        "t0Ms": 25618,
+        "t1Ms": 28164
+      },
+      {
+        "i": 7,
+        "t0Ms": 28184,
+        "t1Ms": 29888
+      },
+      {
+        "i": 9,
+        "t0Ms": 30489,
+        "t1Ms": 32172
+      },
+      {
+        "i": 10,
+        "t0Ms": 32754,
+        "t1Ms": 34638
+      },
+      {
+        "i": 11,
+        "t0Ms": 34718,
+        "t1Ms": 36702
+      },
+      {
+        "i": 12,
+        "t0Ms": 37323,
+        "t1Ms": 39488
+      },
+      {
+        "i": 14,
+        "t0Ms": 42269,
+        "t1Ms": 44271
+      },
+      {
+        "i": 15,
+        "t0Ms": 44771,
+        "t1Ms": 46313
+      },
+      {
+        "i": 16,
+        "t0Ms": 46893,
+        "t1Ms": 48915
+      },
+      {
+        "i": 17,
+        "t0Ms": 49396,
+        "t1Ms": 51277
+      },
+      {
+        "i": 14,
+        "t0Ms": 51478,
+        "t1Ms": 53439
+      },
+      {
+        "i": 15,
+        "t0Ms": 53920,
+        "t1Ms": 55461
+      },
+      {
+        "i": 19,
+        "t0Ms": 55862,
+        "t1Ms": 57423
+      },
+      {
+        "i": 20,
+        "t0Ms": 57984,
+        "t1Ms": 59685
+      },
+      {
+        "i": 21,
+        "t0Ms": 60306,
+        "t1Ms": 62328
+      },
+      {
+        "i": 22,
+        "t0Ms": 62448,
+        "t1Ms": 64310
+      },
+      {
+        "i": 24,
+        "t0Ms": 64610,
+        "t1Ms": 66351
+      },
+      {
+        "i": 25,
+        "t0Ms": 67132,
+        "t1Ms": 69154
+      },
+      {
+        "i": 14,
+        "t0Ms": 71530,
+        "t1Ms": 80830
+      },
+      {
+        "i": 15,
+        "t0Ms": 81351,
+        "t1Ms": 83295
+      },
+      {
+        "i": 27,
+        "t0Ms": 151973,
+        "t1Ms": 153977
+      },
+      {
+        "i": 28,
+        "t0Ms": 154478,
+        "t1Ms": 156020
+      },
+      {
+        "i": 29,
+        "t0Ms": 156241,
+        "t1Ms": 158325
+      },
+      {
+        "i": 30,
+        "t0Ms": 158565,
+        "t1Ms": 165237
+      },
+      {
+        "i": 14,
+        "t0Ms": 165257,
+        "t1Ms": 165738
+      },
+      {
+        "i": 15,
+        "t0Ms": 165758,
+        "t1Ms": 166460
+      },
+      {
+        "i": 32,
+        "t0Ms": 166480,
+        "t1Ms": 168543
+      },
+      {
+        "i": 33,
+        "t0Ms": 168884,
+        "t1Ms": 171028
+      }
+    ],
+    "words": [
+      {
+        "i": 1,
+        "t0Ms": 31,
+        "t1Ms": 12474,
+        "text": "La",
+        "conf": 0.784
+      },
+      {
+        "i": 1,
+        "t0Ms": 12594,
+        "t1Ms": 13175,
+        "text": "noche",
+        "conf": 0.733
+      },
+      {
+        "i": 1,
+        "t0Ms": 13195,
+        "t1Ms": 14116,
+        "text": "cae",
+        "conf": 0.769
+      },
+      {
+        "i": 1,
+        "t0Ms": 14177,
+        "t1Ms": 14617,
+        "text": "sobre",
+        "conf": 0.776
+      },
+      {
+        "i": 1,
+        "t0Ms": 14637,
+        "t1Ms": 14678,
+        "text": "el",
+        "conf": 0.332
+      },
+      {
+        "i": 1,
+        "t0Ms": 14758,
+        "t1Ms": 15178,
+        "text": "ron,",
+        "conf": 0.906
+      },
+      {
+        "i": 2,
+        "t0Ms": 16601,
+        "t1Ms": 17182,
+        "text": "bronce",
+        "conf": 0.784
+      },
+      {
+        "i": 2,
+        "t0Ms": 17222,
+        "t1Ms": 17683,
+        "text": "vibra",
+        "conf": 0.845
+      },
+      {
+        "i": 2,
+        "t0Ms": 17703,
+        "t1Ms": 18665,
+        "text": "en",
+        "conf": 0.694
+      },
+      {
+        "i": 2,
+        "t0Ms": 18685,
+        "t1Ms": 18725,
+        "text": "el",
+        "conf": 0.01
+      },
+      {
+        "i": 2,
+        "t0Ms": 18745,
+        "t1Ms": 19947,
+        "text": "salón.",
+        "conf": 0.687
+      },
+      {
+        "i": 4,
+        "t0Ms": 21209,
+        "t1Ms": 21710,
+        "text": "Hielo",
+        "conf": 0.712
+      },
+      {
+        "i": 4,
+        "t0Ms": 21730,
+        "t1Ms": 22031,
+        "text": "canta",
+        "conf": 0.662
+      },
+      {
+        "i": 4,
+        "t0Ms": 22051,
+        "t1Ms": 22191,
+        "text": "en",
+        "conf": 0.542
+      },
+      {
+        "i": 4,
+        "t0Ms": 22211,
+        "t1Ms": 22652,
+        "text": "vaso",
+        "conf": 0.846
+      },
+      {
+        "i": 4,
+        "t0Ms": 22732,
+        "t1Ms": 23614,
+        "text": "corto,",
+        "conf": 0.875
+      },
+      {
+        "i": 5,
+        "t0Ms": 23634,
+        "t1Ms": 24035,
+        "text": "lima",
+        "conf": 0.811
+      },
+      {
+        "i": 5,
+        "t0Ms": 24055,
+        "t1Ms": 24336,
+        "text": "corta",
+        "conf": 0.832
+      },
+      {
+        "i": 5,
+        "t0Ms": 24356,
+        "t1Ms": 24416,
+        "text": "el",
+        "conf": 0.581
+      },
+      {
+        "i": 5,
+        "t0Ms": 24496,
+        "t1Ms": 24937,
+        "text": "calor",
+        "conf": 0.865
+      },
+      {
+        "i": 5,
+        "t0Ms": 25037,
+        "t1Ms": 25538,
+        "text": "roto.",
+        "conf": 0.866
+      },
+      {
+        "i": 6,
+        "t0Ms": 25618,
+        "t1Ms": 26079,
+        "text": "Vieja",
+        "conf": 0.815
+      },
+      {
+        "i": 6,
+        "t0Ms": 26200,
+        "t1Ms": 26941,
+        "text": "risa,",
+        "conf": 0.743
+      },
+      {
+        "i": 6,
+        "t0Ms": 26961,
+        "t1Ms": 27342,
+        "text": "mesa",
+        "conf": 0.838
+      },
+      {
+        "i": 6,
+        "t0Ms": 27362,
+        "t1Ms": 28164,
+        "text": "fiel,",
+        "conf": 0.888
+      },
+      {
+        "i": 7,
+        "t0Ms": 28184,
+        "t1Ms": 28725,
+        "text": "sudor",
+        "conf": 0.824
+      },
+      {
+        "i": 7,
+        "t0Ms": 28745,
+        "t1Ms": 29066,
+        "text": "brilla",
+        "conf": 0.68
+      },
+      {
+        "i": 7,
+        "t0Ms": 29086,
+        "t1Ms": 29186,
+        "text": "en",
+        "conf": 0.846
+      },
+      {
+        "i": 7,
+        "t0Ms": 29246,
+        "t1Ms": 29366,
+        "text": "la",
+        "conf": 0.751
+      },
+      {
+        "i": 7,
+        "t0Ms": 29447,
+        "t1Ms": 29888,
+        "text": "pared.",
+        "conf": 0.904
+      },
+      {
+        "i": 9,
+        "t0Ms": 30489,
+        "t1Ms": 30850,
+        "text": "Manos",
+        "conf": 0.832
+      },
+      {
+        "i": 9,
+        "t0Ms": 30950,
+        "t1Ms": 31291,
+        "text": "juntas",
+        "conf": 0.841
+      },
+      {
+        "i": 9,
+        "t0Ms": 31411,
+        "t1Ms": 31571,
+        "text": "al",
+        "conf": 0.801
+      },
+      {
+        "i": 9,
+        "t0Ms": 31591,
+        "t1Ms": 32172,
+        "text": "compás,",
+        "conf": 0.869
+      },
+      {
+        "i": 10,
+        "t0Ms": 32754,
+        "t1Ms": 33094,
+        "text": "cada",
+        "conf": 0.94
+      },
+      {
+        "i": 10,
+        "t0Ms": 33235,
+        "t1Ms": 33535,
+        "text": "pena",
+        "conf": 0.895
+      },
+      {
+        "i": 10,
+        "t0Ms": 33595,
+        "t1Ms": 33976,
+        "text": "baila",
+        "conf": 0.881
+      },
+      {
+        "i": 10,
+        "t0Ms": 34117,
+        "t1Ms": 34638,
+        "text": "atrás.",
+        "conf": 0.751
+      },
+      {
+        "i": 11,
+        "t0Ms": 34718,
+        "t1Ms": 34798,
+        "text": "No",
+        "conf": 0.806
+      },
+      {
+        "i": 11,
+        "t0Ms": 34898,
+        "t1Ms": 35018,
+        "text": "hay",
+        "conf": 0.275
+      },
+      {
+        "i": 11,
+        "t0Ms": 35039,
+        "t1Ms": 35800,
+        "text": "reloj",
+        "conf": 0.764
+      },
+      {
+        "i": 11,
+        "t0Ms": 35900,
+        "t1Ms": 36001,
+        "text": "que",
+        "conf": 0.78
+      },
+      {
+        "i": 11,
+        "t0Ms": 36081,
+        "t1Ms": 36341,
+        "text": "mande",
+        "conf": 0.935
+      },
+      {
+        "i": 11,
+        "t0Ms": 36401,
+        "t1Ms": 36702,
+        "text": "aquí,",
+        "conf": 0.888
+      },
+      {
+        "i": 12,
+        "t0Ms": 37323,
+        "t1Ms": 37644,
+        "text": "solo",
+        "conf": 0.976
+      },
+      {
+        "i": 12,
+        "t0Ms": 37664,
+        "t1Ms": 37824,
+        "text": "el",
+        "conf": 0.636
+      },
+      {
+        "i": 12,
+        "t0Ms": 37905,
+        "t1Ms": 38225,
+        "text": "pulso",
+        "conf": 0.904
+      },
+      {
+        "i": 12,
+        "t0Ms": 38245,
+        "t1Ms": 38265,
+        "text": "y",
+        "conf": 0.903
+      },
+      {
+        "i": 12,
+        "t0Ms": 38446,
+        "t1Ms": 38566,
+        "text": "el",
+        "conf": 0.806
+      },
+      {
+        "i": 12,
+        "t0Ms": 38586,
+        "t1Ms": 39488,
+        "text": "maní.",
+        "conf": 0.731
+      },
+      {
+        "i": 14,
+        "t0Ms": 42269,
+        "t1Ms": 42950,
+        "text": "Cuba",
+        "conf": 0.201
+      },
+      {
+        "i": 14,
+        "t0Ms": 42970,
+        "t1Ms": 43450,
+        "text": "libre,",
+        "conf": 0.848
+      },
+      {
+        "i": 14,
+        "t0Ms": 43590,
+        "t1Ms": 43951,
+        "text": "fuego",
+        "conf": 0.489
+      },
+      {
+        "i": 14,
+        "t0Ms": 43971,
+        "t1Ms": 43991,
+        "text": "y",
+        "conf": 0.024
+      },
+      {
+        "i": 14,
+        "t0Ms": 44011,
+        "t1Ms": 44271,
+        "text": "son,",
+        "conf": 0.823
+      },
+      {
+        "i": 15,
+        "t0Ms": 44771,
+        "t1Ms": 45332,
+        "text": "azúcar,",
+        "conf": 0.577
+      },
+      {
+        "i": 15,
+        "t0Ms": 45352,
+        "t1Ms": 45412,
+        "text": "ron",
+        "conf": 0.309
+      },
+      {
+        "i": 15,
+        "t0Ms": 45492,
+        "t1Ms": 45532,
+        "text": "y",
+        "conf": 0.872
+      },
+      {
+        "i": 15,
+        "t0Ms": 45612,
+        "t1Ms": 46313,
+        "text": "corazón.",
+        "conf": 0.862
+      },
+      {
+        "i": 16,
+        "t0Ms": 46893,
+        "t1Ms": 47214,
+        "text": "Cuando",
+        "conf": 0.887
+      },
+      {
+        "i": 16,
+        "t0Ms": 47294,
+        "t1Ms": 47414,
+        "text": "el",
+        "conf": 0.814
+      },
+      {
+        "i": 16,
+        "t0Ms": 47494,
+        "t1Ms": 47954,
+        "text": "mundo",
+        "conf": 0.868
+      },
+      {
+        "i": 16,
+        "t0Ms": 47994,
+        "t1Ms": 48615,
+        "text": "pesa",
+        "conf": 0.606
+      },
+      {
+        "i": 16,
+        "t0Ms": 48635,
+        "t1Ms": 48915,
+        "text": "más,",
+        "conf": 0.928
+      },
+      {
+        "i": 17,
+        "t0Ms": 49396,
+        "t1Ms": 49756,
+        "text": "este",
+        "conf": 0.887
+      },
+      {
+        "i": 17,
+        "t0Ms": 49776,
+        "t1Ms": 50337,
+        "text": "ritmo",
+        "conf": 0.921
+      },
+      {
+        "i": 17,
+        "t0Ms": 50417,
+        "t1Ms": 50677,
+        "text": "nos",
+        "conf": 0.61
+      },
+      {
+        "i": 17,
+        "t0Ms": 50697,
+        "t1Ms": 50897,
+        "text": "da",
+        "conf": 0.93
+      },
+      {
+        "i": 17,
+        "t0Ms": 50997,
+        "t1Ms": 51277,
+        "text": "paz.",
+        "conf": 0.794
+      },
+      {
+        "i": 14,
+        "t0Ms": 51478,
+        "t1Ms": 52138,
+        "text": "Cuba",
+        "conf": 0.428
+      },
+      {
+        "i": 14,
+        "t0Ms": 52158,
+        "t1Ms": 52579,
+        "text": "libre,",
+        "conf": 0.749
+      },
+      {
+        "i": 14,
+        "t0Ms": 52719,
+        "t1Ms": 53179,
+        "text": "fuego",
+        "conf": 0.472
+      },
+      {
+        "i": 14,
+        "t0Ms": 53199,
+        "t1Ms": 53219,
+        "text": "y",
+        "conf": 0.002
+      },
+      {
+        "i": 14,
+        "t0Ms": 53239,
+        "t1Ms": 53439,
+        "text": "son,",
+        "conf": 0.693
+      },
+      {
+        "i": 15,
+        "t0Ms": 53920,
+        "t1Ms": 54360,
+        "text": "azúcar,",
+        "conf": 0.524
+      },
+      {
+        "i": 15,
+        "t0Ms": 54380,
+        "t1Ms": 54560,
+        "text": "ron",
+        "conf": 0.563
+      },
+      {
+        "i": 15,
+        "t0Ms": 54641,
+        "t1Ms": 54681,
+        "text": "y",
+        "conf": 0.706
+      },
+      {
+        "i": 15,
+        "t0Ms": 54741,
+        "t1Ms": 55461,
+        "text": "corazón.",
+        "conf": 0.868
+      },
+      {
+        "i": 19,
+        "t0Ms": 55862,
+        "t1Ms": 56202,
+        "text": "Calles",
+        "conf": 0.817
+      },
+      {
+        "i": 19,
+        "t0Ms": 56282,
+        "t1Ms": 56662,
+        "text": "guardan",
+        "conf": 0.862
+      },
+      {
+        "i": 19,
+        "t0Ms": 56722,
+        "t1Ms": 56843,
+        "text": "lo",
+        "conf": 0.818
+      },
+      {
+        "i": 19,
+        "t0Ms": 56863,
+        "t1Ms": 57023,
+        "text": "que",
+        "conf": 0.788
+      },
+      {
+        "i": 19,
+        "t0Ms": 57103,
+        "t1Ms": 57423,
+        "text": "fue,",
+        "conf": 0.807
+      },
+      {
+        "i": 20,
+        "t0Ms": 57984,
+        "t1Ms": 58384,
+        "text": "sueños",
+        "conf": 0.928
+      },
+      {
+        "i": 20,
+        "t0Ms": 58504,
+        "t1Ms": 58945,
+        "text": "vivos",
+        "conf": 0.949
+      },
+      {
+        "i": 20,
+        "t0Ms": 59045,
+        "t1Ms": 59285,
+        "text": "otra",
+        "conf": 0.986
+      },
+      {
+        "i": 20,
+        "t0Ms": 59385,
+        "t1Ms": 59685,
+        "text": "vez.",
+        "conf": 0.976
+      },
+      {
+        "i": 21,
+        "t0Ms": 60306,
+        "t1Ms": 60786,
+        "text": "Brindis",
+        "conf": 0.882
+      },
+      {
+        "i": 21,
+        "t0Ms": 60806,
+        "t1Ms": 61147,
+        "text": "alto,",
+        "conf": 0.916
+      },
+      {
+        "i": 21,
+        "t0Ms": 61307,
+        "t1Ms": 61567,
+        "text": "voz",
+        "conf": 0.821
+      },
+      {
+        "i": 21,
+        "t0Ms": 61587,
+        "t1Ms": 62328,
+        "text": "sincera,",
+        "conf": 0.846
+      },
+      {
+        "i": 22,
+        "t0Ms": 62448,
+        "t1Ms": 62708,
+        "text": "hoy",
+        "conf": 0.736
+      },
+      {
+        "i": 22,
+        "t0Ms": 62728,
+        "t1Ms": 62828,
+        "text": "la",
+        "conf": 0.8
+      },
+      {
+        "i": 22,
+        "t0Ms": 63048,
+        "t1Ms": 63409,
+        "text": "pena",
+        "conf": 0.865
+      },
+      {
+        "i": 22,
+        "t0Ms": 63529,
+        "t1Ms": 63709,
+        "text": "no",
+        "conf": 0.691
+      },
+      {
+        "i": 22,
+        "t0Ms": 63769,
+        "t1Ms": 64310,
+        "text": "gobierna.",
+        "conf": 0.758
+      },
+      {
+        "i": 24,
+        "t0Ms": 64610,
+        "t1Ms": 64990,
+        "text": "Toca",
+        "conf": 0.881
+      },
+      {
+        "i": 24,
+        "t0Ms": 65170,
+        "t1Ms": 65611,
+        "text": "lento,",
+        "conf": 0.898
+      },
+      {
+        "i": 24,
+        "t0Ms": 65631,
+        "t1Ms": 66351,
+        "text": "deja",
+        "conf": 0.609
+      },
+      {
+        "t0Ms": 66371,
+        "t1Ms": 66712,
+        "text": "ver,",
+        "conf": 0.831
+      },
+      {
+        "i": 25,
+        "t0Ms": 67132,
+        "t1Ms": 67272,
+        "text": "que",
+        "conf": 0.661
+      },
+      {
+        "i": 25,
+        "t0Ms": 67352,
+        "t1Ms": 67452,
+        "text": "la",
+        "conf": 0.958
+      },
+      {
+        "i": 25,
+        "t0Ms": 67512,
+        "t1Ms": 67813,
+        "text": "noche",
+        "conf": 0.898
+      },
+      {
+        "i": 25,
+        "t0Ms": 68033,
+        "t1Ms": 68614,
+        "text": "sabe",
+        "conf": 0.724
+      },
+      {
+        "i": 25,
+        "t0Ms": 68634,
+        "t1Ms": 69154,
+        "text": "hacer.",
+        "conf": 0.569
+      },
+      {
+        "i": 14,
+        "t0Ms": 71530,
+        "t1Ms": 79327,
+        "text": "Cuba",
+        "conf": 0.929
+      },
+      {
+        "i": 14,
+        "t0Ms": 79487,
+        "t1Ms": 79988,
+        "text": "libre,",
+        "conf": 0.861
+      },
+      {
+        "i": 14,
+        "t0Ms": 80148,
+        "t1Ms": 80489,
+        "text": "fuego",
+        "conf": 0.689
+      },
+      {
+        "i": 14,
+        "t0Ms": 80509,
+        "t1Ms": 80569,
+        "text": "y",
+        "conf": 0.651
+      },
+      {
+        "i": 14,
+        "t0Ms": 80589,
+        "t1Ms": 80830,
+        "text": "son,",
+        "conf": 0.861
+      },
+      {
+        "i": 15,
+        "t0Ms": 81351,
+        "t1Ms": 81752,
+        "text": "azúcar,",
+        "conf": 0.447
+      },
+      {
+        "i": 15,
+        "t0Ms": 81772,
+        "t1Ms": 82032,
+        "text": "ron",
+        "conf": 0.369
+      },
+      {
+        "i": 15,
+        "t0Ms": 82052,
+        "t1Ms": 82133,
+        "text": "y",
+        "conf": 0.623
+      },
+      {
+        "i": 15,
+        "t0Ms": 82153,
+        "t1Ms": 83295,
+        "text": "corazón",
+        "conf": 0.832
+      },
+      {
+        "i": 27,
+        "t0Ms": 151973,
+        "t1Ms": 152674,
+        "text": "Cuba",
+        "conf": 0.453
+      },
+      {
+        "i": 27,
+        "t0Ms": 152694,
+        "t1Ms": 153255,
+        "text": "libre,",
+        "conf": 0.492
+      },
+      {
+        "i": 27,
+        "t0Ms": 153275,
+        "t1Ms": 153656,
+        "text": "fuego",
+        "conf": 0.581
+      },
+      {
+        "i": 27,
+        "t0Ms": 153676,
+        "t1Ms": 153696,
+        "text": "y",
+        "conf": 0.019
+      },
+      {
+        "i": 27,
+        "t0Ms": 153716,
+        "t1Ms": 153977,
+        "text": "son,",
+        "conf": 0.82
+      },
+      {
+        "i": 28,
+        "t0Ms": 154478,
+        "t1Ms": 155139,
+        "text": "azúcar,",
+        "conf": 0.544
+      },
+      {
+        "i": 28,
+        "t0Ms": 155159,
+        "t1Ms": 155219,
+        "text": "ron",
+        "conf": 0.041
+      },
+      {
+        "i": 28,
+        "t0Ms": 155239,
+        "t1Ms": 155259,
+        "text": "y",
+        "conf": 0.007
+      },
+      {
+        "i": 28,
+        "t0Ms": 155279,
+        "t1Ms": 156020,
+        "text": "corazón.",
+        "conf": 0.805
+      },
+      {
+        "i": 29,
+        "t0Ms": 156241,
+        "t1Ms": 156401,
+        "text": "Si",
+        "conf": 0.942
+      },
+      {
+        "i": 29,
+        "t0Ms": 156501,
+        "t1Ms": 157082,
+        "text": "mañana",
+        "conf": 0.871
+      },
+      {
+        "i": 29,
+        "t0Ms": 157263,
+        "t1Ms": 157663,
+        "text": "quiere",
+        "conf": 0.842
+      },
+      {
+        "i": 29,
+        "t0Ms": 157704,
+        "t1Ms": 158325,
+        "text": "entrar,",
+        "conf": 0.892
+      },
+      {
+        "i": 30,
+        "t0Ms": 158565,
+        "t1Ms": 158705,
+        "text": "que",
+        "conf": 0.714
+      },
+      {
+        "i": 30,
+        "t0Ms": 158786,
+        "t1Ms": 158926,
+        "text": "no",
+        "conf": 0.98
+      },
+      {
+        "t0Ms": 158986,
+        "t1Ms": 159086,
+        "text": "se",
+        "conf": 0.772
+      },
+      {
+        "i": 30,
+        "t0Ms": 159126,
+        "t1Ms": 159687,
+        "text": "encuentre",
+        "conf": 0.857
+      },
+      {
+        "i": 30,
+        "t0Ms": 159747,
+        "t1Ms": 159868,
+        "text": "al",
+        "conf": 0.776
+      },
+      {
+        "i": 30,
+        "t0Ms": 159888,
+        "t1Ms": 165237,
+        "text": "bailar.",
+        "conf": 0.615
+      },
+      {
+        "i": 14,
+        "t0Ms": 165257,
+        "t1Ms": 165338,
+        "text": "Cuba",
+        "conf": 0.001
+      },
+      {
+        "i": 14,
+        "t0Ms": 165358,
+        "t1Ms": 165478,
+        "text": "libre,",
+        "conf": 0.002
+      },
+      {
+        "i": 14,
+        "t0Ms": 165498,
+        "t1Ms": 165598,
+        "text": "fuego",
+        "conf": 0.002
+      },
+      {
+        "i": 14,
+        "t0Ms": 165618,
+        "t1Ms": 165638,
+        "text": "y",
+        "conf": 0
+      },
+      {
+        "i": 14,
+        "t0Ms": 165658,
+        "t1Ms": 165738,
+        "text": "son,",
+        "conf": 0.006
+      },
+      {
+        "i": 15,
+        "t0Ms": 165758,
+        "t1Ms": 165899,
+        "text": "azúcar,",
+        "conf": 0
+      },
+      {
+        "i": 15,
+        "t0Ms": 165919,
+        "t1Ms": 165979,
+        "text": "ron",
+        "conf": 0
+      },
+      {
+        "i": 15,
+        "t0Ms": 165999,
+        "t1Ms": 166019,
+        "text": "y",
+        "conf": 0
+      },
+      {
+        "i": 15,
+        "t0Ms": 166039,
+        "t1Ms": 166460,
+        "text": "corazón.",
+        "conf": 0.272
+      },
+      {
+        "i": 32,
+        "t0Ms": 166480,
+        "t1Ms": 167021,
+        "text": "Salud",
+        "conf": 0.707
+      },
+      {
+        "i": 32,
+        "t0Ms": 167041,
+        "t1Ms": 167381,
+        "text": "mi",
+        "conf": 0.833
+      },
+      {
+        "i": 32,
+        "t0Ms": 167401,
+        "t1Ms": 167682,
+        "text": "gente",
+        "conf": 0.827
+      },
+      {
+        "i": 32,
+        "t0Ms": 167742,
+        "t1Ms": 168103,
+        "text": "hasta",
+        "conf": 0.791
+      },
+      {
+        "i": 32,
+        "t0Ms": 168123,
+        "t1Ms": 168163,
+        "text": "el",
+        "conf": 0.018
+      },
+      {
+        "i": 32,
+        "t0Ms": 168183,
+        "t1Ms": 168543,
+        "text": "sol,",
+        "conf": 0.922
+      },
+      {
+        "i": 33,
+        "t0Ms": 168884,
+        "t1Ms": 169004,
+        "text": "que",
+        "conf": 0.808
+      },
+      {
+        "i": 33,
+        "t0Ms": 169064,
+        "t1Ms": 169746,
+        "text": "despierte",
+        "conf": 0.709
+      },
+      {
+        "i": 33,
+        "t0Ms": 169766,
+        "t1Ms": 170166,
+        "text": "este",
+        "conf": 0.734
+      },
+      {
+        "i": 33,
+        "t0Ms": 170186,
+        "t1Ms": 171028,
+        "text": "tambor.",
+        "conf": 0.868
+      }
+    ]
+  },
+  "import": {
+    "firstImportedAt": "2026-02-27T20:49:27.901Z",
+    "lastImportedAt": "2026-02-27T20:49:27.901Z",
+    "inputHashes": {
+      "Bronce y Azúcar Stems (105BPM).txt": "3c969e609e52c61b0b96b41816ed03107c38e1b09a9a34a5410b6fe4f54a4f39",
+      "Bronce y Azúcar Stems (105BPM).zip": "739e2dd3a744ef9b13f0d315e170383824852a5cd59c37f2f64999a8359bab89"
+    },
+    "hashSource": "assets/bronce-y-az-car/01KJGDT3TZQRK50Z36NT/instrumental.wav",
+    "hashSourceSha256": "a752d89040e878d873561445bfa38f8fee79160f7394399b97e317b69a850ff4",
+    "filenameBpm": 105,
+    "sourceGroupKey": "loose:bronce-y-az-car-stems-105bpm",
+    "archivedTo": "D:/seva/FOMO/Songs/the-refresh/refreshing-music/inbox/_done/2026-02-27/loose/bronce-y-az-car-stems-105bpm/consumed.json"
+  },
+  "assetPaths": {
+    "mix": "assets/bronce-y-az-car/01KJGDT3TZQRK50Z36NT/mix.mp3",
+    "mixWav": "",
+    "stemsZip": "assets/bronce-y-az-car/01KJGDT3TZQRK50Z36NT/stems.zip",
+    "effective": "assets/bronce-y-az-car/01KJGDT3TZQRK50Z36NT/effective.json",
+    "instrumental": "assets/bronce-y-az-car/01KJGDT3TZQRK50Z36NT/instrumental.mp3",
+    "instrumentalWav": "assets/bronce-y-az-car/01KJGDT3TZQRK50Z36NT/instrumental.wav",
+    "vocals": "assets/bronce-y-az-car/01KJGDT3TZQRK50Z36NT/vocals.mp3",
+    "vocalsWav": "assets/bronce-y-az-car/01KJGDT3TZQRK50Z36NT/vocals.wav",
+    "composer": "assets/bronce-y-az-car/01KJGDT3TZQRK50Z36NT/composer.txt"
+  },
+  "hasUserHints": true,
+  "lastHintAt": "2026-02-27T21:24:35.560Z"
+}

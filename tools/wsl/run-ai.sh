@@ -76,12 +76,29 @@ if ! command -v python >/dev/null 2>&1 && ! command -v python3 >/dev/null 2>&1; 
   exit 1
 fi
 
+# Prefer GPU + larger ASR model in WSL unless caller overrides.
+if [[ -z "${WHISPERX_DEVICE:-}" ]]; then
+  if command -v nvidia-smi >/dev/null 2>&1 && nvidia-smi -L >/dev/null 2>&1; then
+    export WHISPERX_DEVICE="cuda"
+  else
+    export WHISPERX_DEVICE="cpu"
+  fi
+fi
+if [[ -z "${WHISPERX_MODEL:-}" ]]; then
+  if [[ "$WHISPERX_DEVICE" == "cuda" ]]; then
+    export WHISPERX_MODEL="large-v3"
+  else
+    export WHISPERX_MODEL="small"
+  fi
+fi
+
 echo "[run-ai] node=$(command -v node)"
 if command -v python >/dev/null 2>&1; then
   echo "[run-ai] python=$(command -v python)"
 elif command -v python3 >/dev/null 2>&1; then
   echo "[run-ai] python3=$(command -v python3)"
 fi
+echo "[run-ai] whisperx_device=$WHISPERX_DEVICE whisperx_model=$WHISPERX_MODEL"
 
 case "$TASK" in
   beats)

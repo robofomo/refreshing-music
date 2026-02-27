@@ -1,4 +1,4 @@
-import fs from "node:fs";
+﻿import fs from "node:fs";
 import path from "node:path";
 import { spawnSync } from "node:child_process";
 import { pathToFileURL } from "node:url";
@@ -185,7 +185,9 @@ function readJsonIfExists(filePath) {
 function tokenize(value) {
   return String(value ?? "")
     .toLowerCase()
-    .replace(/[’`]/g, "'")
+    .replace(/[â€™`]/g, "'")
+    .replace(/[‘’]/g, "'")
+    .replace(/[“”]/g, '"')
     .replace(/[^a-z0-9']+/g, " ")
     .trim()
     .split(/\s+/)
@@ -193,9 +195,36 @@ function tokenize(value) {
 }
 
 function normalizeToken(token) {
-  const t = String(token ?? "").toLowerCase().replace(/[’`]/g, "'").replace(/^'+|'+$/g, "");
+  const t = String(token ?? "")
+    .toLowerCase()
+    .replace(/[â€™`]/g, "'")
+    .replace(/[‘’]/g, "'")
+    .replace(/^'+|'+$/g, "");
   if (t.length > 4 && t.endsWith("s")) return t.slice(0, -1);
   return t;
+}
+
+function clamp(v, lo, hi) {
+  return Math.max(lo, Math.min(hi, v));
+}
+
+function limitedEditDistance(a, b, max = 2) {
+  if (Math.abs(a.length - b.length) > max) return max + 1;
+  const prev = new Array(b.length + 1);
+  const next = new Array(b.length + 1);
+  for (let j = 0; j <= b.length; j += 1) prev[j] = j;
+  for (let i = 1; i <= a.length; i += 1) {
+    next[0] = i;
+    let rowMin = next[0];
+    for (let j = 1; j <= b.length; j += 1) {
+      const cost = a[i - 1] === b[j - 1] ? 0 : 1;
+      next[j] = Math.min(prev[j] + 1, next[j - 1] + 1, prev[j - 1] + cost);
+      if (next[j] < rowMin) rowMin = next[j];
+    }
+    if (rowMin > max) return max + 1;
+    for (let j = 0; j <= b.length; j += 1) prev[j] = next[j];
+  }
+  return prev[b.length];
 }
 
 function tokenSimilarity(a, b) {
@@ -211,78 +240,467 @@ function tokenSimilarity(a, b) {
     mismatches += Math.abs(x.length - y.length);
     if (mismatches <= 1) return 0.8;
   }
+  if (x.length >= 3 && y.length >= 3) {
+    const d = limitedEditDistance(x, y, 2);
+    if (d === 1) return 0.74;
+    if (d === 2) return 0.6;
+  }
   return 0;
 }
 
-function evaluateLineWindow(wordTokens, words, target, start, end, cursor) {
-  let ti = 0;
+function overlapRatio(a0, a1, b0, b1) {
+  const lo = Math.max(a0, b0);
+  const hi = Math.min(a1, b1);
+  if (hi <= lo) return 0;
+  const inter = hi - lo;
+  const denom = Math.max(1, Math.min(a1 - a0, b1 - b0));
+  return inter / denom;
+}
+
+function scoreClusterToLine(clusterWords, lineTokens) {
+  const clusterTokens = clusterWords
+    .flatMap((w) => tokenize(w?.text ?? ""))
+    .filter(Boolean);
+  if (!clusterTokens.length || !Array.isArray(lineTokens) || !lineTokens.length) {
+    return { score: 0, coverageLine: 0, coverageCluster: 0, strong: 0 };
+  }
+
+  let li = 0;
   let matched = 0;
-  let strongMatches = 0;
-  let firstMatched = -1;
-  let lastMatched = -1;
-  for (let wi = start; wi <= end && ti < target.length; wi += 1) {
-    const score = tokenSimilarity(wordTokens[wi], target[ti]);
-    if (score <= 0) continue;
-    if (firstMatched === -1) firstMatched = wi;
-    lastMatched = wi;
-    matched += score;
-    if (score >= 0.95) strongMatches += 1;
-    ti += 1;
+  let strong = 0;
+  for (const ct of clusterTokens) {
+    let bestSim = 0;
+    let bestIdx = -1;
+    for (let k = li; k < lineTokens.length; k += 1) {
+      const sim = tokenSimilarity(ct, lineTokens[k]);
+      if (sim > bestSim) {
+        bestSim = sim;
+        bestIdx = k;
+      }
+      if (sim >= 0.95) break;
+    }
+    if (bestSim >= 0.62 && bestIdx >= 0) {
+      matched += bestSim;
+      if (bestSim >= 0.9) strong += 1;
+      li = bestIdx + 1;
+      if (li >= lineTokens.length) break;
+    }
   }
-  if (firstMatched === -1) return null;
-  const coverage = matched / Math.max(1, target.length);
-  const gapPenalty = Math.max(0, start - cursor) * 0.002;
-  const spanLen = lastMatched - firstMatched + 1;
-  const spanPenalty = Math.abs(spanLen - target.length) * 0.007;
-  const score = coverage - gapPenalty - spanPenalty;
-  return { score, coverage, strongMatches, firstMatched, lastMatched };
+
+  const coverageLine = matched / Math.max(1, lineTokens.length);
+  const coverageCluster = matched / Math.max(1, clusterTokens.length);
+  const score = coverageLine * 0.75 + coverageCluster * 0.25 + strong * 0.02;
+  return { score, coverageLine, coverageCluster, strong, clusterTokens: clusterTokens.length };
 }
 
-function buildLyricLinesFromWords(lyricsRawText, wordsPayload) {
+function bestSubclusterMatch(clusterWords, lineTokens) {
+  if (!Array.isArray(clusterWords) || !clusterWords.length) return null;
+  if (!Array.isArray(lineTokens) || !lineTokens.length) return null;
+  let best = null;
+  const maxWords = Math.min(clusterWords.length, Math.max(5, lineTokens.length + 4));
+  for (let s = 0; s < clusterWords.length; s += 1) {
+    const maxEnd = Math.min(clusterWords.length - 1, s + maxWords - 1);
+    for (let e = s; e <= maxEnd; e += 1) {
+      const sub = clusterWords.slice(s, e + 1);
+      const sc = scoreClusterToLine(sub, lineTokens);
+      if (!best || sc.score > best.score) {
+        best = {
+          ...sc,
+          start: s,
+          end: e,
+          t0Ms: Number(sub[0]?.t0Ms),
+          t1Ms: Number(sub[sub.length - 1]?.t1Ms),
+          wordIndexes: sub.map((w) => Number(w?.wordIndex)).filter((n) => Number.isInteger(n))
+        };
+      }
+    }
+  }
+  return best;
+}
+
+function findLineSubsequenceInCluster(clusterWords, lineTokens) {
+  if (!Array.isArray(clusterWords) || !clusterWords.length) return null;
+  if (!Array.isArray(lineTokens) || !lineTokens.length) return null;
+  const clusterTokens = [];
+  for (const w of clusterWords) {
+    const toks = tokenize(w?.text ?? "");
+    for (const tok of toks) {
+      clusterTokens.push({
+        token: tok,
+        wordIndex: Number(w?.wordIndex),
+        t0Ms: Number(w?.t0Ms),
+        t1Ms: Number(w?.t1Ms)
+      });
+    }
+  }
+  if (!clusterTokens.length) return null;
+
+  let li = 0;
+  let matched = 0;
+  let strong = 0;
+  let first = -1;
+  let last = -1;
+  const usedWordIndexes = new Set();
+  for (let ci = 0; ci < clusterTokens.length && li < lineTokens.length; ci += 1) {
+    const s = tokenSimilarity(clusterTokens[ci].token, lineTokens[li]);
+    if (s < 0.62) continue;
+    if (first < 0) first = ci;
+    last = ci;
+    matched += s;
+    if (s >= 0.9) strong += 1;
+    if (Number.isInteger(clusterTokens[ci].wordIndex)) usedWordIndexes.add(clusterTokens[ci].wordIndex);
+    li += 1;
+  }
+  if (first < 0 || last < first) return null;
+  const coverageLine = matched / Math.max(1, lineTokens.length);
+  const coverageCluster = matched / Math.max(1, clusterTokens.length);
+  if (coverageLine < 0.66 || strong < 2) return null;
+  const score = coverageLine * 0.8 + coverageCluster * 0.2 + strong * 0.02;
+  return {
+    score,
+    coverageLine,
+    coverageCluster,
+    strong,
+    clusterTokens: clusterTokens.length,
+    t0Ms: clusterTokens[first].t0Ms,
+    t1Ms: clusterTokens[last].t1Ms,
+    wordIndexes: Array.from(usedWordIndexes.values())
+  };
+}
+
+function buildLyricAlignmentFromWords(lyricsRawText, wordsPayload) {
   const words = Array.isArray(wordsPayload?.words) ? wordsPayload.words : [];
-  if (!words.length) return [];
+  if (!words.length) return { lyricsLines: [], wordLineMap: new Map() };
   const rawLines = String(lyricsRawText ?? "").split(/\r?\n/);
-  const wordTokens = words.map((w) => tokenize(w?.text).join(" "));
-  const out = [];
-  let cursor = 0;
 
-  for (let i = 0; i < rawLines.length; i += 1) {
-    const text = rawLines[i]?.trim() ?? "";
+  const lyricLines = [];
+  const lyricTokens = [];
+  for (let li = 0; li < rawLines.length; li += 1) {
+    const text = rawLines[li]?.trim() ?? "";
     if (!text) continue;
-    const target = tokenize(text);
-    if (!target.length) continue;
+    const tokens = tokenize(text);
+    if (!tokens.length) continue;
+    lyricLines.push({ i: li, tokenCount: tokens.length, tokens });
+    for (let ti = 0; ti < tokens.length; ti += 1) {
+      lyricTokens.push({ lineI: li, token: tokens[ti] });
+    }
+  }
+  if (!lyricTokens.length) return { lyricsLines: [], wordLineMap: new Map() };
 
-    const lookahead = Math.min(words.length - 1, cursor + 140);
-    const baseWindow = Math.max(6, Math.min(28, target.length + 8));
-    let best = null;
-    for (let start = cursor; start <= lookahead; start += 1) {
-      const maxEnd = Math.min(words.length - 1, start + baseWindow);
-      for (let end = start; end <= maxEnd; end += 1) {
-        const candidate = evaluateLineWindow(wordTokens, words, target, start, end, cursor);
-        if (!candidate) continue;
-        if (!best || candidate.score > best.score) best = candidate;
+  const asrTokens = [];
+  for (let wi = 0; wi < words.length; wi += 1) {
+    const w = words[wi];
+    const t0 = Number(w?.t0Ms);
+    const t1Raw = Number(w?.t1Ms);
+    if (!Number.isFinite(t0)) continue;
+    const t1 = Number.isFinite(t1Raw) ? t1Raw : t0 + 200;
+    const segMs = Math.max(40, t1 - t0);
+    const parts = tokenize(w?.text ?? "");
+    if (!parts.length) continue;
+    for (let pi = 0; pi < parts.length; pi += 1) {
+      const a = pi / parts.length;
+      const b = (pi + 1) / parts.length;
+      asrTokens.push({
+        token: parts[pi],
+        wordIndex: wi,
+        t0Ms: Math.round(t0 + segMs * a),
+        t1Ms: Math.round(t0 + segMs * b)
+      });
+    }
+  }
+  if (!asrTokens.length) return { lyricsLines: [], wordLineMap: new Map() };
+
+  const m = lyricTokens.length;
+  const n = asrTokens.length;
+  const DEL_COST = 0.7;
+  const INS_COST = 0.55;
+  const SUB_COST = 1.15;
+  const dp = Array.from({ length: m + 1 }, () => new Array(n + 1).fill(0));
+  const bt = Array.from({ length: m + 1 }, () => new Array(n + 1).fill(0));
+  for (let i = 1; i <= m; i += 1) {
+    dp[i][0] = i * DEL_COST;
+    bt[i][0] = 1;
+  }
+  for (let j = 1; j <= n; j += 1) {
+    dp[0][j] = j * INS_COST;
+    bt[0][j] = 2;
+  }
+  for (let i = 1; i <= m; i += 1) {
+    for (let j = 1; j <= n; j += 1) {
+      const sim = tokenSimilarity(lyricTokens[i - 1].token, asrTokens[j - 1].token);
+      const subst = dp[i - 1][j - 1] + (sim > 0 ? 1 - sim : SUB_COST);
+      const del = dp[i - 1][j] + DEL_COST;
+      const ins = dp[i][j - 1] + INS_COST;
+      let best = subst;
+      let op = 3;
+      if (del < best) {
+        best = del;
+        op = 1;
+      }
+      if (ins < best) {
+        best = ins;
+        op = 2;
+      }
+      dp[i][j] = best;
+      bt[i][j] = op;
+    }
+  }
+
+  const matchedByLine = new Map();
+  const wordLineWeight = new Map();
+  let i = m;
+  let j = n;
+  while (i > 0 || j > 0) {
+    const op = bt[i][j];
+    if (op === 3 && i > 0 && j > 0) {
+      const lineI = lyricTokens[i - 1].lineI;
+      const a = asrTokens[j - 1];
+      const sim = tokenSimilarity(lyricTokens[i - 1].token, a.token);
+      if (sim >= 0.5) {
+        const rec = matchedByLine.get(lineI) || { t0: Infinity, t1: -Infinity, hits: 0 };
+        rec.t0 = Math.min(rec.t0, a.t0Ms);
+        rec.t1 = Math.max(rec.t1, a.t1Ms);
+        rec.hits += 1;
+        matchedByLine.set(lineI, rec);
+        const key = `${a.wordIndex}:${lineI}`;
+        wordLineWeight.set(key, (wordLineWeight.get(key) || 0) + sim);
+      }
+      i -= 1;
+      j -= 1;
+      continue;
+    }
+    if (op === 1 && i > 0) {
+      i -= 1;
+      continue;
+    }
+    if (j > 0) j -= 1;
+  }
+
+  const wordLineMap = new Map();
+  for (const [key, weight] of wordLineWeight.entries()) {
+    const [wordIndexStr, lineIStr] = key.split(":");
+    const wordIndex = Number(wordIndexStr);
+    const lineI = Number(lineIStr);
+    const cur = wordLineMap.get(wordIndex);
+    if (!cur || weight > cur.weight) wordLineMap.set(wordIndex, { lineI, weight });
+  }
+
+  let msPerToken = 280;
+  const msSamples = [];
+  for (const line of lyricLines) {
+    const rec = matchedByLine.get(line.i);
+    if (!rec || !Number.isFinite(rec.t0) || !Number.isFinite(rec.t1)) continue;
+    msSamples.push((rec.t1 - rec.t0) / Math.max(1, line.tokenCount));
+  }
+  if (msSamples.length) {
+    msPerToken = clamp(msSamples.reduce((a, b) => a + b, 0) / msSamples.length, 120, 480);
+  }
+
+  const out = lyricLines.map((line) => {
+    const rec = matchedByLine.get(line.i);
+    if (rec && Number.isFinite(rec.t0) && Number.isFinite(rec.t1) && rec.t1 > rec.t0) {
+      return { i: line.i, t0Ms: Math.max(0, Math.round(rec.t0)), t1Ms: Math.max(Math.round(rec.t0) + 240, Math.round(rec.t1)), tokens: line.tokenCount };
+    }
+    return { i: line.i, t0Ms: NaN, t1Ms: NaN, tokens: line.tokenCount };
+  });
+
+  for (let k = 0; k < out.length; k += 1) {
+    if (Number.isFinite(out[k].t0Ms) && Number.isFinite(out[k].t1Ms)) continue;
+    let prev = k - 1;
+    while (prev >= 0 && !Number.isFinite(out[prev].t0Ms)) prev -= 1;
+    let next = k + 1;
+    while (next < out.length && !Number.isFinite(out[next].t0Ms)) next += 1;
+    const estDur = clamp(Math.round((out[k].tokens || 4) * msPerToken), 700, 7000);
+
+    if (prev >= 0 && next < out.length) {
+      const gap = Math.max(300, out[next].t0Ms - out[prev].t1Ms);
+      const missing = next - prev - 1;
+      const slot = gap / Math.max(1, missing + 1);
+      const t0 = out[prev].t1Ms + slot * (k - prev) - estDur * 0.5;
+      out[k].t0Ms = Math.max(0, Math.round(t0));
+      out[k].t1Ms = Math.max(out[k].t0Ms + 260, Math.round(out[k].t0Ms + estDur));
+    } else if (prev >= 0) {
+      out[k].t0Ms = Math.round(out[prev].t1Ms + 120);
+      out[k].t1Ms = Math.round(out[k].t0Ms + estDur);
+    } else if (next < out.length) {
+      out[k].t1Ms = Math.max(260, Math.round(out[next].t0Ms - 120));
+      out[k].t0Ms = Math.max(0, out[k].t1Ms - estDur);
+    } else {
+      out[k].t0Ms = k * Math.max(estDur, 1000);
+      out[k].t1Ms = out[k].t0Ms + estDur;
+    }
+  }
+
+  const intervalsByLine = new Map();
+  for (const row of out) {
+    if (!Number.isFinite(row.t0Ms) || !Number.isFinite(row.t1Ms)) continue;
+    if (!intervalsByLine.has(row.i)) intervalsByLine.set(row.i, []);
+    intervalsByLine.get(row.i).push({ t0Ms: row.t0Ms, t1Ms: row.t1Ms });
+  }
+
+  const wordsByLine = new Map();
+  for (const [wordIndex, rec] of wordLineMap.entries()) {
+    const lineI = rec?.lineI;
+    const weight = Number(rec?.weight);
+    if (!Number.isInteger(lineI) || !Number.isFinite(weight) || weight < 0.7) continue;
+    const w = words[wordIndex];
+    const t0Ms = Number(w?.t0Ms);
+    const t1Raw = Number(w?.t1Ms);
+    if (!Number.isFinite(t0Ms)) continue;
+    const t1Ms = Number.isFinite(t1Raw) ? t1Raw : t0Ms + 180;
+    if (!wordsByLine.has(lineI)) wordsByLine.set(lineI, []);
+    wordsByLine.get(lineI).push({ t0Ms, t1Ms, wordIndex });
+  }
+
+  for (const line of lyricLines) {
+    const mapped = (wordsByLine.get(line.i) || []).sort((a, b) => a.t0Ms - b.t0Ms || a.wordIndex - b.wordIndex);
+    if (mapped.length < 6) continue;
+    const clusters = [];
+    let cur = null;
+    for (const w of mapped) {
+      if (!cur) {
+        cur = { t0Ms: w.t0Ms, t1Ms: w.t1Ms, count: 1, lastWordIndex: w.wordIndex };
+        continue;
+      }
+      const gapMs = w.t0Ms - cur.t1Ms;
+      const gapWords = w.wordIndex - cur.lastWordIndex;
+      if (gapMs > 1600 || gapWords > 6) {
+        clusters.push(cur);
+        cur = { t0Ms: w.t0Ms, t1Ms: w.t1Ms, count: 1, lastWordIndex: w.wordIndex };
+      } else {
+        cur.t1Ms = Math.max(cur.t1Ms, w.t1Ms);
+        cur.count += 1;
+        cur.lastWordIndex = w.wordIndex;
       }
     }
+    if (cur) clusters.push(cur);
+    if (clusters.length < 2) continue;
 
-    const minStrong = target.length <= 3 ? 1 : 2;
-    if (best && best.coverage >= 0.58 && best.strongMatches >= minStrong) {
-      const first = words[best.firstMatched];
-      const last = words[best.lastMatched];
-      const t0 = Number(first?.t0Ms);
-      const t1 = Number(last?.t1Ms);
-      if (Number.isFinite(t0)) {
-        out.push({
-          i,
-          t0Ms: Math.max(0, Math.round(t0)),
-          t1Ms: Number.isFinite(t1) ? Math.max(Math.round(t0), Math.round(t1)) : Math.round(t0) + 2200
-        });
-        cursor = Math.max(cursor, best.lastMatched + 1);
+    const existing = intervalsByLine.get(line.i) || [];
+    const baselineDur = existing.length ? Math.max(1, existing[0].t1Ms - existing[0].t0Ms) : 0;
+    const minWords = Math.max(4, Math.floor(line.tokenCount * 0.55));
+    const accepted = [];
+    for (const c of clusters) {
+      if (c.count < minWords) continue;
+      const cDur = Math.max(1, c.t1Ms - c.t0Ms);
+      if (baselineDur > 0) {
+        const ratio = cDur / baselineDur;
+        if (ratio < 0.55 || ratio > 2.3) continue;
+      }
+      const overlapExisting = existing.some((ex) => overlapRatio(ex.t0Ms, ex.t1Ms, c.t0Ms, c.t1Ms) > 0.45 || Math.abs(ex.t0Ms - c.t0Ms) < 500);
+      if (overlapExisting) continue;
+      const overlapAccepted = accepted.some((ex) => overlapRatio(ex.t0Ms, ex.t1Ms, c.t0Ms, c.t1Ms) > 0.45 || Math.abs(ex.t0Ms - c.t0Ms) < 500);
+      if (overlapAccepted) continue;
+      accepted.push(c);
+    }
+    accepted.sort((a, b) => a.t0Ms - b.t0Ms);
+    for (const c of accepted.slice(0, 2)) {
+      out.push({
+        i: line.i,
+        t0Ms: Math.max(0, Math.round(c.t0Ms)),
+        t1Ms: Math.max(Math.round(c.t0Ms) + 240, Math.round(c.t1Ms)),
+        tokens: line.tokenCount
+      });
+      existing.push({ t0Ms: c.t0Ms, t1Ms: c.t1Ms });
+    }
+    intervalsByLine.set(line.i, existing);
+  }
+
+  const mappedWordIndexes = new Set();
+  for (const idx of wordLineMap.keys()) mappedWordIndexes.add(Number(idx));
+  const unmappedClusters = [];
+  let currentCluster = [];
+  for (let wi = 0; wi < words.length; wi += 1) {
+    const w = words[wi];
+    const t0Ms = Number(w?.t0Ms);
+    const t1Raw = Number(w?.t1Ms);
+    if (!Number.isFinite(t0Ms)) continue;
+    if (mappedWordIndexes.has(wi)) {
+      if (currentCluster.length) {
+        unmappedClusters.push(currentCluster);
+        currentCluster = [];
+      }
+      continue;
+    }
+    const t1Ms = Number.isFinite(t1Raw) ? t1Raw : t0Ms + 180;
+    const prev = currentCluster.length ? currentCluster[currentCluster.length - 1] : null;
+    if (prev) {
+      const gapMs = t0Ms - prev.t1Ms;
+      const gapWords = wi - prev.wordIndex;
+      if (gapMs > 1800 || gapWords > 6) {
+        unmappedClusters.push(currentCluster);
+        currentCluster = [];
+      }
+    }
+    currentCluster.push({ wordIndex: wi, t0Ms, t1Ms, text: String(w?.text ?? ""), conf: Number.isFinite(Number(w?.conf)) ? Number(w.conf) : 0.6 });
+  }
+  if (currentCluster.length) unmappedClusters.push(currentCluster);
+
+  for (const cluster of unmappedClusters) {
+    const tokenCount = cluster.reduce((acc, w) => acc + tokenize(w.text).length, 0);
+    if (tokenCount < 5 || cluster.length < 4) continue;
+    const c0All = cluster[0].t0Ms;
+    const c1All = cluster[cluster.length - 1].t1Ms;
+    const cDurAll = Math.max(1, c1All - c0All);
+    if (cDurAll < 900 || cDurAll > 22000) continue;
+
+    const candidates = [];
+    for (const line of lyricLines) {
+      if (!Array.isArray(line.tokens) || line.tokens.length < 4) continue;
+      const hasBase = Array.isArray(intervalsByLine.get(line.i)) && intervalsByLine.get(line.i).length > 0;
+      if (!hasBase) continue;
+      const sc = bestSubclusterMatch(cluster, line.tokens);
+      const sq = findLineSubsequenceInCluster(cluster, line.tokens);
+      const pick = (!sc || (sq && sq.score > sc.score)) ? sq : sc;
+      if (!pick) continue;
+      if (!Number.isFinite(pick.t0Ms) || !Number.isFinite(pick.t1Ms) || pick.t1Ms <= pick.t0Ms) continue;
+      if (pick.coverageLine < 0.7 || pick.coverageCluster < 0.24 || pick.strong < 2) continue;
+      candidates.push({ lineI: line.i, ...pick });
+    }
+
+    if (!candidates.length) continue;
+    candidates.sort((a, b) => b.score - a.score || a.t0Ms - b.t0Ms);
+    const usedWordIndexes = new Set();
+    const accepted = [];
+    for (const cand of candidates) {
+      const overlapUsed = cand.wordIndexes.some((wi) => usedWordIndexes.has(wi));
+      if (overlapUsed) continue;
+      const existing = intervalsByLine.get(cand.lineI) || [];
+      const overlaps = existing.some((ex) => overlapRatio(ex.t0Ms, ex.t1Ms, cand.t0Ms, cand.t1Ms) > 0.35 || Math.abs(ex.t0Ms - cand.t0Ms) < 500);
+      if (overlaps) continue;
+      accepted.push(cand);
+      for (const wi of cand.wordIndexes) usedWordIndexes.add(wi);
+      if (accepted.length >= 3) break;
+    }
+
+    for (const cand of accepted) {
+      out.push({
+        i: cand.lineI,
+        t0Ms: Math.max(0, Math.round(cand.t0Ms)),
+        t1Ms: Math.max(Math.round(cand.t0Ms) + 240, Math.round(cand.t1Ms)),
+        tokens: Math.max(1, cand.clusterTokens || 1)
+      });
+      const existing = intervalsByLine.get(cand.lineI) || [];
+      existing.push({ t0Ms: cand.t0Ms, t1Ms: cand.t1Ms });
+      intervalsByLine.set(cand.lineI, existing);
+      for (const wi of cand.wordIndexes) {
+        const cur = wordLineMap.get(wi);
+        if (!cur || cand.score > (Number(cur.weight) || 0)) {
+          wordLineMap.set(wi, { lineI: cand.lineI, weight: cand.score });
+        }
       }
     }
   }
-  return out;
-}
 
+  const lyricsLines = out.map((x) => ({
+    i: x.i,
+    t0Ms: Math.max(0, Math.round(x.t0Ms)),
+    t1Ms: Math.max(Math.round(x.t0Ms) + 240, Math.round(x.t1Ms))
+  }));
+  const flatWordLineMap = new Map();
+  for (const [wordIndex, rec] of wordLineMap.entries()) flatWordLineMap.set(wordIndex, rec.lineI);
+  return { lyricsLines, wordLineMap: flatWordLineMap };
+}
 function buildTimingFromAi(track, mp3Path, timingPath) {
   const baseTiming = timingPath ? readJson5Lite(timingPath) : {};
   const beatsPath = findAssetSidecar(mp3Path, "beats.json");
@@ -298,21 +716,158 @@ function buildTimingFromAi(track, mp3Path, timingPath) {
       .map((n) => Math.max(0, Math.round(n)));
   }
 
+  let wordLineMap = new Map();
   if ((!Array.isArray(timing.lyricsLines) || timing.lyricsLines.length === 0) && Array.isArray(words?.words)) {
-    const inferred = buildLyricLinesFromWords(track?.lyrics?.rawText ?? "", words);
-    if (inferred.length) timing.lyricsLines = inferred;
+    const inferred = buildLyricAlignmentFromWords(track?.lyrics?.rawText ?? "", words);
+    if (inferred.lyricsLines.length) timing.lyricsLines = inferred.lyricsLines;
+    wordLineMap = inferred.wordLineMap || new Map();
+  }
+
+  if (Array.isArray(timing.lyricsLines) && timing.lyricsLines.length > 0) {
+    const rows = timing.lyricsLines
+      .map((row) => ({
+        i: Number.isInteger(row?.i) ? row.i : undefined,
+        t0Ms: Number.isFinite(Number(row?.t0Ms)) ? Math.max(0, Math.round(Number(row.t0Ms))) : undefined,
+        t1Ms: Number.isFinite(Number(row?.t1Ms)) ? Math.max(0, Math.round(Number(row.t1Ms))) : undefined
+      }))
+      .filter((row) => Number.isInteger(row.i) && Number.isFinite(row.t0Ms))
+      .sort((a, b) => a.t0Ms - b.t0Ms);
+    for (let ri = 0; ri < rows.length; ri += 1) {
+      if (Number.isFinite(rows[ri].t1Ms) && rows[ri].t1Ms > rows[ri].t0Ms) continue;
+      const next = ri + 1 < rows.length ? rows[ri + 1] : null;
+      const nextT0 = next && Number.isFinite(next.t0Ms) ? next.t0Ms : rows[ri].t0Ms + 2600;
+      rows[ri].t1Ms = Math.max(rows[ri].t0Ms + 260, Math.round(nextT0));
+    }
+    timing.lyricsLines = rows;
   }
 
   if (!Array.isArray(timing.words) && Array.isArray(words?.words)) {
     timing.words = words.words
-      .map((w) => ({
-        i: Number.isInteger(w?.i) ? w.i : undefined,
+      .map((w, idx) => ({
+        i: Number.isInteger(w?.i) ? w.i : (wordLineMap.has(idx) ? wordLineMap.get(idx) : undefined),
         t0Ms: Number.isFinite(Number(w?.t0Ms)) ? Math.max(0, Math.round(Number(w.t0Ms))) : undefined,
         t1Ms: Number.isFinite(Number(w?.t1Ms)) ? Math.max(0, Math.round(Number(w.t1Ms))) : undefined,
         text: String(w?.text ?? ""),
         conf: Number.isFinite(Number(w?.conf)) ? Number(w.conf) : undefined
       }))
       .filter((w) => Number.isFinite(w.t0Ms) && w.text);
+  }
+
+  if (Array.isArray(timing.lyricsLines) && timing.lyricsLines.length > 1) {
+    const timedWords = Array.isArray(timing.words) ? timing.words : [];
+    const wordCountIn = (lineI, t0, t1) => timedWords.filter((w) => Number.isInteger(w?.i) && w.i === lineI && Number.isFinite(Number(w?.t0Ms)) && Number(w.t0Ms) >= t0 && Number(w.t0Ms) < t1).length;
+    const rows = timing.lyricsLines
+      .map((row) => ({
+        i: Number.isInteger(row?.i) ? row.i : undefined,
+        t0Ms: Number.isFinite(Number(row?.t0Ms)) ? Math.max(0, Math.round(Number(row.t0Ms))) : undefined,
+        t1Ms: Number.isFinite(Number(row?.t1Ms)) ? Math.max(0, Math.round(Number(row.t1Ms))) : undefined
+      }))
+      .filter((row) => Number.isInteger(row.i) && Number.isFinite(row.t0Ms) && Number.isFinite(row.t1Ms) && row.t1Ms > row.t0Ms)
+      .sort((a, b) => a.t0Ms - b.t0Ms);
+    const out = [];
+    for (const row of rows) {
+      const prev = out.length ? out[out.length - 1] : null;
+      if (prev && prev.i === row.i && row.t0Ms <= prev.t1Ms + 320) {
+        const prevDur = prev.t1Ms - prev.t0Ms;
+        const rowDur = row.t1Ms - row.t0Ms;
+        const prevWords = wordCountIn(prev.i, prev.t0Ms, prev.t1Ms);
+        const rowWords = wordCountIn(row.i, row.t0Ms, row.t1Ms);
+        const likelySplit = rowDur < 1400 || rowWords <= Math.max(1, Math.floor(prevWords * 0.35));
+        if (likelySplit) {
+          prev.t1Ms = Math.max(prev.t1Ms, row.t1Ms);
+          continue;
+        }
+      }
+      out.push(row);
+    }
+    timing.lyricsLines = out;
+  }
+
+  if (Array.isArray(timing.words) && timing.words.length && Array.isArray(timing.lyricsLines) && timing.lyricsLines.length) {
+    const rawLines = String(track?.lyrics?.rawText ?? "").split(/\r?\n/);
+    const lyricCatalog = rawLines
+      .map((text, i) => ({ i, tokens: tokenize(String(text ?? "").trim()) }))
+      .filter((x) => x.tokens.length >= 4);
+    const clusters = [];
+    let cur = [];
+    for (let wi = 0; wi < timing.words.length; wi += 1) {
+      const w = timing.words[wi];
+      if (Number.isInteger(w?.i)) {
+        if (cur.length) {
+          clusters.push(cur);
+          cur = [];
+        }
+        continue;
+      }
+      const t0Ms = Number(w?.t0Ms);
+      const t1Raw = Number(w?.t1Ms);
+      if (!Number.isFinite(t0Ms)) continue;
+      const t1Ms = Number.isFinite(t1Raw) ? t1Raw : t0Ms + 180;
+      const prev = cur.length ? cur[cur.length - 1] : null;
+      if (prev && (t0Ms - prev.t1Ms > 1800 || wi - prev.wi > 6)) {
+        clusters.push(cur);
+        cur = [];
+      }
+      cur.push({ wi, text: String(w?.text ?? ""), t0Ms, t1Ms });
+    }
+    if (cur.length) clusters.push(cur);
+
+    const hasOverlap = (lineI, t0, t1) => (timing.lyricsLines || []).some((row) => {
+      if (!Number.isInteger(row?.i) || row.i !== lineI) return false;
+      const r0 = Number(row?.t0Ms);
+      const r1 = Number.isFinite(Number(row?.t1Ms)) ? Number(row.t1Ms) : r0 + 2600;
+      if (!Number.isFinite(r0) || !Number.isFinite(r1)) return false;
+      return overlapRatio(r0, r1, t0, t1) > 0.35 || Math.abs(r0 - t0) < 500;
+    });
+
+    for (const cl of clusters) {
+      const tokenCount = cl.reduce((acc, w) => acc + tokenize(w.text).length, 0);
+      const t0 = cl[0]?.t0Ms;
+      const t1 = cl[cl.length - 1]?.t1Ms;
+      if (!Number.isFinite(t0) || !Number.isFinite(t1) || t1 <= t0) continue;
+      if (tokenCount < 5 || cl.length < 4 || t1 - t0 > 14000) continue;
+      const maxTimedEnd = (timing.lyricsLines || [])
+        .map((row) => Number.isFinite(Number(row?.t1Ms)) ? Number(row.t1Ms) : Number(row?.t0Ms))
+        .filter((n) => Number.isFinite(n))
+        .reduce((a, b) => Math.max(a, b), 0);
+      const tailRecovery = maxTimedEnd > 0 && t0 >= maxTimedEnd - 1200;
+
+      const candidates = [];
+      for (const line of lyricCatalog) {
+        const sc = scoreClusterToLine(cl, line.tokens);
+        const minLine = tailRecovery ? 0.52 : 0.68;
+        const minCluster = tailRecovery ? 0.14 : 0.22;
+        const minStrong = tailRecovery ? 1 : 2;
+        if (sc.coverageLine < minLine || sc.coverageCluster < minCluster || sc.strong < minStrong) continue;
+        candidates.push({ lineI: line.i, ...sc });
+      }
+      if (!candidates.length) continue;
+      candidates.sort((a, b) => b.score - a.score || a.lineI - b.lineI);
+      const best = candidates.find((cand) => !hasOverlap(cand.lineI, t0, t1)) || null;
+      if (!best) continue;
+
+      timing.lyricsLines.push({
+        i: best.lineI,
+        t0Ms: Math.max(0, Math.round(t0)),
+        t1Ms: Math.max(Math.round(t0) + 240, Math.round(t1))
+      });
+      for (const w of cl) {
+        if (!Number.isInteger(timing.words[w.wi]?.i)) {
+          timing.words[w.wi].i = best.lineI;
+        }
+      }
+    }
+
+    timing.lyricsLines = timing.lyricsLines
+      .filter((row) => Number.isInteger(row?.i) && Number.isFinite(Number(row?.t0Ms)))
+      .map((row) => ({
+        i: row.i,
+        t0Ms: Math.max(0, Math.round(Number(row.t0Ms))),
+        t1Ms: Number.isFinite(Number(row?.t1Ms))
+          ? Math.max(Math.round(Number(row.t0Ms)) + 240, Math.round(Number(row.t1Ms)))
+          : Math.round(Number(row.t0Ms)) + 2600
+      }))
+      .sort((a, b) => a.t0Ms - b.t0Ms);
   }
 
   return Object.keys(timing).length > 0 ? timing : null;
@@ -452,3 +1007,4 @@ if (isCli) {
     process.exit(1);
   }
 }
+

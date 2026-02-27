@@ -1,4 +1,6 @@
 import { spawnSync } from "node:child_process";
+import fs from "node:fs";
+import path from "node:path";
 
 function run(bin, args, options = {}) {
   return spawnSync(bin, args, {
@@ -30,6 +32,45 @@ function toTrackIdCsv(report) {
     if (g?.status === "imported" && g?.trackId) ids.add(String(g.trackId));
   }
   return Array.from(ids).join(",");
+}
+
+function importedTrackIds(report) {
+  const ids = [];
+  for (const g of report?.groups ?? []) {
+    if (g?.status === "imported" && g?.trackId) ids.push(String(g.trackId));
+  }
+  return ids;
+}
+
+function trackNeedsLyricRepair(repoRoot, trackId) {
+  const trackPath = path.join(repoRoot, "tracks", `${trackId}.track.json`);
+  if (!fs.existsSync(trackPath)) return false;
+  let track;
+  try {
+    track = JSON.parse(fs.readFileSync(trackPath, "utf8"));
+  } catch {
+    return false;
+  }
+
+  const lyricRaw = String(track?.lyrics?.rawText ?? "").trim();
+  if (!lyricRaw) return false;
+  const assetDirRel = String(track?.assetDir ?? "");
+  if (!assetDirRel) return false;
+  const assetDirAbs = path.resolve(repoRoot, assetDirRel);
+  const wordsPath = path.join(assetDirAbs, "words.json");
+  if (!fs.existsSync(wordsPath)) return false;
+
+  const timingWords = Array.isArray(track?.timing?.words) ? track.timing.words.length : 0;
+  const timingLines = Array.isArray(track?.timing?.lyricsLines) ? track.timing.lyricsLines.length : 0;
+  return timingWords === 0 || timingLines === 0;
+}
+
+function findLyricRepairTrackIds(report, repoRoot) {
+  const out = [];
+  for (const trackId of importedTrackIds(report)) {
+    if (trackNeedsLyricRepair(repoRoot, trackId)) out.push(trackId);
+  }
+  return out;
 }
 
 function runAiForTrackIds(trackIdCsv) {
@@ -74,6 +115,7 @@ function main() {
 
   const trackIdCsv = toTrackIdCsv(report);
   if (!trackIdCsv) return;
+  const repoRoot = process.cwd();
 
   const ai = runAiForTrackIds(trackIdCsv);
   if (ai.status !== 0) {
@@ -88,6 +130,20 @@ function main() {
   const reduce = runNode("tools/reduce-effective-all.mjs", ["--trackId", trackIdCsv], { stdio: "inherit" });
   if (reduce.status !== 0) {
     process.exit(reduce.status || 1);
+  }
+
+  const repairIds = findLyricRepairTrackIds(report, repoRoot);
+  if (!repairIds.length) return;
+  const repairCsv = repairIds.join(",");
+  process.stdout.write(`[import:inbox] lyric timing repair for: ${repairCsv}\n`);
+
+  const repairBuild = runNode("tools/batch-preprocess.mjs", ["--trackId", repairCsv], { stdio: "inherit" });
+  if (repairBuild.status !== 0) {
+    process.exit(repairBuild.status || 1);
+  }
+  const repairReduce = runNode("tools/reduce-effective-all.mjs", ["--trackId", repairCsv], { stdio: "inherit" });
+  if (repairReduce.status !== 0) {
+    process.exit(repairReduce.status || 1);
   }
 }
 

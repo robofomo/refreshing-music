@@ -2,12 +2,12 @@
   "workId": "off-by-one-still-true",
   "trackId": "6o_ZqzRrXVMeec",
   "recipeRef": {
-    "albumId": "example-theme",
+    "albumId": "random",
     "trackOverrideId": "6o_ZqzRrXVMeec"
   },
-  "createdAt": "2026-02-13T02:13:08.895Z",
+  "createdAt": "2026-01-28T20:03:00.000Z",
   "slug": "off-by-one-still-true",
-  "title": "Off By One Still True",
+  "title": "Off by One, Still True",
   "audio": {
     "filename": "mix.mp3",
     "path": "../assets/off-by-one-still-true/6o_ZqzRrXVMeec/mix.mp3",
@@ -16,15 +16,79 @@
     "bytes": 3714432
   },
   "composer": {
-    "rawText": "",
-    "headerMap": {}
+    "rawText": "[Song Title: Off by One, Still True]\r\n[Style: math rock, polyrhythmic, odd meter, changing meter, clean studio recording, phasing morphing effects guitars, elastic bass, dynamic live drums, expressive grounded male vocal]\r\n[Caption: Almost right can still be right.]\r\n[Image: A ruler slightly misaligned.]\r\n[Refresh Title: Random 4]\r\n[Theme: Random]\r\n[Gradients: 4]\r\n[Rank: 28]\r\n[Title Rarity: 1.94]\r\n[Seeds: 713, A:40, B:4, C:24, D:2]\r\n[Perspective: observer]\r\n[Concept: Imperfect alignment reveals deeper order.]\r\n[Topic: Complexity & Emergence → recursion_and_return]\r\n[Genre Bias: math_rock]\r\n[Style Change: none]\r\n[Modulation: none]\r\n[Hook Prominence: low]\r\n[Deviation: structural bend]\r\n[Created: January 29, 2026 at 9:03 AM]\r\n[Composer Version: v2.3]\r\n\r\n[Intro]\r\n[Guitars strike syncopated chords that never quite repeat.]\r\n[Motif shifts length each cycle.]\r\n\r\n[Verse]\r\n[Drums pivot between tight and loose accents.]\r\nI missed the mark by just a beat  \r\nStill landed somewhere on my feet  \r\nThe answer wasn’t what I planned  \r\nBut fit the question better than\r\n\r\n[Verse]\r\n[Bass climbs while guitars descend.]\r\nEvery loop returns misread  \r\nA clearer truth inside instead  \r\nNot broken, just a shade askew  \r\nEnough to show another view\r\n\r\n[Chorus]\r\n[Brief unison hit, then release.]\r\nOff by one, still true  \r\nThe math holds even when it moves  \r\nWhat looks wrong from far away  \r\nLocks in close enough to stay\r\n\r\n[Verse]\r\n[Guitar tapping grows denser, drums busier.]\r\nPerfection stalls, it wants control  \r\nNear-miss keeps the system whole  \r\nEvery flaw that doesn’t fail  \r\nIs a signal, not a tale\r\n\r\n[Bridge]\r\n[Dropout Before Final: bass alone, then drums creep back.]\r\nIf it lined up flawlessly  \r\nThere’d be nothing left to see  \r\nThe offset keeps the pulse alive  \r\nGives the reason room to drive\r\n\r\n[Final Chorus]\r\n[Full band, tighter phrasing.]\r\nOff by one, still true  \r\nThe math holds even when it moves  \r\nWhat looks wrong from far away  \r\nLocks in close enough to stay\r\n\r\n[Ending]\r\n[Guitars ring unresolved interval.]\r\nClose enough\r\n",
+    "headerMap": {
+      "Song Title": "Off by One, Still True",
+      "Style": "math rock, polyrhythmic, odd meter, changing meter, clean studio recording, phasing morphing effects guitars, elastic bass, dynamic live drums, expressive grounded male vocal",
+      "Caption": "Almost right can still be right.",
+      "Image": "A ruler slightly misaligned.",
+      "Refresh Title": "Random 4",
+      "Theme": "Random",
+      "Gradients": "4",
+      "Rank": "28",
+      "Title Rarity": "1.94",
+      "Seeds": "713, A:40, B:4, C:24, D:2",
+      "Perspective": "observer",
+      "Concept": "Imperfect alignment reveals deeper order.",
+      "Topic": "Complexity & Emergence → recursion_and_return",
+      "Genre Bias": "math_rock",
+      "Style Change": "none",
+      "Modulation": "none",
+      "Hook Prominence": "low",
+      "Deviation": "structural bend",
+      "Created": "January 29, 2026 at 9:03 AM",
+      "Composer Version": "v2.3"
+    }
   },
-  "sections": [],
+  "sections": [
+    {
+      "id": "intro-1",
+      "labelRaw": "Intro",
+      "notesRaw": "Guitars strike syncopated chords that never quite repeat.\nMotif shifts length each cycle."
+    },
+    {
+      "id": "verse-1",
+      "labelRaw": "Verse",
+      "notesRaw": "Drums pivot between tight and loose accents."
+    },
+    {
+      "id": "verse-2",
+      "labelRaw": "Verse",
+      "notesRaw": "Bass climbs while guitars descend."
+    },
+    {
+      "id": "chorus-1",
+      "labelRaw": "Chorus",
+      "notesRaw": "Brief unison hit, then release."
+    },
+    {
+      "id": "verse-3",
+      "labelRaw": "Verse",
+      "notesRaw": "Guitar tapping grows denser, drums busier."
+    },
+    {
+      "id": "bridge-1",
+      "labelRaw": "Bridge",
+      "notesRaw": "Dropout Before Final: bass alone, then drums creep back."
+    },
+    {
+      "id": "final-chorus-1",
+      "labelRaw": "Final Chorus",
+      "notesRaw": "Full band, tighter phrasing."
+    },
+    {
+      "id": "ending-1",
+      "labelRaw": "Ending",
+      "notesRaw": "Guitars ring unresolved interval."
+    }
+  ],
   "lyrics": {
-    "rawText": ""
+    "rawText": "\nI missed the mark by just a beat  \nStill landed somewhere on my feet  \nThe answer wasn’t what I planned  \nBut fit the question better than\n\nEvery loop returns misread  \nA clearer truth inside instead  \nNot broken, just a shade askew  \nEnough to show another view\n\nOff by one, still true  \nThe math holds even when it moves  \nWhat looks wrong from far away  \nLocks in close enough to stay\n\nPerfection stalls, it wants control  \nNear-miss keeps the system whole  \nEvery flaw that doesn’t fail  \nIs a signal, not a tale\n\nIf it lined up flawlessly  \nThere’d be nothing left to see  \nThe offset keeps the pulse alive  \nGives the reason room to drive\n\nOff by one, still true  \nThe math holds even when it moves  \nWhat looks wrong from far away  \nLocks in close enough to stay\n\nClose enough\n"
   },
   "sourceGroupKey": "off-by-one-still-true",
   "assetDir": "assets/off-by-one-still-true/6o_ZqzRrXVMeec",
+  "createdLocalRaw": "January 29, 2026 at 9:03 AM",
+  "createdTz": "Pacific/Auckland",
   "timing": {
     "beatsMs": [
       615,
@@ -291,18 +355,538 @@
       164258,
       164885,
       165512
+    ],
+    "lyricsLines": [
+      {
+        "i": 1,
+        "t0Ms": 200,
+        "t1Ms": 2904
+      },
+      {
+        "i": 2,
+        "t0Ms": 4385,
+        "t1Ms": 8431
+      },
+      {
+        "i": 3,
+        "t0Ms": 8611,
+        "t1Ms": 10974
+      },
+      {
+        "i": 4,
+        "t0Ms": 10994,
+        "t1Ms": 16641
+      },
+      {
+        "i": 6,
+        "t0Ms": 16761,
+        "t1Ms": 20006
+      },
+      {
+        "i": 7,
+        "t0Ms": 20606,
+        "t1Ms": 24892
+      },
+      {
+        "i": 8,
+        "t0Ms": 25473,
+        "t1Ms": 28116
+      },
+      {
+        "i": 9,
+        "t0Ms": 28236,
+        "t1Ms": 29498
+      },
+      {
+        "i": 11,
+        "t0Ms": 34782,
+        "t1Ms": 37182
+      },
+      {
+        "i": 12,
+        "t0Ms": 41786,
+        "t1Ms": 45146
+      },
+      {
+        "i": 13,
+        "t0Ms": 49654,
+        "t1Ms": 52534
+      },
+      {
+        "i": 14,
+        "t0Ms": 56683,
+        "t1Ms": 59563
+      },
+      {
+        "i": 16,
+        "t0Ms": 63471,
+        "t1Ms": 65871
+      },
+      {
+        "i": 17,
+        "t0Ms": 68940,
+        "t1Ms": 71820
+      },
+      {
+        "i": 18,
+        "t0Ms": 74888,
+        "t1Ms": 78498
+      },
+      {
+        "i": 19,
+        "t0Ms": 80062,
+        "t1Ms": 84915
+      },
+      {
+        "i": 21,
+        "t0Ms": 87393,
+        "t1Ms": 89793
+      },
+      {
+        "i": 22,
+        "t0Ms": 91831,
+        "t1Ms": 94711
+      },
+      {
+        "i": 23,
+        "t0Ms": 96461,
+        "t1Ms": 99341
+      },
+      {
+        "i": 24,
+        "t0Ms": 100732,
+        "t1Ms": 103612
+      },
+      {
+        "i": 26,
+        "t0Ms": 104762,
+        "t1Ms": 107162
+      },
+      {
+        "i": 27,
+        "t0Ms": 107233,
+        "t1Ms": 110593
+      },
+      {
+        "i": 28,
+        "t0Ms": 110663,
+        "t1Ms": 114598
+      },
+      {
+        "i": 29,
+        "t0Ms": 114718,
+        "t1Ms": 117598
+      },
+      {
+        "i": 31,
+        "t0Ms": 117718,
+        "t1Ms": 118678
+      }
+    ],
+    "words": [
+      {
+        "i": 1,
+        "t0Ms": 200,
+        "t1Ms": 420,
+        "text": "I",
+        "conf": 0.812
+      },
+      {
+        "i": 1,
+        "t0Ms": 440,
+        "t1Ms": 721,
+        "text": "missed",
+        "conf": 0.528
+      },
+      {
+        "i": 1,
+        "t0Ms": 781,
+        "t1Ms": 1281,
+        "text": "the",
+        "conf": 0.928
+      },
+      {
+        "i": 1,
+        "t0Ms": 1301,
+        "t1Ms": 1382,
+        "text": "mark",
+        "conf": 0
+      },
+      {
+        "i": 1,
+        "t0Ms": 1402,
+        "t1Ms": 1822,
+        "text": "by",
+        "conf": 0.789
+      },
+      {
+        "i": 1,
+        "t0Ms": 1842,
+        "t1Ms": 2002,
+        "text": "just",
+        "conf": 0.562
+      },
+      {
+        "i": 1,
+        "t0Ms": 2203,
+        "t1Ms": 2683,
+        "text": "a",
+        "conf": 0.83
+      },
+      {
+        "i": 1,
+        "t0Ms": 2703,
+        "t1Ms": 2904,
+        "text": "bead",
+        "conf": 0.493
+      },
+      {
+        "i": 2,
+        "t0Ms": 4385,
+        "t1Ms": 4746,
+        "text": "Still",
+        "conf": 0.784
+      },
+      {
+        "t0Ms": 4926,
+        "t1Ms": 5347,
+        "text": "landing",
+        "conf": 0.635
+      },
+      {
+        "i": 2,
+        "t0Ms": 5407,
+        "t1Ms": 6248,
+        "text": "somewhere",
+        "conf": 0.549
+      },
+      {
+        "i": 2,
+        "t0Ms": 6268,
+        "t1Ms": 6308,
+        "text": "on",
+        "conf": 0.408
+      },
+      {
+        "i": 2,
+        "t0Ms": 6388,
+        "t1Ms": 6769,
+        "text": "my",
+        "conf": 0.788
+      },
+      {
+        "i": 2,
+        "t0Ms": 7149,
+        "t1Ms": 8431,
+        "text": "feet",
+        "conf": 0.468
+      },
+      {
+        "i": 3,
+        "t0Ms": 8611,
+        "t1Ms": 8991,
+        "text": "The",
+        "conf": 0.728
+      },
+      {
+        "i": 3,
+        "t0Ms": 9011,
+        "t1Ms": 9312,
+        "text": "answer",
+        "conf": 0.266
+      },
+      {
+        "i": 3,
+        "t0Ms": 9372,
+        "t1Ms": 9792,
+        "text": "wasn't",
+        "conf": 0.608
+      },
+      {
+        "i": 3,
+        "t0Ms": 9853,
+        "t1Ms": 10774,
+        "text": "what",
+        "conf": 0.484
+      },
+      {
+        "i": 3,
+        "t0Ms": 10794,
+        "t1Ms": 10814,
+        "text": "I",
+        "conf": 0.009
+      },
+      {
+        "i": 3,
+        "t0Ms": 10834,
+        "t1Ms": 10974,
+        "text": "planned",
+        "conf": 0.072
+      },
+      {
+        "i": 4,
+        "t0Ms": 10994,
+        "t1Ms": 11054,
+        "text": "But",
+        "conf": 0.293
+      },
+      {
+        "i": 4,
+        "t0Ms": 11234,
+        "t1Ms": 11395,
+        "text": "fit",
+        "conf": 0.576
+      },
+      {
+        "i": 4,
+        "t0Ms": 11475,
+        "t1Ms": 11655,
+        "text": "the",
+        "conf": 0.753
+      },
+      {
+        "i": 4,
+        "t0Ms": 11755,
+        "t1Ms": 12316,
+        "text": "question",
+        "conf": 0.869
+      },
+      {
+        "i": 4,
+        "t0Ms": 12436,
+        "t1Ms": 12957,
+        "text": "better",
+        "conf": 0.873
+      },
+      {
+        "i": 4,
+        "t0Ms": 15760,
+        "t1Ms": 16641,
+        "text": "than",
+        "conf": 0.803
+      },
+      {
+        "i": 6,
+        "t0Ms": 16761,
+        "t1Ms": 16862,
+        "text": "Every",
+        "conf": 0
+      },
+      {
+        "i": 6,
+        "t0Ms": 16882,
+        "t1Ms": 17322,
+        "text": "loop",
+        "conf": 0.724
+      },
+      {
+        "i": 6,
+        "t0Ms": 17342,
+        "t1Ms": 18103,
+        "text": "returns",
+        "conf": 0.758
+      },
+      {
+        "i": 6,
+        "t0Ms": 18143,
+        "t1Ms": 20006,
+        "text": "misread",
+        "conf": 0.451
+      },
+      {
+        "i": 7,
+        "t0Ms": 20606,
+        "t1Ms": 20987,
+        "text": "A",
+        "conf": 0.735
+      },
+      {
+        "i": 7,
+        "t0Ms": 21007,
+        "t1Ms": 21568,
+        "text": "clearer",
+        "conf": 0.464
+      },
+      {
+        "i": 7,
+        "t0Ms": 21728,
+        "t1Ms": 22229,
+        "text": "truth",
+        "conf": 0.895
+      },
+      {
+        "i": 7,
+        "t0Ms": 22429,
+        "t1Ms": 23490,
+        "text": "inside",
+        "conf": 0.876
+      },
+      {
+        "i": 7,
+        "t0Ms": 23550,
+        "t1Ms": 24892,
+        "text": "instead",
+        "conf": 0.772
+      },
+      {
+        "i": 8,
+        "t0Ms": 25473,
+        "t1Ms": 25713,
+        "text": "Not",
+        "conf": 0.937
+      },
+      {
+        "i": 8,
+        "t0Ms": 25773,
+        "t1Ms": 26394,
+        "text": "broken,",
+        "conf": 0.785
+      },
+      {
+        "i": 8,
+        "t0Ms": 26414,
+        "t1Ms": 26694,
+        "text": "just",
+        "conf": 0.932
+      },
+      {
+        "i": 8,
+        "t0Ms": 26855,
+        "t1Ms": 26895,
+        "text": "a",
+        "conf": 0.942
+      },
+      {
+        "i": 8,
+        "t0Ms": 26995,
+        "t1Ms": 27455,
+        "text": "shade",
+        "conf": 0.767
+      },
+      {
+        "i": 8,
+        "t0Ms": 27475,
+        "t1Ms": 28116,
+        "text": "askew",
+        "conf": 0.818
+      },
+      {
+        "i": 9,
+        "t0Ms": 28236,
+        "t1Ms": 28557,
+        "text": "Enough",
+        "conf": 0.876
+      },
+      {
+        "i": 9,
+        "t0Ms": 28617,
+        "t1Ms": 28777,
+        "text": "to",
+        "conf": 0.996
+      },
+      {
+        "i": 9,
+        "t0Ms": 28897,
+        "t1Ms": 29498,
+        "text": "show",
+        "conf": 0.719
+      },
+      {
+        "i": 18,
+        "t0Ms": 74888,
+        "t1Ms": 75590,
+        "text": "Every",
+        "conf": 0.87
+      },
+      {
+        "i": 18,
+        "t0Ms": 75931,
+        "t1Ms": 76272,
+        "text": "flaw",
+        "conf": 0.487
+      },
+      {
+        "i": 18,
+        "t0Ms": 76392,
+        "t1Ms": 76934,
+        "text": "that",
+        "conf": 0.908
+      },
+      {
+        "i": 18,
+        "t0Ms": 77014,
+        "t1Ms": 77776,
+        "text": "doesn't",
+        "conf": 0.729
+      },
+      {
+        "i": 18,
+        "t0Ms": 77896,
+        "t1Ms": 78498,
+        "text": "fail",
+        "conf": 0.933
+      },
+      {
+        "i": 19,
+        "t0Ms": 80062,
+        "t1Ms": 80403,
+        "text": "Is",
+        "conf": 0.734
+      },
+      {
+        "i": 19,
+        "t0Ms": 80423,
+        "t1Ms": 80563,
+        "text": "a",
+        "conf": 0.921
+      },
+      {
+        "i": 19,
+        "t0Ms": 80724,
+        "t1Ms": 83571,
+        "text": "signal,",
+        "conf": 0.751
+      },
+      {
+        "i": 19,
+        "t0Ms": 83672,
+        "t1Ms": 84173,
+        "text": "not",
+        "conf": 0.901
+      },
+      {
+        "i": 19,
+        "t0Ms": 84273,
+        "t1Ms": 84434,
+        "text": "a",
+        "conf": 0.763
+      },
+      {
+        "i": 19,
+        "t0Ms": 84835,
+        "t1Ms": 84915,
+        "text": "tail",
+        "conf": 0.25
+      },
+      {
+        "i": 28,
+        "t0Ms": 110663,
+        "t1Ms": 114598,
+        "text": "ooo",
+        "conf": 0.612
+      }
     ]
   },
   "assetPaths": {
     "mix": "assets/off-by-one-still-true/6o_ZqzRrXVMeec/mix.mp3",
     "mixWav": "",
     "stemsZip": "",
+    "effective": "assets/off-by-one-still-true/6o_ZqzRrXVMeec/effective.json",
     "instrumental": "",
     "instrumentalWav": "",
     "vocals": "",
     "vocalsWav": "",
-    "composer": "assets/off-by-one-still-true/6o_ZqzRrXVMeec/composer.txt",
-    "effective": "assets/off-by-one-still-true/6o_ZqzRrXVMeec/effective.json"
+    "composer": "assets/off-by-one-still-true/6o_ZqzRrXVMeec/composer.txt"
   },
   "hasUserHints": true,
   "lastHintAt": "2026-02-25T07:05:01.992Z"

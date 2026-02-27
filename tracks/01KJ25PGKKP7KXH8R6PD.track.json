@@ -525,9 +525,19 @@
         "t1Ms": 52958
       },
       {
+        "i": 6,
+        "t0Ms": 53379,
+        "t1Ms": 55442
+      },
+      {
         "i": 7,
         "t0Ms": 55462,
         "t1Ms": 58046
+      },
+      {
+        "i": 9,
+        "t0Ms": 58386,
+        "t1Ms": 62552
       },
       {
         "i": 10,
@@ -545,14 +555,29 @@
         "t1Ms": 76528
       },
       {
+        "i": 14,
+        "t0Ms": 77032,
+        "t1Ms": 82841
+      },
+      {
         "i": 15,
         "t0Ms": 82981,
         "t1Ms": 92274
       },
       {
+        "i": 16,
+        "t0Ms": 92294,
+        "t1Ms": 98804
+      },
+      {
         "i": 17,
         "t0Ms": 98824,
         "t1Ms": 99445
+      },
+      {
+        "i": 19,
+        "t0Ms": 105955,
+        "t1Ms": 108197
       },
       {
         "i": 20,
@@ -590,9 +615,19 @@
         "t1Ms": 134342
       },
       {
+        "i": 29,
+        "t0Ms": 158504,
+        "t1Ms": 161310
+      },
+      {
         "i": 30,
         "t0Ms": 161690,
         "t1Ms": 167863
+      },
+      {
+        "i": 31,
+        "t0Ms": 170228,
+        "t1Ms": 174095
       },
       {
         "i": 32,
@@ -612,210 +647,245 @@
     ],
     "words": [
       {
+        "i": 1,
         "t0Ms": 38978,
         "t1Ms": 39759,
         "text": "Silent",
         "conf": 0.815
       },
       {
+        "i": 1,
         "t0Ms": 39979,
         "t1Ms": 40280,
         "text": "nodes",
         "conf": 0.722
       },
       {
+        "i": 1,
         "t0Ms": 40420,
         "t1Ms": 41502,
         "text": "begin",
         "conf": 0.85
       },
       {
+        "i": 1,
         "t0Ms": 41562,
         "t1Ms": 42083,
         "text": "to",
         "conf": 0.93
       },
       {
+        "i": 1,
         "t0Ms": 42503,
         "t1Ms": 43384,
         "text": "wake",
         "conf": 0.676
       },
       {
+        "i": 2,
         "t0Ms": 43985,
         "t1Ms": 44486,
         "text": "Pressure",
         "conf": 0.564
       },
       {
+        "i": 2,
         "t0Ms": 44766,
         "t1Ms": 45027,
         "text": "tests",
         "conf": 0.865
       },
       {
+        "i": 2,
         "t0Ms": 45147,
         "t1Ms": 45648,
         "text": "what",
         "conf": 0.718
       },
       {
+        "i": 2,
         "t0Ms": 45808,
         "t1Ms": 46229,
         "text": "we",
         "conf": 0.954
       },
       {
+        "i": 2,
         "t0Ms": 46349,
         "t1Ms": 46890,
         "text": "can",
         "conf": 0.84
       },
       {
+        "i": 2,
         "t0Ms": 46970,
         "t1Ms": 47791,
         "text": "take",
         "conf": 0.876
       },
       {
+        "i": 4,
         "t0Ms": 48472,
         "t1Ms": 48792,
         "text": "Weight",
         "conf": 0.366
       },
       {
+        "i": 4,
         "t0Ms": 48892,
         "t1Ms": 49033,
         "text": "of",
         "conf": 0.694
       },
       {
+        "i": 4,
         "t0Ms": 49073,
         "t1Ms": 49453,
         "text": "truth",
         "conf": 0.767
       },
       {
+        "i": 4,
         "t0Ms": 49473,
         "t1Ms": 49553,
         "text": "in",
         "conf": 0.662
       },
       {
+        "i": 4,
         "t0Ms": 49694,
         "t1Ms": 50074,
         "text": "every",
         "conf": 0.784
       },
       {
+        "i": 4,
         "t0Ms": 50154,
         "t1Ms": 50535,
         "text": "block",
         "conf": 0.848
       },
       {
+        "i": 5,
         "t0Ms": 50615,
         "t1Ms": 50855,
         "text": "No",
         "conf": 0.85
       },
       {
+        "i": 5,
         "t0Ms": 50895,
         "t1Ms": 51156,
         "text": "king",
         "conf": 0.72
       },
       {
+        "i": 5,
         "t0Ms": 51216,
         "t1Ms": 51637,
         "text": "crown,",
         "conf": 0.697
       },
       {
+        "i": 5,
         "t0Ms": 51677,
         "t1Ms": 51897,
         "text": "no",
         "conf": 0.906
       },
       {
+        "i": 5,
         "t0Ms": 51957,
         "t1Ms": 52498,
         "text": "ticking",
         "conf": 0.472
       },
       {
+        "i": 5,
         "t0Ms": 52558,
         "t1Ms": 52958,
         "text": "clock",
         "conf": 0.798
       },
       {
+        "i": 6,
         "t0Ms": 53379,
         "t1Ms": 53599,
         "text": "Rules",
         "conf": 0.49
       },
       {
+        "i": 6,
         "t0Ms": 53700,
         "t1Ms": 53800,
         "text": "are",
         "conf": 0.714
       },
       {
+        "i": 6,
         "t0Ms": 53860,
         "t1Ms": 54180,
         "text": "still",
         "conf": 0.602
       },
       {
+        "i": 6,
         "t0Ms": 54220,
         "t1Ms": 54421,
         "text": "not",
         "conf": 0.716
       },
       {
+        "i": 6,
         "t0Ms": 54681,
         "t1Ms": 54861,
         "text": "hollow",
         "conf": 0.316
       },
       {
+        "i": 6,
         "t0Ms": 54921,
         "t1Ms": 55442,
         "text": "cries",
         "conf": 0.599
       },
       {
+        "i": 7,
         "t0Ms": 55462,
         "t1Ms": 56363,
         "text": "History",
         "conf": 0.663
       },
       {
+        "i": 7,
         "t0Ms": 56383,
         "t1Ms": 56524,
         "text": "etch",
         "conf": 0.237
       },
       {
+        "i": 7,
         "t0Ms": 56544,
         "t1Ms": 56724,
         "text": "where",
         "conf": 0.287
       },
       {
+        "i": 7,
         "t0Ms": 56784,
         "t1Ms": 57265,
         "text": "reason",
         "conf": 0.448
       },
       {
+        "i": 7,
         "t0Ms": 57365,
         "t1Ms": 58046,
         "text": "lies",
         "conf": 0.862
       },
       {
+        "i": 9,
         "t0Ms": 58386,
         "t1Ms": 59929,
         "text": "Covalidation,",
@@ -828,126 +898,147 @@
         "conf": 0.316
       },
       {
+        "i": 9,
         "t0Ms": 60830,
         "t1Ms": 61211,
         "text": "not",
         "conf": 0.913
       },
       {
+        "i": 9,
         "t0Ms": 61391,
         "t1Ms": 62552,
         "text": "sold",
         "conf": 0.692
       },
       {
+        "i": 10,
         "t0Ms": 63213,
         "t1Ms": 63634,
         "text": "Time",
         "conf": 0.744
       },
       {
+        "i": 10,
         "t0Ms": 64095,
         "t1Ms": 64335,
         "text": "decides",
         "conf": 0.244
       },
       {
+        "i": 10,
         "t0Ms": 64435,
         "t1Ms": 64836,
         "text": "what",
         "conf": 0.714
       },
       {
+        "i": 10,
         "t0Ms": 64996,
         "t1Ms": 65557,
         "text": "chains",
         "conf": 0.5
       },
       {
+        "i": 10,
         "t0Ms": 65597,
         "t1Ms": 67520,
         "text": "can",
         "conf": 0.933
       },
       {
+        "i": 10,
         "t0Ms": 67640,
         "t1Ms": 67720,
         "text": "hold",
         "conf": 0.25
       },
       {
+        "i": 11,
         "t0Ms": 67700,
         "t1Ms": 68262,
         "text": "Through",
         "conf": 0.844
       },
       {
+        "i": 11,
         "t0Ms": 68322,
         "t1Ms": 69205,
         "text": "delay",
         "conf": 0.928
       },
       {
+        "i": 11,
         "t0Ms": 69546,
         "t1Ms": 69686,
         "text": "and",
         "conf": 0.739
       },
       {
+        "i": 11,
         "t0Ms": 69787,
         "t1Ms": 70910,
         "text": "grinding",
         "conf": 0.813
       },
       {
+        "i": 11,
         "t0Ms": 70970,
         "t1Ms": 72094,
         "text": "strain",
         "conf": 0.646
       },
       {
+        "i": 12,
         "t0Ms": 72475,
         "t1Ms": 73338,
         "text": "Signal",
         "conf": 0.829
       },
       {
+        "i": 12,
         "t0Ms": 73378,
         "t1Ms": 73799,
         "text": "cuts",
         "conf": 0.632
       },
       {
+        "i": 12,
         "t0Ms": 73920,
         "t1Ms": 74441,
         "text": "through",
         "conf": 0.661
       },
       {
+        "i": 12,
         "t0Ms": 74622,
         "t1Ms": 75164,
         "text": "noise",
         "conf": 0.839
       },
       {
+        "i": 12,
         "t0Ms": 75485,
         "t1Ms": 75685,
         "text": "and",
         "conf": 0.849
       },
       {
+        "i": 12,
         "t0Ms": 76448,
         "t1Ms": 76528,
         "text": "pain",
         "conf": 0.25
       },
       {
+        "i": 14,
         "t0Ms": 77032,
         "t1Ms": 80878,
         "text": "Hold",
         "conf": 0.297
       },
       {
+        "i": 14,
         "t0Ms": 80898,
         "t1Ms": 81679,
         "text": "the",
@@ -966,6 +1057,7 @@
         "conf": 0.298
       },
       {
+        "i": 14,
         "t0Ms": 82780,
         "t1Ms": 82841,
         "text": "the",
@@ -978,60 +1070,70 @@
         "conf": 0.001
       },
       {
+        "i": 15,
         "t0Ms": 82981,
         "t1Ms": 83682,
         "text": "Trust",
         "conf": 0.313
       },
       {
+        "i": 15,
         "t0Ms": 83802,
         "t1Ms": 85344,
         "text": "is",
         "conf": 0.719
       },
       {
+        "i": 15,
         "t0Ms": 85364,
         "t1Ms": 85464,
         "text": "slow,",
         "conf": 0.027
       },
       {
+        "i": 15,
         "t0Ms": 85484,
         "t1Ms": 85545,
         "text": "but",
         "conf": 0.031
       },
       {
+        "i": 15,
         "t0Ms": 85565,
         "t1Ms": 86286,
         "text": "stays",
         "conf": 0.557
       },
       {
+        "i": 15,
         "t0Ms": 86306,
         "t1Ms": 86486,
         "text": "the",
         "conf": 0.634
       },
       {
+        "i": 15,
         "t0Ms": 89390,
         "t1Ms": 92274,
         "text": "same",
         "conf": 0.517
       },
       {
+        "i": 16,
         "t0Ms": 92294,
         "t1Ms": 92375,
         "text": "Burn",
         "conf": 0
       },
       {
+        "i": 16,
         "t0Ms": 92395,
         "t1Ms": 93556,
         "text": "the",
         "conf": 0.404
       },
       {
+        "i": 16,
         "t0Ms": 93576,
         "t1Ms": 94237,
         "text": "hype,",
@@ -1044,318 +1146,371 @@
         "conf": 0.379
       },
       {
+        "i": 16,
         "t0Ms": 95279,
         "t1Ms": 98704,
         "text": "the",
         "conf": 0.321
       },
       {
+        "i": 16,
         "t0Ms": 98724,
         "t1Ms": 98804,
         "text": "test",
         "conf": 0
       },
       {
+        "i": 17,
         "t0Ms": 98824,
         "t1Ms": 98904,
         "text": "What",
         "conf": 0
       },
       {
+        "i": 17,
         "t0Ms": 98924,
         "t1Ms": 99084,
         "text": "survives",
         "conf": 0
       },
       {
+        "i": 17,
         "t0Ms": 99105,
         "t1Ms": 99265,
         "text": "deserves",
         "conf": 0
       },
       {
+        "i": 17,
         "t0Ms": 99285,
         "t1Ms": 99345,
         "text": "the",
         "conf": 0
       },
       {
+        "i": 17,
         "t0Ms": 99365,
         "t1Ms": 99445,
         "text": "rest",
         "conf": 0.25
       },
       {
+        "i": 19,
         "t0Ms": 105955,
         "t1Ms": 106355,
         "text": "Forge",
         "conf": 0.518
       },
       {
+        "i": 19,
         "t0Ms": 106475,
         "t1Ms": 106616,
         "text": "and",
         "conf": 0.766
       },
       {
+        "i": 19,
         "t0Ms": 106676,
         "t1Ms": 107136,
         "text": "failures",
         "conf": 0.51
       },
       {
+        "i": 19,
         "t0Ms": 107156,
         "t1Ms": 107396,
         "text": "mark",
         "conf": 0.636
       },
       {
+        "i": 19,
         "t0Ms": 107436,
         "t1Ms": 107697,
         "text": "the",
         "conf": 0.542
       },
       {
+        "i": 19,
         "t0Ms": 107757,
         "t1Ms": 108197,
         "text": "road",
         "conf": 0.74
       },
       {
+        "i": 20,
         "t0Ms": 108237,
         "t1Ms": 108878,
         "text": "Every",
         "conf": 0.745
       },
       {
+        "i": 20,
         "t0Ms": 108938,
         "t1Ms": 109178,
         "text": "loss",
         "conf": 0.583
       },
       {
+        "i": 20,
         "t0Ms": 109338,
         "t1Ms": 109458,
         "text": "a",
         "conf": 0.751
       },
       {
+        "i": 20,
         "t0Ms": 109558,
         "t1Ms": 110059,
         "text": "deeper",
         "conf": 0.588
       },
       {
+        "i": 20,
         "t0Ms": 110339,
         "t1Ms": 110599,
         "text": "code",
         "conf": 0.674
       },
       {
+        "i": 21,
         "t0Ms": 110639,
         "t1Ms": 111360,
         "text": "No",
         "conf": 0.394
       },
       {
+        "i": 21,
         "t0Ms": 111380,
         "t1Ms": 111720,
         "text": "retreat",
         "conf": 0.419
       },
       {
+        "i": 21,
         "t0Ms": 111741,
         "t1Ms": 111941,
         "text": "to",
         "conf": 0.61
       },
       {
+        "i": 21,
         "t0Ms": 112281,
         "t1Ms": 112461,
         "text": "easy",
         "conf": 0.395
       },
       {
+        "i": 21,
         "t0Ms": 112541,
         "t1Ms": 113002,
         "text": "lies",
         "conf": 0.248
       },
       {
+        "i": 22,
         "t0Ms": 113022,
         "t1Ms": 113162,
         "text": "We",
         "conf": 0.838
       },
       {
+        "i": 22,
         "t0Ms": 113222,
         "t1Ms": 113662,
         "text": "scale",
         "conf": 0.836
       },
       {
+        "i": 22,
         "t0Ms": 113702,
         "t1Ms": 114123,
         "text": "truth",
         "conf": 0.365
       },
       {
+        "i": 22,
         "t0Ms": 114143,
         "t1Ms": 114383,
         "text": "as",
         "conf": 0.559
       },
       {
+        "i": 22,
         "t0Ms": 114403,
         "t1Ms": 114843,
         "text": "human",
         "conf": 0.572
       },
       {
+        "i": 22,
         "t0Ms": 115284,
         "t1Ms": 115624,
         "text": "size",
         "conf": 0.507
       },
       {
+        "i": 24,
         "t0Ms": 115804,
         "t1Ms": 116305,
         "text": "Strip",
         "conf": 0.825
       },
       {
+        "i": 24,
         "t0Ms": 116405,
         "t1Ms": 116525,
         "text": "it",
         "conf": 0.968
       },
       {
+        "i": 24,
         "t0Ms": 116605,
         "t1Ms": 117106,
         "text": "down",
         "conf": 0.85
       },
       {
+        "i": 24,
         "t0Ms": 117166,
         "t1Ms": 117706,
         "text": "to",
         "conf": 0.726
       },
       {
+        "i": 24,
         "t0Ms": 117766,
         "t1Ms": 118447,
         "text": "what",
         "conf": 0.695
       },
       {
+        "i": 24,
         "t0Ms": 118727,
         "t1Ms": 118907,
         "text": "is",
         "conf": 0.711
       },
       {
+        "i": 24,
         "t0Ms": 119007,
         "t1Ms": 120149,
         "text": "real",
         "conf": 0.643
       },
       {
+        "i": 25,
         "t0Ms": 120189,
         "t1Ms": 121230,
         "text": "Consensus",
         "conf": 0.858
       },
       {
+        "i": 25,
         "t0Ms": 121370,
         "t1Ms": 122210,
         "text": "forged",
         "conf": 0.294
       },
       {
+        "i": 25,
         "t0Ms": 122230,
         "t1Ms": 122471,
         "text": "in",
         "conf": 0.916
       },
       {
+        "i": 25,
         "t0Ms": 122591,
         "t1Ms": 123492,
         "text": "will",
         "conf": 0.43
       },
       {
+        "i": 25,
         "t0Ms": 123512,
         "t1Ms": 123672,
         "text": "and",
         "conf": 0.886
       },
       {
+        "i": 25,
         "t0Ms": 123752,
         "t1Ms": 125233,
         "text": "steel",
         "conf": 0.543
       },
       {
+        "i": 26,
         "t0Ms": 125333,
         "t1Ms": 125774,
         "text": "No",
         "conf": 0.926
       },
       {
+        "i": 26,
         "t0Ms": 126374,
         "t1Ms": 126775,
         "text": "escape,",
         "conf": 0.417
       },
       {
+        "i": 26,
         "t0Ms": 126795,
         "t1Ms": 127195,
         "text": "no",
         "conf": 0.746
       },
       {
+        "i": 26,
         "t0Ms": 127636,
         "t1Ms": 128476,
         "text": "central",
         "conf": 0.589
       },
       {
+        "i": 26,
         "t0Ms": 128577,
         "t1Ms": 129738,
         "text": "throne",
         "conf": 0.555
       },
       {
+        "i": 27,
         "t0Ms": 130278,
         "t1Ms": 130679,
         "text": "Strength",
         "conf": 0.212
       },
       {
+        "i": 27,
         "t0Ms": 130699,
         "t1Ms": 130879,
         "text": "is",
         "conf": 0.688
       },
       {
+        "i": 27,
         "t0Ms": 130979,
         "t1Ms": 131880,
         "text": "found",
         "conf": 0.345
       },
       {
+        "i": 27,
         "t0Ms": 131900,
         "t1Ms": 132080,
         "text": "in",
         "conf": 0.798
       },
       {
+        "i": 27,
         "t0Ms": 132180,
         "t1Ms": 134222,
         "text": "standing",
         "conf": 0.609
       },
       {
+        "i": 27,
         "t0Ms": 134242,
         "t1Ms": 134342,
         "text": "alone",
@@ -1374,78 +1529,91 @@
         "conf": 0.333
       },
       {
+        "i": 29,
         "t0Ms": 158504,
         "t1Ms": 160007,
         "text": "Don't",
         "conf": 0.579
       },
       {
+        "i": 29,
         "t0Ms": 160087,
         "t1Ms": 160869,
         "text": "bend",
         "conf": 0.672
       },
       {
+        "i": 29,
         "t0Ms": 160889,
         "t1Ms": 160949,
         "text": "the",
         "conf": 0
       },
       {
+        "i": 29,
         "t0Ms": 160969,
         "t1Ms": 161310,
         "text": "frame",
         "conf": 0.575
       },
       {
+        "i": 30,
         "t0Ms": 161690,
         "t1Ms": 162412,
         "text": "Trust",
         "conf": 0.556
       },
       {
+        "i": 30,
         "t0Ms": 162432,
         "t1Ms": 162893,
         "text": "is",
         "conf": 0.826
       },
       {
+        "i": 30,
         "t0Ms": 163033,
         "t1Ms": 163995,
         "text": "slow,",
         "conf": 0.25
       },
       {
+        "i": 30,
         "t0Ms": 164015,
         "t1Ms": 164837,
         "text": "but",
         "conf": 0.532
       },
       {
+        "i": 30,
         "t0Ms": 164857,
         "t1Ms": 165458,
         "text": "stays",
         "conf": 0.744
       },
       {
+        "i": 30,
         "t0Ms": 165518,
         "t1Ms": 165699,
         "text": "the",
         "conf": 0.889
       },
       {
+        "i": 30,
         "t0Ms": 165779,
         "t1Ms": 167863,
         "text": "same",
         "conf": 0.892
       },
       {
+        "i": 31,
         "t0Ms": 170228,
         "t1Ms": 170308,
         "text": "From",
         "conf": 0
       },
       {
+        "i": 31,
         "t0Ms": 170328,
         "t1Ms": 171911,
         "text": "the",
@@ -1458,6 +1626,7 @@
         "conf": 0.355
       },
       {
+        "i": 31,
         "t0Ms": 173795,
         "t1Ms": 173855,
         "text": "the",
@@ -1470,84 +1639,98 @@
         "conf": 0.005
       },
       {
+        "i": 31,
         "t0Ms": 173995,
         "t1Ms": 174095,
         "text": "align",
         "conf": 0.007
       },
       {
+        "i": 32,
         "t0Ms": 174116,
         "t1Ms": 178625,
         "text": "Decentralize",
         "conf": 0.224
       },
       {
+        "i": 32,
         "t0Ms": 178645,
         "t1Ms": 178685,
         "text": "by",
         "conf": 0.003
       },
       {
+        "i": 32,
         "t0Ms": 178705,
         "t1Ms": 178825,
         "text": "design",
         "conf": 0.164
       },
       {
+        "i": 34,
         "t0Ms": 185504,
         "t1Ms": 186045,
         "text": "When",
         "conf": 0.255
       },
       {
+        "i": 34,
         "t0Ms": 186065,
         "t1Ms": 186125,
         "text": "the",
         "conf": 0.271
       },
       {
+        "i": 34,
         "t0Ms": 186185,
         "t1Ms": 186987,
         "text": "dust",
         "conf": 0.899
       },
       {
+        "i": 34,
         "t0Ms": 187007,
         "t1Ms": 187408,
         "text": "has",
         "conf": 0.799
       },
       {
+        "i": 34,
         "t0Ms": 187428,
         "t1Ms": 188590,
         "text": "cleared",
         "conf": 0.346
       },
       {
+        "i": 34,
         "t0Ms": 189471,
         "t1Ms": 189652,
         "text": "away,",
         "conf": 0.441
       },
       {
+        "i": 35,
         "t0Ms": 190553,
         "t1Ms": 190874,
         "text": "Only",
         "conf": 0.969
       },
       {
+        "i": 35,
         "t0Ms": 190974,
         "t1Ms": 192056,
         "text": "tested",
         "conf": 0.817
       },
       {
+        "i": 35,
         "t0Ms": 192156,
         "t1Ms": 193619,
         "text": "chains",
         "conf": 0.704
       },
       {
+        "i": 35,
         "t0Ms": 194841,
         "t1Ms": 199530,
         "text": "remain",
@@ -1571,12 +1754,12 @@
     "mix": "assets/consensus-of-ash/01KJ25PGKKP7KXH8R6PD/mix.mp3",
     "mixWav": "",
     "stemsZip": "assets/consensus-of-ash/01KJ25PGKKP7KXH8R6PD/stems.zip",
+    "effective": "assets/consensus-of-ash/01KJ25PGKKP7KXH8R6PD/effective.json",
     "instrumental": "assets/consensus-of-ash/01KJ25PGKKP7KXH8R6PD/instrumental.mp3",
     "instrumentalWav": "assets/consensus-of-ash/01KJ25PGKKP7KXH8R6PD/instrumental.wav",
     "vocals": "assets/consensus-of-ash/01KJ25PGKKP7KXH8R6PD/vocals.mp3",
     "vocalsWav": "assets/consensus-of-ash/01KJ25PGKKP7KXH8R6PD/vocals.wav",
-    "composer": "assets/consensus-of-ash/01KJ25PGKKP7KXH8R6PD/composer.txt",
-    "effective": "assets/consensus-of-ash/01KJ25PGKKP7KXH8R6PD/effective.json"
+    "composer": "assets/consensus-of-ash/01KJ25PGKKP7KXH8R6PD/composer.txt"
   },
   "hasUserHints": true,
   "lastHintAt": "2026-02-25T06:46:58.291Z"

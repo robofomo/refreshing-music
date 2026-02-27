@@ -127,37 +127,69 @@ function buildLyricTimeline(track: any, tMs: number): LyricLine[] {
 
 function wordProgressForLine(track: any, lines: LyricLine[], currentIdx: number, cur: LyricLine, tMs: number) {
   const words = Array.isArray(track?.timing?.words) ? (track.timing.words as WordTiming[]) : [];
-  const next = currentIdx + 1 < lines.length ? lines[currentIdx + 1] : null;
-  const windowEndMs = next?.t0Ms ?? cur.t1Ms;
-  const timeProgress = clamp01((tMs - cur.t0Ms) / Math.max(1, windowEndMs - cur.t0Ms));
+  const lineEndMs = Number.isFinite(cur?.t1Ms) ? cur.t1Ms : cur.t0Ms + 2600;
+  const timeProgress = clamp01((tMs - cur.t0Ms) / Math.max(1, lineEndMs - cur.t0Ms));
   if (!words.length) return timeProgress;
+  const prev = currentIdx > 0 ? lines[currentIdx - 1] : null;
+  const next = currentIdx + 1 < lines.length ? lines[currentIdx + 1] : null;
+  const windowStartMs = Math.max(
+    0,
+    Math.min(
+      cur.t0Ms,
+      (prev ? prev.t1Ms : cur.t0Ms) + 40
+    )
+  );
+  const windowEndMs = Math.max(
+    lineEndMs,
+    Math.min(
+      lineEndMs + 220,
+      (next ? next.t0Ms : lineEndMs + 220)
+    )
+  );
 
   const lineWords = words
     .filter((w) => {
-      if (typeof w?.i === "number") return w.i === cur.i;
       const t0 = Number(w?.t0Ms);
-      return Number.isFinite(t0) && t0 >= cur.t0Ms && t0 < windowEndMs + 120;
+      if (!Number.isFinite(t0)) return false;
+      if (t0 < windowStartMs || t0 >= windowEndMs) return false;
+      if (typeof w?.i === "number") return w.i === cur.i;
+      return true;
     })
     .filter((w) => Number.isFinite(Number(w?.t0Ms)))
     .sort((a, b) => Number(a.t0Ms) - Number(b.t0Ms));
   if (!lineWords.length) return timeProgress;
+  const firstWordStartMs = Number(lineWords[0]?.t0Ms);
+  if (Number.isFinite(firstWordStartMs) && tMs < firstWordStartMs) return 0;
 
   let done = 0;
+  let progressedWeight = 0;
+  let totalWeight = 0;
   for (const w of lineWords) {
     const t0 = Number(w.t0Ms);
     const t1 = Number.isFinite(Number(w.t1Ms)) ? Number(w.t1Ms) : t0 + 180;
+    const conf = Number.isFinite(Number(w.conf)) ? clamp01(Number(w.conf)) : 0.75;
+    const weight = 0.35 + conf * 0.65;
+    totalWeight += weight;
     if (tMs >= t1) {
       done += 1;
+      progressedWeight += weight;
       continue;
     }
-    if (tMs > t0) {
+    if (tMs > t0 && tMs < t1) {
       done += clamp01((tMs - t0) / Math.max(1, t1 - t0));
+      progressedWeight += weight * clamp01((tMs - t0) / Math.max(1, t1 - t0));
     }
-    break;
   }
   const wordProgress = clamp01(done / lineWords.length);
-  // Ensure the highlight reaches full line width by end-of-line even if word timings are sparse.
-  return Math.max(wordProgress, timeProgress);
+  const weightedWordProgress = totalWeight > 0 ? clamp01(progressedWeight / totalWeight) : wordProgress;
+  const avgConf =
+    lineWords.length > 0
+      ? lineWords.reduce((acc, w) => acc + (Number.isFinite(Number(w.conf)) ? clamp01(Number(w.conf)) : 0.75), 0) / lineWords.length
+      : 0.75;
+  const trustWords = clamp01((avgConf - 0.35) / 0.45);
+  const blended = weightedWordProgress * trustWords + timeProgress * (1 - trustWords);
+  if (tMs >= lineEndMs) return 1;
+  return clamp01(blended);
 }
 
 function findCurrent(lines: LyricLine[], tMs: number) {
@@ -165,11 +197,18 @@ function findCurrent(lines: LyricLine[], tMs: number) {
   let current = -1;
   for (let i = 0; i < lines.length; i += 1) {
     const row = lines[i];
-    if (tMs >= row.t0Ms && tMs < row.t1Ms) {
+    const prev = i > 0 ? lines[i - 1] : null;
+    const startMs = i === 0
+      ? row.t0Ms
+      : Math.min(
+        row.t0Ms,
+        Number.isFinite(prev?.t1Ms) ? Number(prev.t1Ms) : row.t0Ms
+      );
+    if (tMs >= startMs && tMs < row.t1Ms) {
       current = i;
       break;
     }
-    if (tMs >= row.t0Ms) current = i;
+    if (tMs >= startMs) current = i;
   }
   return { current: Math.max(0, Math.min(lines.length - 1, current)) };
 }
@@ -223,6 +262,11 @@ export function renderLyricsKaraoke({
 
   const lines = buildLyricTimeline(track, tMs);
   if (!lines.length) return { lyricIndex: -1, lyricText: "" };
+  const nextPreviewMs = Number(params?.nextPreviewMs ?? 1600);
+  const firstLineLeadInMs = Number(params?.firstLineLeadInMs ?? nextPreviewMs);
+  if (tMs < lines[0].t0Ms - firstLineLeadInMs) {
+    return { lyricIndex: -1, lyricText: "" };
+  }
 
   const window = lyricWindow(track, lines);
   if (window) {
@@ -238,6 +282,7 @@ export function renderLyricsKaraoke({
   const cur = lines[current] ?? null;
   const next = current + 1 < lines.length ? lines[current + 1] : null;
   if (!cur) return { lyricIndex: -1, lyricText: "" };
+  const showNext = Boolean(next?.text) && (tMs >= ((next?.t0Ms ?? Number.POSITIVE_INFINITY) - nextPreviewMs));
 
   const safeMargin = Number(params?.safeMarginPx ?? 32);
   const controlsReservedPx = Number(params?.controlsReservedPx ?? 96);
@@ -301,7 +346,7 @@ export function renderLyricsKaraoke({
     ctx.restore();
   }
 
-  if (next?.text) {
+  if (showNext && next?.text) {
     ctx.fillStyle = toRgba("#DCE8FF", opacity * 0.32);
     ctx.shadowBlur = 6;
     ctx.fillText(next.text, x, yNext, maxWidth);

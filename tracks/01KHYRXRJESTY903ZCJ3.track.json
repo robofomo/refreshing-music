@@ -416,401 +416,531 @@
       },
       {
         "i": 12,
-        "t0Ms": 43318,
-        "t1Ms": 45701
+        "t0Ms": 54273,
+        "t1Ms": 56636
       },
       {
         "i": 13,
+        "t0Ms": 57097,
+        "t1Ms": 59380
+      },
+      {
+        "i": 14,
+        "t0Ms": 59741,
+        "t1Ms": 62084
+      },
+      {
+        "i": 15,
+        "t0Ms": 62184,
+        "t1Ms": 66150
+      },
+      {
+        "i": 17,
+        "t0Ms": 76087,
+        "t1Ms": 78831
+      },
+      {
+        "i": 18,
+        "t0Ms": 78951,
+        "t1Ms": 81295
+      },
+      {
+        "i": 19,
+        "t0Ms": 81595,
+        "t1Ms": 84079
+      },
+      {
+        "i": 20,
+        "t0Ms": 84159,
+        "t1Ms": 86783
+      },
+      {
+        "i": 22,
+        "t0Ms": 87064,
+        "t1Ms": 89467
+      },
+      {
+        "i": 23,
         "t0Ms": 89888,
         "t1Ms": 92131
       },
       {
-        "i": 14,
+        "i": 24,
         "t0Ms": 92532,
         "t1Ms": 94896
       },
       {
-        "i": 15,
+        "i": 25,
         "t0Ms": 94976,
         "t1Ms": 97720
       },
       {
-        "i": 22,
+        "i": 27,
+        "t0Ms": 99362,
+        "t1Ms": 102347
+      },
+      {
+        "i": 28,
+        "t0Ms": 103913,
+        "t1Ms": 107477
+      },
+      {
+        "i": 29,
+        "t0Ms": 109760,
+        "t1Ms": 114446
+      },
+      {
+        "i": 30,
+        "t0Ms": 115727,
+        "t1Ms": 119331
+      },
+      {
+        "i": 32,
         "t0Ms": 119852,
         "t1Ms": 122235
       },
       {
-        "i": 24,
+        "i": 33,
+        "t0Ms": 122655,
+        "t1Ms": 124958
+      },
+      {
+        "i": 34,
         "t0Ms": 125339,
         "t1Ms": 127681
       },
       {
-        "i": 25,
+        "i": 35,
         "t0Ms": 127741,
         "t1Ms": 130765
       },
       {
-        "i": 32,
+        "i": 37,
         "t0Ms": 170317,
-        "t1Ms": 176859
+        "t1Ms": 172845
+      },
+      {
+        "i": 38,
+        "t0Ms": 175795,
+        "t1Ms": 178504
       }
     ],
     "words": [
       {
+        "i": 1,
         "t0Ms": 11810,
         "t1Ms": 11990,
         "text": "We",
         "conf": 0.764
       },
       {
+        "i": 1,
         "t0Ms": 12030,
         "t1Ms": 12311,
         "text": "tap",
         "conf": 0.886
       },
       {
+        "i": 1,
         "t0Ms": 12371,
         "t1Ms": 12912,
         "text": "refresh",
         "conf": 0.882
       },
       {
+        "i": 1,
         "t0Ms": 12992,
         "t1Ms": 13112,
         "text": "and",
         "conf": 0.803
       },
       {
+        "i": 1,
         "t0Ms": 13192,
         "t1Ms": 13533,
         "text": "share",
         "conf": 0.738
       },
       {
+        "i": 1,
         "t0Ms": 13633,
         "t1Ms": 13733,
         "text": "the",
         "conf": 0.926
       },
       {
+        "i": 1,
         "t0Ms": 13873,
         "t1Ms": 14414,
         "text": "sign",
         "conf": 0.826
       },
       {
+        "i": 2,
         "t0Ms": 14454,
         "t1Ms": 14494,
         "text": "We",
         "conf": 0.5
       },
       {
+        "i": 2,
         "t0Ms": 17499,
         "t1Ms": 17779,
         "text": "hold",
         "conf": 0.952
       },
       {
+        "i": 2,
         "t0Ms": 17839,
         "t1Ms": 17959,
         "text": "the",
         "conf": 0.873
       },
       {
+        "i": 2,
         "t0Ms": 18039,
         "t1Ms": 18360,
         "text": "thread",
         "conf": 0.916
       },
       {
+        "i": 2,
         "t0Ms": 18480,
         "t1Ms": 18600,
         "text": "and",
         "conf": 0.852
       },
       {
+        "i": 2,
         "t0Ms": 18721,
         "t1Ms": 19041,
         "text": "keep",
         "conf": 0.938
       },
       {
+        "i": 2,
         "t0Ms": 19201,
         "t1Ms": 19301,
         "text": "it",
         "conf": 0.58
       },
       {
+        "i": 2,
         "t0Ms": 19402,
         "t1Ms": 19842,
         "text": "kind",
         "conf": 0.928
       },
       {
+        "i": 4,
         "t0Ms": 21805,
         "t1Ms": 21925,
         "text": "We",
         "conf": 0.991
       },
       {
+        "i": 4,
         "t0Ms": 21965,
         "t1Ms": 22186,
         "text": "chase",
         "conf": 0.95
       },
       {
+        "i": 4,
         "t0Ms": 22226,
         "t1Ms": 22326,
         "text": "the",
         "conf": 0.905
       },
       {
+        "i": 4,
         "t0Ms": 22386,
         "t1Ms": 22727,
         "text": "frame,",
         "conf": 0.88
       },
       {
+        "i": 4,
         "t0Ms": 22747,
         "t1Ms": 22927,
         "text": "then",
         "conf": 0.824
       },
       {
+        "i": 4,
         "t0Ms": 23027,
         "t1Ms": 23287,
         "text": "name",
         "conf": 0.896
       },
       {
+        "i": 4,
         "t0Ms": 23348,
         "t1Ms": 23448,
         "text": "the",
         "conf": 0.932
       },
       {
+        "i": 4,
         "t0Ms": 23488,
         "t1Ms": 23788,
         "text": "glow",
         "conf": 0.947
       },
       {
+        "i": 5,
         "t0Ms": 23808,
         "t1Ms": 23828,
         "text": "A",
         "conf": 0.998
       },
       {
+        "i": 5,
         "t0Ms": 24329,
         "t1Ms": 24770,
         "text": "quiet",
         "conf": 0.892
       },
       {
+        "i": 5,
         "t0Ms": 24870,
         "t1Ms": 25190,
         "text": "pull,",
         "conf": 0.94
       },
       {
+        "i": 5,
         "t0Ms": 25271,
         "t1Ms": 25431,
         "text": "the",
         "conf": 0.967
       },
       {
+        "i": 5,
         "t0Ms": 25591,
         "t1Ms": 25871,
         "text": "night",
         "conf": 0.878
       },
       {
+        "i": 5,
         "t0Ms": 25911,
         "t1Ms": 26132,
         "text": "can",
         "conf": 0.893
       },
       {
+        "i": 5,
         "t0Ms": 26212,
         "t1Ms": 26492,
         "text": "show",
         "conf": 0.966
       },
       {
+        "i": 6,
         "t0Ms": 26512,
         "t1Ms": 27053,
         "text": "We",
         "conf": 0.88
       },
       {
+        "i": 6,
         "t0Ms": 27113,
         "t1Ms": 27394,
         "text": "mark",
         "conf": 0.926
       },
       {
+        "i": 6,
         "t0Ms": 27434,
         "t1Ms": 27514,
         "text": "the",
         "conf": 0.822
       },
       {
+        "i": 6,
         "t0Ms": 27574,
         "t1Ms": 28095,
         "text": "squares,",
         "conf": 0.878
       },
       {
+        "i": 6,
         "t0Ms": 28155,
         "t1Ms": 28355,
         "text": "we",
         "conf": 0.892
       },
       {
+        "i": 6,
         "t0Ms": 28455,
         "t1Ms": 28796,
         "text": "call",
         "conf": 0.932
       },
       {
+        "i": 6,
         "t0Ms": 28836,
         "t1Ms": 28916,
         "text": "the",
         "conf": 0.791
       },
       {
+        "i": 6,
         "t0Ms": 29016,
         "t1Ms": 29397,
         "text": "wind",
         "conf": 0.912
       },
       {
+        "i": 7,
         "t0Ms": 29417,
         "t1Ms": 29437,
         "text": "A",
         "conf": 0.992
       },
       {
+        "i": 7,
         "t0Ms": 29697,
         "t1Ms": 29998,
         "text": "bright",
         "conf": 0.626
       },
       {
+        "i": 7,
         "t0Ms": 30058,
         "t1Ms": 30258,
         "text": "new",
         "conf": 0.969
       },
       {
+        "i": 7,
         "t0Ms": 30338,
         "t1Ms": 30619,
         "text": "set,",
         "conf": 0.946
       },
       {
+        "i": 7,
         "t0Ms": 30699,
         "t1Ms": 30919,
         "text": "we're",
         "conf": 0.718
       },
       {
+        "i": 7,
         "t0Ms": 30999,
         "t1Ms": 31680,
         "text": "standing",
         "conf": 0.875
       },
       {
+        "i": 7,
         "t0Ms": 31861,
         "t1Ms": 33143,
         "text": "in",
         "conf": 0.863
       },
       {
+        "i": 9,
         "t0Ms": 33783,
         "t1Ms": 33884,
         "text": "The",
         "conf": 0.839
       },
       {
+        "i": 9,
         "t0Ms": 33924,
         "t1Ms": 34204,
         "text": "room",
         "conf": 0.738
       },
       {
+        "i": 9,
         "t0Ms": 34224,
         "t1Ms": 34545,
         "text": "stays",
         "conf": 0.878
       },
       {
+        "i": 9,
         "t0Ms": 34605,
         "t1Ms": 34945,
         "text": "calm,",
         "conf": 0.761
       },
       {
+        "i": 9,
         "t0Ms": 35005,
         "t1Ms": 35085,
         "text": "the",
         "conf": 0.901
       },
       {
+        "i": 9,
         "t0Ms": 35166,
         "t1Ms": 35746,
         "text": "signal",
         "conf": 0.933
       },
       {
+        "i": 9,
         "t0Ms": 35827,
         "t1Ms": 38070,
         "text": "clear",
         "conf": 0.578
       },
       {
+        "i": 10,
         "t0Ms": 38050,
         "t1Ms": 39272,
         "text": "We",
         "conf": 0.787
       },
       {
+        "i": 10,
         "t0Ms": 39352,
         "t1Ms": 39612,
         "text": "lean",
         "conf": 0.814
       },
       {
+        "i": 10,
         "t0Ms": 39672,
         "t1Ms": 39772,
         "text": "in",
         "conf": 0.865
       },
       {
+        "i": 10,
         "t0Ms": 39853,
         "t1Ms": 40253,
         "text": "close",
         "conf": 0.914
       },
       {
+        "i": 10,
         "t0Ms": 40353,
         "t1Ms": 40473,
         "text": "and",
         "conf": 0.84
       },
       {
+        "i": 10,
         "t0Ms": 40514,
         "t1Ms": 40914,
         "text": "lose",
         "conf": 0.872
       },
       {
+        "i": 10,
         "t0Ms": 41054,
         "t1Ms": 41235,
         "text": "the",
         "conf": 0.312
       },
       {
+        "i": 10,
         "t0Ms": 41255,
         "t1Ms": 42877,
         "text": "fear",
@@ -979,42 +1109,49 @@
         "conf": 0.767
       },
       {
+        "i": 12,
         "t0Ms": 54273,
         "t1Ms": 54393,
         "text": "We",
         "conf": 0.994
       },
       {
+        "i": 12,
         "t0Ms": 54453,
         "t1Ms": 54734,
         "text": "press",
         "conf": 0.895
       },
       {
+        "i": 12,
         "t0Ms": 54794,
         "t1Ms": 55315,
         "text": "refresh,",
         "conf": 0.896
       },
       {
+        "i": 12,
         "t0Ms": 55655,
         "t1Ms": 55755,
         "text": "we",
         "conf": 0.724
       },
       {
+        "i": 12,
         "t0Ms": 55815,
         "t1Ms": 56076,
         "text": "press",
         "conf": 0.871
       },
       {
+        "i": 12,
         "t0Ms": 56136,
         "t1Ms": 56636,
         "text": "refresh",
         "conf": 0.769
       },
       {
+        "i": 13,
         "t0Ms": 57097,
         "t1Ms": 57157,
         "text": "A",
@@ -1033,126 +1170,147 @@
         "conf": 0.808
       },
       {
+        "i": 13,
         "t0Ms": 57758,
         "t1Ms": 58119,
         "text": "light,",
         "conf": 0.608
       },
       {
+        "i": 13,
         "t0Ms": 58379,
         "t1Ms": 58439,
         "text": "a",
         "conf": 0.476
       },
       {
+        "i": 13,
         "t0Ms": 58479,
         "t1Ms": 58900,
         "text": "steady",
         "conf": 0.892
       },
       {
+        "i": 13,
         "t0Ms": 59060,
         "t1Ms": 59380,
         "text": "breath",
         "conf": 0.869
       },
       {
+        "i": 14,
         "t0Ms": 59741,
         "t1Ms": 59861,
         "text": "We",
         "conf": 0.943
       },
       {
+        "i": 14,
         "t0Ms": 59901,
         "t1Ms": 60182,
         "text": "press",
         "conf": 0.856
       },
       {
+        "i": 14,
         "t0Ms": 60262,
         "t1Ms": 60802,
         "text": "refresh,",
         "conf": 0.851
       },
       {
+        "i": 14,
         "t0Ms": 60822,
         "t1Ms": 61023,
         "text": "we",
         "conf": 0.96
       },
       {
+        "i": 14,
         "t0Ms": 61123,
         "t1Ms": 61423,
         "text": "press",
         "conf": 0.861
       },
       {
+        "i": 14,
         "t0Ms": 61523,
         "t1Ms": 62084,
         "text": "refresh",
         "conf": 0.759
       },
       {
+        "i": 15,
         "t0Ms": 62184,
         "t1Ms": 62385,
         "text": "We",
         "conf": 0.899
       },
       {
+        "i": 15,
         "t0Ms": 62485,
         "t1Ms": 62865,
         "text": "build",
         "conf": 0.72
       },
       {
+        "i": 15,
         "t0Ms": 62965,
         "t1Ms": 63026,
         "text": "it",
         "conf": 0.921
       },
       {
+        "i": 15,
         "t0Ms": 63146,
         "t1Ms": 63446,
         "text": "bright,",
         "conf": 0.828
       },
       {
+        "i": 15,
         "t0Ms": 63526,
         "t1Ms": 63747,
         "text": "we",
         "conf": 0.996
       },
       {
+        "i": 15,
         "t0Ms": 63847,
         "t1Ms": 64227,
         "text": "build",
         "conf": 0.799
       },
       {
+        "i": 15,
         "t0Ms": 64327,
         "t1Ms": 64468,
         "text": "it",
         "conf": 0.361
       },
       {
+        "i": 15,
         "t0Ms": 64488,
         "t1Ms": 66150,
         "text": "fresh",
         "conf": 0.776
       },
       {
+        "i": 17,
         "t0Ms": 76087,
         "t1Ms": 76207,
         "text": "A",
         "conf": 0.771
       },
       {
+        "i": 17,
         "t0Ms": 76227,
         "t1Ms": 76908,
         "text": "screenshot",
         "conf": 0.915
       },
       {
+        "i": 17,
         "t0Ms": 76948,
         "t1Ms": 77329,
         "text": "saved",
@@ -1165,114 +1323,133 @@
         "conf": 0.258
       },
       {
+        "i": 17,
         "t0Ms": 77770,
         "t1Ms": 78130,
         "text": "laughter",
         "conf": 0.626
       },
       {
+        "i": 17,
         "t0Ms": 78190,
         "t1Ms": 78831,
         "text": "lands",
         "conf": 0.924
       },
       {
+        "i": 18,
         "t0Ms": 78951,
         "t1Ms": 78991,
         "text": "A",
         "conf": 0.979
       },
       {
+        "i": 18,
         "t0Ms": 79031,
         "t1Ms": 79372,
         "text": "wave",
         "conf": 0.938
       },
       {
+        "i": 18,
         "t0Ms": 79472,
         "t1Ms": 79612,
         "text": "of",
         "conf": 0.9
       },
       {
+        "i": 18,
         "t0Ms": 79692,
         "t1Ms": 80013,
         "text": "pings",
         "conf": 0.696
       },
       {
+        "i": 18,
         "t0Ms": 80073,
         "t1Ms": 80313,
         "text": "from",
         "conf": 0.961
       },
       {
+        "i": 18,
         "t0Ms": 80414,
         "t1Ms": 80894,
         "text": "distant",
         "conf": 0.929
       },
       {
+        "i": 18,
         "t0Ms": 80954,
         "t1Ms": 81295,
         "text": "lands",
         "conf": 0.951
       },
       {
+        "i": 19,
         "t0Ms": 81595,
         "t1Ms": 81716,
         "text": "No",
         "conf": 0.953
       },
       {
+        "i": 19,
         "t0Ms": 81756,
         "t1Ms": 82236,
         "text": "chasing",
         "conf": 0.89
       },
       {
+        "i": 19,
         "t0Ms": 82316,
         "t1Ms": 82757,
         "text": "noise,",
         "conf": 0.863
       },
       {
+        "i": 19,
         "t0Ms": 82817,
         "t1Ms": 83118,
         "text": "no",
         "conf": 0.883
       },
       {
+        "i": 19,
         "t0Ms": 83258,
         "t1Ms": 83598,
         "text": "empty",
         "conf": 0.767
       },
       {
+        "i": 19,
         "t0Ms": 83699,
         "t1Ms": 84079,
         "text": "race",
         "conf": 0.98
       },
       {
+        "i": 20,
         "t0Ms": 84159,
         "t1Ms": 84440,
         "text": "Just",
         "conf": 0.883
       },
       {
+        "i": 20,
         "t0Ms": 84600,
         "t1Ms": 84920,
         "text": "honest",
         "conf": 0.788
       },
       {
+        "i": 20,
         "t0Ms": 85001,
         "t1Ms": 85381,
         "text": "craft",
         "conf": 0.857
       },
       {
+        "i": 20,
         "t0Ms": 85481,
         "t1Ms": 85622,
         "text": "in",
@@ -1285,342 +1462,399 @@
         "conf": 0.815
       },
       {
+        "i": 20,
         "t0Ms": 86303,
         "t1Ms": 86783,
         "text": "space",
         "conf": 0.914
       },
       {
+        "i": 22,
         "t0Ms": 87064,
         "t1Ms": 87184,
         "text": "We",
         "conf": 0.96
       },
       {
+        "i": 22,
         "t0Ms": 87244,
         "t1Ms": 87524,
         "text": "press",
         "conf": 0.793
       },
       {
+        "i": 22,
         "t0Ms": 87585,
         "t1Ms": 88105,
         "text": "refresh,",
         "conf": 0.88
       },
       {
+        "i": 22,
         "t0Ms": 88446,
         "t1Ms": 88546,
         "text": "we",
         "conf": 0.772
       },
       {
+        "i": 22,
         "t0Ms": 88606,
         "t1Ms": 88887,
         "text": "press",
         "conf": 0.91
       },
       {
+        "i": 22,
         "t0Ms": 88947,
         "t1Ms": 89467,
         "text": "refresh",
         "conf": 0.853
       },
       {
+        "i": 23,
         "t0Ms": 89888,
         "t1Ms": 89968,
         "text": "A",
         "conf": 0.593
       },
       {
+        "i": 23,
         "t0Ms": 89988,
         "t1Ms": 90469,
         "text": "rising",
         "conf": 0.699
       },
       {
+        "i": 23,
         "t0Ms": 90549,
         "t1Ms": 91030,
         "text": "light,",
         "conf": 0.59
       },
       {
+        "i": 23,
         "t0Ms": 91190,
         "t1Ms": 91230,
         "text": "a",
         "conf": 0.785
       },
       {
+        "i": 23,
         "t0Ms": 91270,
         "t1Ms": 91691,
         "text": "steady",
         "conf": 0.97
       },
       {
+        "i": 23,
         "t0Ms": 91831,
         "t1Ms": 92131,
         "text": "breath",
         "conf": 0.884
       },
       {
+        "i": 24,
         "t0Ms": 92532,
         "t1Ms": 92632,
         "text": "We",
         "conf": 0.788
       },
       {
+        "i": 24,
         "t0Ms": 92692,
         "t1Ms": 92993,
         "text": "press",
         "conf": 0.837
       },
       {
+        "i": 24,
         "t0Ms": 93053,
         "t1Ms": 93554,
         "text": "refresh,",
         "conf": 0.863
       },
       {
+        "i": 24,
         "t0Ms": 93614,
         "t1Ms": 93814,
         "text": "we",
         "conf": 0.987
       },
       {
+        "i": 24,
         "t0Ms": 93934,
         "t1Ms": 94215,
         "text": "press",
         "conf": 0.821
       },
       {
+        "i": 24,
         "t0Ms": 94315,
         "t1Ms": 94896,
         "text": "refresh",
         "conf": 0.823
       },
       {
+        "i": 25,
         "t0Ms": 94976,
         "t1Ms": 95176,
         "text": "We",
         "conf": 0.988
       },
       {
+        "i": 25,
         "t0Ms": 95276,
         "t1Ms": 95657,
         "text": "build",
         "conf": 0.789
       },
       {
+        "i": 25,
         "t0Ms": 95737,
         "t1Ms": 95837,
         "text": "it",
         "conf": 0.826
       },
       {
+        "i": 25,
         "t0Ms": 95937,
         "t1Ms": 96258,
         "text": "bright,",
         "conf": 0.729
       },
       {
+        "i": 25,
         "t0Ms": 96318,
         "t1Ms": 96538,
         "text": "we",
         "conf": 0.903
       },
       {
+        "i": 25,
         "t0Ms": 96638,
         "t1Ms": 96999,
         "text": "build",
         "conf": 0.78
       },
       {
+        "i": 25,
         "t0Ms": 97099,
         "t1Ms": 97179,
         "text": "it",
         "conf": 0.844
       },
       {
+        "i": 25,
         "t0Ms": 97279,
         "t1Ms": 97720,
         "text": "fresh",
         "conf": 0.757
       },
       {
+        "i": 27,
         "t0Ms": 99362,
         "t1Ms": 99503,
         "text": "We",
         "conf": 0.84
       },
       {
+        "i": 27,
         "t0Ms": 99523,
         "t1Ms": 99783,
         "text": "trade",
         "conf": 0.796
       },
       {
+        "i": 27,
         "t0Ms": 99863,
         "t1Ms": 99983,
         "text": "our",
         "conf": 0.916
       },
       {
+        "i": 27,
         "t0Ms": 100044,
         "t1Ms": 100404,
         "text": "time",
         "conf": 0.766
       },
       {
+        "i": 27,
         "t0Ms": 100424,
         "t1Ms": 100604,
         "text": "for",
         "conf": 0.907
       },
       {
+        "i": 27,
         "t0Ms": 100725,
         "t1Ms": 101085,
         "text": "tools",
         "conf": 0.787
       },
       {
+        "i": 27,
         "t0Ms": 101125,
         "t1Ms": 101305,
         "text": "that",
         "conf": 0.652
       },
       {
+        "i": 27,
         "t0Ms": 101446,
         "t1Ms": 102347,
         "text": "last",
         "conf": 0.68
       },
       {
+        "i": 28,
         "t0Ms": 103913,
         "t1Ms": 104894,
         "text": "We",
         "conf": 0.855
       },
       {
+        "i": 28,
         "t0Ms": 104954,
         "t1Ms": 105275,
         "text": "plant",
         "conf": 0.779
       },
       {
+        "i": 28,
         "t0Ms": 105315,
         "t1Ms": 105395,
         "text": "the",
         "conf": 0.716
       },
       {
+        "i": 28,
         "t0Ms": 105475,
         "t1Ms": 105875,
         "text": "flag,",
         "conf": 0.989
       },
       {
+        "i": 28,
         "t0Ms": 105895,
         "t1Ms": 106036,
         "text": "we",
         "conf": 0.989
       },
       {
+        "i": 28,
         "t0Ms": 106076,
         "t1Ms": 106556,
         "text": "learn",
         "conf": 0.794
       },
       {
+        "i": 28,
         "t0Ms": 106636,
         "t1Ms": 106696,
         "text": "it",
         "conf": 0.976
       },
       {
+        "i": 28,
         "t0Ms": 106836,
         "t1Ms": 107477,
         "text": "fast",
         "conf": 0.731
       },
       {
+        "i": 29,
         "t0Ms": 109760,
         "t1Ms": 109780,
         "text": "A",
         "conf": 0.923
       },
       {
+        "i": 29,
         "t0Ms": 110421,
         "t1Ms": 110881,
         "text": "gentle",
         "conf": 0.879
       },
       {
+        "i": 29,
         "t0Ms": 110981,
         "t1Ms": 111582,
         "text": "joker,",
         "conf": 0.764
       },
       {
+        "i": 29,
         "t0Ms": 111662,
         "t1Ms": 112323,
         "text": "guiding",
         "conf": 0.783
       },
       {
+        "i": 29,
         "t0Ms": 112403,
         "t1Ms": 114446,
         "text": "hand",
         "conf": 0.884
       },
       {
+        "i": 30,
         "t0Ms": 115727,
         "t1Ms": 115847,
         "text": "We",
         "conf": 0.827
       },
       {
+        "i": 30,
         "t0Ms": 115907,
         "t1Ms": 116188,
         "text": "keep",
         "conf": 0.932
       },
       {
+        "i": 30,
         "t0Ms": 116248,
         "t1Ms": 116368,
         "text": "the",
         "conf": 0.978
       },
       {
+        "i": 30,
         "t0Ms": 116448,
         "t1Ms": 117049,
         "text": "rhythm,",
         "conf": 0.888
       },
       {
+        "i": 30,
         "t0Ms": 117129,
         "t1Ms": 117469,
         "text": "line",
         "conf": 0.38
       },
       {
+        "i": 30,
         "t0Ms": 117489,
         "t1Ms": 117790,
         "text": "by",
         "conf": 0.852
       },
       {
+        "i": 30,
         "t0Ms": 117850,
         "t1Ms": 119331,
         "text": "line",
         "conf": 0.412
       },
       {
+        "i": 32,
         "t0Ms": 119852,
         "t1Ms": 119972,
         "text": "We",
         "conf": 0.998
       },
       {
+        "i": 32,
         "t0Ms": 120032,
         "t1Ms": 120313,
         "text": "press",
@@ -1633,18 +1867,21 @@
         "conf": 0.539
       },
       {
+        "i": 32,
         "t0Ms": 120553,
         "t1Ms": 120913,
         "text": "fresh,",
         "conf": 0.836
       },
       {
+        "i": 32,
         "t0Ms": 121234,
         "t1Ms": 121334,
         "text": "we",
         "conf": 0.996
       },
       {
+        "i": 32,
         "t0Ms": 121394,
         "t1Ms": 121674,
         "text": "press",
@@ -1657,30 +1894,35 @@
         "conf": 0.175
       },
       {
+        "i": 32,
         "t0Ms": 121894,
         "t1Ms": 122235,
         "text": "fresh",
         "conf": 0.829
       },
       {
+        "i": 33,
         "t0Ms": 122655,
         "t1Ms": 122755,
         "text": "A",
         "conf": 0.654
       },
       {
+        "i": 33,
         "t0Ms": 122775,
         "t1Ms": 123236,
         "text": "higher",
         "conf": 0.434
       },
       {
+        "i": 33,
         "t0Ms": 123296,
         "t1Ms": 123717,
         "text": "road,",
         "conf": 0.699
       },
       {
+        "i": 33,
         "t0Ms": 124017,
         "t1Ms": 124077,
         "text": "a",
@@ -1699,18 +1941,21 @@
         "conf": 0.864
       },
       {
+        "i": 33,
         "t0Ms": 124638,
         "t1Ms": 124958,
         "text": "breath",
         "conf": 0.864
       },
       {
+        "i": 34,
         "t0Ms": 125339,
         "t1Ms": 125439,
         "text": "We",
         "conf": 0.792
       },
       {
+        "i": 34,
         "t0Ms": 125499,
         "t1Ms": 125779,
         "text": "press",
@@ -1723,18 +1968,21 @@
         "conf": 0
       },
       {
+        "i": 34,
         "t0Ms": 126019,
         "t1Ms": 126400,
         "text": "fresh,",
         "conf": 0.814
       },
       {
+        "i": 34,
         "t0Ms": 126420,
         "t1Ms": 126600,
         "text": "we",
         "conf": 0.744
       },
       {
+        "i": 34,
         "t0Ms": 126700,
         "t1Ms": 127021,
         "text": "press",
@@ -1747,138 +1995,161 @@
         "conf": 0
       },
       {
+        "i": 34,
         "t0Ms": 127361,
         "t1Ms": 127681,
         "text": "fresh",
         "conf": 0.911
       },
       {
+        "i": 35,
         "t0Ms": 127741,
         "t1Ms": 127962,
         "text": "We",
         "conf": 0.611
       },
       {
+        "i": 35,
         "t0Ms": 128062,
         "t1Ms": 128442,
         "text": "build",
         "conf": 0.755
       },
       {
+        "i": 35,
         "t0Ms": 128522,
         "t1Ms": 128602,
         "text": "it",
         "conf": 0.782
       },
       {
+        "i": 35,
         "t0Ms": 128743,
         "t1Ms": 129043,
         "text": "bright,",
         "conf": 0.75
       },
       {
+        "i": 35,
         "t0Ms": 129103,
         "t1Ms": 129323,
         "text": "we",
         "conf": 0.7
       },
       {
+        "i": 35,
         "t0Ms": 129443,
         "t1Ms": 129804,
         "text": "build",
         "conf": 0.792
       },
       {
+        "i": 35,
         "t0Ms": 129904,
         "t1Ms": 129964,
         "text": "it",
         "conf": 0.984
       },
       {
+        "i": 35,
         "t0Ms": 130084,
         "t1Ms": 130765,
         "text": "fresh",
         "conf": 0.808
       },
       {
+        "i": 37,
         "t0Ms": 170317,
         "t1Ms": 170498,
         "text": "We",
         "conf": 0.49
       },
       {
+        "i": 37,
         "t0Ms": 170518,
         "t1Ms": 170839,
         "text": "press",
         "conf": 0.909
       },
       {
+        "i": 37,
         "t0Ms": 170899,
         "t1Ms": 171401,
         "text": "refresh",
         "conf": 0.873
       },
       {
+        "i": 37,
         "t0Ms": 171581,
         "t1Ms": 171762,
         "text": "and",
         "conf": 0.769
       },
       {
+        "i": 37,
         "t0Ms": 171802,
         "t1Ms": 172103,
         "text": "hold",
         "conf": 0.837
       },
       {
+        "i": 37,
         "t0Ms": 172183,
         "t1Ms": 172384,
         "text": "the",
         "conf": 0.378
       },
       {
+        "i": 37,
         "t0Ms": 172404,
         "t1Ms": 172845,
         "text": "line",
         "conf": 0.686
       },
       {
+        "i": 38,
         "t0Ms": 175795,
         "t1Ms": 175916,
         "text": "We",
         "conf": 0.986
       },
       {
+        "i": 38,
         "t0Ms": 175976,
         "t1Ms": 176297,
         "text": "press",
         "conf": 0.889
       },
       {
+        "i": 38,
         "t0Ms": 176357,
         "t1Ms": 176859,
         "text": "refresh",
         "conf": 0.815
       },
       {
+        "i": 38,
         "t0Ms": 176999,
         "t1Ms": 177200,
         "text": "and",
         "conf": 0.592
       },
       {
+        "i": 38,
         "t0Ms": 177220,
         "t1Ms": 177681,
         "text": "keep",
         "conf": 0.748
       },
       {
+        "i": 38,
         "t0Ms": 177701,
         "t1Ms": 178384,
         "text": "it",
         "conf": 0.906
       },
       {
+        "i": 38,
         "t0Ms": 178424,
         "t1Ms": 178504,
         "text": "kind",
@@ -1890,12 +2161,12 @@
     "mix": "",
     "mixWav": "",
     "stemsZip": "assets/lanterns-on-the-refresh-line/01KHYRXRJESTY903ZCJ3/stems.zip",
+    "effective": "assets/lanterns-on-the-refresh-line/01KHYRXRJESTY903ZCJ3/effective.json",
     "instrumental": "assets/lanterns-on-the-refresh-line/01KHYRXRJESTY903ZCJ3/instrumental.mp3",
     "instrumentalWav": "",
     "vocals": "assets/lanterns-on-the-refresh-line/01KHYRXRJESTY903ZCJ3/vocals.mp3",
     "vocalsWav": "",
-    "composer": "assets/lanterns-on-the-refresh-line/01KHYRXRJESTY903ZCJ3/composer.txt",
-    "effective": "assets/lanterns-on-the-refresh-line/01KHYRXRJESTY903ZCJ3/effective.json"
+    "composer": "assets/lanterns-on-the-refresh-line/01KHYRXRJESTY903ZCJ3/composer.txt"
   },
   "hasUserHints": true,
   "lastHintAt": "2026-02-25T09:16:44.362Z"

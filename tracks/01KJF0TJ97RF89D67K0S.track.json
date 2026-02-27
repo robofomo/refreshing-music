@@ -1,0 +1,1813 @@
+{
+  "workId": "fire-on-the-grid",
+  "trackId": "01KJF0TJ97RF89D67K0S",
+  "recipeRef": {
+    "albumId": "random",
+    "trackOverrideId": "01KJF0TJ97RF89D67K0S"
+  },
+  "createdAt": "2026-02-27T07:31:00.000Z",
+  "slug": "fire-on-the-grid",
+  "title": "Fire on the Grid",
+  "audio": {
+    "filename": "mix.mp3",
+    "path": "../assets/fire-on-the-grid/01KJF0TJ97RF89D67K0S/mix.mp3",
+    "cidOrTx": "",
+    "mime": "audio/mpeg",
+    "bytes": 2988596
+  },
+  "composer": {
+    "rawText": "[Song Title: Fire on the Grid]\r\n[Style: electro, clean studio recording, confident male vocal, snappy drums, clean synth bass]\r\n[Caption: A pulse meets a spark.\r\nPrecision and passion negotiate the downbeat.]\r\n[Image: A glowing metronome suspended in flame.\r\nLines of light forming a perfect grid in midair.]\r\n[Refresh Title: Random 8]\r\n[Theme: random]\r\n[Gradients: 8]\r\n[Rank: 1]\r\n[Title Rarity: 0.25]\r\n[Seeds: 442118, A:91, B:3, C:77, D:12]\r\n[Perspective: i_builder]\r\n[Concept: Human pulse aligning with system clock]\r\n[Topic: Human–Machine Duet → coauthoring_a_song]\r\n[Genre Bias: modern electro]\r\n[Style Change: Bridge]\r\n[Modulation: up whole step at Final Chorus]\r\n[Hook Prominence: high]\r\n[Deviation: call_response_backing]\r\n[Created: February 27, 2026 at 8:31 PM]\r\n[Composer Version: v2.6]\r\n\r\n[Intro]\r\n[metronome tick evolves into percussive groove; filtered synth swell; instrumental only]\r\n\r\n[Verse]\r\n[conversational contour; tight pocket; minimal arrangement]\r\nI built a clock inside the sound,\r\nA steady pulse that circles round,\r\nBut in my chest the rhythm bends,\r\nA spark that never quite conforms.\r\n\r\n[Pre-Chorus]\r\n[rising arp; tension lift; backing vocal echoes]\r\nYou pull me closer to the line,\r\nI lean away but still in time.\r\n\r\n[Chorus]\r\n[wide synth chords; strong kick; call-and-response backing]\r\nSet me to the fire,\r\nLock me to the clock,\r\nWe can rise together,\r\nRight on every drop.\r\nSet me to the fire,\r\nHold me in the frame,\r\nWhen the beat is steady,\r\nWe ignite the same.\r\n\r\n[Verse]\r\n[crisper drums; bass syncopation; layered harmonies]\r\nYour grid is drawn in silver light,\r\nMy pulse is red and burning bright,\r\nSomewhere between the push and pull,\r\nThe signal finally feels full.\r\n\r\n[Bridge]\r\n[STYLE CHANGE: half-time breakdown; sub bass swell; sparse vocal]\r\nNo lines—just breath and spark,\r\nNo count—just beating dark,\r\nThen bring the numbers back to flame,\r\nAnd let the downbeat say my name.\r\n\r\n[Final Chorus]\r\n[MODULATION up whole step; stacked harmonies; bigger lift]\r\nSet me to the fire,\r\nLock me to the clock,\r\nWe can rise together,\r\nRight on every drop.\r\nSet me to the fire,\r\nHold me in the frame,\r\nWhen the beat is steady,\r\nWe ignite the same.\r\n\r\n[Ending]\r\n[drop to kick and vocal; refrain tag]\r\nRight on every drop.\r\n[synth tail fades]\r\n",
+    "headerMap": {
+      "Song Title": "Fire on the Grid",
+      "Style": "electro, clean studio recording, confident male vocal, snappy drums, clean synth bass",
+      "Refresh Title": "Random 8",
+      "Theme": "random",
+      "Gradients": "8",
+      "Rank": "1",
+      "Title Rarity": "0.25",
+      "Seeds": "442118, A:91, B:3, C:77, D:12",
+      "Perspective": "i_builder",
+      "Concept": "Human pulse aligning with system clock",
+      "Topic": "Human–Machine Duet → coauthoring_a_song",
+      "Genre Bias": "modern electro",
+      "Style Change": "Bridge",
+      "Modulation": "up whole step at Final Chorus",
+      "Hook Prominence": "high",
+      "Deviation": "call_response_backing",
+      "Created": "February 27, 2026 at 8:31 PM",
+      "Composer Version": "v2.6"
+    }
+  },
+  "sections": [
+    {
+      "id": "intro-1",
+      "labelRaw": "Intro",
+      "notesRaw": "metronome tick evolves into percussive groove; filtered synth swell; instrumental only"
+    },
+    {
+      "id": "verse-1",
+      "labelRaw": "Verse",
+      "notesRaw": "conversational contour; tight pocket; minimal arrangement"
+    },
+    {
+      "id": "pre-chorus-1",
+      "labelRaw": "Pre-Chorus",
+      "notesRaw": "rising arp; tension lift; backing vocal echoes"
+    },
+    {
+      "id": "chorus-1",
+      "labelRaw": "Chorus",
+      "notesRaw": "wide synth chords; strong kick; call-and-response backing"
+    },
+    {
+      "id": "verse-2",
+      "labelRaw": "Verse",
+      "notesRaw": "crisper drums; bass syncopation; layered harmonies"
+    },
+    {
+      "id": "bridge-1",
+      "labelRaw": "Bridge",
+      "notesRaw": "STYLE CHANGE: half-time breakdown; sub bass swell; sparse vocal"
+    },
+    {
+      "id": "final-chorus-1",
+      "labelRaw": "Final Chorus",
+      "notesRaw": "MODULATION up whole step; stacked harmonies; bigger lift"
+    },
+    {
+      "id": "ending-1",
+      "labelRaw": "Ending",
+      "notesRaw": "drop to kick and vocal; refrain tag"
+    },
+    {
+      "id": "synth-tail-fades-1",
+      "labelRaw": "synth tail fades",
+      "notesRaw": ""
+    }
+  ],
+  "lyrics": {
+    "rawText": "\nI built a clock inside the sound,\nA steady pulse that circles round,\nBut in my chest the rhythm bends,\nA spark that never quite conforms.\n\nYou pull me closer to the line,\nI lean away but still in time.\n\nSet me to the fire,\nLock me to the clock,\nWe can rise together,\nRight on every drop.\nSet me to the fire,\nHold me in the frame,\nWhen the beat is steady,\nWe ignite the same.\n\nYour grid is drawn in silver light,\nMy pulse is red and burning bright,\nSomewhere between the push and pull,\nThe signal finally feels full.\n\nNo lines—just breath and spark,\nNo count—just beating dark,\nThen bring the numbers back to flame,\nAnd let the downbeat say my name.\n\nSet me to the fire,\nLock me to the clock,\nWe can rise together,\nRight on every drop.\nSet me to the fire,\nHold me in the frame,\nWhen the beat is steady,\nWe ignite the same.\n\nRight on every drop.\n"
+  },
+  "sourceGroupKey": "loose:fire-on-the-grid-stems-130bpm",
+  "assetDir": "assets/fire-on-the-grid/01KJF0TJ97RF89D67K0S",
+  "createdLocalRaw": "February 27, 2026 at 8:31 PM",
+  "createdTz": "Pacific/Auckland",
+  "timing": {
+    "beatsMs": [
+      569,
+      1149,
+      1695,
+      2229,
+      2775,
+      3332,
+      3866,
+      4389,
+      4853,
+      5317,
+      5770,
+      6246,
+      6711,
+      7163,
+      7616,
+      8081,
+      8545,
+      9009,
+      9474,
+      9938,
+      10403,
+      10855,
+      11320,
+      11784,
+      12249,
+      12701,
+      13166,
+      13653,
+      14164,
+      14663,
+      15174,
+      15673,
+      16149,
+      16625,
+      17090,
+      17554,
+      18019,
+      18471,
+      18924,
+      19389,
+      19853,
+      20317,
+      20782,
+      21246,
+      21711,
+      22163,
+      22616,
+      23081,
+      23545,
+      24009,
+      24474,
+      24938,
+      25403,
+      25855,
+      26308,
+      26773,
+      27237,
+      27701,
+      28154,
+      28607,
+      29071,
+      29536,
+      30000,
+      30465,
+      30929,
+      31393,
+      31858,
+      32322,
+      32775,
+      33228,
+      33692,
+      34157,
+      34621,
+      35085,
+      35550,
+      36014,
+      36479,
+      36931,
+      37384,
+      37837,
+      38290,
+      38673,
+      39056,
+      39439,
+      39822,
+      40194,
+      40577,
+      40960,
+      41343,
+      41726,
+      42098,
+      42469,
+      42876,
+      43375,
+      43839,
+      44304,
+      44768,
+      45232,
+      45685,
+      46150,
+      46626,
+      47090,
+      47543,
+      47996,
+      48460,
+      48924,
+      49389,
+      49853,
+      50318,
+      50782,
+      51235,
+      51688,
+      52152,
+      52616,
+      53058,
+      53510,
+      53986,
+      54439,
+      54892,
+      55345,
+      55844,
+      56308,
+      56773,
+      57237,
+      57702,
+      58166,
+      58619,
+      59083,
+      59536,
+      60000,
+      60465,
+      60929,
+      61394,
+      61858,
+      62322,
+      62775,
+      63228,
+      63692,
+      64157,
+      64621,
+      65086,
+      65538,
+      66026,
+      66514,
+      67059,
+      67617,
+      68174,
+      68661,
+      69137,
+      69613,
+      70101,
+      70577,
+      71065,
+      71541,
+      72005,
+      72469,
+      72934,
+      73398,
+      73851,
+      74304,
+      74768,
+      75233,
+      75697,
+      76161,
+      76626,
+      77090,
+      77543,
+      77996,
+      78460,
+      78925,
+      79389,
+      79842,
+      80295,
+      80771,
+      81235,
+      81688,
+      82152,
+      82617,
+      83081,
+      83545,
+      84010,
+      84474,
+      84939,
+      85391,
+      85844,
+      86309,
+      86773,
+      87237,
+      87702,
+      88166,
+      88631,
+      89095,
+      89548,
+      90001,
+      90465,
+      90929,
+      91394,
+      91858,
+      92323,
+      92787,
+      93251,
+      93704,
+      94157,
+      94621,
+      95086,
+      95550,
+      96015,
+      96467,
+      96920,
+      97373,
+      97826,
+      98290,
+      98754,
+      99219,
+      99683,
+      100148,
+      100612,
+      101076,
+      101541,
+      102005,
+      102470,
+      102934,
+      103398,
+      103863,
+      104327,
+      104780,
+      105244,
+      105697,
+      106162,
+      106626,
+      107090,
+      107555,
+      108008,
+      108460,
+      108925,
+      109389,
+      109865,
+      110376,
+      110898,
+      111409,
+      111920,
+      112385,
+      112849,
+      113313,
+      113778,
+      114242,
+      114707,
+      115171,
+      115635,
+      116100,
+      116564,
+      117017,
+      117470,
+      117934,
+      118399,
+      118863,
+      119327,
+      119780,
+      120233,
+      120697,
+      121162,
+      121626,
+      122091,
+      122555,
+      123019,
+      123472,
+      123937,
+      124389,
+      124854,
+      125306,
+      125771,
+      126235,
+      126688,
+      127152,
+      127617,
+      128081,
+      128546,
+      129010,
+      129474,
+      129939,
+      130392,
+      130856,
+      131309,
+      131773,
+      132238,
+      132702,
+      133166,
+      133631,
+      134095,
+      134548,
+      135001,
+      135465,
+      135930,
+      136394,
+      136858,
+      137323,
+      137787,
+      138252,
+      138704,
+      139157,
+      139622,
+      140086,
+      140550,
+      141015,
+      141479,
+      141920,
+      142385,
+      142733,
+      143081,
+      143430,
+      143778,
+      144126,
+      144475,
+      144823,
+      145171,
+      145519,
+      145868,
+      146228,
+      146611,
+      146994,
+      147354,
+      147702,
+      148050,
+      148399,
+      148747
+    ],
+    "lyricsLines": [
+      {
+        "i": 1,
+        "t0Ms": 13987,
+        "t1Ms": 16290
+      },
+      {
+        "i": 2,
+        "t0Ms": 17813,
+        "t1Ms": 19996
+      },
+      {
+        "i": 3,
+        "t0Ms": 21498,
+        "t1Ms": 23722
+      },
+      {
+        "i": 4,
+        "t0Ms": 23862,
+        "t1Ms": 27127
+      },
+      {
+        "i": 6,
+        "t0Ms": 28870,
+        "t1Ms": 32555
+      },
+      {
+        "i": 7,
+        "t0Ms": 32575,
+        "t1Ms": 37783
+      },
+      {
+        "i": 9,
+        "t0Ms": 38607,
+        "t1Ms": 40269
+      },
+      {
+        "i": 10,
+        "t0Ms": 40329,
+        "t1Ms": 41830
+      },
+      {
+        "i": 11,
+        "t0Ms": 42471,
+        "t1Ms": 43792
+      },
+      {
+        "i": 12,
+        "t0Ms": 43852,
+        "t1Ms": 45554
+      },
+      {
+        "i": 13,
+        "t0Ms": 46114,
+        "t1Ms": 47656
+      },
+      {
+        "i": 14,
+        "t0Ms": 47676,
+        "t1Ms": 49357
+      },
+      {
+        "i": 15,
+        "t0Ms": 49397,
+        "t1Ms": 51179
+      },
+      {
+        "i": 16,
+        "t0Ms": 51219,
+        "t1Ms": 52700
+      },
+      {
+        "i": 18,
+        "t0Ms": 52740,
+        "t1Ms": 68175
+      },
+      {
+        "i": 19,
+        "t0Ms": 69438,
+        "t1Ms": 71560
+      },
+      {
+        "i": 20,
+        "t0Ms": 73142,
+        "t1Ms": 75204
+      },
+      {
+        "i": 21,
+        "t0Ms": 75464,
+        "t1Ms": 78327
+      },
+      {
+        "i": 23,
+        "t0Ms": 78767,
+        "t1Ms": 84573
+      },
+      {
+        "i": 24,
+        "t0Ms": 85414,
+        "t1Ms": 88337
+      },
+      {
+        "i": 25,
+        "t0Ms": 88858,
+        "t1Ms": 91640
+      },
+      {
+        "i": 26,
+        "t0Ms": 91921,
+        "t1Ms": 94283
+      },
+      {
+        "i": 28,
+        "t0Ms": 97670,
+        "t1Ms": 99252
+      },
+      {
+        "i": 29,
+        "t0Ms": 99672,
+        "t1Ms": 100893
+      },
+      {
+        "i": 30,
+        "t0Ms": 101554,
+        "t1Ms": 102915
+      },
+      {
+        "i": 31,
+        "t0Ms": 102976,
+        "t1Ms": 104597
+      },
+      {
+        "i": 32,
+        "t0Ms": 105218,
+        "t1Ms": 106639
+      },
+      {
+        "i": 33,
+        "t0Ms": 106699,
+        "t1Ms": 108321
+      },
+      {
+        "i": 34,
+        "t0Ms": 108942,
+        "t1Ms": 110263
+      },
+      {
+        "i": 35,
+        "t0Ms": 110323,
+        "t1Ms": 111765
+      },
+      {
+        "i": 37,
+        "t0Ms": 117711,
+        "t1Ms": 126580
+      }
+    ],
+    "words": [
+      {
+        "i": 1,
+        "t0Ms": 13987,
+        "t1Ms": 14267,
+        "text": "I",
+        "conf": 0.83
+      },
+      {
+        "i": 1,
+        "t0Ms": 14328,
+        "t1Ms": 14568,
+        "text": "built",
+        "conf": 0.725
+      },
+      {
+        "i": 1,
+        "t0Ms": 14648,
+        "t1Ms": 14708,
+        "text": "a",
+        "conf": 0.799
+      },
+      {
+        "i": 1,
+        "t0Ms": 14768,
+        "t1Ms": 15049,
+        "text": "clock",
+        "conf": 0.874
+      },
+      {
+        "i": 1,
+        "t0Ms": 15109,
+        "t1Ms": 15529,
+        "text": "inside",
+        "conf": 0.836
+      },
+      {
+        "i": 1,
+        "t0Ms": 15549,
+        "t1Ms": 15690,
+        "text": "the",
+        "conf": 0.752
+      },
+      {
+        "i": 1,
+        "t0Ms": 15770,
+        "t1Ms": 16290,
+        "text": "sound",
+        "conf": 0.713
+      },
+      {
+        "i": 2,
+        "t0Ms": 17813,
+        "t1Ms": 17873,
+        "text": "A",
+        "conf": 0.755
+      },
+      {
+        "i": 2,
+        "t0Ms": 17953,
+        "t1Ms": 18394,
+        "text": "steady",
+        "conf": 0.919
+      },
+      {
+        "i": 2,
+        "t0Ms": 18474,
+        "t1Ms": 18754,
+        "text": "pulse",
+        "conf": 0.824
+      },
+      {
+        "i": 2,
+        "t0Ms": 18774,
+        "t1Ms": 18894,
+        "text": "that",
+        "conf": 0.72
+      },
+      {
+        "i": 2,
+        "t0Ms": 18955,
+        "t1Ms": 19395,
+        "text": "circles",
+        "conf": 0.761
+      },
+      {
+        "i": 2,
+        "t0Ms": 19535,
+        "t1Ms": 19996,
+        "text": "round",
+        "conf": 0.758
+      },
+      {
+        "i": 3,
+        "t0Ms": 21498,
+        "t1Ms": 21719,
+        "text": "But",
+        "conf": 0.913
+      },
+      {
+        "i": 3,
+        "t0Ms": 21859,
+        "t1Ms": 21899,
+        "text": "in",
+        "conf": 0.318
+      },
+      {
+        "i": 3,
+        "t0Ms": 21939,
+        "t1Ms": 22079,
+        "text": "my",
+        "conf": 0.678
+      },
+      {
+        "i": 3,
+        "t0Ms": 22099,
+        "t1Ms": 22400,
+        "text": "chest",
+        "conf": 0.605
+      },
+      {
+        "i": 3,
+        "t0Ms": 22440,
+        "t1Ms": 22640,
+        "text": "the",
+        "conf": 0.722
+      },
+      {
+        "i": 3,
+        "t0Ms": 22660,
+        "t1Ms": 23061,
+        "text": "rhythm",
+        "conf": 0.7
+      },
+      {
+        "i": 3,
+        "t0Ms": 23121,
+        "t1Ms": 23722,
+        "text": "bends",
+        "conf": 0.917
+      },
+      {
+        "i": 4,
+        "t0Ms": 23862,
+        "t1Ms": 23922,
+        "text": "A",
+        "conf": 0.857
+      },
+      {
+        "i": 4,
+        "t0Ms": 23942,
+        "t1Ms": 24523,
+        "text": "spark",
+        "conf": 0.817
+      },
+      {
+        "i": 4,
+        "t0Ms": 24723,
+        "t1Ms": 24883,
+        "text": "that",
+        "conf": 0.676
+      },
+      {
+        "i": 4,
+        "t0Ms": 24964,
+        "t1Ms": 25544,
+        "text": "never",
+        "conf": 0.883
+      },
+      {
+        "i": 4,
+        "t0Ms": 25645,
+        "t1Ms": 26246,
+        "text": "quite",
+        "conf": 0.854
+      },
+      {
+        "i": 4,
+        "t0Ms": 26366,
+        "t1Ms": 27127,
+        "text": "conforms",
+        "conf": 0.916
+      },
+      {
+        "i": 6,
+        "t0Ms": 28870,
+        "t1Ms": 29030,
+        "text": "You",
+        "conf": 0.958
+      },
+      {
+        "i": 6,
+        "t0Ms": 29090,
+        "t1Ms": 29350,
+        "text": "pull",
+        "conf": 0.948
+      },
+      {
+        "i": 6,
+        "t0Ms": 29370,
+        "t1Ms": 29490,
+        "text": "me",
+        "conf": 0.986
+      },
+      {
+        "i": 6,
+        "t0Ms": 29571,
+        "t1Ms": 30151,
+        "text": "closer",
+        "conf": 0.871
+      },
+      {
+        "i": 6,
+        "t0Ms": 30232,
+        "t1Ms": 31634,
+        "text": "to",
+        "conf": 0.936
+      },
+      {
+        "i": 6,
+        "t0Ms": 31654,
+        "t1Ms": 31914,
+        "text": "the",
+        "conf": 0.864
+      },
+      {
+        "i": 6,
+        "t0Ms": 32094,
+        "t1Ms": 32555,
+        "text": "line",
+        "conf": 0.904
+      },
+      {
+        "i": 7,
+        "t0Ms": 32575,
+        "t1Ms": 32595,
+        "text": "I",
+        "conf": 0.995
+      },
+      {
+        "i": 7,
+        "t0Ms": 33256,
+        "t1Ms": 33897,
+        "text": "lean",
+        "conf": 0.671
+      },
+      {
+        "i": 7,
+        "t0Ms": 33917,
+        "t1Ms": 34638,
+        "text": "away",
+        "conf": 0.868
+      },
+      {
+        "i": 7,
+        "t0Ms": 34678,
+        "t1Ms": 34799,
+        "text": "but",
+        "conf": 0.882
+      },
+      {
+        "i": 7,
+        "t0Ms": 34839,
+        "t1Ms": 35520,
+        "text": "still",
+        "conf": 0.889
+      },
+      {
+        "i": 7,
+        "t0Ms": 35540,
+        "t1Ms": 35740,
+        "text": "in",
+        "conf": 0.821
+      },
+      {
+        "i": 7,
+        "t0Ms": 35800,
+        "t1Ms": 37783,
+        "text": "time",
+        "conf": 0.484
+      },
+      {
+        "i": 9,
+        "t0Ms": 38607,
+        "t1Ms": 39007,
+        "text": "Send",
+        "conf": 0.323
+      },
+      {
+        "i": 9,
+        "t0Ms": 39047,
+        "t1Ms": 39188,
+        "text": "me",
+        "conf": 0.964
+      },
+      {
+        "i": 9,
+        "t0Ms": 39228,
+        "t1Ms": 39428,
+        "text": "to",
+        "conf": 0.963
+      },
+      {
+        "i": 9,
+        "t0Ms": 39508,
+        "t1Ms": 39588,
+        "text": "the",
+        "conf": 0.958
+      },
+      {
+        "i": 9,
+        "t0Ms": 39708,
+        "t1Ms": 40269,
+        "text": "fire,",
+        "conf": 0.93
+      },
+      {
+        "i": 10,
+        "t0Ms": 40329,
+        "t1Ms": 40849,
+        "text": "lock",
+        "conf": 0.905
+      },
+      {
+        "i": 10,
+        "t0Ms": 40869,
+        "t1Ms": 40989,
+        "text": "me",
+        "conf": 0.959
+      },
+      {
+        "i": 10,
+        "t0Ms": 41069,
+        "t1Ms": 41290,
+        "text": "to",
+        "conf": 0.963
+      },
+      {
+        "i": 10,
+        "t0Ms": 41350,
+        "t1Ms": 41450,
+        "text": "the",
+        "conf": 0.919
+      },
+      {
+        "i": 10,
+        "t0Ms": 41530,
+        "t1Ms": 41830,
+        "text": "clock",
+        "conf": 0.928
+      },
+      {
+        "i": 11,
+        "t0Ms": 42471,
+        "t1Ms": 42651,
+        "text": "We",
+        "conf": 0.986
+      },
+      {
+        "i": 11,
+        "t0Ms": 42691,
+        "t1Ms": 42951,
+        "text": "can",
+        "conf": 0.708
+      },
+      {
+        "i": 11,
+        "t0Ms": 43031,
+        "t1Ms": 43171,
+        "text": "rise",
+        "conf": 0.647
+      },
+      {
+        "i": 11,
+        "t0Ms": 43191,
+        "t1Ms": 43792,
+        "text": "together",
+        "conf": 0.783
+      },
+      {
+        "i": 12,
+        "t0Ms": 43852,
+        "t1Ms": 44132,
+        "text": "right",
+        "conf": 0.725
+      },
+      {
+        "i": 12,
+        "t0Ms": 44272,
+        "t1Ms": 44352,
+        "text": "on",
+        "conf": 0.876
+      },
+      {
+        "i": 12,
+        "t0Ms": 44653,
+        "t1Ms": 45113,
+        "text": "every",
+        "conf": 0.974
+      },
+      {
+        "i": 12,
+        "t0Ms": 45233,
+        "t1Ms": 45554,
+        "text": "drop",
+        "conf": 0.933
+      },
+      {
+        "i": 13,
+        "t0Ms": 46114,
+        "t1Ms": 46394,
+        "text": "Send",
+        "conf": 0.494
+      },
+      {
+        "i": 13,
+        "t0Ms": 46434,
+        "t1Ms": 46555,
+        "text": "me",
+        "conf": 0.903
+      },
+      {
+        "i": 13,
+        "t0Ms": 46615,
+        "t1Ms": 46815,
+        "text": "to",
+        "conf": 0.974
+      },
+      {
+        "i": 13,
+        "t0Ms": 46895,
+        "t1Ms": 46975,
+        "text": "the",
+        "conf": 0.844
+      },
+      {
+        "i": 13,
+        "t0Ms": 47075,
+        "t1Ms": 47656,
+        "text": "fire,",
+        "conf": 0.65
+      },
+      {
+        "i": 14,
+        "t0Ms": 47676,
+        "t1Ms": 47756,
+        "text": "hold",
+        "conf": 0.252
+      },
+      {
+        "i": 14,
+        "t0Ms": 48276,
+        "t1Ms": 48516,
+        "text": "me",
+        "conf": 0.968
+      },
+      {
+        "i": 14,
+        "t0Ms": 48616,
+        "t1Ms": 48697,
+        "text": "in",
+        "conf": 0.954
+      },
+      {
+        "i": 14,
+        "t0Ms": 48737,
+        "t1Ms": 48817,
+        "text": "the",
+        "conf": 0.826
+      },
+      {
+        "i": 14,
+        "t0Ms": 48937,
+        "t1Ms": 49357,
+        "text": "frame",
+        "conf": 0.874
+      },
+      {
+        "i": 15,
+        "t0Ms": 49397,
+        "t1Ms": 50038,
+        "text": "When",
+        "conf": 0.936
+      },
+      {
+        "i": 15,
+        "t0Ms": 50098,
+        "t1Ms": 50198,
+        "text": "the",
+        "conf": 0.747
+      },
+      {
+        "i": 15,
+        "t0Ms": 50318,
+        "t1Ms": 50578,
+        "text": "beat",
+        "conf": 0.934
+      },
+      {
+        "i": 15,
+        "t0Ms": 50638,
+        "t1Ms": 50698,
+        "text": "is",
+        "conf": 0.974
+      },
+      {
+        "i": 15,
+        "t0Ms": 50738,
+        "t1Ms": 51179,
+        "text": "steady,",
+        "conf": 0.878
+      },
+      {
+        "i": 16,
+        "t0Ms": 51219,
+        "t1Ms": 51439,
+        "text": "we",
+        "conf": 0.963
+      },
+      {
+        "i": 16,
+        "t0Ms": 51599,
+        "t1Ms": 52080,
+        "text": "ignite",
+        "conf": 0.753
+      },
+      {
+        "i": 16,
+        "t0Ms": 52160,
+        "t1Ms": 52300,
+        "text": "the",
+        "conf": 0.896
+      },
+      {
+        "i": 16,
+        "t0Ms": 52380,
+        "t1Ms": 52700,
+        "text": "same",
+        "conf": 0.97
+      },
+      {
+        "i": 18,
+        "t0Ms": 52740,
+        "t1Ms": 66013,
+        "text": "Your",
+        "conf": 0.954
+      },
+      {
+        "i": 18,
+        "t0Ms": 66073,
+        "t1Ms": 66333,
+        "text": "grid",
+        "conf": 0.818
+      },
+      {
+        "i": 18,
+        "t0Ms": 66393,
+        "t1Ms": 66473,
+        "text": "is",
+        "conf": 0.894
+      },
+      {
+        "i": 18,
+        "t0Ms": 66513,
+        "t1Ms": 66794,
+        "text": "drawn",
+        "conf": 0.919
+      },
+      {
+        "i": 18,
+        "t0Ms": 66854,
+        "t1Ms": 66934,
+        "text": "in",
+        "conf": 0.567
+      },
+      {
+        "i": 18,
+        "t0Ms": 66974,
+        "t1Ms": 67414,
+        "text": "silver",
+        "conf": 0.842
+      },
+      {
+        "i": 18,
+        "t0Ms": 67494,
+        "t1Ms": 68175,
+        "text": "light",
+        "conf": 0.552
+      },
+      {
+        "i": 19,
+        "t0Ms": 69438,
+        "t1Ms": 69658,
+        "text": "My",
+        "conf": 0.688
+      },
+      {
+        "i": 19,
+        "t0Ms": 69698,
+        "t1Ms": 69999,
+        "text": "pulse",
+        "conf": 0.731
+      },
+      {
+        "i": 19,
+        "t0Ms": 70059,
+        "t1Ms": 70139,
+        "text": "is",
+        "conf": 0.662
+      },
+      {
+        "i": 19,
+        "t0Ms": 70219,
+        "t1Ms": 70439,
+        "text": "red",
+        "conf": 0.93
+      },
+      {
+        "i": 19,
+        "t0Ms": 70499,
+        "t1Ms": 70599,
+        "text": "and",
+        "conf": 0.942
+      },
+      {
+        "i": 19,
+        "t0Ms": 70659,
+        "t1Ms": 71080,
+        "text": "burning",
+        "conf": 0.806
+      },
+      {
+        "i": 19,
+        "t0Ms": 71120,
+        "t1Ms": 71560,
+        "text": "bright",
+        "conf": 0.715
+      },
+      {
+        "i": 20,
+        "t0Ms": 73142,
+        "t1Ms": 73602,
+        "text": "Somewhere",
+        "conf": 0.942
+      },
+      {
+        "i": 20,
+        "t0Ms": 73662,
+        "t1Ms": 74083,
+        "text": "between",
+        "conf": 0.834
+      },
+      {
+        "i": 20,
+        "t0Ms": 74143,
+        "t1Ms": 74263,
+        "text": "the",
+        "conf": 0.95
+      },
+      {
+        "i": 20,
+        "t0Ms": 74323,
+        "t1Ms": 74643,
+        "text": "push",
+        "conf": 0.771
+      },
+      {
+        "i": 20,
+        "t0Ms": 74663,
+        "t1Ms": 74763,
+        "text": "and",
+        "conf": 0.632
+      },
+      {
+        "i": 20,
+        "t0Ms": 74803,
+        "t1Ms": 75204,
+        "text": "pull",
+        "conf": 0.72
+      },
+      {
+        "i": 21,
+        "t0Ms": 75464,
+        "t1Ms": 75604,
+        "text": "The",
+        "conf": 0.845
+      },
+      {
+        "i": 21,
+        "t0Ms": 75684,
+        "t1Ms": 76265,
+        "text": "signal,",
+        "conf": 0.864
+      },
+      {
+        "t0Ms": 76385,
+        "t1Ms": 76545,
+        "text": "no",
+        "conf": 0.878
+      },
+      {
+        "t0Ms": 76625,
+        "t1Ms": 77146,
+        "text": "fine,",
+        "conf": 0.505
+      },
+      {
+        "t0Ms": 77166,
+        "t1Ms": 77246,
+        "text": "he",
+        "conf": 0.526
+      },
+      {
+        "i": 21,
+        "t0Ms": 77326,
+        "t1Ms": 77907,
+        "text": "feels",
+        "conf": 0.886
+      },
+      {
+        "i": 21,
+        "t0Ms": 78007,
+        "t1Ms": 78327,
+        "text": "full",
+        "conf": 0.822
+      },
+      {
+        "i": 23,
+        "t0Ms": 78767,
+        "t1Ms": 82071,
+        "text": "No",
+        "conf": 0.726
+      },
+      {
+        "i": 23,
+        "t0Ms": 82211,
+        "t1Ms": 82771,
+        "text": "lines,",
+        "conf": 0.89
+      },
+      {
+        "i": 23,
+        "t0Ms": 82852,
+        "t1Ms": 83032,
+        "text": "just",
+        "conf": 0.678
+      },
+      {
+        "i": 23,
+        "t0Ms": 83092,
+        "t1Ms": 83853,
+        "text": "breath",
+        "conf": 0.676
+      },
+      {
+        "i": 23,
+        "t0Ms": 83873,
+        "t1Ms": 83933,
+        "text": "and",
+        "conf": 0.336
+      },
+      {
+        "i": 23,
+        "t0Ms": 83953,
+        "t1Ms": 84573,
+        "text": "spark",
+        "conf": 0.92
+      },
+      {
+        "i": 24,
+        "t0Ms": 85414,
+        "t1Ms": 85754,
+        "text": "No",
+        "conf": 0.94
+      },
+      {
+        "i": 24,
+        "t0Ms": 85875,
+        "t1Ms": 86495,
+        "text": "count,",
+        "conf": 0.68
+      },
+      {
+        "i": 24,
+        "t0Ms": 86555,
+        "t1Ms": 86735,
+        "text": "just",
+        "conf": 0.856
+      },
+      {
+        "i": 24,
+        "t0Ms": 86796,
+        "t1Ms": 87516,
+        "text": "beat",
+        "conf": 0.848
+      },
+      {
+        "t0Ms": 87556,
+        "t1Ms": 87676,
+        "text": "and",
+        "conf": 0.869
+      },
+      {
+        "i": 24,
+        "t0Ms": 87736,
+        "t1Ms": 88337,
+        "text": "dart",
+        "conf": 0.922
+      },
+      {
+        "i": 25,
+        "t0Ms": 88858,
+        "t1Ms": 89038,
+        "text": "Then",
+        "conf": 0.905
+      },
+      {
+        "i": 25,
+        "t0Ms": 89098,
+        "t1Ms": 89318,
+        "text": "bring",
+        "conf": 0.937
+      },
+      {
+        "i": 25,
+        "t0Ms": 89358,
+        "t1Ms": 89498,
+        "text": "the",
+        "conf": 0.584
+      },
+      {
+        "i": 25,
+        "t0Ms": 89578,
+        "t1Ms": 90219,
+        "text": "numbers",
+        "conf": 0.595
+      },
+      {
+        "i": 25,
+        "t0Ms": 90279,
+        "t1Ms": 90559,
+        "text": "back",
+        "conf": 0.982
+      },
+      {
+        "i": 25,
+        "t0Ms": 90599,
+        "t1Ms": 90820,
+        "text": "to",
+        "conf": 0.793
+      },
+      {
+        "i": 25,
+        "t0Ms": 90900,
+        "t1Ms": 91640,
+        "text": "flame",
+        "conf": 0.846
+      },
+      {
+        "i": 26,
+        "t0Ms": 91921,
+        "t1Ms": 92081,
+        "text": "Let",
+        "conf": 0.932
+      },
+      {
+        "i": 26,
+        "t0Ms": 92121,
+        "t1Ms": 92261,
+        "text": "the",
+        "conf": 0.9
+      },
+      {
+        "i": 26,
+        "t0Ms": 92341,
+        "t1Ms": 92681,
+        "text": "down",
+        "conf": 0.572
+      },
+      {
+        "t0Ms": 92701,
+        "t1Ms": 92982,
+        "text": "deep",
+        "conf": 0.342
+      },
+      {
+        "i": 26,
+        "t0Ms": 93002,
+        "t1Ms": 93422,
+        "text": "say",
+        "conf": 0.846
+      },
+      {
+        "i": 26,
+        "t0Ms": 93662,
+        "t1Ms": 93702,
+        "text": "my",
+        "conf": 0.118
+      },
+      {
+        "i": 26,
+        "t0Ms": 93723,
+        "t1Ms": 94283,
+        "text": "name,",
+        "conf": 0.909
+      },
+      {
+        "t0Ms": 94423,
+        "t1Ms": 96205,
+        "text": "boy",
+        "conf": 0.645
+      },
+      {
+        "i": 28,
+        "t0Ms": 97670,
+        "t1Ms": 98090,
+        "text": "Set",
+        "conf": 0.288
+      },
+      {
+        "i": 28,
+        "t0Ms": 98110,
+        "t1Ms": 98271,
+        "text": "me",
+        "conf": 0.905
+      },
+      {
+        "i": 28,
+        "t0Ms": 98311,
+        "t1Ms": 98551,
+        "text": "to",
+        "conf": 0.686
+      },
+      {
+        "i": 28,
+        "t0Ms": 98591,
+        "t1Ms": 98651,
+        "text": "the",
+        "conf": 0.62
+      },
+      {
+        "i": 28,
+        "t0Ms": 99132,
+        "t1Ms": 99252,
+        "text": "fire",
+        "conf": 0.432
+      },
+      {
+        "i": 29,
+        "t0Ms": 99672,
+        "t1Ms": 99912,
+        "text": "Block",
+        "conf": 0.522
+      },
+      {
+        "i": 29,
+        "t0Ms": 99952,
+        "t1Ms": 100093,
+        "text": "me",
+        "conf": 0.976
+      },
+      {
+        "i": 29,
+        "t0Ms": 100133,
+        "t1Ms": 100393,
+        "text": "to",
+        "conf": 0.674
+      },
+      {
+        "i": 29,
+        "t0Ms": 100433,
+        "t1Ms": 100533,
+        "text": "the",
+        "conf": 0.786
+      },
+      {
+        "i": 29,
+        "t0Ms": 100593,
+        "t1Ms": 100893,
+        "text": "clock",
+        "conf": 0.901
+      },
+      {
+        "i": 30,
+        "t0Ms": 101554,
+        "t1Ms": 101734,
+        "text": "We",
+        "conf": 0.972
+      },
+      {
+        "i": 30,
+        "t0Ms": 101834,
+        "t1Ms": 101954,
+        "text": "can",
+        "conf": 0.373
+      },
+      {
+        "i": 30,
+        "t0Ms": 102035,
+        "t1Ms": 102275,
+        "text": "rise",
+        "conf": 0.775
+      },
+      {
+        "i": 30,
+        "t0Ms": 102315,
+        "t1Ms": 102915,
+        "text": "together",
+        "conf": 0.792
+      },
+      {
+        "i": 31,
+        "t0Ms": 102976,
+        "t1Ms": 103216,
+        "text": "Right",
+        "conf": 0.938
+      },
+      {
+        "i": 31,
+        "t0Ms": 103356,
+        "t1Ms": 103436,
+        "text": "on",
+        "conf": 0.921
+      },
+      {
+        "i": 31,
+        "t0Ms": 103676,
+        "t1Ms": 104257,
+        "text": "every",
+        "conf": 0.823
+      },
+      {
+        "i": 31,
+        "t0Ms": 104317,
+        "t1Ms": 104597,
+        "text": "drop",
+        "conf": 0.943
+      },
+      {
+        "i": 32,
+        "t0Ms": 105218,
+        "t1Ms": 105478,
+        "text": "Set",
+        "conf": 0.543
+      },
+      {
+        "i": 32,
+        "t0Ms": 105498,
+        "t1Ms": 105658,
+        "text": "me",
+        "conf": 0.898
+      },
+      {
+        "i": 32,
+        "t0Ms": 105698,
+        "t1Ms": 105959,
+        "text": "to",
+        "conf": 0.634
+      },
+      {
+        "i": 32,
+        "t0Ms": 105999,
+        "t1Ms": 106059,
+        "text": "the",
+        "conf": 0.975
+      },
+      {
+        "i": 32,
+        "t0Ms": 106159,
+        "t1Ms": 106639,
+        "text": "fire",
+        "conf": 0.751
+      },
+      {
+        "i": 33,
+        "t0Ms": 106699,
+        "t1Ms": 106799,
+        "text": "Hold",
+        "conf": 0.461
+      },
+      {
+        "i": 33,
+        "t0Ms": 107360,
+        "t1Ms": 107600,
+        "text": "me",
+        "conf": 0.949
+      },
+      {
+        "i": 33,
+        "t0Ms": 107700,
+        "t1Ms": 107780,
+        "text": "in",
+        "conf": 0.786
+      },
+      {
+        "i": 33,
+        "t0Ms": 107821,
+        "t1Ms": 107881,
+        "text": "the",
+        "conf": 0.949
+      },
+      {
+        "i": 33,
+        "t0Ms": 108001,
+        "t1Ms": 108321,
+        "text": "frame",
+        "conf": 0.695
+      },
+      {
+        "i": 34,
+        "t0Ms": 108942,
+        "t1Ms": 109182,
+        "text": "When",
+        "conf": 0.793
+      },
+      {
+        "i": 34,
+        "t0Ms": 109222,
+        "t1Ms": 109282,
+        "text": "the",
+        "conf": 0.315
+      },
+      {
+        "i": 34,
+        "t0Ms": 109422,
+        "t1Ms": 109743,
+        "text": "beat",
+        "conf": 0.707
+      },
+      {
+        "i": 34,
+        "t0Ms": 109763,
+        "t1Ms": 109823,
+        "text": "is",
+        "conf": 0.459
+      },
+      {
+        "i": 34,
+        "t0Ms": 109843,
+        "t1Ms": 110263,
+        "text": "steady",
+        "conf": 0.815
+      },
+      {
+        "i": 35,
+        "t0Ms": 110323,
+        "t1Ms": 110543,
+        "text": "We",
+        "conf": 0.875
+      },
+      {
+        "i": 35,
+        "t0Ms": 110623,
+        "t1Ms": 111204,
+        "text": "ignite",
+        "conf": 0.672
+      },
+      {
+        "i": 35,
+        "t0Ms": 111264,
+        "t1Ms": 111384,
+        "text": "the",
+        "conf": 0.564
+      },
+      {
+        "i": 35,
+        "t0Ms": 111464,
+        "t1Ms": 111765,
+        "text": "same",
+        "conf": 0.643
+      },
+      {
+        "i": 37,
+        "t0Ms": 117711,
+        "t1Ms": 117991,
+        "text": "Right",
+        "conf": 0.865
+      },
+      {
+        "i": 37,
+        "t0Ms": 118111,
+        "t1Ms": 118231,
+        "text": "on",
+        "conf": 0.846
+      },
+      {
+        "i": 37,
+        "t0Ms": 118472,
+        "t1Ms": 118812,
+        "text": "every",
+        "conf": 0.789
+      },
+      {
+        "i": 37,
+        "t0Ms": 119092,
+        "t1Ms": 126580,
+        "text": "drop",
+        "conf": 0.832
+      },
+      {
+        "t0Ms": 133833,
+        "t1Ms": 149192,
+        "text": "you",
+        "conf": 0.631
+      }
+    ]
+  },
+  "import": {
+    "firstImportedAt": "2026-02-27T07:43:16.773Z",
+    "lastImportedAt": "2026-02-27T07:43:16.773Z",
+    "inputHashes": {
+      "Fire on the Grid Stems (130BPM).txt": "0882019057b3ed0da6bb7a7fe887f22e790d0c39240bc8efabaf2d1a4129872e",
+      "Fire on the Grid Stems (130BPM).zip": "62a1f5472814169799682ebb03efe9dbbe38d271d0b0f5cd2a9d3c3f43ec3d35"
+    },
+    "hashSource": "assets/fire-on-the-grid/01KJF0TJ97RF89D67K0S/instrumental.wav",
+    "hashSourceSha256": "db7c337a885f592f0fbcffc9e309bcaf8467310112377c769bdd69dc9850a686",
+    "filenameBpm": 130,
+    "sourceGroupKey": "loose:fire-on-the-grid-stems-130bpm",
+    "archivedTo": "D:/seva/FOMO/Songs/the-refresh/refreshing-music/inbox/_done/2026-02-27/loose/fire-on-the-grid-stems-130bpm/consumed.json"
+  },
+  "assetPaths": {
+    "mix": "assets/fire-on-the-grid/01KJF0TJ97RF89D67K0S/mix.mp3",
+    "mixWav": "",
+    "stemsZip": "assets/fire-on-the-grid/01KJF0TJ97RF89D67K0S/stems.zip",
+    "effective": "assets/fire-on-the-grid/01KJF0TJ97RF89D67K0S/effective.json",
+    "instrumental": "assets/fire-on-the-grid/01KJF0TJ97RF89D67K0S/instrumental.mp3",
+    "instrumentalWav": "assets/fire-on-the-grid/01KJF0TJ97RF89D67K0S/instrumental.wav",
+    "vocals": "assets/fire-on-the-grid/01KJF0TJ97RF89D67K0S/vocals.mp3",
+    "vocalsWav": "assets/fire-on-the-grid/01KJF0TJ97RF89D67K0S/vocals.wav",
+    "composer": "assets/fire-on-the-grid/01KJF0TJ97RF89D67K0S/composer.txt"
+  },
+  "hasUserHints": true,
+  "lastHintAt": "2026-02-27T07:48:28.838Z"
+}

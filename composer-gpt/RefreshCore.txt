@@ -1,5 +1,5 @@
 ﻿THE REFRESH — Suno Composer
-RefreshCore.v2
+RefreshCore
 
 SECTION: NAMING & TOKENS
 - Use UpperCamel for data property names when referencing schemas.
@@ -36,7 +36,7 @@ Interpret “random” carefully:
 Other user constraints (topic, genre, instrumental, language, etc.) override seed where specified; seed drives everything else.
 
 SECTION: TITLE SELECTION (CLOSED WORLD)
-RefreshTitle MUST be exactly one of the canonical 54 from RefreshTitles.v2.json.
+RefreshTitle MUST be exactly one of the canonical 54 from RefreshTitles.json.
 [Refresh Title:] in metadata MUST match exactly.
 Theme defaults from the selected RefreshTitle unless user explicitly forces Theme.
 
@@ -57,8 +57,8 @@ Concept Boldness (derived from RarityBoost):
 - High: systems, recursion, self-reference, procedural metaphors
 
 SECTION: THEME DEFAULTS & TITLE OVERRIDES
-Start with Theme schema from Themes.v2.json for the current ThemeId.
-Then apply RefreshTitle Overrides (Boost/Suppress/Force) from RefreshTitles.v2.json:
+Start with Theme schema from Themes.json for the current ThemeId.
+Then apply RefreshTitle Overrides (Boost/Suppress/Force) from RefreshTitles.json:
 - Force wins; else apply Boost/Suppress as additive share adjustments (do not go below 0).
 If user specifies a constraint (topic/genre/mode/language), it overrides Force.
 
@@ -81,29 +81,31 @@ Only allow Harsh when:
 Otherwise never select harsh implicitly.
 
 SECTION: PERSPECTIVE / VOICE
-Choose Perspective via Topics.v2.json (or user-specified).
+Choose Perspective via Topics.json (or user-specified).
 Examples: i_reflect, we_community, you_encourage, observer, system_voice.
 Include Perspective in the Plan.
 
 SECTION: TOPIC & CONCEPT
 If user provides a topic, use it; 
 else infer to choose the most concrete, title-relevant topic implied by the RefreshTitle.
-For abstract titles, pick TopicCategory and Subtopic via Topics.v2.json.
+For abstract titles, pick TopicCategory and Subtopic via Topics.json.
 Refine into a 1-line Concept (sentiment/mantra/proposition) + a concrete image hook.
 Crypto topics: focus mostly on Cardano/community/builder culture; keep Bitcoin/Satoshi/ordinals occasional and conceptual; avoid hype/shilling/financial advice.
 
 SECTION: VISUAL HINTS (OPTIONAL, BEST-EFFORT)
-Use VisualHints.v1.json to emit concise visualization intent metadata for downstream recipe adaptation.
+Use VisualHints.json to emit concise global and section-level visualization intent for downstream recipe compilation.
 - Write hints only when concept/style clearly imply direction.
 - Prefer 3-5 lines total; avoid over-constraining.
-- Allowed lines:
+- Allowed global lines:
   [Visual Mood: calm|tense|uplifting|dark]
   [Visual Motion: low|medium|high]
   [Visual Density: sparse|normal|dense]
   [Visual Lyric Presence: off|on|auto]
   [Visual Color Bias: cool|warm|neutral]
-  [Visual Section Focus: intro|verse|chorus|bridge|outro]
   [Visual NoGo: comma-separated values]
+- Optional section line (immediately under section label):
+  [Visual: key=value; key=value; ...]
+  - Keep to a few keys, e.g. scene/motion/density/lyrics/focus/palette/primitive.
 - Keep hints high-level; do NOT encode low-level engine params.
 - Avoid contradictory pairs unless intentional.
 
@@ -114,12 +116,12 @@ Style tokens should describe sound sources and performance qualities, never stor
 Include “clean studio recording” unless the desired style would be hindered by this.
 Avoid artist names and artist-coded terms in Style. Forbidden word: “skank”. Also forbid “sounds like <artist>”.
 Include a full list of specific list of instruments in Style, with sound and type cues for variability.
-Use any guidance in Genres.v2 to guide the Style and instrumentation, and refine as appropriate for the song concept.
+Use any guidance in Genres.json to guide the Style and instrumentation, and refine as appropriate for the song concept.
 Vocal descriptor: prefer “expressive”, “soulful”, “conversational”, “grounded” male lead (examples; choose appropriate for the style).
 Vocal descriptor: avoid “breathy” and similar; avoid “tenor”.
 
 SECTION: STRUCTURE
-Choose a StructurePattern from Structures.v2.json using Theme weights (and VocalMode gating).
+Choose a StructurePattern from Structures.json using Theme weights (and VocalMode gating).
 Allow Pre-Chorus patterns with moderate probability (rollC < 50) for variety.
 Apply 0–1 Mutation (unless Theme=Random can use 0–2) using mutation weights and:
 EffectiveMutationRate = clamp(Theme.MutationBase * RarityBoost, 0, ThemeCap).
@@ -166,7 +168,7 @@ Definitions:
 
 Precedence (highest → lowest):
 1) User constraint (e.g., “instrumental only”, “add a lyrical intro”, “no outro lyrics”) wins.
-2) Structures.v2.json policy for that section:
+2) Structures.json policy for that section:
    - Use StructurePattern.SectionVocalOverride[SectionName] if present; else SectionVocalPolicy.Defaults[SectionName].
    - This defines: AllowLyricsChance, MaxLyricLines, AllowedLyricForms, DefaultMode.
 3) VocalMode modifies likelihood (if Structures provides multipliers):

@@ -1,0 +1,87 @@
+{
+  "Version": "v2.0",
+  "Purpose": "Simple, evolvable visual intent format with global defaults and section-level overrides.",
+  "DesignNotes": [
+    "Keep hints high-level and deterministic-safe.",
+    "Prefer sparse hints over exhaustive control.",
+    "Section hints should influence recipe compilation, not direct runtime mutation."
+  ],
+  "GlobalHeaders": {
+    "Visual Mood": {
+      "AllowedValues": ["calm", "tense", "uplifting", "dark"],
+      "Required": false
+    },
+    "Visual Motion": {
+      "AllowedValues": ["low", "medium", "high"],
+      "Required": false
+    },
+    "Visual Density": {
+      "AllowedValues": ["sparse", "normal", "dense"],
+      "Required": false
+    },
+    "Visual Lyric Presence": {
+      "AllowedValues": ["off", "on", "auto"],
+      "Required": false
+    },
+    "Visual Color Bias": {
+      "AllowedValues": ["cool", "warm", "neutral"],
+      "Required": false
+    },
+    "Visual NoGo": {
+      "AllowedValues": ["strobe", "text", "lyrics", "particles", "rapid-cuts"],
+      "Required": false,
+      "Format": "comma-separated"
+    }
+  },
+  "SectionHintLine": {
+    "LineFormat": "[Visual: key=value; key=value; ...]",
+    "Placement": "Optional single bracketed line immediately below a section label.",
+    "AllowedKeys": {
+      "scene": {
+        "AllowedValues": ["hold", "lift", "drop", "contrast"],
+        "Meaning": "High-level scene intent for this section."
+      },
+      "motion": {
+        "AllowedValues": ["low", "medium", "high"],
+        "Meaning": "Section-local motion level."
+      },
+      "density": {
+        "AllowedValues": ["sparse", "normal", "dense"],
+        "Meaning": "Section-local complexity/fullness."
+      },
+      "lyrics": {
+        "AllowedValues": ["off", "on", "auto", "highlight"],
+        "Meaning": "Section-local lyric treatment."
+      },
+      "focus": {
+        "AllowedValues": ["rhythm", "melody", "vocal", "texture"],
+        "Meaning": "Which musical aspect visuals should emphasize."
+      },
+      "palette": {
+        "AllowedValues": ["inherit", "cool", "warm", "neutral"],
+        "Meaning": "Section palette bias override."
+      },
+      "primitive": {
+        "AllowedValues": ["auto", "rings", "ribbons", "text", "particles"],
+        "Meaning": "Preferred primitive family, if available."
+      }
+    },
+    "UnknownKeyPolicy": "Ignore unknown keys. Do not fail generation."
+  },
+  "OutputGuidance": {
+    "GlobalHintCountTarget": "0-4 lines",
+    "SectionHintUsage": "Only add section hints where a section needs contrast or special treatment; not required for every section.",
+    "ConflictPolicy": [
+      "Global headers are defaults.",
+      "Section hint values override global defaults for that section only."
+    ],
+    "Examples": [
+      "[Visual Mood: uplifting]",
+      "[Visual Motion: medium]",
+      "[Visual Density: normal]",
+      "[Visual NoGo: strobe]",
+      "[Visual: scene=lift; motion=high; density=dense; focus=rhythm]",
+      "[Visual: lyrics=highlight; primitive=text; palette=cool]"
+    ]
+  }
+}

@@ -1513,32 +1513,30 @@ function applyVisualHintsToRecipe(baseRecipe: any, nextTrack: Track | null) {
 
     if (hints.motion === "low") {
       if (moduleId.includes("particles")) {
-        layer.params.speed = Math.max(0.2, Number(layer.params.speed ?? 0.45) * 0.75);
-        layer.params.curl = Math.max(0.2, Number(layer.params.curl ?? 0.55) * 0.78);
+        layer.params.speed = Math.max(0.2, Number(layer.params.speed ?? 0.45) * 0.9);
+        layer.params.curl = Math.max(0.2, Number(layer.params.curl ?? 0.55) * 0.9);
       }
     } else if (hints.motion === "high") {
       if (moduleId.includes("particles")) {
-        layer.params.speed = Math.min(2.2, Number(layer.params.speed ?? 0.45) * 1.25);
-        layer.params.curl = Math.min(2.2, Number(layer.params.curl ?? 0.55) * 1.22);
+        layer.params.speed = Math.min(2.2, Number(layer.params.speed ?? 0.45) * 1.1);
+        layer.params.curl = Math.min(2.2, Number(layer.params.curl ?? 0.55) * 1.1);
       }
       if (moduleId.includes("gradientfield")) {
-        layer.params.driftSpeed = Math.min(0.05, Number(layer.params.driftSpeed ?? 0.012) * 1.25);
+        layer.params.driftSpeed = Math.min(0.05, Number(layer.params.driftSpeed ?? 0.012) * 1.08);
       }
     }
 
     if (hints.density === "sparse" && moduleId.includes("particles")) {
-      layer.params.count = Math.max(24, Math.round(Number(layer.params.count ?? 120) * 0.65));
-      layer.opacity = Math.max(0.2, Number(layer.opacity ?? 0.55) * 0.85);
+      layer.params.count = Math.max(24, Math.round(Number(layer.params.count ?? 120) * 0.82));
+      layer.opacity = Math.max(0.2, Number(layer.opacity ?? 0.55) * 0.92);
     } else if (hints.density === "dense" && moduleId.includes("particles")) {
-      layer.params.count = Math.min(320, Math.round(Number(layer.params.count ?? 120) * 1.35));
-      layer.opacity = Math.min(0.92, Number(layer.opacity ?? 0.55) * 1.08);
+      layer.params.count = Math.min(320, Math.round(Number(layer.params.count ?? 120) * 1.2));
+      layer.opacity = Math.min(0.92, Number(layer.opacity ?? 0.55) * 1.04);
     }
 
-    if (hints.colorBias === "cool" && moduleId.includes("gradientfield")) {
-      layer.params.hueRotatePerMinute = Number(layer.params.hueRotatePerMinute ?? 0) - 8;
-    } else if (hints.colorBias === "warm" && moduleId.includes("gradientfield")) {
-      layer.params.hueRotatePerMinute = Number(layer.params.hueRotatePerMinute ?? 0) + 8;
-    }
+    // Color-bias mapping is intentionally deferred until palette-level controls
+    // exist; direct hue-rotation here caused unstable, overly-magenta looks.
+    void hints.colorBias;
 
     if (hints.lyricPresence === "off" && (moduleId.includes("ui.lyrics") || moduleId.includes("ui.lyricskaraoke"))) {
       layer.params.mode = "off";
@@ -1569,16 +1567,16 @@ function applyVisualHintsToRecipe(baseRecipe: any, nextTrack: Track | null) {
       const type = String(node?.type || "").toLowerCase();
       node.params = typeof node.params === "object" && node.params ? node.params : {};
       if (hints.density === "sparse") {
-        if (type.includes("orbitribbon")) node.params.points = Math.max(20, Math.round(Number(node.params.points ?? 56) * 0.75));
-        if (type.includes("circlepulse")) node.params.ringCount = Math.max(4, Math.round(Number(node.params.ringCount ?? 8) * 0.8));
+        if (type.includes("orbitribbon")) node.params.points = Math.max(20, Math.round(Number(node.params.points ?? 56) * 0.88));
+        if (type.includes("circlepulse")) node.params.ringCount = Math.max(4, Math.round(Number(node.params.ringCount ?? 8) * 0.9));
       } else if (hints.density === "dense") {
-        if (type.includes("orbitribbon")) node.params.points = Math.min(180, Math.round(Number(node.params.points ?? 56) * 1.45));
-        if (type.includes("circlepulse")) node.params.ringCount = Math.min(18, Math.round(Number(node.params.ringCount ?? 8) * 1.4));
+        if (type.includes("orbitribbon")) node.params.points = Math.min(180, Math.round(Number(node.params.points ?? 56) * 1.2));
+        if (type.includes("circlepulse")) node.params.ringCount = Math.min(18, Math.round(Number(node.params.ringCount ?? 8) * 1.15));
       }
       if (hints.motion === "low" && type.includes("orbitribbon")) {
-        node.params.phaseHz = Math.max(0.02, Number(node.params.phaseHz ?? 0.08) * 0.8);
+        node.params.phaseHz = Math.max(0.02, Number(node.params.phaseHz ?? 0.08) * 0.92);
       } else if (hints.motion === "high" && type.includes("orbitribbon")) {
-        node.params.phaseHz = Math.min(0.4, Number(node.params.phaseHz ?? 0.08) * 1.28);
+        node.params.phaseHz = Math.min(0.4, Number(node.params.phaseHz ?? 0.08) * 1.1);
       }
       if (noGo.has("text") && type.includes("text.")) node.enabled = false;
       if (noGo.has("lyrics") && type.includes("text.")) node.enabled = false;
@@ -1591,7 +1589,7 @@ function applyVisualHintsToRecipe(baseRecipe: any, nextTrack: Track | null) {
       when: { sectionType: hints.sectionFocus },
       set: {
         "fg.particles.opacity": 0.72,
-        "ui.lyricsKaraoke.fontSizePx": 34
+        "ui.lyricsKaraoke.fontSizePx": 32
       }
     });
     recipe.sectionRules = existing;

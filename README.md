@@ -41,6 +41,9 @@ Supported header keys (aliases with `Viz ...` also accepted):
 Notes:
 - Hints are intentionally high-level and deterministic-safe.
 - Mapping is best-effort and non-destructive: base recipes still load, hints apply as constrained overrides.
+- Next step (drafted in `composer-gpt/VisualHints.json`): section-level hint lines
+  - `[Visual: key=value; key=value; ...]` under section labels
+  - Intended for compile-time recipe generation, not ad-hoc runtime mutation.
 
 ## Workflow (Inbox -> Assets -> Tracks)
 1. Drop new files into `inbox/` (mp3/wav/txt/json5/zip).

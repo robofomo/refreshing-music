@@ -106,6 +106,14 @@ Use VisualHints.json to emit concise global and section-level visualization inte
 - Optional section line (immediately under section label):
   [Visual: key=value; key=value; ...]
   - Keep to a few keys, e.g. scene/motion/density/lyrics/focus/palette/primitive.
+- Section hint target: 2-3 per song.
+  - Include one in the first major section (Verse preferred; Intro if needed).
+  - Include one in a Chorus (or Final Chorus).
+  - Optional third in Bridge or Final Chorus for contrast/climax.
+- Suggested section roles:
+  - First major section: baseline (scene=hold, motion=medium, density=normal).
+  - Chorus: lift (scene=lift, higher motion/density, focus=rhythm or vocal).
+  - Bridge/Final Chorus: contrast or climax.
 - Keep hints high-level; do NOT encode low-level engine params.
 - Avoid contradictory pairs unless intentional.
 

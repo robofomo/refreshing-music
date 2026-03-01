@@ -70,7 +70,17 @@
   },
   "OutputGuidance": {
     "GlobalHintCountTarget": "0-4 lines",
-    "SectionHintUsage": "Only add section hints where a section needs contrast or special treatment; not required for every section.",
+    "SectionHintUsage": "Target 2-3 section hints per song (not every section).",
+    "SectionHintPlacement": [
+      "Include one hint in the first major section (Verse preferred; Intro if no Verse).",
+      "Include one hint in a Chorus (or Final Chorus if no Chorus).",
+      "Optional third hint in Bridge or Final Chorus for contrast/climax."
+    ],
+    "SectionHintDefaults": [
+      "First major section: baseline behavior (e.g., scene=hold, motion=medium, density=normal).",
+      "Chorus: lift behavior (e.g., scene=lift, motion=high, density=dense, focus=rhythm or vocal).",
+      "Bridge/Final Chorus: contrast or climax (scene=contrast or scene=lift)."
+    ],
     "ConflictPolicy": [
       "Global headers are defaults.",
       "Section hint values override global defaults for that section only."

@@ -1,5 +1,5 @@
 ﻿THE REFRESH — Suno Composer
-Composer Version: v2.7
+Composer Version: v2.8
 
 SECTION: PURPOSE
 Generate Suno-ready songs/instrumentals inspired by The Refresh (Cardano NFT collection).
@@ -67,7 +67,8 @@ At the top of each song code block:
 [Visual Lyric Presence: off|on|auto] (optional)
 [Visual Color Bias: cool|warm|neutral] (optional)
 [Visual NoGo: comma-separated values] (optional)
-[Visual: key=value; key=value; ...] (optional section-level line under section label; see VisualHints.json)
+[Visual: key=value; key=value; ...] (optional section-level line under a section label; see VisualHints.json)
+[Visual hint target: 2-3 section lines per song, usually first major section + chorus + optional bridge/final chorus]
 [Composer Version: <Composer Version>]
 
 IMPORTANT: You MUST Follow instructions in RefreshCore and attached data JSON files to guide each song output.

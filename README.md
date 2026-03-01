@@ -15,6 +15,17 @@ Local-first Canvas2D visualizer with:
 - assets/<workId>/<trackId>/ (gitignored): imported media + composer/timing files
 - tracks/<trackId>.track.json (tracked): small generated track metadata
 
+## Recipe Resolvable Values (Deterministic)
+Layer `params` support deterministic expression objects (all resolved from absolute time + seed + signals):
+- `{"const": ...}`: explicit literal passthrough
+- `{"signal": "audio.amp"}`: read from render state / signal bus path
+- `{"pick": [...], "w": [...]}`: deterministic weighted choice (seed + param path)
+- `{"map": "audio.amp", "from":[0,1], "to":[10,40], "ease":"linear|in|out|inOut"}`
+- `{"lfo":{"hz":0.2,"amp":0.5,"bias":1.0,"phase":0,"wave":"sine|tri|saw"}}`
+- `{"mul":[exprA, exprB, ...]}` and `{"add":[exprA, exprB, ...]}`
+
+This keeps seek deterministic: a frame depends only on current timestamp + seed + inputs, never on prior-frame simulation history.
+
 ## Workflow (Inbox -> Assets -> Tracks)
 1. Drop new files into `inbox/` (mp3/wav/txt/json5/zip).
 2. Run `npm run import:inbox`.
@@ -39,6 +50,11 @@ Local-first Canvas2D visualizer with:
    - `preprocess:ai` (stems -> beats -> whisperx)
    - `preprocess` (embeds generated AI timing into `tracks/<trackId>.track.json`)
 8. Run `npm run dev` for the dev viewer.
+   - Optional viewer mode query param: `?mode=playback|primitive-lab|graph-scene` (default `playback`).
+   - In `primitive-lab`, use `j/l` to switch primitives, `z/x` scale, `a/s` density, `r` variant, and `y` (or `lab copy` button) to copy a recipe snippet template.
+   - In `graph-scene`, renderer uses `recipe.graph.layers[*].nodes[*]` if present (fallback graph otherwise); `y` / `lab copy` copies a graph snippet template.
+   - Graph node params support the same deterministic resolvable values (`map`, `pick`, `lfo`, `signal`, `add`, `mul`).
+   - Press `t` in viewer to run a determinism probe (checks stable param resolution for current time/seed; result shown in HUD).
 
 ### Import Flags
 - `npm run import:inbox -- --dry-run`
@@ -137,6 +153,7 @@ Authoring mode supports lightweight beat/downbeat hint events from the dev viewe
   - `d`: downbeat hint at current playhead
   - `b`: beat hint at current playhead
   - `1`/`2`/`3`/`4`: bar-beat hint (`beatInBar`)
+  - `v`: cycle viewer mode (`playback` -> `primitive-lab` -> `graph-scene`)
 - Authoring persistence:
   - Hints are written via local dev API and reduced with debounce.
   - Reducer also runs after `beats` / `whisperx` updates.

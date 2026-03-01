@@ -1,15 +1,18 @@
 import { selectPalette } from "./palette";
 import { hashStringToSeed } from "./rng";
-import { renderGradientField } from "./modules/bg.gradientField";
-import { renderParticles } from "./modules/fg.particles";
-import { renderLyricsKaraoke } from "./modules/ui.lyricsKaraoke";
 import { compositeTransition, normalizeSectionLabel, type TransitionDef } from "./transitions";
 import { classifySection, type SectionType } from "./sections";
+import { assertDeterministicFrameInput } from "./determinism";
+import { renderRegisteredModule } from "./moduleRegistry";
+import { resolveResolvable } from "./resolvable";
+import { renderGraphScene } from "./graphScene";
 
 type EngineState = {
   tMs: number;
   sectionId?: string;
   sectionType?: SectionType;
+  viewerMode?: string;
+  signalBus?: any;
   amp?: number;
   energy?: number;
   recipe?: any;
@@ -187,6 +190,12 @@ export function createEngine({
     for (const layer of layers) {
       if (layer?.enabled === false) continue;
       const overrides = resolveLayerOverrides(layer, recipe, sectionType, sectionId);
+      const resolvedParams = resolveResolvable(overrides.params, {
+        tMs,
+        seed,
+        state,
+        path: `${String(layer?.module || "module")}.params`
+      });
       const layerForOpacity = overrides.opacity === undefined ? layer : { ...layer, opacity: overrides.opacity };
       const layerOpacity = resolveLayerOpacity(layerForOpacity, state);
       if (layerOpacity <= 0) continue;
@@ -195,42 +204,21 @@ export function createEngine({
       targetCtx.globalCompositeOperation = layer?.blend ?? "source-over";
       targetCtx.globalAlpha = layerOpacity;
 
-      if (layer?.module === "bg.gradientField") {
-        renderGradientField({
-          ctx: targetCtx,
-          canvas,
-          tMs,
-          colors: palette,
-          seed,
-          params: overrides.params
-        });
-      } else if (layer?.module === "fg.particles") {
-        renderParticles({
-          ctx: targetCtx,
-          canvas,
-          tMs,
-          amp: state?.amp,
-          colors: palette,
-          seed,
-          params: overrides.params
-        });
-      } else if (layer?.module === "ui.lyrics" || layer?.module === "ui.lyricsKaraoke") {
-        const lyricInfo = renderLyricsKaraoke({
-          ctx: targetCtx,
-          canvas,
-          tMs,
-          track: state?.track,
-          sectionType,
-          params: {
-            ...overrides.params,
-            mode: state?.lyricMode ?? overrides.params?.mode ?? "center",
-            controlsTopPx: state?.uiLayout?.controlsTopPx,
-            viewportHeightPx: state?.uiLayout?.viewportHeightPx
-          },
-          lyricsEnabled: state?.lyricsEnabled
-        });
-        lyricIndex = lyricInfo.lyricIndex;
-        lyricText = lyricInfo.lyricText;
+      const moduleResult = renderRegisteredModule({
+        moduleId: String(layer?.module ?? ""),
+        ctx: targetCtx,
+        canvas,
+        tMs,
+        seed,
+        params: resolvedParams,
+        colors: palette,
+        sectionType,
+        state
+      });
+      if (moduleResult?.lyricIndex !== undefined) lyricIndex = moduleResult.lyricIndex;
+      if (moduleResult?.lyricText !== undefined) lyricText = moduleResult.lyricText;
+      if (moduleResult === null) {
+        // Unknown module id: keep rendering pipeline stable by skipping layer.
       }
 
       targetCtx.restore();
@@ -246,6 +234,14 @@ export function createEngine({
   }
 
   function renderFrame(state: EngineState) {
+    assertDeterministicFrameInput({
+      tMs: Number(state?.tMs),
+      sectionId: state?.sectionId,
+      sectionType: state?.sectionType,
+      trackId: state?.track?.trackId,
+      seed,
+      viewerMode: state?.viewerMode
+    });
     const timeState = getTimeState ? getTimeState() : {};
     const audioState = getAudioState ? getAudioState() : {};
     const tMs = state?.tMs ?? timeState?.tMs ?? 0;
@@ -271,6 +267,7 @@ export function createEngine({
     const layers = Array.isArray(recipe?.layers) && recipe.layers.length
       ? recipe.layers
       : [{ module: "bg.gradientField", params: { gradientStops: 3 } }];
+    const viewerMode = String(state?.viewerMode ?? "playback");
     const sectionId = String(state?.sectionId ?? "section");
     const sectionType = state?.sectionType ?? classifySection(sectionId);
     const width = canvas.width;
@@ -290,8 +287,24 @@ export function createEngine({
 
     let frameInfo = { sectionId, sectionType, lyricIndex: -1, lyricText: "" };
     const drawToFn = (targetCtx: CanvasRenderingContext2D) => {
-      const renderInfo = renderLayers({ targetCtx, layers, state, palette, tMs, recipe, sectionType, sectionId });
-      frameInfo = { ...frameInfo, ...renderInfo };
+      if (viewerMode === "graph-scene") {
+        targetCtx.setTransform(1, 0, 0, 1, 0, 0);
+        targetCtx.globalAlpha = 1;
+        targetCtx.globalCompositeOperation = "source-over";
+        targetCtx.clearRect(0, 0, canvas.width, canvas.height);
+        renderGraphScene({
+          ctx: targetCtx,
+          canvas,
+          tMs,
+          seed,
+          state,
+          recipe,
+          colors: palette
+        });
+      } else {
+        const renderInfo = renderLayers({ targetCtx, layers, state, palette, tMs, recipe, sectionType, sectionId });
+        frameInfo = { ...frameInfo, ...renderInfo };
+      }
       void audioState;
     };
 
@@ -324,3 +337,4 @@ export function createEngine({
 }
 
 export { hashStringToSeed };
+export { registerModule } from "./moduleRegistry";

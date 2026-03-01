@@ -26,6 +26,45 @@
       "params": { "mode": "center", "fontSizePx": 30, "lineGapPx": 10, "opacity": 0.92, "safeMarginPx": 34, "controlsReservedPx": 108, "glowStrength": 0.85 },
     },
   ],
+  "graph": {
+    "layers": [
+      {
+        "id": "main",
+        "blend": "screen",
+        "opacity": 1,
+        "nodes": [
+          {
+            "id": "pulse",
+            "type": "shape.circlePulse",
+            "params": {
+              "ringCount": 9,
+              "radiusPx": { "map": "beat.downbeatPulse", "from": [0, 1], "to": [72, 126], "ease": "out" },
+              "alpha": { "add": [0.14, { "mul": [ { "signal": "audio.amp" }, 0.22 ] }] }
+            }
+          },
+          {
+            "id": "ribbonA",
+            "type": "polyline.orbitRibbon",
+            "params": {
+              "points": 64,
+              "radiusPx": 182,
+              "thicknessPx": { "map": "beat.pulse", "from": [0, 1], "to": [1.1, 3.2], "ease": "inOut" },
+              "phaseHz": { "pick": [0.06, 0.08, 0.1], "w": [1, 2, 1] }
+            }
+          },
+          {
+            "id": "wordEcho",
+            "type": "text.echoWord",
+            "params": {
+              "fontPx": 30,
+              "echoCount": { "pick": [3, 4, 5], "w": [1, 2, 1] },
+              "driftPx": { "lfo": { "hz": 0.2, "amp": 8, "bias": 12, "wave": "sine" } }
+            }
+          }
+        ]
+      }
+    ]
+  },
   "sectionRules": [
     { "when": { "sectionType": "chorus" }, "set": { "bg.gradientField.hueRotatePerMinute": 12, "fg.particles.opacity": 0.4, "ui.lyricsKaraoke.fontSizePx": 34, "ui.lyricsKaraoke.glowStrength": 1.05 } },
     { "when": { "sectionType": "verse" }, "set": { "fg.particles.count": 120, "fg.particles.opacity": 0.25, "ui.lyricsKaraoke.fontSizePx": 28, "ui.lyricsKaraoke.glowStrength": 0.72 } },

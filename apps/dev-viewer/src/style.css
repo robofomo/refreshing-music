@@ -67,6 +67,24 @@ body,
   cursor: pointer;
 }
 
+#modeBtn {
+  min-width: 96px;
+  text-transform: lowercase;
+  font-size: 12px;
+  letter-spacing: 0.02em;
+}
+
+#labCopyBtn {
+  min-width: 84px;
+  font-size: 12px;
+  text-transform: lowercase;
+}
+
+#labCopyBtn[disabled] {
+  opacity: 0.55;
+  cursor: default;
+}
+
 #seek {
   order: 2;
   flex: 1 0 100%;

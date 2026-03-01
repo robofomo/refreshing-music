@@ -1,6 +1,7 @@
 import "./style.css";
 import { createEngine, hashStringToSeed } from "../../../packages/engine/src/index";
 import { classifySection } from "../../../packages/engine/src/sections";
+import { resolveResolvable } from "../../../packages/engine/src/resolvable";
 
 declare const __AUTHORING_MODE__: boolean;
 declare const __RELEASE_MODE__: boolean;
@@ -61,6 +62,47 @@ type Track = {
 };
 
 type PlaybackMode = "mix" | "stems";
+type ViewerMode = "playback" | "primitive-lab" | "graph-scene";
+const VIEWER_MODES: ViewerMode[] = ["playback", "primitive-lab", "graph-scene"];
+type LabPrimitiveId = "shape.circlePulse" | "polyline.orbitRibbon" | "text.echoWord";
+const LAB_PRIMITIVES: LabPrimitiveId[] = ["shape.circlePulse", "polyline.orbitRibbon", "text.echoWord"];
+type ViewerSignalBus = {
+  time: {
+    audioMs: number;
+    renderMs: number;
+    offsetMs: number;
+    durationSec: number;
+    currentSec: number;
+  };
+  transport: {
+    playing: boolean;
+    isSeeking: boolean;
+    seekInFlight: boolean;
+    pendingSeekRatio: number;
+    playbackMode: PlaybackMode;
+    viewerMode: ViewerMode;
+  };
+  section: {
+    id: string;
+    type: string;
+  };
+  beat: {
+    pulse: number;
+    downbeatPulse: number;
+    beatCount: number;
+    downbeatCount: number;
+    fusionMode: string;
+  };
+  hints: {
+    count: number;
+    fusionModeLabel: string;
+    aiDownbeats: number;
+  };
+  audio: {
+    amp: number;
+    seed: number;
+  };
+};
 
 type Particle = {
   x: number;
@@ -78,6 +120,8 @@ const playBtn = document.getElementById("playBtn") as HTMLButtonElement;
 const prevBtn = document.getElementById("prevBtn") as HTMLButtonElement;
 const nextBtn = document.getElementById("nextBtn") as HTMLButtonElement;
 const seedBtn = document.getElementById("seedBtn") as HTMLButtonElement;
+const modeBtn = document.getElementById("modeBtn") as HTMLButtonElement;
+const labCopyBtn = document.getElementById("labCopyBtn") as HTMLButtonElement;
 const hudBtn = document.getElementById("hudBtn") as HTMLButtonElement;
 const controls = document.getElementById("controls") as HTMLDivElement;
 const mixer = document.getElementById("mixer") as HTMLDivElement;
@@ -135,6 +179,15 @@ let renderOffsetMs = DEFAULT_RENDER_OFFSET_MS;
 let hudVisible = new URL(location.href).searchParams.get("hud") === "1";
 let lyricsEnabled = new URL(location.href).searchParams.get("lyrics") !== "0";
 let lyricMode = new URL(location.href).searchParams.get("lyricMode") || "center";
+let viewerMode: ViewerMode = "playback";
+let labPrimitive: LabPrimitiveId = LAB_PRIMITIVES[0];
+let labScale = 1;
+let labDensity = 1;
+let labVariant = 0;
+let labCopyFlashUntilMs = 0;
+let determinismProbeStatus = "idle";
+let determinismProbeAtIso = "";
+let determinismProbeRequested = false;
 let isSeeking = false;
 let pendingSeekRatio = 0;
 let wasPlayingBeforeSeek = false;
@@ -205,6 +258,135 @@ function updateUrlParam(key: string, value: string | null) {
   if (value === null) u.searchParams.delete(key);
   else u.searchParams.set(key, value);
   history.replaceState({}, "", u);
+}
+
+function normalizeViewerMode(value: string | null | undefined): ViewerMode {
+  const raw = String(value || "").trim().toLowerCase();
+  if (raw === "primitive-lab" || raw === "graph-scene" || raw === "playback") return raw;
+  return "playback";
+}
+
+function setViewerMode(nextMode: ViewerMode) {
+  viewerMode = nextMode;
+  updateUrlParam("mode", nextMode === "playback" ? null : nextMode);
+  if (modeBtn) modeBtn.textContent = nextMode;
+}
+
+function cycleViewerMode() {
+  const i = VIEWER_MODES.indexOf(viewerMode);
+  const next = VIEWER_MODES[(i + 1) % VIEWER_MODES.length];
+  setViewerMode(next);
+  refreshLabControls();
+}
+
+function cycleLabPrimitive(dir: 1 | -1) {
+  const i = LAB_PRIMITIVES.indexOf(labPrimitive);
+  const next = (i + dir + LAB_PRIMITIVES.length) % LAB_PRIMITIVES.length;
+  labPrimitive = LAB_PRIMITIVES[next];
+  refreshLabControls();
+}
+
+function clampLabScale(v: number) {
+  return Math.max(0.5, Math.min(2.5, Number(v) || 1));
+}
+
+function clampLabDensity(v: number) {
+  return Math.max(0.5, Math.min(2.5, Number(v) || 1));
+}
+
+function activeLabSnippet() {
+  const scale = Number(labScale.toFixed(3));
+  const density = Number(labDensity.toFixed(3));
+  const pulseMul = Number((0.16 * scale).toFixed(3));
+  if (labPrimitive === "shape.circlePulse") {
+    return `{
+  "id": "lab-circle",
+  "module": "primitive.circlePulse",
+  "blend": "screen",
+  "params": {
+    "radiusPx": {"map":"beat.downbeatPulse","from":[0,1],"to":[48,${Math.round(120 * scale)}],"ease":"out"},
+    "ringCount": ${Math.max(4, Math.round(9 * density))},
+    "alpha": {"add":[0.2, {"mul":[{"signal":"audio.amp"},${pulseMul}]}]}
+  }
+}`;
+  }
+  if (labPrimitive === "polyline.orbitRibbon") {
+    return `{
+  "id": "lab-ribbon",
+  "module": "primitive.orbitRibbon",
+  "blend": "screen",
+  "params": {
+    "points": ${Math.max(24, Math.round(48 * density))},
+    "radiusPx": ${Math.round(130 * scale)},
+    "thicknessPx": {"map":"beat.pulse","from":[0,1],"to":[1.2,3.2],"ease":"inOut"},
+    "phaseHz": {"pick":[0.05,0.08,0.12],"w":[1,2,1]}
+  }
+}`;
+  }
+  return `{
+  "id": "lab-text",
+  "module": "primitive.echoWord",
+  "params": {
+    "fontPx": ${Math.round(42 * scale)},
+    "echoCount": ${Math.max(2, Math.round(5 * density))},
+    "driftPx": {"lfo":{"hz":0.22,"amp":${Math.round(12 * scale)},"wave":"sine"}},
+    "alpha": {"map":"audio.amp","from":[0,0.35],"to":[0.62,0.96]}
+  }
+}`;
+}
+
+function activeGraphSnippet() {
+  return `{
+  "graph": {
+    "layers": [
+      {
+        "id": "base",
+        "blend": "screen",
+        "opacity": 1,
+        "nodes": [
+          { "id": "pulse", "type": "shape.circlePulse", "params": { "ringCount": 8, "radiusPx": 88, "alpha": 0.18 } },
+          { "id": "ribbon", "type": "polyline.orbitRibbon", "params": { "points": 60, "radiusPx": 170, "thicknessPx": 1.7, "phaseHz": 0.08 } },
+          { "id": "word", "type": "text.echoWord", "params": { "fontPx": 30, "echoCount": 4, "driftPx": 12 } }
+        ]
+      }
+    ]
+  }
+}`;
+}
+
+function refreshLabControls() {
+  if (!labCopyBtn) return;
+  const canCopy = viewerMode === "primitive-lab" || viewerMode === "graph-scene";
+  labCopyBtn.disabled = !canCopy;
+  labCopyBtn.textContent = canCopy ? "lab copy" : "lab off";
+}
+
+async function copyLabSnippet() {
+  if (viewerMode !== "primitive-lab" && viewerMode !== "graph-scene") return;
+  const text = viewerMode === "graph-scene" ? activeGraphSnippet() : activeLabSnippet();
+  try {
+    if (navigator.clipboard?.writeText) {
+      await navigator.clipboard.writeText(text);
+      labCopyFlashUntilMs = performance.now() + 1800;
+      return;
+    }
+  } catch {
+    // Fall through to hidden textarea fallback.
+  }
+  const ta = document.createElement("textarea");
+  ta.value = text;
+  ta.setAttribute("readonly", "true");
+  ta.style.position = "fixed";
+  ta.style.opacity = "0";
+  ta.style.left = "-9999px";
+  document.body.appendChild(ta);
+  ta.select();
+  try {
+    document.execCommand("copy");
+    labCopyFlashUntilMs = performance.now() + 1800;
+  } finally {
+    document.body.removeChild(ta);
+  }
 }
 
 function clampOffset(v: number) {
@@ -1158,6 +1340,186 @@ function drawBeatOrb(beat: number, downbeat: number) {
   ctx.restore();
 }
 
+function drawPrimitiveLabOverlay(signalBus: ViewerSignalBus) {
+  const w = canvas.width;
+  const h = canvas.height;
+  const cx = w * 0.5;
+  const cy = h * 0.5;
+  const t = signalBus.time.renderMs / 1000;
+  const amp = signalBus.audio.amp;
+  const beat = signalBus.beat.pulse;
+  const downbeat = signalBus.beat.downbeatPulse;
+  const ringCount = Math.max(3, Math.round((6 + labDensity * 4)));
+  const baseR = Math.min(w, h) * 0.09 * labScale;
+  const seedPhase = (((seed >>> 0) + labVariant) % 360) * (Math.PI / 180);
+
+  ctx.save();
+  ctx.globalCompositeOperation = "screen";
+  if (labPrimitive === "shape.circlePulse") {
+    for (let i = 0; i < ringCount; i += 1) {
+      const u = i / Math.max(1, ringCount - 1);
+      const phase = seedPhase + i * 0.7;
+      const wobble = 1 + 0.16 * Math.sin(t * (0.6 + u * 0.9) + phase);
+      const radius = baseR * (1 + u * 2.6) * wobble * (1 + amp * 0.22 + downbeat * 0.3);
+      const alpha = 0.09 + (1 - u) * 0.13;
+      const hue = Math.round(192 + 24 * Math.sin(phase + t * 0.2));
+      ctx.strokeStyle = `hsla(${hue}, 84%, 68%, ${alpha})`;
+      ctx.lineWidth = Math.max(1, 2.3 - u * 1.3);
+      ctx.beginPath();
+      ctx.arc(cx, cy, radius, 0, Math.PI * 2);
+      ctx.stroke();
+    }
+  } else if (labPrimitive === "polyline.orbitRibbon") {
+    const points = Math.max(24, Math.round(44 * labDensity));
+    const r = baseR * (2.5 + beat * 0.6 + downbeat * 0.4);
+    ctx.strokeStyle = `rgba(120, 198, 255, ${0.5 + amp * 0.35})`;
+    ctx.lineWidth = 1.3 + beat * 1.6;
+    ctx.beginPath();
+    for (let i = 0; i <= points; i += 1) {
+      const u = i / points;
+      const a = u * Math.PI * 2 + t * (0.45 + labDensity * 0.15) + seedPhase;
+      const drift = 1 + 0.2 * Math.sin((3 + labDensity) * a + t * 0.4 + labVariant * 0.1);
+      const x = cx + Math.cos(a) * r * drift;
+      const y = cy + Math.sin(a) * r * drift * (0.72 + 0.08 * Math.sin(t * 0.5));
+      if (i === 0) ctx.moveTo(x, y);
+      else ctx.lineTo(x, y);
+    }
+    ctx.stroke();
+  } else {
+    const lyric = String(findCurrentLyricLine(signalBus.time.renderMs)?.i ?? "");
+    const text = lyric ? `line ${lyric}` : "echo";
+    const echoCount = Math.max(2, Math.round(4 * labDensity));
+    const fontPx = Math.max(22, Math.round(36 * labScale));
+    ctx.textAlign = "center";
+    ctx.textBaseline = "middle";
+    ctx.font = `700 ${fontPx}px ui-sans-serif, system-ui, -apple-system, Segoe UI`;
+    for (let i = echoCount; i >= 0; i -= 1) {
+      const u = i / Math.max(1, echoCount);
+      const drift = (1 - u) * (10 + downbeat * 12);
+      const y = cy + Math.sin(t * 0.85 + u * 2.2 + seedPhase) * drift;
+      const a = 0.12 + (1 - u) * (0.38 + beat * 0.32);
+      ctx.fillStyle = `rgba(150, 218, 255, ${a})`;
+      ctx.fillText(text, cx, y);
+    }
+  }
+  ctx.restore();
+}
+
+function buildSignalBus(input: {
+  tAudioMs: number;
+  tRenderMs: number;
+  durationSec: number;
+  amp: number;
+  sectionId: string;
+  sectionType: string;
+  pulse: { beat: number; downbeat: number };
+}): ViewerSignalBus {
+  return {
+    time: {
+      audioMs: input.tAudioMs,
+      renderMs: input.tRenderMs,
+      offsetMs: renderOffsetMs,
+      durationSec: input.durationSec,
+      currentSec: Number(audio.currentTime) || 0
+    },
+    transport: {
+      playing: !audio.paused,
+      isSeeking,
+      seekInFlight,
+      pendingSeekRatio,
+      playbackMode,
+      viewerMode
+    },
+    section: {
+      id: input.sectionId,
+      type: input.sectionType
+    },
+    beat: {
+      pulse: input.pulse.beat,
+      downbeatPulse: input.pulse.downbeat,
+      beatCount: pulseBeatTimesMs.length,
+      downbeatCount: downbeatMarkers.length || pulseDownbeatTimesMs.length,
+      fusionMode: fusionModeAt(input.tRenderMs)
+    },
+    hints: {
+      count: activeHintCount,
+      fusionModeLabel: beatFusionModeLabel,
+      aiDownbeats: aiDownbeatMarkers.length
+    },
+    audio: {
+      amp: input.amp,
+      seed
+    }
+  };
+}
+
+function stableStringify(value: unknown): string {
+  if (Array.isArray(value)) return `[${value.map((v) => stableStringify(v)).join(",")}]`;
+  if (!value || typeof value !== "object") return JSON.stringify(value);
+  const entries = Object.entries(value as Record<string, unknown>).sort(([a], [b]) => a.localeCompare(b));
+  return `{${entries.map(([k, v]) => `${JSON.stringify(k)}:${stableStringify(v)}`).join(",")}}`;
+}
+
+function runDeterminismProbe(input: {
+  tMs: number;
+  seed: number;
+  sectionId: string;
+  sectionType: string;
+  signalBus: ViewerSignalBus;
+  amp: number;
+}) {
+  const stateLike = {
+    tMs: input.tMs,
+    sectionId: input.sectionId,
+    sectionType: input.sectionType,
+    viewerMode,
+    signalBus: input.signalBus,
+    amp: input.amp,
+    energy: input.amp,
+    recipe: currentRecipe,
+    track
+  };
+  try {
+    const layers = Array.isArray(currentRecipe?.layers) ? currentRecipe.layers : [];
+    const layerChecks = layers.map((layer: any) => {
+      const once = resolveResolvable(layer?.params ?? {}, {
+        tMs: input.tMs,
+        seed: input.seed,
+        state: stateLike,
+        path: `${String(layer?.module || "layer")}.params`
+      });
+      const twice = resolveResolvable(layer?.params ?? {}, {
+        tMs: input.tMs,
+        seed: input.seed,
+        state: stateLike,
+        path: `${String(layer?.module || "layer")}.params`
+      });
+      return stableStringify(once) === stableStringify(twice);
+    });
+
+    const graphLayers = Array.isArray(currentRecipe?.graph?.layers) ? currentRecipe.graph.layers : [];
+    const graphChecks = graphLayers.flatMap((layer: any, li: number) => {
+      const nodes = Array.isArray(layer?.nodes) ? layer.nodes : [];
+      return nodes.map((node: any, ni: number) => {
+        const nodeSeed = (input.seed ^ hashStringToSeed(`${String(layer?.id || li)}:${String(node?.id || ni)}`)) >>> 0;
+        const path = `graph.${String(layer?.id || li)}.${String(node?.id || ni)}.params`;
+        const once = resolveResolvable(node?.params ?? {}, { tMs: input.tMs, seed: nodeSeed, state: stateLike, path });
+        const twice = resolveResolvable(node?.params ?? {}, { tMs: input.tMs, seed: nodeSeed, state: stateLike, path });
+        return stableStringify(once) === stableStringify(twice);
+      });
+    });
+
+    const all = [...layerChecks, ...graphChecks];
+    const pass = all.every(Boolean);
+    determinismProbeStatus = pass
+      ? `pass (layer:${layerChecks.length} graph:${graphChecks.length})`
+      : `fail (layer:${layerChecks.filter(Boolean).length}/${layerChecks.length} graph:${graphChecks.filter(Boolean).length}/${graphChecks.length})`;
+  } catch (err) {
+    determinismProbeStatus = `error (${err instanceof Error ? err.message : String(err)})`;
+  }
+  determinismProbeAtIso = new Date().toISOString();
+}
+
 function drawHintOverlays() {
   const durationSec = Number(audio.duration);
   if (!Number.isFinite(durationSec) || durationSec <= 0) return;
@@ -1275,12 +1637,24 @@ function render() {
   const sectionId = sec?.id ?? "";
   const sectionType = classifySection(sectionId || sec?.id || "");
   const pulse = beatPulseInfo(tRenderMs);
+  const durationSec = Number.isFinite(audio.duration) ? Number(audio.duration) : 0;
+  const signalBus = buildSignalBus({
+    tAudioMs,
+    tRenderMs,
+    durationSec,
+    amp,
+    sectionId,
+    sectionType,
+    pulse
+  });
   const controlsRect = controls.getBoundingClientRect();
   const viewportHeightPx = window.visualViewport?.height ?? window.innerHeight;
   const frameInfo = engine.renderFrame({
     tMs: tRenderMs,
     sectionId,
     sectionType,
+    viewerMode,
+    signalBus,
     amp,
     energy: amp,
     recipe: currentRecipe,
@@ -1292,7 +1666,19 @@ function render() {
       viewportHeightPx
     }
   });
-  drawBeatOrb(pulse.beat, pulse.downbeat);
+  if (determinismProbeRequested) {
+    determinismProbeRequested = false;
+    runDeterminismProbe({
+      tMs: tRenderMs,
+      seed,
+      sectionId,
+      sectionType,
+      signalBus,
+      amp
+    });
+  }
+  if (viewerMode !== "graph-scene") drawBeatOrb(pulse.beat, pulse.downbeat);
+  if (viewerMode === "primitive-lab") drawPrimitiveLabOverlay(signalBus);
   drawHintOverlays();
 
 if (!isSeeking && Number.isFinite(audio.duration) && audio.duration > 0) {
@@ -1310,10 +1696,12 @@ if (!isSeeking && Number.isFinite(audio.duration) && audio.duration > 0) {
       ? lyricsLines[lyricRef.i]
       : "";
   hud.style.display = hudVisible ? "block" : "none";
+  const showLabFlash = performance.now() < labCopyFlashUntilMs;
   hud.textContent = [
     `title: ${preferredTrackTitle(track)}`,
     `trackId: ${track?.trackId ?? "-"}`,
     `seed: ${seed}`,
+    `mode: ${viewerMode}`,
     `time: ${fmtMs(tAudioMs)}`,
     `offsetMs: ${renderOffsetMs}`,
     `seekTarget: ${lastSeekTargetSec.toFixed(3)}s`,
@@ -1321,10 +1709,28 @@ if (!isSeeking && Number.isFinite(audio.duration) && audio.duration > 0) {
     `seekErrorMs: ${lastSeekErrorMs}`,
     `playback: ${playbackMode}`,
     `hints: ${activeHintCount}`,
-    `fusion: ${beatFusionModeLabel} (now: ${fusionModeAt(tRenderMs)})`,
-    `beats: ${pulseBeatTimesMs.length}`,
-    `downbeats: ${downbeatMarkers.length || pulseDownbeatTimesMs.length}`,
-    `aiDownbeats: ${aiDownbeatMarkers.length}`,
+    `fusion: ${signalBus.hints.fusionModeLabel} (now: ${signalBus.beat.fusionMode})`,
+    `determinism: ${determinismProbeStatus}${determinismProbeAtIso ? ` @ ${determinismProbeAtIso}` : ""}`,
+    `beats: ${signalBus.beat.beatCount}`,
+    `downbeats: ${signalBus.beat.downbeatCount}`,
+    `aiDownbeats: ${signalBus.hints.aiDownbeats}`,
+    ...(viewerMode === "primitive-lab"
+      ? [
+          `labPrimitive: ${labPrimitive}`,
+          `labScale: ${labScale.toFixed(2)}`,
+          `labDensity: ${labDensity.toFixed(2)}`,
+          `labVariant: ${labVariant}`,
+          `labSnippet: ${activeLabSnippet().split("\n")[0]}`,
+          ...(showLabFlash ? ["labCopy: copied"] : [])
+        ]
+      : []),
+    ...(viewerMode === "graph-scene"
+      ? [
+          `graphLayers: ${Array.isArray(currentRecipe?.graph?.layers) ? currentRecipe.graph.layers.length : 0}`,
+          `graphSnippet: ${activeGraphSnippet().split("\n")[0]}`,
+          ...(showLabFlash ? ["labCopy: copied"] : [])
+        ]
+      : []),
     `sectionId: ${sectionId || "-"}`,
     `sectionType: ${frameInfo?.sectionType ?? sectionType}`,
     `lyricIndex: ${lyricIndex}`,
@@ -1332,6 +1738,13 @@ if (!isSeeking && Number.isFinite(audio.duration) && audio.duration > 0) {
     ``,
     `keys: space/k play`,
     `      left/right seek`,
+    `      v cycle mode`,
+    `      z/x lab scale -/+`,
+    `      a/s lab density -/+`,
+    `      j/l lab primitive prev/next`,
+    `      r lab variant`,
+    `      y lab snippet copy`,
+    `      t determinism probe`,
     `      d = downbeat anchor (keep established tempo)`,
     `      1/2/3/4 = measure tempo hints`,
     `      b = single beat hint`,
@@ -1428,11 +1841,14 @@ async function init() {
   const offsetParam = url.searchParams.get("offset");
   const lyricsParam = url.searchParams.get("lyrics");
   const lyricModeParam = url.searchParams.get("lyricMode");
+  const modeParam = url.searchParams.get("mode");
   seed = seedParam ? Number(seedParam) : NaN;
   setRenderOffset(offsetParam ? Number(offsetParam) : DEFAULT_RENDER_OFFSET_MS);
   setLyricsEnabled(lyricsParam !== "0");
   lyricMode = lyricModeParam === "fixed" || lyricModeParam === "off" ? lyricModeParam : "center";
   updateUrlParam("lyricMode", lyricMode);
+  setViewerMode(normalizeViewerMode(modeParam));
+  refreshLabControls();
 
   const byTrackId = requestedTrackId
     ? indexEntries.findIndex((entry) => trackIdFromEntry(entry) === requestedTrackId)
@@ -1510,6 +1926,16 @@ seek.addEventListener("change", () => {
 
 seedBtn.addEventListener("click", () => {
   randomizeSeed();
+  showControlsTemporarily();
+});
+
+modeBtn?.addEventListener("click", () => {
+  cycleViewerMode();
+  showControlsTemporarily();
+});
+
+labCopyBtn?.addEventListener("click", () => {
+  void copyLabSnippet();
   showControlsTemporarily();
 });
 
@@ -1591,6 +2017,58 @@ window.addEventListener("keydown", async (e) => {
     e.preventDefault();
     lyricMode = lyricMode === "fixed" ? "center" : lyricMode === "center" ? "off" : "fixed";
     updateUrlParam("lyricMode", lyricMode);
+    return;
+  }
+  if (e.key.toLowerCase() === "v" && !e.repeat) {
+    e.preventDefault();
+    cycleViewerMode();
+    return;
+  }
+  if (viewerMode === "primitive-lab" && !e.repeat) {
+    if (e.key.toLowerCase() === "z") {
+      e.preventDefault();
+      labScale = clampLabScale(labScale - 0.1);
+      return;
+    }
+    if (e.key.toLowerCase() === "x") {
+      e.preventDefault();
+      labScale = clampLabScale(labScale + 0.1);
+      return;
+    }
+    if (e.key.toLowerCase() === "a") {
+      e.preventDefault();
+      labDensity = clampLabDensity(labDensity - 0.1);
+      return;
+    }
+    if (e.key.toLowerCase() === "s") {
+      e.preventDefault();
+      labDensity = clampLabDensity(labDensity + 0.1);
+      return;
+    }
+    if (e.key.toLowerCase() === "j") {
+      e.preventDefault();
+      cycleLabPrimitive(-1);
+      return;
+    }
+    if (e.key.toLowerCase() === "l") {
+      e.preventDefault();
+      cycleLabPrimitive(1);
+      return;
+    }
+    if (e.key.toLowerCase() === "r") {
+      e.preventDefault();
+      labVariant = (labVariant + 1) % 1000;
+      return;
+    }
+    if (e.key.toLowerCase() === "y") {
+      e.preventDefault();
+      await copyLabSnippet();
+      return;
+    }
+  }
+  if (e.key.toLowerCase() === "t" && !e.repeat) {
+    e.preventDefault();
+    determinismProbeRequested = true;
     return;
   }
   if (e.key.toLowerCase() === "c" && !e.repeat) {

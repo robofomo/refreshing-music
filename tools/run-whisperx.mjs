@@ -25,6 +25,32 @@ function hasLyricalContent(composerPath) {
   }
 }
 
+function valueByKey(headerMap, keyName) {
+  const hit = Object.entries(headerMap ?? {}).find(([k]) => String(k).toLowerCase() === keyName.toLowerCase());
+  return hit ? String(hit[1] ?? "").trim() : "";
+}
+
+function normalizeLangToken(raw) {
+  const v = String(raw ?? "").trim().toLowerCase();
+  if (!v) return "";
+  if (v === "multi") return "multi";
+  const first = v.split(/[+/,|\s]+/).map((x) => x.trim()).filter(Boolean)[0] || "";
+  if (first.startsWith("es") || first === "spanish" || first === "espanol" || first === "español") return "es";
+  if (first.startsWith("en") || first === "english") return "en";
+  return "";
+}
+
+function languageHintFromComposer(composerPath) {
+  if (!composerPath || !fs.existsSync(composerPath)) return "";
+  try {
+    const parsed = parseComposerFile(composerPath);
+    const raw = valueByKey(parsed?.headerMap ?? {}, "Language");
+    return normalizeLangToken(raw);
+  } catch {
+    return "";
+  }
+}
+
 function runWhisperx(audioPath, { language, device, model }) {
   const py = process.env.PYTHON || "python";
   const script = path.resolve("tools", "preprocess", "audio", "whisperx_words.py");
@@ -85,7 +111,8 @@ function main() {
   const onlyTrackId = typeof args.trackId === "string" ? args.trackId : "";
   const force = Boolean(args["force-whisperx"]);
   const overwriteAi = Boolean(args["overwrite-ai"] || args.overwrite);
-  const language = typeof args.language === "string" ? args.language : "en";
+  const cliLanguage = typeof args.language === "string" ? String(args.language).trim() : "";
+  const defaultLanguage = cliLanguage || "en";
   const envDevice = typeof process.env.WHISPERX_DEVICE === "string" ? process.env.WHISPERX_DEVICE.trim() : "";
   const envModel = typeof process.env.WHISPERX_MODEL === "string" ? process.env.WHISPERX_MODEL.trim() : "";
   const device = typeof args.device === "string" ? args.device : (envDevice || "cpu");
@@ -116,6 +143,8 @@ function main() {
     }
 
     const audioPath = pickAudioForWhisperx(t.assetDir);
+    const hintLanguage = languageHintFromComposer(composerPath);
+    const language = cliLanguage || (hintLanguage === "multi" ? defaultLanguage : (hintLanguage || defaultLanguage));
     if (!audioPath) {
       skipped += 1;
       console.log(`whisperx [${idx}/${tracks.length}] skip ${t.trackId} (no audio)`);

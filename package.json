@@ -11,6 +11,7 @@
     "beats": "node tools/run-beats.mjs",
     "whisperx": "node tools/run-whisperx.mjs",
     "preprocess:ai": "node tools/preprocess-ai.mjs",
+    "composer:lint": "node tools/lint-composer.mjs",
     "repair:lyrics": "node tools/repair-lyrics-timing.mjs",
     "reduce:effective": "node tools/reduce-effective-all.mjs",
     "build:release": "node tools/reduce-effective-all.mjs && npm --workspace apps/dev-viewer run build:release",

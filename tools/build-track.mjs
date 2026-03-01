@@ -33,6 +33,8 @@ function titleFromHeaderMap(headerMap) {
   if (exact) return exact[1];
   const song = Object.entries(headerMap).find(([k]) => k.toLowerCase() === "song title");
   if (song) return song[1];
+  const compact = Object.entries(headerMap).find(([k]) => k.toLowerCase() === "songtitle");
+  if (compact) return compact[1];
   return "";
 }
 
@@ -54,6 +56,17 @@ function createdFields(headerMap, audioStat) {
   const createdLocalRaw = valueByKey(headerMap, "created");
   if (!createdLocalRaw) {
     return { createdAt: new Date(audioStat.mtimeMs).toISOString() };
+  }
+
+  const dateOnly = String(createdLocalRaw).match(/^(\d{4})-(\d{2})-(\d{2})$/);
+  if (dateOnly) {
+    // Date-only Created values intentionally preserve calendar date without
+    // inferring an unknown local time component.
+    return {
+      createdAt: `${dateOnly[1]}-${dateOnly[2]}-${dateOnly[3]}T00:00:00.000Z`,
+      createdLocalRaw,
+      createdDateOnly: true
+    };
   }
 
   try {
@@ -965,6 +978,7 @@ export function buildTrackWithOptions({
 
   if (created.createdLocalRaw) track.createdLocalRaw = created.createdLocalRaw;
   if (created.createdTz) track.createdTz = created.createdTz;
+  if (created.createdDateOnly) track.createdDateOnly = true;
   const timingPath = findTimingPath(mp3Path);
   try {
     const timing = buildTimingFromAi(track, mp3Path, timingPath);

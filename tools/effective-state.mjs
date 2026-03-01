@@ -391,6 +391,32 @@ function inAnyWindow(ms, windows) {
   return false;
 }
 
+function setHintTimesMs(rawHintEvents) {
+  return (Array.isArray(rawHintEvents) ? rawHintEvents : [])
+    .map((h) => {
+      const isSet = h?.type === "hint/downbeat"
+        || (h?.type === "hint/barBeat" && Number(h?.payload?.beatInBar) === 1);
+      if (!isSet) return NaN;
+      return Math.max(0, Math.round(Number(h.tSec) * 1000));
+    })
+    .filter((n) => Number.isFinite(n))
+    .sort((a, b) => a - b);
+}
+
+function extendWindowsToNextSet(windows, setTimesMs, rangeMaxMs) {
+  const sets = Array.isArray(setTimesMs) ? setTimesMs : [];
+  const maxMs = Math.max(0, Math.round(Number(rangeMaxMs) || 0));
+  const out = [];
+  for (const w of Array.isArray(windows) ? windows : []) {
+    let endMs = Math.max(w.startMs, Math.min(maxMs, w.endMs));
+    const nextSet = sets.find((s) => s > w.endMs + 40);
+    if (Number.isFinite(nextSet)) endMs = Math.max(endMs, Math.min(maxMs, Math.round(nextSet)));
+    else endMs = maxMs;
+    out.push({ startMs: Math.max(0, Math.round(w.startMs)), endMs: Math.max(0, Math.round(endMs)) });
+  }
+  return out;
+}
+
 function hasNearMs(sortedMs, targetMs, tolMs) {
   if (!Array.isArray(sortedMs) || !sortedMs.length) return false;
   const t = Math.max(0, Math.round(Number(targetMs) || 0));
@@ -421,6 +447,39 @@ function blendAiWithTempoGridGlobal(beatsMs, gridMs, tempoMs) {
     }
   }
   return uniqSortedMs(out);
+}
+
+function detectSubdivisionFactor(establishedTempoMs, aiStepMs) {
+  if (!(establishedTempoMs > 0) || !(aiStepMs > 0)) return 1;
+  const r = establishedTempoMs / aiStepMs;
+  const factors = [2, 3, 4];
+  let best = 1;
+  let bestDiff = Number.POSITIVE_INFINITY;
+  for (const k of factors) {
+    const d = Math.abs(r - k);
+    if (d < bestDiff) {
+      best = k;
+      bestDiff = d;
+    }
+  }
+  const tol = 0.22;
+  return bestDiff <= tol ? best : 1;
+}
+
+function primaryAiBeatsAgainstGrid(aiBeatsMs, gridMs, tempoMs) {
+  const ai = uniqSortedMs(aiBeatsMs || []);
+  const grid = uniqSortedMs(gridMs || []);
+  if (!ai.length || !grid.length) return ai;
+  const assignTol = Math.max(80, Math.round(tempoMs * 0.28));
+  const byGrid = new Map();
+  for (const a of ai) {
+    const g = nearestBeatMs(a, grid);
+    const dist = Math.abs(a - g);
+    if (dist > assignTol) continue;
+    const prev = byGrid.get(g);
+    if (!prev || dist < prev.dist) byGrid.set(g, { ms: a, dist });
+  }
+  return uniqSortedMs(Array.from(byGrid.values()).map((x) => x.ms));
 }
 
 function hintOverlaysFromEvents(events) {
@@ -563,7 +622,11 @@ export function reduceEffectiveState({
   }
 
   let effectiveBeats = uniqSortedMs([...beatsMs, ...hintBeatMs]);
+  let aiReferenceBeats = uniqSortedMs(beatsMs);
   let beatFusionMode = tempoMode ? "tempo-override-grid" : "ai-plus-snapped-hints";
+  let subdivisionFactor = 1;
+  let tempoOverrideWindows = [];
+  let fusionWindows = [];
   if (tempoMode) {
     const rangeMin = beatsMs.length ? Math.min(beatsMs[0], rawMinMs) : rawMinMs;
     const rangeMax = beatsMs.length ? Math.max(beatsMs[beatsMs.length - 1], rawMaxMs) : rawMaxMs;
@@ -579,6 +642,7 @@ export function reduceEffectiveState({
     });
     if (grid.length) {
       const aiStepMs = medianBeatStepMs(beatsMs);
+      subdivisionFactor = detectSubdivisionFactor(establishedTempoMs, aiStepMs);
       const tempoCloseToAi = aiStepMs > 0
         && Math.abs(establishedTempoMs - aiStepMs) <= Math.max(40, aiStepMs * 0.12);
       const hasStructuredMeasureHints = rawBarHints.some((h) => {
@@ -586,8 +650,22 @@ export function reduceEffectiveState({
         return Number.isInteger(b) && b >= 2 && b <= 4;
       });
       if (hasStructuredMeasureHints && beatsMs.length > 0) {
-        effectiveBeats = blendAiWithTempoGridGlobal(beatsMs, grid, establishedTempoMs);
-        beatFusionMode = "ai-tempo-overlay-global";
+        const rawHintWindows = clusterHintWindowsMs(resolvedBarHints, establishedTempoMs);
+        const setTimes = setHintTimesMs(rawHintEvents);
+        tempoOverrideWindows = extendWindowsToNextSet(rawHintWindows, setTimes, Math.max(Math.max(0, rangeMin), rangeMax));
+        aiReferenceBeats = subdivisionFactor > 1
+          ? primaryAiBeatsAgainstGrid(beatsMs, grid, establishedTempoMs)
+          : uniqSortedMs(beatsMs);
+        const mixed = [];
+        for (const ms of aiReferenceBeats) {
+          if (!inAnyWindow(ms, tempoOverrideWindows)) mixed.push(ms);
+        }
+        for (const ms of grid) {
+          if (inAnyWindow(ms, tempoOverrideWindows)) mixed.push(ms);
+        }
+        effectiveBeats = uniqSortedMs(mixed);
+        beatFusionMode = "tempo-override-windowed";
+        fusionWindows = tempoOverrideWindows;
       } else if (tempoCloseToAi && beatsMs.length > 0 && resolvedBarHints.length > 0) {
         const windows = clusterHintWindowsMs(resolvedBarHints, establishedTempoMs);
         const mixed = [];
@@ -599,9 +677,14 @@ export function reduceEffectiveState({
         }
         effectiveBeats = uniqSortedMs(mixed);
         beatFusionMode = "ai-with-local-overrides";
+        fusionWindows = windows;
       } else {
         effectiveBeats = grid;
         beatFusionMode = anchorSetMs.length > 1 ? "tempo-override-piecewise" : "tempo-override-grid";
+        aiReferenceBeats = subdivisionFactor > 1
+          ? primaryAiBeatsAgainstGrid(beatsMs, grid, establishedTempoMs)
+          : uniqSortedMs(beatsMs);
+        fusionWindows = [];
       }
     }
   }
@@ -698,11 +781,22 @@ export function reduceEffectiveState({
   for (let i = 0; i < effectiveBeats.length; i += 1) {
     if (!downbeatMask[i]) continue;
     const isHint = explicitSetDownbeatIdxSet.has(i);
-    const alignedToAi = hasNearMs(beatsMs, effectiveBeats[i], aiAlignTol);
+    const alignedToAi = hasNearMs(aiReferenceBeats, effectiveBeats[i], aiAlignTol);
+    const inOverrideWindow = inAnyWindow(effectiveBeats[i], tempoOverrideWindows);
     let source = "inferred";
     if (isHint) source = "hint";
-    else if (beatFusionMode === "ai-tempo-overlay-global" || beatFusionMode === "tempo-override-piecewise" || beatFusionMode === "tempo-override-grid") {
-      source = alignedToAi ? "ai" : "corrected";
+    else if (
+      inOverrideWindow
+      || beatFusionMode === "ai-tempo-overlay-global"
+      || beatFusionMode === "tempo-override-piecewise"
+      || beatFusionMode === "tempo-override-grid"
+    ) {
+      // In tempo-established modes, non-hint downbeats are always pattern-inferred;
+      // color indicates whether timing was corrected away from AI beat positions.
+      source = alignedToAi ? "inferred" : "corrected";
+    } else {
+      // In AI-driven modes, highlight aligned inferred downbeats as AI.
+      source = alignedToAi ? "ai" : "inferred";
     }
     downbeatMarkers.push({
       tMs: effectiveBeats[i],
@@ -755,8 +849,13 @@ export function reduceEffectiveState({
       lastHintAt: lastHintAt || "",
       downbeatAnchorsCount: activeDownbeatAnchors.length,
       establishedTempoMs: establishedTempoMs || 0,
+      subdivisionFactor,
       lockedTempoBpm: Number.isFinite(Number(lockedTempoBpm)) ? Number(lockedTempoBpm) : 0,
       beatFusionMode,
+      fusionWindowsSec: fusionWindows.map((w) => ({
+        t0Sec: Number(w.startMs) / 1000,
+        t1Sec: Number(w.endMs) / 1000
+      })),
       beatsSec: hintBeatMs.map((ms) => ms / 1000),
       downbeatsSec: survivingHintDownbeats.map((ms) => ms / 1000),
       barBeats: hintBarBeats

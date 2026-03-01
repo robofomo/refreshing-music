@@ -192,18 +192,41 @@ function wordProgressForLine(track: any, lines: LyricLine[], currentIdx: number,
   return clamp01(blended);
 }
 
+function earliestReliableWordStartMs(track: any, lineIndex: number) {
+  const words = Array.isArray(track?.timing?.words) ? (track.timing.words as WordTiming[]) : [];
+  if (!words.length || !Number.isFinite(lineIndex) || lineIndex < 0) return Number.NaN;
+  const maxWordDurationMs = 3500;
+  const minWordDurationMs = 40;
+  const lineWords = words
+    .filter((w) => typeof w?.i === "number" && w.i === lineIndex)
+    .filter((w) => Number.isFinite(Number(w?.t0Ms)) && Number.isFinite(Number(w?.t1Ms)))
+    .sort((a, b) => Number(a.t0Ms) - Number(b.t0Ms));
+  for (const w of lineWords) {
+    const t0 = Number(w.t0Ms);
+    const t1 = Number(w.t1Ms);
+    const duration = t1 - t0;
+    if (!Number.isFinite(duration)) continue;
+    if (duration < minWordDurationMs || duration > maxWordDurationMs) continue;
+    return t0;
+  }
+  return Number.NaN;
+}
+
 function findCurrent(lines: LyricLine[], tMs: number) {
   if (!lines.length) return { current: -1 };
+  const maxCarryGapMs = 1800;
   let current = -1;
   for (let i = 0; i < lines.length; i += 1) {
     const row = lines[i];
     const prev = i > 0 ? lines[i - 1] : null;
+    const rowStart = Number(row.t0Ms);
+    const prevEnd = Number.isFinite(prev?.t1Ms) ? Number(prev.t1Ms) : Number.NaN;
+    const allowCarry = Number.isFinite(prevEnd) && rowStart - prevEnd <= maxCarryGapMs;
     const startMs = i === 0
-      ? row.t0Ms
-      : Math.min(
-        row.t0Ms,
-        Number.isFinite(prev?.t1Ms) ? Number(prev.t1Ms) : row.t0Ms
-      );
+      ? rowStart
+      : allowCarry
+        ? Math.min(rowStart, prevEnd)
+        : rowStart;
     if (tMs >= startMs && tMs < row.t1Ms) {
       current = i;
       break;
@@ -264,7 +287,11 @@ export function renderLyricsKaraoke({
   if (!lines.length) return { lyricIndex: -1, lyricText: "" };
   const nextPreviewMs = Number(params?.nextPreviewMs ?? 1600);
   const firstLineLeadInMs = Number(params?.firstLineLeadInMs ?? nextPreviewMs);
-  if (tMs < lines[0].t0Ms - firstLineLeadInMs) {
+  const firstLineMinStartMs = Math.max(0, Number(params?.firstLineMinStartMs ?? 1200));
+  const firstLineReliableStart = earliestReliableWordStartMs(track, lines[0].i);
+  const firstLineAnchorMs = Number.isFinite(firstLineReliableStart) ? firstLineReliableStart : lines[0].t0Ms;
+  const firstLineShowAtMs = Math.max(firstLineMinStartMs, firstLineAnchorMs - firstLineLeadInMs);
+  if (tMs < firstLineShowAtMs) {
     return { lyricIndex: -1, lyricText: "" };
   }
 
@@ -283,6 +310,20 @@ export function renderLyricsKaraoke({
   const next = current + 1 < lines.length ? lines[current + 1] : null;
   if (!cur) return { lyricIndex: -1, lyricText: "" };
   const showNext = Boolean(next?.text) && (tMs >= ((next?.t0Ms ?? Number.POSITIVE_INFINITY) - nextPreviewMs));
+  const gapHideMs = Math.max(0, Number(params?.gapHideMs ?? 5000));
+  const curEndMs = Number.isFinite(cur?.t1Ms) ? Number(cur.t1Ms) : Number(cur.t0Ms) + 2600;
+  const nextStartMs = Number.isFinite(next?.t0Ms) ? Number(next.t0Ms) : Number.POSITIVE_INFINITY;
+  if (tMs > curEndMs) {
+    if (Number.isFinite(nextStartMs)) {
+      // During long silent gaps, hide lyrics until shortly before the next line.
+      if (tMs < nextStartMs - nextPreviewMs) {
+        return { lyricIndex: -1, lyricText: "" };
+      }
+    } else if (tMs > curEndMs + gapHideMs) {
+      // After the final line, hold briefly then hide.
+      return { lyricIndex: -1, lyricText: "" };
+    }
+  }
 
   const safeMargin = Number(params?.safeMarginPx ?? 32);
   const controlsReservedPx = Number(params?.controlsReservedPx ?? 96);

@@ -29,9 +29,9 @@
     { "GenreId": "tropical_house", "Label": "tropical house", "StyleTokens": ["tropical house"], "Compatibility": { "HarshVocalsAllowed": false }, "HintTokens": ["bright", "summer", "plucks"] },
     { "GenreId": "afrobeat_modern", "Label": "modern afrobeat groove", "StyleTokens": ["afrobeat"], "Compatibility": { "HarshVocalsAllowed": false }, "HintTokens": ["percussive groove", "call-and-response", "syncopation"] },
 
-    { "GenreId": "cinematic_hybrid", "Label": "cinematic hybrid", "StyleTokens": ["cinematic", "orchestral", "hybrid"], "Compatibility": { "HarshVocalsAllowed": false }, "HintTokens": ["big lift", "clear motifs", "wide drums"] },
-    { "GenreId": "neo_classical", "Label": "neo-classical", "StyleTokens": ["neo-classical", "chamber"], "Compatibility": { "HarshVocalsAllowed": false }, "HintTokens": ["string focus", "piano motif", "dynamic phrasing"] },
-    { "GenreId": "orchestral_choral", "Label": "orchestral choral", "StyleTokens": ["orchestral", "choir"], "Compatibility": { "HarshVocalsAllowed": false }, "HintTokens": ["full ensemble", "choral swells", "majestic"] },
+    { "GenreId": "cinematic_hybrid", "Label": "cinematic hybrid", "StyleTokens": ["cinematic", "orchestral", "hybrid"], "Compatibility": { "HarshVocalsAllowed": false }, "HintTokens": ["clear motifs", "hybrid percussion", "focused arc"], "Prominence": { "DefaultMultiplier": 0.35, "SuppressUnlessRequested": true } },
+    { "GenreId": "neo_classical", "Label": "neo-classical", "StyleTokens": ["neo-classical", "chamber"], "Compatibility": { "HarshVocalsAllowed": false }, "HintTokens": ["string focus", "piano motif", "dynamic phrasing"], "Prominence": { "DefaultMultiplier": 0.6, "SuppressUnlessRequested": true } },
+    { "GenreId": "orchestral_choral", "Label": "orchestral choral", "StyleTokens": ["orchestral", "choir"], "Compatibility": { "HarshVocalsAllowed": false }, "HintTokens": ["ensemble detail", "choral texture", "measured lift"], "Prominence": { "DefaultMultiplier": 0.45, "SuppressUnlessRequested": true } },
 
     { "GenreId": "jazz_fusion_modern", "Label": "modern jazz fusion", "StyleTokens": ["modern jazz fusion"], "Compatibility": { "HarshVocalsAllowed": false }, "HintTokens": ["complex groove", "extended chords", "tight ensemble"] },
     { "GenreId": "latin_jazz_big_band", "Label": "latin jazz big band", "StyleTokens": ["latin jazz", "big band"], "Compatibility": { "HarshVocalsAllowed": false }, "HintTokens": ["horn section", "salsa swing", "ensemble hits"] },

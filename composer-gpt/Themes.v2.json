@@ -19,15 +19,13 @@
           "neo_classical": 0.8,
           "orchestral_choral": 0.55,
 
-          "cinematic_hybrid": 1.2,
-
           "synthwave": 0.35,
           "alt_rock": 0.7,
           "prog_rock": 0.45
         },
         "VocalMode": { "instrumental": 2.1, "textural": 1.8, "sparse": 1.6, "full": 0.9 },
         "TopicCategory": { "sky_perspective": 2.3, "renewal_clarity": 1.7, "focus_flow": 1.2, "complexity_emergence": 1.1, "system_process": 1.0, "memory_community": 0.9, "programmatic_art_and_play": 0.8 },
-        "StructurePattern": { "cinematic_build": 1.6, "verse_chorus_instrumental_intro": 1.6, "verse_prechorus_chorus": 1.2, "verse_prechorus_chorus_postchorus": 1.1, "groove_song": 0.9, "structural_experiment": 0.9 }
+        "StructurePattern": { "verse_chorus_instrumental_intro": 1.6, "verse_prechorus_chorus": 1.2, "verse_prechorus_chorus_postchorus": 1.1, "groove_song": 0.9, "structural_experiment": 0.9 }
       },
       "Rates": { "StyleChange": 0.16, "Modulation": 0.32, "Deviation": 0.24, "MutationBase": 0.24 },
       "StyleDefaults": { "StyleTokensAdd": ["clean studio recording"], "StyleTokensAvoid": ["live", "breathy",  "tenor", "skank"] }
@@ -59,13 +57,12 @@
           "melodic_house": 0.9,
 
           "neo_classical": 0.55,
-          "cinematic_hybrid": 1.0,
 
           "pop_rock": 0.6
         },
         "VocalMode": { "instrumental": 1.1, "textural": 1.1, "sparse": 1.6, "full": 1.6 },
         "TopicCategory": { "motion_journey": 2.1, "renewal_clarity": 1.6, "human_craft_and_tools": 1.2, "complexity_emergence": 1.1, "memory_community": 1.0, "sky_perspective": 0.8 },
-        "StructurePattern": { "verse_prechorus_chorus": 1.5, "verse_prechorus_chorus_postchorus": 1.3, "verse_chorus_instrumental_intro": 1.3, "groove_song": 1.0, "cinematic_build": 0.9, "structural_experiment": 0.9 }
+        "StructurePattern": { "verse_prechorus_chorus": 1.5, "verse_prechorus_chorus_postchorus": 1.3, "verse_chorus_instrumental_intro": 1.3, "groove_song": 1.0, "structural_experiment": 0.9 }
       },
       "Rates": { "StyleChange": 0.18, "Modulation": 0.30, "Deviation": 0.26, "MutationBase": 0.30 },
       "StyleDefaults": { "StyleTokensAdd": ["clean studio recording"], "StyleTokensAvoid": ["live", "breathy",  "tenor", "skank"] }
@@ -98,13 +95,11 @@
 
           "latin": 0.75,
           "reggaeton": 0.65,
-          "tropical_house": 0.55,
-
-          "cinematic_hybrid": 0.45
+          "tropical_house": 0.55
         },
         "VocalMode": { "instrumental": 0.9, "textural": 1.0, "sparse": 1.5, "full": 1.9 },
         "TopicCategory": { "night_social": 2.0, "memory_community": 1.1, "focus_flow": 1.0, "renewal_clarity": 0.9, "system_process": 0.8, "crypto_decentralization": 0.7 },
-        "StructurePattern": { "groove_song": 1.7, "verse_prechorus_chorus": 1.4, "verse_prechorus_chorus_postchorus": 1.5, "verse_chorus_instrumental_intro": 0.9, "structural_experiment": 0.9, "cinematic_build": 0.45 }
+        "StructurePattern": { "groove_song": 1.7, "verse_prechorus_chorus": 1.4, "verse_prechorus_chorus_postchorus": 1.5, "verse_chorus_instrumental_intro": 0.9, "structural_experiment": 0.9 }
       },
       "Rates": { "StyleChange": 0.22, "Modulation": 0.26, "Deviation": 0.30, "MutationBase": 0.32 },
       "StyleDefaults": { "StyleTokensAdd": ["clean studio recording"], "StyleTokensAvoid": ["live", "breathy",  "tenor", "skank"] }
@@ -142,7 +137,6 @@
           "power_metal": 0.55,
 
           "neo_classical": 0.6,
-          "cinematic_hybrid": 0.9,
 
           "reggae_dub": 0.7,
           "latin": 0.6,
@@ -155,7 +149,7 @@
         },
         "VocalMode": { "instrumental": 1.2, "textural": 1.1, "sparse": 1.5, "full": 1.2 },
         "TopicCategory": { "color_identity": 2.1, "complexity_emergence": 1.2, "system_process": 1.1, "programmatic_art_and_play": 1.1, "renewal_clarity": 1.2, "night_social": 0.9, "crypto_decentralization": 0.8 },
-        "StructurePattern": { "verse_prechorus_chorus": 1.4, "verse_prechorus_chorus_postchorus": 1.5, "verse_chorus_instrumental_intro": 1.2, "groove_song": 1.1, "structural_experiment": 1.0, "cinematic_build": 0.9 }
+        "StructurePattern": { "verse_prechorus_chorus": 1.4, "verse_prechorus_chorus_postchorus": 1.5, "verse_chorus_instrumental_intro": 1.2, "groove_song": 1.1, "structural_experiment": 1.0 }
       },
       "Rates": { "StyleChange": 0.28, "Modulation": 0.32, "Deviation": 0.35, "MutationBase": 0.34 },
       "StyleDefaults": { "StyleTokensAdd": ["clean studio recording"], "StyleTokensAvoid": ["live", "breathy",  "tenor", "skank"] }
@@ -192,7 +186,6 @@
 
           "neo_classical": 0.6,
           "orchestral_choral": 0.45,
-          "cinematic_hybrid": 0.9,
 
           "hip_hop": 0.85,
           "rap": 0.85,
@@ -206,7 +199,7 @@
         },
         "VocalMode": { "instrumental": 0.9, "textural": 1.1, "sparse": 1.4, "full": 1.7 },
         "TopicCategory": { "memory_community": 1.9, "programmatic_art_and_play": 1.6, "complexity_emergence": 1.1, "human_machine_duet": 1.0, "crypto_decentralization": 1.1, "renewal_clarity": 1.1, "human_craft_and_tools": 1.0, "system_process": 0.9 },
-        "StructurePattern": { "verse_prechorus_chorus": 1.4, "verse_prechorus_chorus_postchorus": 1.6, "verse_chorus_instrumental_intro": 1.3, "groove_song": 1.0, "structural_experiment": 1.1, "cinematic_build": 0.75 }
+        "StructurePattern": { "verse_prechorus_chorus": 1.4, "verse_prechorus_chorus_postchorus": 1.6, "verse_chorus_instrumental_intro": 1.3, "groove_song": 1.0, "structural_experiment": 1.1 }
       },
       "Rates": { "StyleChange": 0.22, "Modulation": 0.32, "Deviation": 0.28, "MutationBase": 0.32 },
       "StyleDefaults": { "StyleTokensAdd": ["clean studio recording"], "StyleTokensAvoid": ["live", "breathy",  "tenor", "skank"] }
@@ -256,7 +249,6 @@
 
           "neo_classical": 0.75,
           "orchestral_choral": 0.6,
-          "cinematic_hybrid": 0.8,
 
           "pop_rock": 0.55,
           "pop": 0.5,
@@ -266,7 +258,7 @@
         },
         "VocalMode": { "instrumental": 1.1, "textural": 1.0, "sparse": 1.2, "full": 1.3 },
         "TopicCategory": { "system_process": 1.8, "programmatic_art_and_play": 1.5, "complexity_emergence": 1.5, "human_machine_duet": 1.3, "wildcard_metaphor": 1.2, "renewal_clarity": 1.0, "night_social": 0.9, "memory_community": 0.9, "focus_flow": 0.9, "crypto_decentralization": 1.0 },
-        "StructurePattern": { "structural_experiment": 2.0, "verse_prechorus_chorus_postchorus": 1.3, "verse_prechorus_chorus": 1.0, "groove_song": 1.1, "instrumental_thematic_dev": 1.1, "cinematic_build": 0.7 }
+        "StructurePattern": { "structural_experiment": 2.0, "verse_prechorus_chorus_postchorus": 1.3, "verse_prechorus_chorus": 1.0, "groove_song": 1.1, "instrumental_thematic_dev": 1.1 }
       },
       "Rates": { "StyleChange": 0.70, "Modulation": 0.60, "Deviation": 0.60, "MutationBase": 0.60 },
       "StyleDefaults": { "StyleTokensAdd": ["clean studio recording", "style-change", "key-change"], "StyleTokensAvoid": ["live", "breathy",  "tenor", "skank"] }

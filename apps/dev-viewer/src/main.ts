@@ -23,7 +23,11 @@ type EffectiveState = {
     downbeatMarkers?: Array<{ tMs?: number; source?: "hint" | "inferred" | "ai" | "corrected" }>;
     aiDownbeatMarkers?: Array<{ tMs?: number; source?: "ai" }>;
   };
-  hints?: { eventsCount?: number; beatFusionMode?: string };
+  hints?: {
+    eventsCount?: number;
+    beatFusionMode?: string;
+    fusionWindowsSec?: Array<{ t0Sec?: number; t1Sec?: number }>;
+  };
   overlays?: HintOverlay[];
 };
 type Track = {
@@ -31,6 +35,7 @@ type Track = {
   trackId: string;
   workId?: string;
   slug: string;
+  composer?: { headerMap?: Record<string, string> };
   audio: { path: string; filename?: string };
   assetPaths?: {
     mix?: string;
@@ -107,6 +112,7 @@ let aiDownbeatMarkers: Array<{ tMs: number; source: "ai" }> = [];
 let hintOverlays: HintOverlay[] = [];
 let activeHintCount = 0;
 let beatFusionModeLabel = "-";
+let fusionWindowsMs: Array<{ t0Ms: number; t1Ms: number }> = [];
 let lastSeekTargetSec = 0;
 let lastSeekActualSec = 0;
 let lastSeekErrorMs = 0;
@@ -180,6 +186,18 @@ function mulberry32(a: number) {
 function trackIdFromEntry(entry: string) {
   const file = entry.split("/").pop() ?? "";
   return file.replace(/\.track\.json$/i, "");
+}
+
+function preferredTrackTitle(next: Track | null) {
+  if (!next) return "-";
+  const hm = next.composer?.headerMap ?? {};
+  const songTitle = Object.entries(hm).find(([k]) => k.toLowerCase() === "song title");
+  if (songTitle && String(songTitle[1]).trim()) return String(songTitle[1]).trim();
+  const compactSongTitle = Object.entries(hm).find(([k]) => k.toLowerCase() === "songtitle");
+  if (compactSongTitle && String(compactSongTitle[1]).trim()) return String(compactSongTitle[1]).trim();
+  const title = Object.entries(hm).find(([k]) => k.toLowerCase() === "title");
+  if (title && String(title[1]).trim()) return String(title[1]).trim();
+  return next.title ?? "-";
 }
 
 function updateUrlParam(key: string, value: string | null) {
@@ -635,6 +653,18 @@ function normalizeMsList(value: unknown) {
     .map((n) => Math.max(0, Math.round(n)));
 }
 
+function fusionModeAt(tMs: number) {
+  const t = Math.max(0, Math.round(Number(tMs) || 0));
+  const inWindow = fusionWindowsMs.some((w) => t >= w.t0Ms && t <= w.t1Ms);
+  if (beatFusionModeLabel === "tempo-override-windowed") {
+    return inWindow ? "tempo-override-windowed" : "ai-plus-snapped-hints";
+  }
+  if (beatFusionModeLabel === "ai-with-local-overrides") {
+    return inWindow ? "ai-with-local-overrides" : "ai-plus-snapped-hints";
+  }
+  return beatFusionModeLabel;
+}
+
 async function loadEffectiveGuidance(nextTrack: Track, baseTrackUrl: string) {
   const trackBeats = normalizeMsList(nextTrack?.timing?.beatsMs);
   pulseBeatTimesMs = trackBeats;
@@ -645,6 +675,7 @@ async function loadEffectiveGuidance(nextTrack: Track, baseTrackUrl: string) {
   hintOverlays = [];
   activeHintCount = 0;
   beatFusionModeLabel = "-";
+  fusionWindowsMs = [];
 
   const assetDirUrl = resolveAssetDirUrl(nextTrack, baseTrackUrl);
   if (!assetDirUrl) return;
@@ -680,6 +711,8 @@ async function loadEffectiveGuidance(nextTrack: Track, baseTrackUrl: string) {
               ? "hint" as const
               : m?.source === "ai"
                 ? "ai" as const
+                : m?.source === "corrected"
+                  ? "corrected" as const
                 : "inferred" as const
           }))
           .filter((m) => Number.isFinite(m.tMs))
@@ -693,6 +726,14 @@ async function loadEffectiveGuidance(nextTrack: Track, baseTrackUrl: string) {
           .filter((m) => Number.isFinite(m.tMs))
         : [];
       beatFusionModeLabel = String(j?.hints?.beatFusionMode || "-");
+      fusionWindowsMs = Array.isArray(j?.hints?.fusionWindowsSec)
+        ? j.hints.fusionWindowsSec
+          .map((w) => ({
+            t0Ms: Math.max(0, Math.round(Number(w?.t0Sec) * 1000)),
+            t1Ms: Math.max(0, Math.round(Number(w?.t1Sec) * 1000))
+          }))
+          .filter((w) => Number.isFinite(w.t0Ms) && Number.isFinite(w.t1Ms) && w.t1Ms >= w.t0Ms)
+        : [];
       mergeHintOverlays(Array.isArray(j?.overlays) ? j.overlays : []);
       activeHintCount = Number.isFinite(Number(j?.hints?.eventsCount))
         ? Math.max(0, Math.round(Number(j?.hints?.eventsCount)))
@@ -1009,7 +1050,12 @@ function resolveDisplayDownbeatSourceByBeat(
   effectiveDownbeats: Array<{ tMs: number; source: "hint" | "inferred" | "ai" | "corrected" }>,
   aiOnlyDownbeats: Array<{ tMs: number; source: "ai" }>
 ) {
-  const aiDownbeatMs = aiOnlyDownbeats.map((d) => Math.max(0, Math.round(d.tMs)));
+  const aiDownbeatMs = Array.from(new Set([
+    ...aiOnlyDownbeats.map((d) => Math.max(0, Math.round(d.tMs))),
+    ...effectiveDownbeats
+      .filter((d) => d.source === "ai")
+      .map((d) => Math.max(0, Math.round(d.tMs)))
+  ])).sort((a, b) => a - b);
   const hintDownbeatMs = effectiveDownbeats
     .filter((d) => d.source === "hint")
     .map((d) => Math.max(0, Math.round(d.tMs)));
@@ -1265,7 +1311,7 @@ if (!isSeeking && Number.isFinite(audio.duration) && audio.duration > 0) {
       : "";
   hud.style.display = hudVisible ? "block" : "none";
   hud.textContent = [
-    `title: ${track?.title ?? "-"}`,
+    `title: ${preferredTrackTitle(track)}`,
     `trackId: ${track?.trackId ?? "-"}`,
     `seed: ${seed}`,
     `time: ${fmtMs(tAudioMs)}`,
@@ -1275,7 +1321,7 @@ if (!isSeeking && Number.isFinite(audio.duration) && audio.duration > 0) {
     `seekErrorMs: ${lastSeekErrorMs}`,
     `playback: ${playbackMode}`,
     `hints: ${activeHintCount}`,
-    `fusion: ${beatFusionModeLabel}`,
+    `fusion: ${beatFusionModeLabel} (now: ${fusionModeAt(tRenderMs)})`,
     `beats: ${pulseBeatTimesMs.length}`,
     `downbeats: ${downbeatMarkers.length || pulseDownbeatTimesMs.length}`,
     `aiDownbeats: ${aiDownbeatMarkers.length}`,

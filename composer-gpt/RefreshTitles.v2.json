@@ -16,12 +16,12 @@
       "Overrides": { "Genre": { "Force": [], "Boost": ["latin", "reggaeton", "tropical_house"], "Suppress": [] }, "LanguageForce": "Spanish" }
     },
     { "RefreshTitle": "Rainbow in the Sky", "ThemeIdDefault": "sky", "Gradients": 6, "Rank": 7, "TitleRarityPct": 0.75, "ThemeRarityPct": 5.14, "GradientRarityPct": 3.60,
-      "Overrides": { "Genre": { "Force": [], "Boost": ["cinematic_hybrid", "melodic_house"], "Suppress": [] } }
+      "Overrides": { "Genre": { "Force": [], "Boost": ["melodic_house"], "Suppress": [] } }
     },
     { "RefreshTitle": "Sunset Dreams", "ThemeIdDefault": "sky", "Gradients": 6, "Rank": 8, "TitleRarityPct": 0.75, "ThemeRarityPct": 5.14, "GradientRarityPct": 3.60, "Overrides": {} },
 
     { "RefreshTitle": "Random 2", "ThemeIdDefault": "random", "Gradients": 2, "Rank": 9, "TitleRarityPct": 1.23, "ThemeRarityPct": 8.42, "GradientRarityPct": 10.77, "Overrides": {} },
-    { "RefreshTitle": "The Grey Beyond", "ThemeIdDefault": "community", "Gradients": 2, "Rank": 10, "TitleRarityPct": 1.28, "ThemeRarityPct": 21.52, "GradientRarityPct": 10.77, "Overrides": { "Genre": { "Force": [], "Boost": ["cinematic_hybrid"], "Suppress": [] } } },
+    { "RefreshTitle": "The Grey Beyond", "ThemeIdDefault": "community", "Gradients": 2, "Rank": 10, "TitleRarityPct": 1.28, "ThemeRarityPct": 21.52, "GradientRarityPct": 10.77, "Overrides": { "Genre": { "Force": [], "Boost": [], "Suppress": [] } } },
     { "RefreshTitle": "Peacock", "ThemeIdDefault": "community", "Gradients": 2, "Rank": 11, "TitleRarityPct": 1.29, "ThemeRarityPct": 21.52, "GradientRarityPct": 10.77, "Overrides": {} },
     { "RefreshTitle": "Lemon Lime", "ThemeIdDefault": "colors", "Gradients": 2, "Rank": 12, "TitleRarityPct": 1.35, "ThemeRarityPct": 35.64, "GradientRarityPct": 10.77, "Overrides": {} },
     { "RefreshTitle": "Cuppa Joe", "ThemeIdDefault": "drinks", "Gradients": 2, "Rank": 13, "TitleRarityPct": 1.38, "ThemeRarityPct": 12.41, "GradientRarityPct": 10.77,
@@ -36,20 +36,20 @@
     { "RefreshTitle": "Random 3", "ThemeIdDefault": "random", "Gradients": 3, "Rank": 17, "TitleRarityPct": 1.58, "ThemeRarityPct": 8.42, "GradientRarityPct": 18.23, "Overrides": {} },
     { "RefreshTitle": "Swankpie Diamonds", "ThemeIdDefault": "community", "Gradients": 3, "Rank": 18, "TitleRarityPct": 1.63, "ThemeRarityPct": 21.52, "GradientRarityPct": 18.23, "Overrides": {} },
     { "RefreshTitle": "Swankpie Strawberries", "ThemeIdDefault": "community", "Gradients": 3, "Rank": 19, "TitleRarityPct": 1.63, "ThemeRarityPct": 21.52, "GradientRarityPct": 18.23, "Overrides": {} },
-    { "RefreshTitle": "Ice Age", "ThemeIdDefault": "community", "Gradients": 3, "Rank": 20, "TitleRarityPct": 1.64, "ThemeRarityPct": 21.52, "GradientRarityPct": 18.23, "Overrides": { "Genre": { "Force": [], "Boost": ["cinematic_hybrid"], "Suppress": [] } } },
+    { "RefreshTitle": "Ice Age", "ThemeIdDefault": "community", "Gradients": 3, "Rank": 20, "TitleRarityPct": 1.64, "ThemeRarityPct": 21.52, "GradientRarityPct": 18.23, "Overrides": { "Genre": { "Force": [], "Boost": [], "Suppress": [] } } },
     { "RefreshTitle": "Swimming Shorts", "ThemeIdDefault": "community", "Gradients": 3, "Rank": 21, "TitleRarityPct": 1.65, "ThemeRarityPct": 21.52, "GradientRarityPct": 18.23, "Overrides": {} },
     { "RefreshTitle": "Cheerful", "ThemeIdDefault": "colors", "Gradients": 3, "Rank": 22, "TitleRarityPct": 1.68, "ThemeRarityPct": 35.64, "GradientRarityPct": 18.23,
       "Overrides": { "Genre": { "Force": [], "Boost": ["pop_rock", "pop"], "Suppress": [] } }
     },
     { "RefreshTitle": "Desert Rose", "ThemeIdDefault": "colors", "Gradients": 3, "Rank": 23, "TitleRarityPct": 1.68, "ThemeRarityPct": 35.64, "GradientRarityPct": 18.23,
-      "Overrides": { "Genre": { "Force": [], "Boost": ["cinematic_hybrid"], "Suppress": [] } }
+      "Overrides": { "Genre": { "Force": [], "Boost": [], "Suppress": [] } }
     },
     { "RefreshTitle": "Fiesta", "ThemeIdDefault": "colors", "Gradients": 3, "Rank": 24, "TitleRarityPct": 1.68, "ThemeRarityPct": 35.64, "GradientRarityPct": 18.23,
       "Overrides": { "Genre": { "Force": [], "Boost": ["latin", "reggaeton"], "Suppress": [] }, "LanguageForce": "Spanish" }
     },
     { "RefreshTitle": "Radiant Splash", "ThemeIdDefault": "colors", "Gradients": 3, "Rank": 25, "TitleRarityPct": 1.68, "ThemeRarityPct": 35.64, "GradientRarityPct": 18.23, "Overrides": {} },
     { "RefreshTitle": "Sailing the Seas", "ThemeIdDefault": "outdoors", "Gradients": 3, "Rank": 26, "TitleRarityPct": 1.68, "ThemeRarityPct": 16.87, "GradientRarityPct": 18.23,
-      "Overrides": { "Genre": { "Force": [], "Boost": ["cinematic_hybrid", "alt_rock"], "Suppress": [] } }
+      "Overrides": { "Genre": { "Force": [], "Boost": ["alt_rock"], "Suppress": [] } }
     },
     { "RefreshTitle": "R to the G to the B", "ThemeIdDefault": "colors", "Gradients": 3, "Rank": 27, "TitleRarityPct": 1.70, "ThemeRarityPct": 35.64, "GradientRarityPct": 18.23, "Overrides": { "TopicCategory": { "Boost": ["system_process", "programmatic_art_and_play"], "Suppress": [] } } },
 

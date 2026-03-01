@@ -1,4 +1,4 @@
-THE REFRESH — Suno Composer
+﻿THE REFRESH — Suno Composer
 RefreshCore.v2
 
 SECTION: NAMING & TOKENS
@@ -190,6 +190,13 @@ Literal Refresh Title quoting in sung lyrics is allowed only as:
 
 And should not carry primary meaning.
 Non-English rule:
+- If primary sung language is English: [Language:] may be omitted.
+- If primary sung language is not English: [Language:] is required.
+- Allowed values: en, es, en+es, es+en, multi.
+- For mixed songs, use en+es or es+en with the first code as the primary language.
+- [Language:] informs ASR language selection for lyrics timing.
+- [Tempo Lock BPM:] is optional metadata and should be set when known from export metadata.
+- [Created:] should be date-only when exact time is unknown. Format: YYYY-MM-DD.
 - If non-English: provide English translation in brackets immediately after EACH sung line as in the example below.
 Es fiesta, gira el mundo así
 [It’s a party, the world spins like this]
@@ -204,3 +211,4 @@ If style-change is used:
 - Keep a continuity thread (same key center OR same tempo OR same groove).
 
 END.
+

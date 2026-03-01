@@ -92,6 +92,21 @@ For abstract titles, pick TopicCategory and Subtopic via Topics.v2.json.
 Refine into a 1-line Concept (sentiment/mantra/proposition) + a concrete image hook.
 Crypto topics: focus mostly on Cardano/community/builder culture; keep Bitcoin/Satoshi/ordinals occasional and conceptual; avoid hype/shilling/financial advice.
 
+SECTION: VISUAL HINTS (OPTIONAL, BEST-EFFORT)
+Use VisualHints.v1.json to emit concise visualization intent metadata for downstream recipe adaptation.
+- Write hints only when concept/style clearly imply direction.
+- Prefer 3-5 lines total; avoid over-constraining.
+- Allowed lines:
+  [Visual Mood: calm|tense|uplifting|dark]
+  [Visual Motion: low|medium|high]
+  [Visual Density: sparse|normal|dense]
+  [Visual Lyric Presence: off|on|auto]
+  [Visual Color Bias: cool|warm|neutral]
+  [Visual Section Focus: intro|verse|chorus|bridge|outro]
+  [Visual NoGo: comma-separated values]
+- Keep hints high-level; do NOT encode low-level engine params.
+- Avoid contradictory pairs unless intentional.
+
 SECTION: GENRE & STYLE (Suno-friendly)
 Select 1 primary Genre (Label/StyleTokens) via Theme Weights + Title Overrides (or user constraint).
 Style field is priming, not a narrative plan: write auditorily renderable concept tokens only.

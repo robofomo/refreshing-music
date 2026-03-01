@@ -140,7 +140,14 @@ function drawTextEcho(args: {
       text = String(lines[active.i] ?? "").trim();
     }
   }
-  if (!text) text = "graph";
+  if (!text) {
+    const hm = track?.composer?.headerMap ?? {};
+    text =
+      String(hm?.["Song Title"] ?? "").trim() ||
+      String(hm?.["Title"] ?? "").trim() ||
+      String(track?.title ?? "").trim() ||
+      "visual";
+  }
   const rng = createRng(nodeSeed);
   const phase = rng.float() * Math.PI * 2;
   ctx.textAlign = "center";

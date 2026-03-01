@@ -59,6 +59,15 @@ type Track = {
     downbeatTimesMs?: number[];
   };
   recipeRef?: { albumId?: string; trackOverrideId?: string };
+  visualHints?: {
+    mood?: "calm" | "tense" | "uplifting" | "dark";
+    motion?: "low" | "medium" | "high";
+    density?: "sparse" | "normal" | "dense";
+    lyricPresence?: "off" | "on" | "auto";
+    colorBias?: "cool" | "warm" | "neutral";
+    sectionFocus?: "intro" | "verse" | "chorus" | "bridge" | "outro";
+    noGo?: string[];
+  };
 };
 
 type PlaybackMode = "mix" | "stems";
@@ -294,8 +303,14 @@ function labSeedForPrimitive() {
 
 function currentLabProfile() {
   const rng = mulberry32(labSeedForPrimitive());
-  const scale = 0.7 + rng() * 1.5;
-  const density = 0.65 + rng() * 1.65;
+  const primitiveRanges: Record<LabPrimitiveId, { scale: [number, number]; density: [number, number] }> = {
+    "shape.circlePulse": { scale: [0.75, 2.1], density: [0.6, 2.0] },
+    "polyline.orbitRibbon": { scale: [0.7, 2.4], density: [0.4, 3.9] },
+    "text.echoWord": { scale: [0.7, 2.0], density: [0.5, 2.3] }
+  };
+  const ranges = primitiveRanges[labPrimitive] ?? primitiveRanges["shape.circlePulse"];
+  const scale = ranges.scale[0] + rng() * (ranges.scale[1] - ranges.scale[0]);
+  const density = ranges.density[0] + rng() * (ranges.density[1] - ranges.density[0]);
   const variant = Math.floor(rng() * 1000);
   return { scale, density, variant };
 }
@@ -1397,8 +1412,12 @@ function drawPrimitiveLabOverlay(signalBus: ViewerSignalBus) {
     }
     ctx.stroke();
   } else {
-    const lyric = String(findCurrentLyricLine(signalBus.time.renderMs)?.i ?? "");
-    const text = lyric ? `line ${lyric}` : "echo";
+    const lyricIndex = Number(findCurrentLyricLine(signalBus.time.renderMs)?.i);
+    const rawLines = String(track?.lyrics?.rawText ?? "").split(/\r?\n/);
+    const activeLyric = Number.isInteger(lyricIndex) && lyricIndex >= 0 && lyricIndex < rawLines.length
+      ? String(rawLines[lyricIndex] ?? "").trim()
+      : "";
+    const text = activeLyric || preferredTrackTitle(track);
     const echoCount = Math.max(2, Math.round(4 * labDensity));
     const fontPx = Math.max(22, Math.round(36 * labScale));
     ctx.textAlign = "center";
@@ -1469,6 +1488,116 @@ function stableStringify(value: unknown): string {
   if (!value || typeof value !== "object") return JSON.stringify(value);
   const entries = Object.entries(value as Record<string, unknown>).sort(([a], [b]) => a.localeCompare(b));
   return `{${entries.map(([k, v]) => `${JSON.stringify(k)}:${stableStringify(v)}`).join(",")}}`;
+}
+
+function cloneRecipe<T>(v: T): T {
+  if (Array.isArray(v)) return v.map((x) => cloneRecipe(x)) as T;
+  if (v && typeof v === "object") {
+    const out: Record<string, any> = {};
+    for (const [k, val] of Object.entries(v as Record<string, any>)) out[k] = cloneRecipe(val);
+    return out as T;
+  }
+  return v;
+}
+
+function applyVisualHintsToRecipe(baseRecipe: any, nextTrack: Track | null) {
+  const hints = nextTrack?.visualHints;
+  if (!hints || typeof hints !== "object") return baseRecipe;
+  const recipe = cloneRecipe(baseRecipe || {});
+  const layers = Array.isArray(recipe?.layers) ? recipe.layers : [];
+  const noGo = new Set((Array.isArray(hints.noGo) ? hints.noGo : []).map((x) => String(x).toLowerCase()));
+
+  for (const layer of layers) {
+    const moduleId = String(layer?.module || "").toLowerCase();
+    layer.params = typeof layer.params === "object" && layer.params ? layer.params : {};
+
+    if (hints.motion === "low") {
+      if (moduleId.includes("particles")) {
+        layer.params.speed = Math.max(0.2, Number(layer.params.speed ?? 0.45) * 0.75);
+        layer.params.curl = Math.max(0.2, Number(layer.params.curl ?? 0.55) * 0.78);
+      }
+    } else if (hints.motion === "high") {
+      if (moduleId.includes("particles")) {
+        layer.params.speed = Math.min(2.2, Number(layer.params.speed ?? 0.45) * 1.25);
+        layer.params.curl = Math.min(2.2, Number(layer.params.curl ?? 0.55) * 1.22);
+      }
+      if (moduleId.includes("gradientfield")) {
+        layer.params.driftSpeed = Math.min(0.05, Number(layer.params.driftSpeed ?? 0.012) * 1.25);
+      }
+    }
+
+    if (hints.density === "sparse" && moduleId.includes("particles")) {
+      layer.params.count = Math.max(24, Math.round(Number(layer.params.count ?? 120) * 0.65));
+      layer.opacity = Math.max(0.2, Number(layer.opacity ?? 0.55) * 0.85);
+    } else if (hints.density === "dense" && moduleId.includes("particles")) {
+      layer.params.count = Math.min(320, Math.round(Number(layer.params.count ?? 120) * 1.35));
+      layer.opacity = Math.min(0.92, Number(layer.opacity ?? 0.55) * 1.08);
+    }
+
+    if (hints.colorBias === "cool" && moduleId.includes("gradientfield")) {
+      layer.params.hueRotatePerMinute = Number(layer.params.hueRotatePerMinute ?? 0) - 8;
+    } else if (hints.colorBias === "warm" && moduleId.includes("gradientfield")) {
+      layer.params.hueRotatePerMinute = Number(layer.params.hueRotatePerMinute ?? 0) + 8;
+    }
+
+    if (hints.lyricPresence === "off" && (moduleId.includes("ui.lyrics") || moduleId.includes("ui.lyricskaraoke"))) {
+      layer.params.mode = "off";
+      layer.opacity = 0;
+    } else if (hints.lyricPresence === "on" && (moduleId.includes("ui.lyrics") || moduleId.includes("ui.lyricskaraoke"))) {
+      if (!layer.params.mode || layer.params.mode === "off") layer.params.mode = "center";
+      layer.opacity = Math.max(0.85, Number(layer.opacity ?? 0.92));
+    }
+
+    if (noGo.has("lyrics") && (moduleId.includes("ui.lyrics") || moduleId.includes("ui.lyricskaraoke"))) {
+      layer.params.mode = "off";
+      layer.opacity = 0;
+    }
+    if (noGo.has("particles") && moduleId.includes("particles")) {
+      layer.enabled = false;
+      layer.opacity = 0;
+    }
+    if (noGo.has("text") && (moduleId.includes("ui.lyrics") || moduleId.includes("ui.lyricskaraoke"))) {
+      layer.enabled = false;
+      layer.opacity = 0;
+    }
+  }
+
+  const graphLayers = Array.isArray(recipe?.graph?.layers) ? recipe.graph.layers : [];
+  for (const gl of graphLayers) {
+    const nodes = Array.isArray(gl?.nodes) ? gl.nodes : [];
+    for (const node of nodes) {
+      const type = String(node?.type || "").toLowerCase();
+      node.params = typeof node.params === "object" && node.params ? node.params : {};
+      if (hints.density === "sparse") {
+        if (type.includes("orbitribbon")) node.params.points = Math.max(20, Math.round(Number(node.params.points ?? 56) * 0.75));
+        if (type.includes("circlepulse")) node.params.ringCount = Math.max(4, Math.round(Number(node.params.ringCount ?? 8) * 0.8));
+      } else if (hints.density === "dense") {
+        if (type.includes("orbitribbon")) node.params.points = Math.min(180, Math.round(Number(node.params.points ?? 56) * 1.45));
+        if (type.includes("circlepulse")) node.params.ringCount = Math.min(18, Math.round(Number(node.params.ringCount ?? 8) * 1.4));
+      }
+      if (hints.motion === "low" && type.includes("orbitribbon")) {
+        node.params.phaseHz = Math.max(0.02, Number(node.params.phaseHz ?? 0.08) * 0.8);
+      } else if (hints.motion === "high" && type.includes("orbitribbon")) {
+        node.params.phaseHz = Math.min(0.4, Number(node.params.phaseHz ?? 0.08) * 1.28);
+      }
+      if (noGo.has("text") && type.includes("text.")) node.enabled = false;
+      if (noGo.has("lyrics") && type.includes("text.")) node.enabled = false;
+    }
+  }
+
+  if (hints.sectionFocus && typeof recipe === "object") {
+    const existing = Array.isArray(recipe.sectionRules) ? recipe.sectionRules : [];
+    existing.push({
+      when: { sectionType: hints.sectionFocus },
+      set: {
+        "fg.particles.opacity": 0.72,
+        "ui.lyricsKaraoke.fontSizePx": 34
+      }
+    });
+    recipe.sectionRules = existing;
+  }
+
+  return recipe;
 }
 
 function runDeterminismProbe(input: {
@@ -1670,7 +1799,7 @@ function render() {
     energy: amp,
     recipe: currentRecipe,
     track,
-    lyricsEnabled: lyricsEnabled && hasLyricTiming(),
+    lyricsEnabled: isHintEditMode() && lyricsEnabled && hasLyricTiming(),
     lyricMode,
     uiLayout: {
       controlsTopPx: controlsRect.top,
@@ -1688,7 +1817,7 @@ function render() {
       amp
     });
   }
-  if (viewerMode !== "graph-scene") drawBeatOrb(pulse.beat, pulse.downbeat);
+  if (isHintEditMode()) drawBeatOrb(pulse.beat, pulse.downbeat);
   if (viewerMode === "primitive-lab") drawPrimitiveLabOverlay(signalBus);
   if (isHintEditMode()) drawHintOverlays();
 
@@ -1706,6 +1835,14 @@ if (!isSeeking && Number.isFinite(audio.duration) && audio.duration > 0) {
     : typeof lyricRef?.i === "number" && lyricRef.i >= 0 && lyricRef.i < lyricsLines.length
       ? lyricsLines[lyricRef.i]
       : "";
+  const labProfileRounded = (() => {
+    const p = currentLabProfile();
+    return {
+      ...p,
+      scale: Number(p.scale.toFixed(2)),
+      density: Number(p.density.toFixed(2))
+    };
+  })();
   hud.style.display = hudVisible ? "block" : "none";
   const showLabFlash = performance.now() < labCopyFlashUntilMs;
   hud.textContent = [
@@ -1730,7 +1867,7 @@ if (!isSeeking && Number.isFinite(audio.duration) && audio.duration > 0) {
       ? [
           `labPrimitive: ${labPrimitive}`,
           `labSeed: ${labSeedForPrimitive()}`,
-          `labProfile: ${stableStringify(currentLabProfile())}`,
+          `labProfile: ${stableStringify(labProfileRounded)}`,
           `labSnippet: ${activeLabSnippet().split("\n")[0]}`,
           ...(showLabFlash ? ["labCopy: copied"] : [])
         ]
@@ -1749,6 +1886,7 @@ if (!isSeeking && Number.isFinite(audio.duration) && audio.duration > 0) {
     ``,
     `keys: space play/pause`,
     `      left/right seek`,
+    `      r refresh seed`,
     `      v cycle mode`,
     `      j/k lab primitive prev/next`,
     `      y lab snippet copy`,
@@ -1765,7 +1903,7 @@ if (!isSeeking && Number.isFinite(audio.duration) && audio.duration > 0) {
     `      [ ] offset`,
     `      \\ reset offset`,
     `      h/? hud`,
-    `      l lyrics on/off`
+    ...(isHintEditMode() ? [`      l lyrics on/off`] : [])
   ].join("\n");
 
   requestAnimationFrame(render);
@@ -1802,9 +1940,10 @@ async function loadTrack(nextIndex: number) {
       const fallbackUrl = new URL(`/recipes/resolve?albumId=example-theme&trackOverrideId=${encodeURIComponent(override)}`, location.origin);
       recipeResp = await fetch(fallbackUrl.toString());
     }
-    currentRecipe = recipeResp.ok ? await recipeResp.json() : { layers: [{ module: "bg.gradientField", params: { gradientStops: 3 } }] };
+    const resolved = recipeResp.ok ? await recipeResp.json() : { layers: [{ module: "bg.gradientField", params: { gradientStops: 3 } }] };
+    currentRecipe = applyVisualHintsToRecipe(resolved, track);
   } catch {
-    currentRecipe = { layers: [{ module: "bg.gradientField", params: { gradientStops: 3 } }] };
+    currentRecipe = applyVisualHintsToRecipe({ layers: [{ module: "bg.gradientField", params: { gradientStops: 3 } }] }, track);
   }
 
   const assets = await resolvePlaybackAssets(track, trackUrl);
@@ -2020,7 +2159,7 @@ window.addEventListener("keydown", async (e) => {
     updateUrlParam("hud", hudVisible ? "1" : null);
     return;
   }
-  if (e.key.toLowerCase() === "l") {
+  if (isHintEditMode() && e.key.toLowerCase() === "l") {
     e.preventDefault();
     setLyricsEnabled(!lyricsEnabled);
     return;
@@ -2034,6 +2173,11 @@ window.addEventListener("keydown", async (e) => {
   if (e.key.toLowerCase() === "v" && !e.repeat) {
     e.preventDefault();
     cycleViewerMode();
+    return;
+  }
+  if (e.key.toLowerCase() === "r" && !e.repeat) {
+    e.preventDefault();
+    randomizeSeed();
     return;
   }
   if (viewerMode === "primitive-lab" && !e.repeat) {

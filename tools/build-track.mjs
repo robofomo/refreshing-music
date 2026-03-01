@@ -52,6 +52,39 @@ function recipeRefFromComposer(headerMap, trackId) {
   };
 }
 
+function splitCsvLike(value) {
+  return String(value ?? "")
+    .split(/[;,|]/)
+    .map((x) => x.trim())
+    .filter(Boolean);
+}
+
+function parseVisualHintsFromHeaderMap(headerMap) {
+  const mood = slugify(valueByKey(headerMap, "Visual Mood") || valueByKey(headerMap, "Viz Mood"));
+  const motion = slugify(valueByKey(headerMap, "Visual Motion") || valueByKey(headerMap, "Viz Motion"));
+  const density = slugify(valueByKey(headerMap, "Visual Density") || valueByKey(headerMap, "Viz Density"));
+  const lyricPresence = slugify(valueByKey(headerMap, "Visual Lyric Presence") || valueByKey(headerMap, "Viz Lyric Presence"));
+  const colorBias = slugify(valueByKey(headerMap, "Visual Color Bias") || valueByKey(headerMap, "Viz Color Bias"));
+  const sectionFocus = slugify(valueByKey(headerMap, "Visual Section Focus") || valueByKey(headerMap, "Viz Section Focus"));
+  const noGo = splitCsvLike(valueByKey(headerMap, "Visual NoGo") || valueByKey(headerMap, "Viz NoGo")).map(slugify);
+
+  const normalize = (v, allowed) => (allowed.includes(v) ? v : "");
+  const out = {
+    mood: normalize(mood, ["calm", "tense", "uplifting", "dark"]),
+    motion: normalize(motion, ["low", "medium", "high"]),
+    density: normalize(density, ["sparse", "normal", "dense"]),
+    lyricPresence: normalize(lyricPresence, ["off", "on", "auto"]),
+    colorBias: normalize(colorBias, ["cool", "warm", "neutral"]),
+    sectionFocus: normalize(sectionFocus, ["intro", "verse", "chorus", "bridge", "outro"]),
+    noGo: noGo.filter((x) => ["strobe", "text", "lyrics", "particles", "rapid-cuts"].includes(x))
+  };
+
+  const hasAny = Boolean(
+    out.mood || out.motion || out.density || out.lyricPresence || out.colorBias || out.sectionFocus || out.noGo.length
+  );
+  return hasAny ? out : null;
+}
+
 function createdFields(headerMap, audioStat) {
   const createdLocalRaw = valueByKey(headerMap, "created");
   if (!createdLocalRaw) {
@@ -966,6 +999,8 @@ export function buildTrackWithOptions({
       rawText: composer.lyricsRawText
     }
   };
+  const visualHints = parseVisualHintsFromHeaderMap(composer.headerMap);
+  if (visualHints) track.visualHints = visualHints;
   if (sourceGroupKey) track.sourceGroupKey = sourceGroupKey;
   else if (typeof existing?.sourceGroupKey === "string" && existing.sourceGroupKey) {
     track.sourceGroupKey = existing.sourceGroupKey;

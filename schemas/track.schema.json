@@ -40,6 +40,22 @@
       },
       "additionalProperties": true
     },
+    "visualHints": {
+      "type": "object",
+      "properties": {
+        "mood": { "type": "string", "enum": ["calm", "tense", "uplifting", "dark"] },
+        "motion": { "type": "string", "enum": ["low", "medium", "high"] },
+        "density": { "type": "string", "enum": ["sparse", "normal", "dense"] },
+        "lyricPresence": { "type": "string", "enum": ["off", "on", "auto"] },
+        "colorBias": { "type": "string", "enum": ["cool", "warm", "neutral"] },
+        "sectionFocus": { "type": "string", "enum": ["intro", "verse", "chorus", "bridge", "outro"] },
+        "noGo": {
+          "type": "array",
+          "items": { "type": "string" }
+        }
+      },
+      "additionalProperties": true
+    },
     "sections": {
       "type": "array",
       "items": {

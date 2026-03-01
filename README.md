@@ -26,6 +26,22 @@ Layer `params` support deterministic expression objects (all resolved from absol
 
 This keeps seek deterministic: a frame depends only on current timestamp + seed + inputs, never on prior-frame simulation history.
 
+## Composer Visual Hints v1 (Best Effort)
+Composer headers can provide high-level visualization intent. These are parsed into `track.visualHints` during `build-track`, then mapped to runtime recipe adjustments.
+
+Supported header keys (aliases with `Viz ...` also accepted):
+- `[Visual Mood: calm|tense|uplifting|dark]`
+- `[Visual Motion: low|medium|high]`
+- `[Visual Density: sparse|normal|dense]`
+- `[Visual Lyric Presence: off|on|auto]`
+- `[Visual Color Bias: cool|warm|neutral]`
+- `[Visual Section Focus: intro|verse|chorus|bridge|outro]`
+- `[Visual NoGo: lyrics, text, particles, strobe, rapid-cuts]`
+
+Notes:
+- Hints are intentionally high-level and deterministic-safe.
+- Mapping is best-effort and non-destructive: base recipes still load, hints apply as constrained overrides.
+
 ## Workflow (Inbox -> Assets -> Tracks)
 1. Drop new files into `inbox/` (mp3/wav/txt/json5/zip).
 2. Run `npm run import:inbox`.
@@ -51,7 +67,7 @@ This keeps seek deterministic: a frame depends only on current timestamp + seed 
    - `preprocess` (embeds generated AI timing into `tracks/<trackId>.track.json`)
 8. Run `npm run dev` for the dev viewer.
    - Optional viewer mode query param: `?mode=hint-edit|primitive-lab|graph-scene` (default `hint-edit`; legacy `playback` maps to `hint-edit`).
-   - In `primitive-lab`, use `j/k` to switch primitives, then vary only by seed (`seed` button / `?seed=...`); `y` (or `lab copy` button) copies a recipe snippet template for the current seeded variant.
+   - In `primitive-lab`, use `j/k` to switch primitives, then vary only by seed (`seed` button, `r` key, or `?seed=...`); `y` (or `lab copy` button) copies a recipe snippet template for the current seeded variant.
    - In `graph-scene`, renderer uses `recipe.graph.layers[*].nodes[*]` if present (fallback graph otherwise); `y` / `lab copy` copies a graph snippet template.
    - Graph node params support the same deterministic resolvable values (`map`, `pick`, `lfo`, `signal`, `add`, `mul`).
    - Press `t` in viewer to run a determinism probe (checks stable param resolution for current time/seed; result shown in HUD).

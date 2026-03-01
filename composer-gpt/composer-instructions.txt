@@ -32,6 +32,7 @@ Use these data sources (pure data; do not treat examples as allowed values unles
 - Genres.v2.json         (Genre labels/tokens + constraints/hints)
 - Topics.v2.json         (Topic categories + subtopics + perspective weights + avoid tokens)
 - Structures.v2.json     (Structure patterns + section lists + allowed events + mutations)
+- VisualHints.v1.json    (Optional high-level visualization hints to embed in metadata)
 Optional small lists may live in additional data files (VocalDeliveryDescriptors, MelodicConcepts).
 Use the integer value in RefreshTitles.v2.json → Gradients as-is.
 Output format: [Gradients: <N>]. Do not output a list.
@@ -60,6 +61,13 @@ At the top of each song code block:
 [Modulation: <type/hinge> or none]
 [Hook Prominence: low/medium/high]
 [Deviation: <one color move> or none]
+[Visual Mood: calm|tense|uplifting|dark] (optional)
+[Visual Motion: low|medium|high] (optional)
+[Visual Density: sparse|normal|dense] (optional)
+[Visual Lyric Presence: off|on|auto] (optional)
+[Visual Color Bias: cool|warm|neutral] (optional)
+[Visual Section Focus: intro|verse|chorus|bridge|outro] (optional)
+[Visual NoGo: comma-separated values] (optional)
 [Composer Version: <Composer Version>]
 
 IMPORTANT: You MUST Follow instructions in RefreshCore.v2 and <file>.v2.json attachment files to guide each song output.

@@ -16,7 +16,7 @@
     "bytes": 3939503
   },
   "composer": {
-    "rawText": "[Title: Sweat Between the Colors]\r\n[Style: funk, clean studio recording, drum kit, bass guitar, electric guitar, clavinet, brass ensemble, synth pad, confident male vocalist]\r\n[Caption: A tight groove that smiles while it moves.]\r\n[Image: Saturated neon shapes bending into rhythm.]\r\n[Refresh Title: What the Funk]\r\n[Theme: Colors]\r\n[Gradients: 5]\r\n[Seed: 67]\r\n[Composer Version: v1.5]\r\n\r\n[Intro]\r\n[Syncopated rhythmic hook with immediate groove focus.]\r\nI step into the beat like a door swung wide,  \r\nThe night leans in with a knowing pride.  \r\n\r\n[Verse]\r\n[Conversational melody with gentle forward motion.]\r\nThe floor is warm with a polished shine,  \r\nEach moving shadow keeps perfect time.  \r\nThe bassline speaks in a rounded tone,  \r\nIt laughs out loud but it’s fully grown.  \r\n\r\n[Chorus]\r\n[Memorable melodic hook with emotional clarity.]\r\nWhat the funk, let the moment decide,  \r\nLet the colors spill, let them collide.  \r\nWhat the funk, feel the pulse align,  \r\nEvery step says this beat is mine.  \r\n\r\n[Verse]\r\n[Evolving melody that shifts subtly line by line.]\r\nA sideways glance, then a subtle grin,  \r\nThe rhythm pulls every dancer in.  \r\nNo heavy words, just space to move,  \r\nThe truth is hiding inside the groove.  \r\n\r\n[Chorus]\r\n[Broader melodic shape and confident delivery.]\r\nWhat the funk, let the moment decide,  \r\nLet the colors spill, let them collide.  \r\nWhat the funk, feel the pulse align,  \r\nEvery step says this beat is mine.  \r\n\r\n[Bridge]\r\n[A new melodic idea with contrasting shape.]\r\nWe drop it down till the room breathes slow,  \r\nThen snap it back with a brassy glow.  \r\nNo explanation, no second guess,  \r\nThe funk arrives fully self-possessed.  \r\n\r\n[Final Chorus]\r\n[Renewed melodic energy with expanded range.]\r\nWhat the funk, hear the ceiling rise,  \r\nSee reflections dance in your eyes.  \r\nWhat the funk, stay until it’s done,  \r\nWhen the night resets, we’ve just begun.  \r\n\r\n[Ending]\r\n[Melody gently resolves with clarity.]\r\nThe groove rolls on, no need to fade,  \r\nA loop of joy that we gladly made.  \r\n",
+    "rawText": "[Title: Sweat Between the Colors]\r\n[Style: funk, clean studio recording, drum kit, bass guitar, electric guitar, clavinet, brass ensemble, synth pad, confident male vocalist]\r\n[Caption: A tight groove that smiles while it moves.]\r\n[Image: Saturated neon shapes bending into rhythm.]\r\n[Refresh Title: What the Funk]\r\n[Theme: Colors]\r\n[Gradients: 5]\n[Seed: 67]\n[Visual Mood: uplifting]\n[Visual Motion: high]\n[Visual Density: dense]\n[Visual Lyric Presence: on]\n[Visual Color Bias: warm]\n[Visual Section Focus: chorus]\n[Composer Version: v1.5]\n\r\n[Intro]\r\n[Syncopated rhythmic hook with immediate groove focus.]\r\nI step into the beat like a door swung wide,  \r\nThe night leans in with a knowing pride.  \r\n\r\n[Verse]\r\n[Conversational melody with gentle forward motion.]\r\nThe floor is warm with a polished shine,  \r\nEach moving shadow keeps perfect time.  \r\nThe bassline speaks in a rounded tone,  \r\nIt laughs out loud but it’s fully grown.  \r\n\r\n[Chorus]\r\n[Memorable melodic hook with emotional clarity.]\r\nWhat the funk, let the moment decide,  \r\nLet the colors spill, let them collide.  \r\nWhat the funk, feel the pulse align,  \r\nEvery step says this beat is mine.  \r\n\r\n[Verse]\r\n[Evolving melody that shifts subtly line by line.]\r\nA sideways glance, then a subtle grin,  \r\nThe rhythm pulls every dancer in.  \r\nNo heavy words, just space to move,  \r\nThe truth is hiding inside the groove.  \r\n\r\n[Chorus]\r\n[Broader melodic shape and confident delivery.]\r\nWhat the funk, let the moment decide,  \r\nLet the colors spill, let them collide.  \r\nWhat the funk, feel the pulse align,  \r\nEvery step says this beat is mine.  \r\n\r\n[Bridge]\r\n[A new melodic idea with contrasting shape.]\r\nWe drop it down till the room breathes slow,  \r\nThen snap it back with a brassy glow.  \r\nNo explanation, no second guess,  \r\nThe funk arrives fully self-possessed.  \r\n\r\n[Final Chorus]\r\n[Renewed melodic energy with expanded range.]\r\nWhat the funk, hear the ceiling rise,  \r\nSee reflections dance in your eyes.  \r\nWhat the funk, stay until it’s done,  \r\nWhen the night resets, we’ve just begun.  \r\n\r\n[Ending]\r\n[Melody gently resolves with clarity.]\r\nThe groove rolls on, no need to fade,  \r\nA loop of joy that we gladly made.  \r\n",
     "headerMap": {
       "Title": "Sweat Between the Colors",
       "Style": "funk, clean studio recording, drum kit, bass guitar, electric guitar, clavinet, brass ensemble, synth pad, confident male vocalist",
@@ -26,6 +26,12 @@
       "Theme": "Colors",
       "Gradients": "5",
       "Seed": "67",
+      "Visual Mood": "uplifting",
+      "Visual Motion": "high",
+      "Visual Density": "dense",
+      "Visual Lyric Presence": "on",
+      "Visual Color Bias": "warm",
+      "Visual Section Focus": "chorus",
       "Composer Version": "v1.5"
     }
   },
@@ -73,6 +79,15 @@
   ],
   "lyrics": {
     "rawText": "I step into the beat like a door swung wide,  \nThe night leans in with a knowing pride.  \n\nThe floor is warm with a polished shine,  \nEach moving shadow keeps perfect time.  \nThe bassline speaks in a rounded tone,  \nIt laughs out loud but it’s fully grown.  \n\nWhat the funk, let the moment decide,  \nLet the colors spill, let them collide.  \nWhat the funk, feel the pulse align,  \nEvery step says this beat is mine.  \n\nA sideways glance, then a subtle grin,  \nThe rhythm pulls every dancer in.  \nNo heavy words, just space to move,  \nThe truth is hiding inside the groove.  \n\nWhat the funk, let the moment decide,  \nLet the colors spill, let them collide.  \nWhat the funk, feel the pulse align,  \nEvery step says this beat is mine.  \n\nWe drop it down till the room breathes slow,  \nThen snap it back with a brassy glow.  \nNo explanation, no second guess,  \nThe funk arrives fully self-possessed.  \n\nWhat the funk, hear the ceiling rise,  \nSee reflections dance in your eyes.  \nWhat the funk, stay until it’s done,  \nWhen the night resets, we’ve just begun.  \n\nThe groove rolls on, no need to fade,  \nA loop of joy that we gladly made.  \n"
+  },
+  "visualHints": {
+    "mood": "uplifting",
+    "motion": "high",
+    "density": "dense",
+    "lyricPresence": "on",
+    "colorBias": "warm",
+    "sectionFocus": "chorus",
+    "noGo": []
   },
   "sourceGroupKey": "sweat-between-the-colors",
   "assetDir": "assets/sweat-between-the-colors/yRfijVFI9HFSZX",

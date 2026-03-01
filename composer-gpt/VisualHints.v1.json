@@ -1,0 +1,55 @@
+{
+  "Version": "v1.0",
+  "Purpose": "High-level visualization intent for deterministic recipe adaptation. Keep hints sparse and non-conflicting.",
+  "Fields": {
+    "Visual Mood": {
+      "AllowedValues": ["calm", "tense", "uplifting", "dark"],
+      "Guidance": "Choose one. Describes emotional posture, not specific effects."
+    },
+    "Visual Motion": {
+      "AllowedValues": ["low", "medium", "high"],
+      "Guidance": "Choose one. Controls apparent motion intensity."
+    },
+    "Visual Density": {
+      "AllowedValues": ["sparse", "normal", "dense"],
+      "Guidance": "Choose one. Controls scene fullness/complexity."
+    },
+    "Visual Lyric Presence": {
+      "AllowedValues": ["off", "on", "auto"],
+      "Guidance": "Use off for instrumental or text-minimal intent; auto when uncertain."
+    },
+    "Visual Color Bias": {
+      "AllowedValues": ["cool", "warm", "neutral"],
+      "Guidance": "Optional. Nudge palette temperature only."
+    },
+    "Visual Section Focus": {
+      "AllowedValues": ["intro", "verse", "chorus", "bridge", "outro"],
+      "Guidance": "Optional. Emphasize one section type."
+    },
+    "Visual NoGo": {
+      "AllowedValues": ["strobe", "text", "lyrics", "particles", "rapid-cuts"],
+      "Guidance": "Optional comma-separated deny-list."
+    }
+  },
+  "SelectionPolicy": {
+    "DefaultBehavior": "Best effort, once per song.",
+    "WhenToWrite": [
+      "Write hints when song concept clearly implies visual direction.",
+      "Write no more than 3-5 hint lines to avoid over-constraining.",
+      "If uncertain, prefer omitting optional fields."
+    ],
+    "ConflictAvoidance": [
+      "Do not emit contradictory pairs (e.g., Visual Motion high + Visual Density sparse unless intentional).",
+      "Avoid overusing Visual NoGo; reserve for explicit exclusions."
+    ]
+  },
+  "MetadataLines": [
+    "[Visual Mood: <value>]",
+    "[Visual Motion: <value>]",
+    "[Visual Density: <value>]",
+    "[Visual Lyric Presence: <value>]",
+    "[Visual Color Bias: <value>]",
+    "[Visual Section Focus: <value>]",
+    "[Visual NoGo: <value1>, <value2>]"
+  ]
+}

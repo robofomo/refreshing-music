@@ -62,8 +62,8 @@ type Track = {
 };
 
 type PlaybackMode = "mix" | "stems";
-type ViewerMode = "playback" | "primitive-lab" | "graph-scene";
-const VIEWER_MODES: ViewerMode[] = ["playback", "primitive-lab", "graph-scene"];
+type ViewerMode = "hint-edit" | "primitive-lab" | "graph-scene";
+const VIEWER_MODES: ViewerMode[] = ["hint-edit", "primitive-lab", "graph-scene"];
 type LabPrimitiveId = "shape.circlePulse" | "polyline.orbitRibbon" | "text.echoWord";
 const LAB_PRIMITIVES: LabPrimitiveId[] = ["shape.circlePulse", "polyline.orbitRibbon", "text.echoWord"];
 type ViewerSignalBus = {
@@ -179,11 +179,8 @@ let renderOffsetMs = DEFAULT_RENDER_OFFSET_MS;
 let hudVisible = new URL(location.href).searchParams.get("hud") === "1";
 let lyricsEnabled = new URL(location.href).searchParams.get("lyrics") !== "0";
 let lyricMode = new URL(location.href).searchParams.get("lyricMode") || "center";
-let viewerMode: ViewerMode = "playback";
+let viewerMode: ViewerMode = "hint-edit";
 let labPrimitive: LabPrimitiveId = LAB_PRIMITIVES[0];
-let labScale = 1;
-let labDensity = 1;
-let labVariant = 0;
 let labCopyFlashUntilMs = 0;
 let determinismProbeStatus = "idle";
 let determinismProbeAtIso = "";
@@ -262,14 +259,19 @@ function updateUrlParam(key: string, value: string | null) {
 
 function normalizeViewerMode(value: string | null | undefined): ViewerMode {
   const raw = String(value || "").trim().toLowerCase();
-  if (raw === "primitive-lab" || raw === "graph-scene" || raw === "playback") return raw;
-  return "playback";
+  if (raw === "playback" || raw === "hint-edit") return "hint-edit";
+  if (raw === "primitive-lab" || raw === "graph-scene") return raw;
+  return "hint-edit";
 }
 
 function setViewerMode(nextMode: ViewerMode) {
   viewerMode = nextMode;
-  updateUrlParam("mode", nextMode === "playback" ? null : nextMode);
+  updateUrlParam("mode", nextMode === "hint-edit" ? null : nextMode);
   if (modeBtn) modeBtn.textContent = nextMode;
+}
+
+function isHintEditMode() {
+  return viewerMode === "hint-edit";
 }
 
 function cycleViewerMode() {
@@ -286,17 +288,22 @@ function cycleLabPrimitive(dir: 1 | -1) {
   refreshLabControls();
 }
 
-function clampLabScale(v: number) {
-  return Math.max(0.5, Math.min(2.5, Number(v) || 1));
+function labSeedForPrimitive() {
+  return (seed ^ hashStringToSeed(`lab:${labPrimitive}`)) >>> 0;
 }
 
-function clampLabDensity(v: number) {
-  return Math.max(0.5, Math.min(2.5, Number(v) || 1));
+function currentLabProfile() {
+  const rng = mulberry32(labSeedForPrimitive());
+  const scale = 0.7 + rng() * 1.5;
+  const density = 0.65 + rng() * 1.65;
+  const variant = Math.floor(rng() * 1000);
+  return { scale, density, variant };
 }
 
 function activeLabSnippet() {
-  const scale = Number(labScale.toFixed(3));
-  const density = Number(labDensity.toFixed(3));
+  const profile = currentLabProfile();
+  const scale = Number(profile.scale.toFixed(3));
+  const density = Number(profile.density.toFixed(3));
   const pulseMul = Number((0.16 * scale).toFixed(3));
   if (labPrimitive === "shape.circlePulse") {
     return `{
@@ -1349,6 +1356,10 @@ function drawPrimitiveLabOverlay(signalBus: ViewerSignalBus) {
   const amp = signalBus.audio.amp;
   const beat = signalBus.beat.pulse;
   const downbeat = signalBus.beat.downbeatPulse;
+  const profile = currentLabProfile();
+  const labScale = profile.scale;
+  const labDensity = profile.density;
+  const labVariant = profile.variant;
   const ringCount = Math.max(3, Math.round((6 + labDensity * 4)));
   const baseR = Math.min(w, h) * 0.09 * labScale;
   const seedPhase = (((seed >>> 0) + labVariant) % 360) * (Math.PI / 180);
@@ -1679,7 +1690,7 @@ function render() {
   }
   if (viewerMode !== "graph-scene") drawBeatOrb(pulse.beat, pulse.downbeat);
   if (viewerMode === "primitive-lab") drawPrimitiveLabOverlay(signalBus);
-  drawHintOverlays();
+  if (isHintEditMode()) drawHintOverlays();
 
 if (!isSeeking && Number.isFinite(audio.duration) && audio.duration > 0) {
   const max = Math.max(1, Number(seek.max) || SEEK_SCALE);
@@ -1704,22 +1715,22 @@ if (!isSeeking && Number.isFinite(audio.duration) && audio.duration > 0) {
     `mode: ${viewerMode}`,
     `time: ${fmtMs(tAudioMs)}`,
     `offsetMs: ${renderOffsetMs}`,
-    `seekTarget: ${lastSeekTargetSec.toFixed(3)}s`,
-    `seekActual: ${lastSeekActualSec.toFixed(3)}s`,
-    `seekErrorMs: ${lastSeekErrorMs}`,
     `playback: ${playbackMode}`,
-    `hints: ${activeHintCount}`,
-    `fusion: ${signalBus.hints.fusionModeLabel} (now: ${signalBus.beat.fusionMode})`,
+    ...(isHintEditMode()
+      ? [
+          `hints: ${activeHintCount}`,
+          `fusion: ${signalBus.hints.fusionModeLabel} (now: ${signalBus.beat.fusionMode})`,
+          `beats: ${signalBus.beat.beatCount}`,
+          `downbeats: ${signalBus.beat.downbeatCount}`,
+          `aiDownbeats: ${signalBus.hints.aiDownbeats}`
+        ]
+      : []),
     `determinism: ${determinismProbeStatus}${determinismProbeAtIso ? ` @ ${determinismProbeAtIso}` : ""}`,
-    `beats: ${signalBus.beat.beatCount}`,
-    `downbeats: ${signalBus.beat.downbeatCount}`,
-    `aiDownbeats: ${signalBus.hints.aiDownbeats}`,
     ...(viewerMode === "primitive-lab"
       ? [
           `labPrimitive: ${labPrimitive}`,
-          `labScale: ${labScale.toFixed(2)}`,
-          `labDensity: ${labDensity.toFixed(2)}`,
-          `labVariant: ${labVariant}`,
+          `labSeed: ${labSeedForPrimitive()}`,
+          `labProfile: ${stableStringify(currentLabProfile())}`,
           `labSnippet: ${activeLabSnippet().split("\n")[0]}`,
           ...(showLabFlash ? ["labCopy: copied"] : [])
         ]
@@ -1736,20 +1747,21 @@ if (!isSeeking && Number.isFinite(audio.duration) && audio.duration > 0) {
     `lyricIndex: ${lyricIndex}`,
     `lyric: ${lyricText || "-"}`,
     ``,
-    `keys: space/k play`,
+    `keys: space play/pause`,
     `      left/right seek`,
     `      v cycle mode`,
-    `      z/x lab scale -/+`,
-    `      a/s lab density -/+`,
-    `      j/l lab primitive prev/next`,
-    `      r lab variant`,
+    `      j/k lab primitive prev/next`,
     `      y lab snippet copy`,
     `      t determinism probe`,
-    `      d = downbeat anchor (keep established tempo)`,
-    `      1/2/3/4 = measure tempo hints`,
-    `      b = single beat hint`,
-    `      u undo last hint group`,
-    `      c clear hints`,
+    ...(isHintEditMode()
+      ? [
+          `      d = downbeat anchor (keep established tempo)`,
+          `      1/2/3/4 = measure tempo hints`,
+          `      b = single beat hint`,
+          `      u undo last hint group`,
+          `      c clear hints`
+        ]
+      : []),
     `      [ ] offset`,
     `      \\ reset offset`,
     `      h/? hud`,
@@ -1947,7 +1959,7 @@ hudBtn.addEventListener("click", () => {
 
 window.addEventListener("keydown", async (e) => {
   showControlsTemporarily();
-  if ((e.code === "Space" || e.key.toLowerCase() === "k") && !e.repeat) {
+  if (e.code === "Space" && !e.repeat) {
     e.preventDefault();
     await togglePlayPause();
     return;
@@ -1973,7 +1985,7 @@ window.addEventListener("keydown", async (e) => {
     }
     return;
   }
-  if (!e.repeat && (e.key.toLowerCase() === "d" || e.key.toLowerCase() === "b" || ["1", "2", "3", "4"].includes(e.key))) {
+  if (isHintEditMode() && !e.repeat && (e.key.toLowerCase() === "d" || e.key.toLowerCase() === "b" || ["1", "2", "3", "4"].includes(e.key))) {
     const tSec = currentHintCaptureSec();
     if (e.key.toLowerCase() === "d") {
       applyHintEventOptimistic({ type: "hint/downbeat", tSec });
@@ -2025,39 +2037,14 @@ window.addEventListener("keydown", async (e) => {
     return;
   }
   if (viewerMode === "primitive-lab" && !e.repeat) {
-    if (e.key.toLowerCase() === "z") {
-      e.preventDefault();
-      labScale = clampLabScale(labScale - 0.1);
-      return;
-    }
-    if (e.key.toLowerCase() === "x") {
-      e.preventDefault();
-      labScale = clampLabScale(labScale + 0.1);
-      return;
-    }
-    if (e.key.toLowerCase() === "a") {
-      e.preventDefault();
-      labDensity = clampLabDensity(labDensity - 0.1);
-      return;
-    }
-    if (e.key.toLowerCase() === "s") {
-      e.preventDefault();
-      labDensity = clampLabDensity(labDensity + 0.1);
-      return;
-    }
     if (e.key.toLowerCase() === "j") {
       e.preventDefault();
       cycleLabPrimitive(-1);
       return;
     }
-    if (e.key.toLowerCase() === "l") {
+    if (e.key.toLowerCase() === "k") {
       e.preventDefault();
       cycleLabPrimitive(1);
-      return;
-    }
-    if (e.key.toLowerCase() === "r") {
-      e.preventDefault();
-      labVariant = (labVariant + 1) % 1000;
       return;
     }
     if (e.key.toLowerCase() === "y") {
@@ -2066,17 +2053,22 @@ window.addEventListener("keydown", async (e) => {
       return;
     }
   }
+  if (viewerMode === "graph-scene" && !e.repeat && e.key.toLowerCase() === "y") {
+    e.preventDefault();
+    await copyLabSnippet();
+    return;
+  }
   if (e.key.toLowerCase() === "t" && !e.repeat) {
     e.preventDefault();
     determinismProbeRequested = true;
     return;
   }
-  if (e.key.toLowerCase() === "c" && !e.repeat) {
+  if (isHintEditMode() && e.key.toLowerCase() === "c" && !e.repeat) {
     e.preventDefault();
     await clearHintEventsForCurrentTrack();
     return;
   }
-  if (e.key.toLowerCase() === "u" && !e.repeat) {
+  if (isHintEditMode() && e.key.toLowerCase() === "u" && !e.repeat) {
     e.preventDefault();
     await undoLastHintGroupForCurrentTrack();
     return;

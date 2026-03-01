@@ -69,11 +69,15 @@ Notes:
    - `preprocess:ai` (stems -> beats -> whisperx)
    - `preprocess` (embeds generated AI timing into `tracks/<trackId>.track.json`)
 8. Run `npm run dev` for the dev viewer.
-   - Optional viewer mode query param: `?mode=hint-edit|primitive-lab|graph-scene` (default `hint-edit`; legacy `playback` maps to `hint-edit`).
-   - In `primitive-lab`, use `j/k` to switch primitives, then vary only by seed (`seed` button, `r` key, or `?seed=...`); `y` (or `lab copy` button) copies a recipe snippet template for the current seeded variant.
-   - In `graph-scene`, renderer uses `recipe.graph.layers[*].nodes[*]` if present (fallback graph otherwise); `y` / `lab copy` copies a graph snippet template.
+   - Optional viewer mode query param: `?mode=player|hint-edit|primitive-lab|recipe-view|random-scene` (default `player`; legacy `playback` maps to `hint-edit`; legacy `graph-scene` maps to `recipe-view`).
+   - In `primitive-lab`, use `j/k` to switch primitives, then vary only by seed (`seed` button, `r` key, or `?seed=...`).
+   - In `player`, renderer runs a deterministic section playbook from seed (mixing curated recipe scenes and random scenes with section transitions).
+   - In `recipe-view`, renderer uses section-selected recipe graph layers; in `random-scene`, renderer builds deterministic per-section random graph layers.
+   - Section transitions are now registry-based (like primitives) with built-ins: `cut`, `crossfade`, `wipe`, `noiseDissolve`.
    - Graph node params support the same deterministic resolvable values (`map`, `pick`, `lfo`, `signal`, `add`, `mul`).
-   - Press `t` in viewer to run a determinism probe (checks stable param resolution for current time/seed; result shown in HUD).
+   - Built-in graph primitive types currently include `shape.circlePulse`, `polyline.orbitRibbon`, `curve.rosetteSpiral`, and `text.echoWord`.
+   - `curve.rosetteSpiral` supports `mode`, `connectMode`, `symmetrySnap`, `skip`, and optional `color: "black"` for high-contrast variants.
+   - In `recipe-view` and `random-scene`, `j/k` select previous/next graph, `r` refreshes variant, and `a` toggles auto refresh (variant on downbeats + graph step on section changes).
 
 ### Import Flags
 - `npm run import:inbox -- --dry-run`
@@ -172,7 +176,7 @@ Authoring mode supports lightweight beat/downbeat hint events from the dev viewe
   - `d`: downbeat hint at current playhead
   - `b`: beat hint at current playhead
   - `1`/`2`/`3`/`4`: bar-beat hint (`beatInBar`)
-  - `v`: cycle viewer mode (`hint-edit` -> `primitive-lab` -> `graph-scene`)
+  - `v`: cycle viewer mode (`player` -> `hint-edit` -> `primitive-lab` -> `recipe-view` -> `random-scene`)
 - Authoring persistence:
   - Hints are written via local dev API and reduced with debounce.
   - Reducer also runs after `beats` / `whisperx` updates.

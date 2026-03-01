@@ -170,7 +170,8 @@ export function createEngine({
     tMs,
     recipe,
     sectionType,
-    sectionId
+    sectionId,
+    clearFirst = true
   }: {
     targetCtx: CanvasRenderingContext2D;
     layers: any[];
@@ -180,11 +181,14 @@ export function createEngine({
     recipe: any;
     sectionType: SectionType;
     sectionId: string;
+    clearFirst?: boolean;
   }) {
-    targetCtx.setTransform(1, 0, 0, 1, 0, 0);
-    targetCtx.globalAlpha = 1;
-    targetCtx.globalCompositeOperation = "source-over";
-    targetCtx.clearRect(0, 0, canvas.width, canvas.height);
+    if (clearFirst) {
+      targetCtx.setTransform(1, 0, 0, 1, 0, 0);
+      targetCtx.globalAlpha = 1;
+      targetCtx.globalCompositeOperation = "source-over";
+      targetCtx.clearRect(0, 0, canvas.width, canvas.height);
+    }
     let lyricIndex = -1;
     let lyricText = "";
     for (const layer of layers) {
@@ -287,7 +291,14 @@ export function createEngine({
 
     let frameInfo = { sectionId, sectionType, lyricIndex: -1, lyricText: "" };
     const drawToFn = (targetCtx: CanvasRenderingContext2D) => {
-      if (viewerMode === "graph-scene") {
+      const hasGraphLayers = Array.isArray(recipe?.graph?.layers) && recipe.graph.layers.length > 0;
+      const useGraphPipeline =
+        viewerMode === "player" ||
+        viewerMode === "recipe-view" ||
+        viewerMode === "random-scene" ||
+        (viewerMode === "graph-scene") ||
+        (viewerMode === "hint-edit" && hasGraphLayers);
+      if (useGraphPipeline) {
         targetCtx.setTransform(1, 0, 0, 1, 0, 0);
         targetCtx.globalAlpha = 1;
         targetCtx.globalCompositeOperation = "source-over";
@@ -301,6 +312,23 @@ export function createEngine({
           recipe,
           colors: palette
         });
+        if (viewerMode === "hint-edit") {
+          const uiLayers = layers.filter((layer: any) => String(layer?.module ?? "").toLowerCase().startsWith("ui."));
+          if (uiLayers.length) {
+            const renderInfo = renderLayers({
+              targetCtx,
+              layers: uiLayers,
+              state,
+              palette,
+              tMs,
+              recipe,
+              sectionType,
+              sectionId,
+              clearFirst: false
+            });
+            frameInfo = { ...frameInfo, ...renderInfo };
+          }
+        }
       } else {
         const renderInfo = renderLayers({ targetCtx, layers, state, palette, tMs, recipe, sectionType, sectionId });
         frameInfo = { ...frameInfo, ...renderInfo };

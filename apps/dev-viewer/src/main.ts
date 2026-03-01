@@ -2,6 +2,8 @@ import "./style.css";
 import { createEngine, hashStringToSeed } from "../../../packages/engine/src/index";
 import { classifySection } from "../../../packages/engine/src/sections";
 import { resolveResolvable } from "../../../packages/engine/src/resolvable";
+import { renderRegisteredModule } from "../../../packages/engine/src/moduleRegistry";
+import { normalizeSectionLabel } from "../../../packages/engine/src/transitions";
 
 declare const __AUTHORING_MODE__: boolean;
 declare const __RELEASE_MODE__: boolean;
@@ -23,10 +25,12 @@ type EffectiveState = {
     beatMarkers?: Array<{ tMs?: number; source?: "hint" | "inferred" | "ai" | "corrected" }>;
     downbeatMarkers?: Array<{ tMs?: number; source?: "hint" | "inferred" | "ai" | "corrected" }>;
     aiDownbeatMarkers?: Array<{ tMs?: number; source?: "ai" }>;
+    sections?: Array<{ id?: string; labelRaw?: string; t0Ms?: number; t1Ms?: number }>;
   };
   hints?: {
     eventsCount?: number;
     beatFusionMode?: string;
+    sectionBoundaryResolver?: { method?: string; adjusted?: number; avgSnapMs?: number };
     fusionWindowsSec?: Array<{ t0Sec?: number; t1Sec?: number }>;
   };
   overlays?: HintOverlay[];
@@ -71,10 +75,31 @@ type Track = {
 };
 
 type PlaybackMode = "mix" | "stems";
-type ViewerMode = "hint-edit" | "primitive-lab" | "graph-scene";
-const VIEWER_MODES: ViewerMode[] = ["hint-edit", "primitive-lab", "graph-scene"];
-type LabPrimitiveId = "shape.circlePulse" | "polyline.orbitRibbon" | "text.echoWord";
-const LAB_PRIMITIVES: LabPrimitiveId[] = ["shape.circlePulse", "polyline.orbitRibbon", "text.echoWord"];
+type ViewerMode = "player" | "hint-edit" | "primitive-lab" | "recipe-view" | "random-scene";
+const VIEWER_MODES: ViewerMode[] = ["player", "hint-edit", "primitive-lab", "recipe-view", "random-scene"];
+type LabBackdropPolicy = "off" | "fixed" | "random";
+type LabBackdropId = "black" | "gradient" | "vignette" | "bands";
+type LabPrimitiveId =
+  | "bg.gradientField"
+  | "fg.particles"
+  | "shape.beatOrb"
+  | "overlay.beatTrack"
+  | "shape.circlePulse"
+  | "polyline.orbitRibbon"
+  | "curve.rosetteSpiral"
+  | "text.echoWord"
+  | "text.karaoke";
+const LAB_PRIMITIVES: LabPrimitiveId[] = [
+  "bg.gradientField",
+  "fg.particles",
+  "shape.beatOrb",
+  "overlay.beatTrack",
+  "shape.circlePulse",
+  "polyline.orbitRibbon",
+  "curve.rosetteSpiral",
+  "text.echoWord",
+  "text.karaoke"
+];
 type ViewerSignalBus = {
   time: {
     audioMs: number;
@@ -188,9 +213,18 @@ let renderOffsetMs = DEFAULT_RENDER_OFFSET_MS;
 let hudVisible = new URL(location.href).searchParams.get("hud") === "1";
 let lyricsEnabled = new URL(location.href).searchParams.get("lyrics") !== "0";
 let lyricMode = new URL(location.href).searchParams.get("lyricMode") || "center";
-let viewerMode: ViewerMode = "hint-edit";
+let viewerMode: ViewerMode = "player";
 let labPrimitive: LabPrimitiveId = LAB_PRIMITIVES[0];
+let labBackdropPolicy: LabBackdropPolicy = "off";
+let labBackdropFixed: LabBackdropId = "gradient";
 let labCopyFlashUntilMs = 0;
+let graphAutoRefresh = false;
+let graphManualRecipe: { sectionId: string; index: number } | null = null;
+const graphVariantBySection = new Map<string, number>();
+let lastGraphSectionId = "";
+let lastAutoDownbeatCount = -1;
+let playerLastSectionId = "";
+let playerLastTransitionLabel = "crossfade";
 let determinismProbeStatus = "idle";
 let determinismProbeAtIso = "";
 let determinismProbeRequested = false;
@@ -268,14 +302,16 @@ function updateUrlParam(key: string, value: string | null) {
 
 function normalizeViewerMode(value: string | null | undefined): ViewerMode {
   const raw = String(value || "").trim().toLowerCase();
+  if (raw === "player") return "player";
   if (raw === "playback" || raw === "hint-edit") return "hint-edit";
-  if (raw === "primitive-lab" || raw === "graph-scene") return raw;
-  return "hint-edit";
+  if (raw === "primitive-lab" || raw === "recipe-view" || raw === "random-scene") return raw as ViewerMode;
+  if (raw === "graph-scene") return "recipe-view";
+  return "player";
 }
 
 function setViewerMode(nextMode: ViewerMode) {
   viewerMode = nextMode;
-  updateUrlParam("mode", nextMode === "hint-edit" ? null : nextMode);
+  updateUrlParam("mode", nextMode === "player" ? null : nextMode);
   if (modeBtn) modeBtn.textContent = nextMode;
 }
 
@@ -297,6 +333,37 @@ function cycleLabPrimitive(dir: 1 | -1) {
   refreshLabControls();
 }
 
+function cycleLabBackdropPolicy() {
+  if (labBackdropPolicy === "off") labBackdropPolicy = "fixed";
+  else if (labBackdropPolicy === "fixed") labBackdropPolicy = "random";
+  else labBackdropPolicy = "off";
+}
+
+function currentLabBackdropId(): LabBackdropId {
+  if (labBackdropPolicy === "off") return "black";
+  if (labBackdropPolicy === "fixed") return labBackdropFixed;
+  const pool: LabBackdropId[] = ["black", "gradient", "vignette", "bands"];
+  const idx = (hashStringToSeed(`lab-bg:${labPrimitive}:${seed}`) >>> 0) % pool.length;
+  return pool[idx];
+}
+
+function currentSectionIdNow() {
+  const tRenderMs = (Number(audio.currentTime) || 0) * 1000 + renderOffsetMs;
+  const sec = findCurrentSection(tRenderMs);
+  return String(sec?.id ?? "");
+}
+
+function currentGraphVariantForSection(sectionId: string) {
+  const k = String(sectionId || "");
+  return graphVariantBySection.get(k) ?? 0;
+}
+
+function cycleGraphVariantForSection(sectionId: string) {
+  const k = String(sectionId || "");
+  const next = currentGraphVariantForSection(k) + 1;
+  graphVariantBySection.set(k, next);
+}
+
 function labSeedForPrimitive() {
   return (seed ^ hashStringToSeed(`lab:${labPrimitive}`)) >>> 0;
 }
@@ -304,9 +371,15 @@ function labSeedForPrimitive() {
 function currentLabProfile() {
   const rng = mulberry32(labSeedForPrimitive());
   const primitiveRanges: Record<LabPrimitiveId, { scale: [number, number]; density: [number, number] }> = {
+    "bg.gradientField": { scale: [0.8, 2.2], density: [0.6, 2.2] },
+    "fg.particles": { scale: [0.7, 2.0], density: [0.5, 4.0] },
+    "shape.beatOrb": { scale: [0.7, 2.3], density: [0.7, 2.0] },
+    "overlay.beatTrack": { scale: [1.0, 1.0], density: [1.0, 1.0] },
     "shape.circlePulse": { scale: [0.75, 2.1], density: [0.6, 2.0] },
     "polyline.orbitRibbon": { scale: [0.7, 2.4], density: [0.4, 3.9] },
-    "text.echoWord": { scale: [0.7, 2.0], density: [0.5, 2.3] }
+    "curve.rosetteSpiral": { scale: [0.7, 2.5], density: [0.45, 4.2] },
+    "text.echoWord": { scale: [0.7, 2.0], density: [0.5, 2.3] },
+    "text.karaoke": { scale: [0.8, 1.3], density: [0.8, 1.4] }
   };
   const ranges = primitiveRanges[labPrimitive] ?? primitiveRanges["shape.circlePulse"];
   const scale = ranges.scale[0] + rng() * (ranges.scale[1] - ranges.scale[0]);
@@ -320,6 +393,61 @@ function activeLabSnippet() {
   const scale = Number(profile.scale.toFixed(3));
   const density = Number(profile.density.toFixed(3));
   const pulseMul = Number((0.16 * scale).toFixed(3));
+  if (labPrimitive === "bg.gradientField") {
+    return `{
+  "id": "lab-gradient",
+  "module": "bg.gradientField",
+  "params": {
+    "gradientStops": ${Math.max(3, Math.min(7, Math.round(2 + density)))},
+    "driftSpeed": ${Number((0.006 + scale * 0.01).toFixed(4))},
+    "noiseScale": ${Number((0.25 + density * 0.22).toFixed(3))},
+    "soften": ${Number((0.9 + Math.min(0.08, scale * 0.03)).toFixed(3))}
+  }
+}`;
+  }
+  if (labPrimitive === "fg.particles") {
+    return `{
+  "id": "lab-particles",
+  "module": "fg.particles",
+  "blend": "screen",
+  "params": {
+    "count": ${Math.max(24, Math.round(42 * density))},
+    "sizeRange": [${Number((1.0 + scale * 0.5).toFixed(2))}, ${Number((2.5 + scale * 1.6).toFixed(2))}],
+    "speed": ${Number((0.2 + scale * 0.28).toFixed(3))},
+    "curl": ${Number((0.25 + density * 0.2).toFixed(3))},
+    "opacity": ${Number((0.32 + Math.min(0.5, density * 0.14)).toFixed(3))}
+  }
+}`;
+  }
+  if (labPrimitive === "shape.beatOrb") {
+    return `{
+  "id": "lab-orb",
+  "type": "shape.beatOrb",
+  "params": {
+    "baseRadiusRatio": ${Number((0.026 + scale * 0.02).toFixed(4))},
+    "blend": "screen"
+  }
+}`;
+  }
+  if (labPrimitive === "overlay.beatTrack") {
+    return `{
+  "id": "lab-beat-track",
+  "type": "overlay.beatTrack",
+  "params": { "uses": "effective beat/downbeat markers + playhead" }
+}`;
+  }
+  if (labPrimitive === "text.karaoke") {
+    return `{
+  "id": "lab-karaoke",
+  "type": "text.karaoke",
+  "params": {
+    "mode": "center",
+    "fontSizePx": ${Math.round(30 * scale)},
+    "lineGapPx": ${Math.max(8, Math.round(10 * density))},
+    "opacity": 0.92
+  }
+}`;
+  }
   if (labPrimitive === "shape.circlePulse") {
     return `{
   "id": "lab-circle",
@@ -345,6 +473,35 @@ function activeLabSnippet() {
   }
 }`;
   }
+  if (labPrimitive === "curve.rosetteSpiral") {
+    const petals = Math.max(3, Math.round(3 + density * 2.8));
+    const turns = Number((6 + density * 2.4).toFixed(2));
+    const mode = density > 2.6 ? "star" : density > 1.7 ? "hybrid" : "rosette";
+    const skip = density > 2.8 ? 3 : density > 1.9 ? 2 : 1;
+    const symmetrySnap = density > 2.3 ? petals : density > 1.2 ? Math.max(4, petals - 1) : 0;
+    const connectMode = density > 3.1 ? "chords" : density > 2.1 ? "skip" : density < 0.95 ? "radial" : "sequential";
+    const color = scale < 0.95 ? "black" : "palette";
+    return `{
+  "id": "lab-rosette",
+  "module": "curve.rosetteSpiral",
+  "blend": "screen",
+  "params": {
+    "mode": "${mode}",
+    "steps": ${Math.max(420, Math.round(520 * density))},
+    "turns": ${turns},
+    "growth": ${Number((2.2 + scale * 1.1).toFixed(2))},
+    "petalCount": ${petals},
+    "petalAmp": ${Math.round(10 + scale * 16)},
+    "spin": ${Number((0.08 + density * 0.06).toFixed(3))},
+    "skip": ${skip},
+    "connectMode": "${connectMode}",
+    "symmetrySnap": ${symmetrySnap},
+    "symmetryMix": ${symmetrySnap > 0 ? 0.72 : 0},
+    "color": "${color}",
+    "alpha": {"map":"audio.amp","from":[0,0.35],"to":[0.42,0.88]}
+  }
+}`;
+  }
   return `{
   "id": "lab-text",
   "module": "primitive.echoWord",
@@ -363,11 +520,22 @@ function activeGraphSnippet() {
     "layers": [
       {
         "id": "base",
+        "blend": "source-over",
+        "opacity": 1,
+        "nodes": [
+          { "id": "gradient", "type": "bg.gradientField", "params": { "gradientStops": 3, "driftSpeed": 0.012, "noiseScale": 0.45, "soften": 0.94 } },
+          { "id": "particles", "type": "fg.particles", "params": { "count": 140, "sizeRange": [1.6, 4.8], "speed": 0.48, "curl": 0.55, "opacity": 0.62 } },
+          { "id": "orb", "type": "shape.beatOrb", "params": { "baseRadiusRatio": 0.048, "blend": "screen" } },
+          { "id": "pulse", "type": "shape.circlePulse", "params": { "ringCount": 8, "radiusPx": 88, "alpha": 0.18 } },
+          { "id": "ribbon", "type": "polyline.orbitRibbon", "params": { "points": 60, "radiusPx": 170, "thicknessPx": 1.7, "phaseHz": 0.08 } },
+          { "id": "rose", "type": "curve.rosetteSpiral", "params": { "mode": "hybrid", "steps": 860, "turns": 11, "growth": 3.2, "petalCount": 7, "petalAmp": 20, "spin": 0.14, "skip": 2, "alpha": 0.5, "lineWidth": 1.1 } }
+        ]
+      },
+      {
+        "id": "text",
         "blend": "screen",
         "opacity": 1,
         "nodes": [
-          { "id": "pulse", "type": "shape.circlePulse", "params": { "ringCount": 8, "radiusPx": 88, "alpha": 0.18 } },
-          { "id": "ribbon", "type": "polyline.orbitRibbon", "params": { "points": 60, "radiusPx": 170, "thicknessPx": 1.7, "phaseHz": 0.08 } },
           { "id": "word", "type": "text.echoWord", "params": { "fontPx": 30, "echoCount": 4, "driftPx": 12 } }
         ]
       }
@@ -378,37 +546,12 @@ function activeGraphSnippet() {
 
 function refreshLabControls() {
   if (!labCopyBtn) return;
-  const canCopy = viewerMode === "primitive-lab" || viewerMode === "graph-scene";
-  labCopyBtn.disabled = !canCopy;
-  labCopyBtn.textContent = canCopy ? "lab copy" : "lab off";
+  labCopyBtn.disabled = true;
+  labCopyBtn.textContent = "lab off";
 }
 
 async function copyLabSnippet() {
-  if (viewerMode !== "primitive-lab" && viewerMode !== "graph-scene") return;
-  const text = viewerMode === "graph-scene" ? activeGraphSnippet() : activeLabSnippet();
-  try {
-    if (navigator.clipboard?.writeText) {
-      await navigator.clipboard.writeText(text);
-      labCopyFlashUntilMs = performance.now() + 1800;
-      return;
-    }
-  } catch {
-    // Fall through to hidden textarea fallback.
-  }
-  const ta = document.createElement("textarea");
-  ta.value = text;
-  ta.setAttribute("readonly", "true");
-  ta.style.position = "fixed";
-  ta.style.opacity = "0";
-  ta.style.left = "-9999px";
-  document.body.appendChild(ta);
-  ta.select();
-  try {
-    document.execCommand("copy");
-    labCopyFlashUntilMs = performance.now() + 1800;
-  } finally {
-    document.body.removeChild(ta);
-  }
+  void viewerMode;
 }
 
 function clampOffset(v: number) {
@@ -929,6 +1072,17 @@ async function loadEffectiveGuidance(nextTrack: Track, baseTrackUrl: string) {
           }))
           .filter((m) => Number.isFinite(m.tMs))
         : [];
+      if (Array.isArray(j?.effective?.sections) && j.effective.sections.length) {
+        if (!nextTrack.timing) nextTrack.timing = {};
+        nextTrack.timing.sections = j.effective.sections
+          .map((s: any) => ({
+            id: String(s?.id || ""),
+            labelRaw: s?.labelRaw !== undefined ? String(s.labelRaw) : undefined,
+            t0Ms: Number.isFinite(Number(s?.t0Ms)) ? Math.max(0, Math.round(Number(s.t0Ms))) : undefined,
+            t1Ms: Number.isFinite(Number(s?.t1Ms)) ? Math.max(0, Math.round(Number(s.t1Ms))) : undefined
+          }))
+          .filter((s: any) => s.id && Number.isFinite(s.t0Ms));
+      }
       beatFusionModeLabel = String(j?.hints?.beatFusionMode || "-");
       fusionWindowsMs = Array.isArray(j?.hints?.fusionWindowsSec)
         ? j.hints.fusionWindowsSec
@@ -1378,10 +1532,107 @@ function drawPrimitiveLabOverlay(signalBus: ViewerSignalBus) {
   const ringCount = Math.max(3, Math.round((6 + labDensity * 4)));
   const baseR = Math.min(w, h) * 0.09 * labScale;
   const seedPhase = (((seed >>> 0) + labVariant) % 360) * (Math.PI / 180);
+  const backdrop = currentLabBackdropId();
+
+  // Lab backdrop policy: off => explicit black, otherwise deterministic background primitive.
+  if (backdrop === "black") {
+    ctx.save();
+    ctx.globalCompositeOperation = "source-over";
+    ctx.fillStyle = "#000000";
+    ctx.fillRect(0, 0, w, h);
+    ctx.restore();
+  } else if (backdrop === "gradient") {
+    renderRegisteredModule({
+      moduleId: "bg.gradientField",
+      ctx,
+      canvas,
+      tMs: signalBus.time.renderMs,
+      seed: (labSeedForPrimitive() ^ hashStringToSeed("bg.gradient")) >>> 0,
+      params: {
+        gradientStops: Math.max(3, Math.min(7, Math.round(2 + labDensity))),
+        driftSpeed: 0.006 + labScale * 0.01,
+        noiseScale: 0.25 + labDensity * 0.22,
+        soften: 0.9 + Math.min(0.08, labScale * 0.03)
+      },
+      colors: palettes[Math.abs(seed) % palettes.length],
+      sectionType: "verse" as any,
+      state: { tMs: signalBus.time.renderMs, amp, signalBus }
+    });
+  } else if (backdrop === "vignette") {
+    ctx.save();
+    ctx.globalCompositeOperation = "source-over";
+    const pulse = 0.08 * Math.sin(t * 0.23 + seedPhase);
+    const g = ctx.createRadialGradient(cx, cy, Math.max(1, Math.min(w, h) * 0.12), cx, cy, Math.max(w, h) * (0.62 + pulse));
+    g.addColorStop(0, "rgba(16,24,40,0.95)");
+    g.addColorStop(0.6, "rgba(7,10,18,0.92)");
+    g.addColorStop(1, "rgba(0,0,0,1)");
+    ctx.fillStyle = g;
+    ctx.fillRect(0, 0, w, h);
+    ctx.restore();
+  } else if (backdrop === "bands") {
+    ctx.save();
+    ctx.globalCompositeOperation = "source-over";
+    ctx.fillStyle = "#060910";
+    ctx.fillRect(0, 0, w, h);
+    const bandCount = 10;
+    for (let i = 0; i < bandCount; i += 1) {
+      const u = i / Math.max(1, bandCount - 1);
+      const y = h * u;
+      const a = 0.08 + 0.1 * Math.sin(t * 0.35 + i * 0.9 + seedPhase);
+      ctx.fillStyle = `rgba(48, 96, 156, ${Math.max(0.03, Math.min(0.2, a))})`;
+      ctx.fillRect(0, y, w, Math.max(1, h / (bandCount * 2.2)));
+    }
+    ctx.restore();
+  }
 
   ctx.save();
   ctx.globalCompositeOperation = "screen";
-  if (labPrimitive === "shape.circlePulse") {
+  if (labPrimitive === "bg.gradientField") {
+    renderRegisteredModule({
+      moduleId: "bg.gradientField",
+      ctx,
+      canvas,
+      tMs: signalBus.time.renderMs,
+      seed: labSeedForPrimitive(),
+      params: {
+        gradientStops: Math.max(3, Math.min(7, Math.round(2 + labDensity))),
+        driftSpeed: 0.006 + labScale * 0.01,
+        noiseScale: 0.25 + labDensity * 0.22,
+        soften: 0.9 + Math.min(0.08, labScale * 0.03)
+      },
+      colors: palettes[Math.abs(seed) % palettes.length],
+      sectionType: "verse" as any,
+      state: {
+        tMs: signalBus.time.renderMs,
+        amp,
+        signalBus
+      }
+    });
+  } else if (labPrimitive === "fg.particles") {
+    renderRegisteredModule({
+      moduleId: "fg.particles",
+      ctx,
+      canvas,
+      tMs: signalBus.time.renderMs,
+      seed: labSeedForPrimitive(),
+      params: {
+        count: Math.max(24, Math.round(42 * labDensity)),
+        sizeRange: [1.0 + labScale * 0.5, 2.5 + labScale * 1.6],
+        speed: 0.2 + labScale * 0.28,
+        curl: 0.25 + labDensity * 0.2,
+        opacity: 0.32 + Math.min(0.5, labDensity * 0.14)
+      },
+      colors: palettes[Math.abs(seed) % palettes.length],
+      sectionType: "verse" as any,
+      state: {
+        tMs: signalBus.time.renderMs,
+        amp,
+        signalBus
+      }
+    });
+  } else if (labPrimitive === "shape.beatOrb") {
+    drawBeatOrb(beat, downbeat);
+  } else if (labPrimitive === "shape.circlePulse") {
     for (let i = 0; i < ringCount; i += 1) {
       const u = i / Math.max(1, ringCount - 1);
       const phase = seedPhase + i * 0.7;
@@ -1411,13 +1662,102 @@ function drawPrimitiveLabOverlay(signalBus: ViewerSignalBus) {
       else ctx.lineTo(x, y);
     }
     ctx.stroke();
-  } else {
+  } else if (labPrimitive === "curve.rosetteSpiral") {
+    const points = Math.max(240, Math.round(460 * labDensity));
+    const petals = Math.max(3, Math.round(3 + labDensity * 2.8));
+    const turns = 6 + labDensity * 2.6;
+    const maxTheta = Math.PI * 2 * turns;
+    const mode = labDensity > 2.6 ? "star" : labDensity > 1.7 ? "hybrid" : "rosette";
+    const skip = labDensity > 2.8 ? 3 : labDensity > 1.9 ? 2 : 1;
+    const symmetrySnap = labDensity > 2.3 ? petals : labDensity > 1.2 ? Math.max(4, petals - 1) : 0;
+    const symmetryMix = symmetrySnap > 1 ? 0.72 : 0;
+    const connectMode = labDensity > 3.1 ? "chords" : labDensity > 2.1 ? "skip" : labDensity < 0.95 ? "radial" : "sequential";
+    const useBlack = labScale < 0.95 && backdrop !== "black";
+    const growth = 2.0 + labScale * 1.2;
+    const petalAmp = 8 + labScale * 15;
+    const spin = 0.06 + labDensity * 0.065;
+    const twistAmp = 0.08 + beat * 0.1;
+    const pts: Array<{ x: number; y: number }> = [];
+    for (let i = 0; i < points; i += 1) {
+      const u = i / Math.max(1, points - 1);
+      const theta = u * maxTheta;
+      const spiralR = growth * theta;
+      const pWave = Math.cos(theta * petals + seedPhase + t * 0.18);
+      const rosetteR = spiralR + petalAmp * pWave;
+      const starR = spiralR + petalAmp * Math.sign(pWave);
+      const r = mode === "star" ? starR : mode === "hybrid" ? spiralR * 0.45 + rosetteR * 0.55 : rosetteR;
+      const phi = theta + spin * theta + twistAmp * Math.sin(theta * 0.1 + t * 0.2) + downbeat * 0.08;
+      const snapStep = symmetrySnap > 1 ? (Math.PI * 2) / symmetrySnap : 0;
+      const snappedPhi = snapStep > 0 ? Math.round(phi / snapStep) * snapStep : phi;
+      const phiFinal = snapStep > 0 ? (phi * (1 - symmetryMix) + snappedPhi * symmetryMix) : phi;
+      const x = cx + r * Math.cos(phiFinal) * 0.9;
+      const y = cy + r * Math.sin(phiFinal) * 0.9;
+      pts.push({ x, y });
+    }
+    if (useBlack) {
+      // Black disappears under screen; use normal compositing for this branch.
+      ctx.globalCompositeOperation = "source-over";
+    }
+    ctx.strokeStyle = useBlack ? `rgba(0,0,0,${0.78 + amp * 0.2})` : `rgba(130, 210, 255, ${0.54 + amp * 0.3})`;
+    ctx.lineWidth = 0.9 + beat * 1.2;
+    if (connectMode === "radial") {
+      ctx.beginPath();
+      for (let i = 0; i < pts.length; i += Math.max(1, skip)) {
+        const p = pts[i];
+        ctx.moveTo(cx, cy);
+        ctx.lineTo(p.x, p.y);
+      }
+      ctx.stroke();
+    } else if (connectMode === "chords") {
+      const chordStep = Math.max(2, petals - 1);
+      const chordStride = Math.max(1, Math.floor(skip));
+      ctx.beginPath();
+      for (let i = 0; i < pts.length; i += chordStride) {
+        const a = pts[i];
+        const b = pts[(i + chordStep) % pts.length];
+        ctx.moveTo(a.x, a.y);
+        ctx.lineTo(b.x, b.y);
+      }
+      ctx.stroke();
+    } else if (connectMode === "skip" || skip > 1) {
+      for (let start = 0; start < skip; start += 1) {
+        ctx.beginPath();
+        let first = true;
+        for (let i = start; i < pts.length; i += skip) {
+          const p = pts[i];
+          if (first) {
+            ctx.moveTo(p.x, p.y);
+            first = false;
+          } else {
+            ctx.lineTo(p.x, p.y);
+          }
+        }
+        ctx.stroke();
+      }
+    } else {
+      ctx.beginPath();
+      ctx.moveTo(pts[0].x, pts[0].y);
+      for (let i = 1; i < pts.length; i += 1) ctx.lineTo(pts[i].x, pts[i].y);
+      ctx.stroke();
+    }
+  } else if (labPrimitive === "text.echoWord") {
     const lyricIndex = Number(findCurrentLyricLine(signalBus.time.renderMs)?.i);
+    const timingLines = Array.isArray(track?.timing?.lyricsLines) ? track.timing.lyricsLines : [];
+    const firstLyricStartMs = timingLines
+      .map((x: any) => Number(x?.t0Ms))
+      .filter((x: number) => Number.isFinite(x))
+      .sort((a: number, b: number) => a - b)[0];
+    const lyricsHaveStarted = Number.isFinite(firstLyricStartMs) && signalBus.time.renderMs >= Number(firstLyricStartMs);
     const rawLines = String(track?.lyrics?.rawText ?? "").split(/\r?\n/);
     const activeLyric = Number.isInteger(lyricIndex) && lyricIndex >= 0 && lyricIndex < rawLines.length
       ? String(rawLines[lyricIndex] ?? "").trim()
       : "";
-    const text = activeLyric || preferredTrackTitle(track);
+    const titleFallback = lyricsHaveStarted ? "" : preferredTrackTitle(track);
+    const text = activeLyric || titleFallback;
+    if (!text) {
+      ctx.restore();
+      return;
+    }
     const echoCount = Math.max(2, Math.round(4 * labDensity));
     const fontPx = Math.max(22, Math.round(36 * labScale));
     ctx.textAlign = "center";
@@ -1431,6 +1771,30 @@ function drawPrimitiveLabOverlay(signalBus: ViewerSignalBus) {
       ctx.fillStyle = `rgba(150, 218, 255, ${a})`;
       ctx.fillText(text, cx, y);
     }
+  } else if (labPrimitive === "text.karaoke") {
+    renderRegisteredModule({
+      moduleId: "ui.lyricsKaraoke",
+      ctx,
+      canvas,
+      tMs: signalBus.time.renderMs,
+      seed: labSeedForPrimitive(),
+      params: {
+        mode: "center",
+        fontSizePx: Math.round(30 * labScale),
+        lineGapPx: Math.max(8, Math.round(10 * labDensity)),
+        opacity: 0.92
+      },
+      colors: palettes[Math.abs(seed) % palettes.length],
+      sectionType: "verse" as any,
+      state: {
+        tMs: signalBus.time.renderMs,
+        amp,
+        signalBus,
+        track,
+        lyricsEnabled: hasLyricTiming(),
+        lyricMode: "center"
+      }
+    });
   }
   ctx.restore();
 }
@@ -1490,6 +1854,50 @@ function stableStringify(value: unknown): string {
   return `{${entries.map(([k, v]) => `${JSON.stringify(k)}:${stableStringify(v)}`).join(",")}}`;
 }
 
+function labRosetteDebug() {
+  if (labPrimitive !== "curve.rosetteSpiral") return null;
+  const profile = currentLabProfile();
+  const density = profile.density;
+  const scale = profile.scale;
+  const petals = Math.max(3, Math.round(3 + density * 2.8));
+  const turns = Number((6 + density * 2.6).toFixed(2));
+  const mode = density > 2.6 ? "star" : density > 1.7 ? "hybrid" : "rosette";
+  const skip = density > 2.8 ? 3 : density > 1.9 ? 2 : 1;
+  const symmetrySnap = density > 2.3 ? petals : density > 1.2 ? Math.max(4, petals - 1) : 0;
+  const connectMode = density > 3.1 ? "chords" : density > 2.1 ? "skip" : density < 0.95 ? "radial" : "sequential";
+  const colorMode = scale < 0.95 ? "black" : "palette";
+  return { mode, colorMode, connectMode, skip, symmetrySnap, petals, turns };
+}
+
+function graphRosetteDebug(recipe: any) {
+  const layers = Array.isArray(recipe?.graph?.layers) ? recipe.graph.layers : [];
+  const nodes = layers.flatMap((layer: any) => (Array.isArray(layer?.nodes) ? layer.nodes : []));
+  const rosettes = nodes.filter((n: any) => String(n?.type || "").toLowerCase() === "curve.rosettespiral");
+  const summarizeParam = (v: any) => {
+    if (v === undefined || v === null || v === "") return "-";
+    if (typeof v === "string" || typeof v === "number" || typeof v === "boolean") return String(v);
+    return "{expr}";
+  };
+  const previews = rosettes.slice(0, 2).map((n: any) => {
+    const p = n?.params ?? {};
+    return `mode=${summarizeParam(p.mode)} color=${summarizeParam(p.color)} connect=${summarizeParam(p.connectMode)} sym=${summarizeParam(p.symmetrySnap)}`;
+  });
+  return { count: rosettes.length, previews };
+}
+
+function recipeHasGraphNodeType(recipe: any, typeId: string) {
+  const want = String(typeId || "").toLowerCase();
+  if (!want) return false;
+  const layers = Array.isArray(recipe?.graph?.layers) ? recipe.graph.layers : [];
+  for (const layer of layers) {
+    const nodes = Array.isArray(layer?.nodes) ? layer.nodes : [];
+    for (const node of nodes) {
+      if (String(node?.type ?? "").toLowerCase() === want) return true;
+    }
+  }
+  return false;
+}
+
 function cloneRecipe<T>(v: T): T {
   if (Array.isArray(v)) return v.map((x) => cloneRecipe(x)) as T;
   if (v && typeof v === "object") {
@@ -1498,6 +1906,407 @@ function cloneRecipe<T>(v: T): T {
     return out as T;
   }
   return v;
+}
+
+function baseGraphLayers() {
+  return [
+    {
+      id: "base-gradient",
+      blend: "source-over",
+      opacity: 1,
+      nodes: [
+        { id: "gradient", type: "bg.gradientField", params: { gradientStops: 3, driftSpeed: 0.012, noiseScale: 0.45, soften: 0.94 } }
+      ]
+    },
+    {
+      id: "base-particles",
+      blend: "screen",
+      opacity: 0.55,
+      nodes: [
+        { id: "particles", type: "fg.particles", params: { count: 140, sizeRange: [1.6, 4.8], speed: 0.48, curl: 0.55, opacity: 0.62 } }
+      ]
+    },
+    {
+      id: "base-orb",
+      blend: "screen",
+      opacity: 1,
+      nodes: [
+        { id: "orb", type: "shape.beatOrb", params: { baseRadiusRatio: 0.048, blend: "screen" } }
+      ]
+    }
+  ];
+}
+
+function graphTemplateLibrary(baseRecipe: any) {
+  const coreFromTrack = (() => {
+    const layers = Array.isArray(baseRecipe?.graph?.layers) ? cloneRecipe(baseRecipe.graph.layers) : [];
+    const stripBase = (n: any) => {
+      const t = String(n?.type ?? "").toLowerCase();
+      return t !== "bg.gradientfield" && t !== "fg.particles" && t !== "shape.beatorb";
+    };
+    const trimmed = layers
+      .map((l: any) => ({
+        ...l,
+        nodes: (Array.isArray(l?.nodes) ? l.nodes : []).filter(stripBase)
+      }))
+      .filter((l: any) => Array.isArray(l.nodes) && l.nodes.length);
+    return trimmed;
+  })();
+
+  const templates = [
+    ...(coreFromTrack.length ? [{ id: "track-core", name: "Track Core", layers: coreFromTrack }] : []),
+    {
+      id: "pulse-ribbon-rosette",
+      name: "Pulse Ribbon Rosette",
+      layers: [
+        {
+          id: "main",
+          blend: "screen",
+          opacity: 1,
+          nodes: [
+            { id: "pulse", type: "shape.circlePulse", params: { ringCount: 8, radiusPx: 88, alpha: 0.18 } },
+            { id: "ribbon", type: "polyline.orbitRibbon", params: { points: 60, radiusPx: 170, thicknessPx: 1.7, phaseHz: 0.08 } },
+            { id: "rose", type: "curve.rosetteSpiral", params: { mode: "hybrid", steps: 860, turns: 11, growth: 3.2, petalCount: 7, petalAmp: 20, spin: 0.14, skip: 2, alpha: 0.5, lineWidth: 1.1 } }
+          ]
+        }
+      ]
+    },
+    {
+      id: "ribbon-echo",
+      name: "Ribbon Echo",
+      layers: [
+        {
+          id: "main",
+          blend: "screen",
+          opacity: 1,
+          nodes: [
+            { id: "ribbon", type: "polyline.orbitRibbon", params: { points: 84, radiusPx: 182, thicknessPx: 1.5, phaseHz: 0.06 } },
+            { id: "word", type: "text.echoWord", params: { fontPx: 30, echoCount: 4, driftPx: 12 } }
+          ]
+        }
+      ]
+    },
+    {
+      id: "rosette-focus",
+      name: "Rosette Focus",
+      layers: [
+        {
+          id: "main",
+          blend: "screen",
+          opacity: 1,
+          nodes: [
+            { id: "pulse", type: "shape.circlePulse", params: { ringCount: 6, radiusPx: 76, alpha: 0.14 } },
+            { id: "rose", type: "curve.rosetteSpiral", params: { mode: "rosette", steps: 980, turns: 13, growth: 2.8, petalCount: 8, petalAmp: 24, spin: 0.11, skip: 1, alpha: 0.62, lineWidth: 1.25 } }
+          ]
+        }
+      ]
+    }
+  ];
+  return templates;
+}
+
+function resolveGraphSelection(baseRecipe: any, sectionId: string, options?: { allowManual?: boolean; variantOverride?: number }) {
+  const allowManual = options?.allowManual !== false;
+  const templates = graphTemplateLibrary(baseRecipe);
+  const safeTemplates = templates.length ? templates : [{ id: "fallback", name: "Fallback", layers: [] }];
+  const secId = String(sectionId || "");
+  const autoIndex = (hashStringToSeed(`graph:auto:${seed}:${secId}`) >>> 0) % safeTemplates.length;
+  let selectedIndex = autoIndex;
+  let isManual = false;
+  if (allowManual && graphAutoRefresh && graphManualRecipe) {
+    selectedIndex = graphManualRecipe.index;
+    isManual = true;
+  } else if (allowManual && graphManualRecipe && graphManualRecipe.sectionId === secId) {
+    selectedIndex = graphManualRecipe.index;
+    isManual = true;
+  }
+  selectedIndex = ((selectedIndex % safeTemplates.length) + safeTemplates.length) % safeTemplates.length;
+  const variant = Number.isFinite(Number(options?.variantOverride))
+    ? Math.max(0, Number(options?.variantOverride))
+    : currentGraphVariantForSection(secId);
+  return {
+    templates: safeTemplates,
+    selectedIndex,
+    autoIndex,
+    isManual,
+    variant,
+    template: safeTemplates[selectedIndex]
+  };
+}
+
+function graphLayersForSection(baseRecipe: any, sectionId: string, options?: { allowManual?: boolean; variantOverride?: number }) {
+  const sel = resolveGraphSelection(baseRecipe, sectionId, options);
+  const secTag = (hashStringToSeed(`graph:sec:${sectionId}`) >>> 0).toString(16).slice(0, 6);
+  const vTag = `v${Math.max(0, sel.variant)}`;
+  const templ = cloneRecipe(sel.template?.layers ?? []);
+  for (const layer of templ) {
+    const layerId = String(layer?.id || "layer");
+    layer.id = `${layerId}__${secTag}__${vTag}`;
+    const nodes = Array.isArray(layer?.nodes) ? layer.nodes : [];
+    for (const node of nodes) {
+      const nodeId = String(node?.id || "node");
+      node.id = `${nodeId}__${secTag}__${vTag}`;
+    }
+  }
+  return {
+    layers: [...baseGraphLayers(), ...templ],
+    selection: sel
+  };
+}
+
+function randomSceneLayersForSection(sectionId: string, options?: { allowManual?: boolean; variantOverride?: number }) {
+  const allowManual = options?.allowManual !== false;
+  const secId = String(sectionId || "");
+  const sceneCount = 1024;
+  const autoIndex = (hashStringToSeed(`random-scene:auto:${seed}:${secId}`) >>> 0) % sceneCount;
+  let selectedIndex = autoIndex;
+  let isManual = false;
+  if (allowManual && graphAutoRefresh && graphManualRecipe) {
+    selectedIndex = graphManualRecipe.index;
+    isManual = true;
+  } else if (allowManual && graphManualRecipe && graphManualRecipe.sectionId === secId) {
+    selectedIndex = graphManualRecipe.index;
+    isManual = true;
+  }
+  selectedIndex = ((selectedIndex % sceneCount) + sceneCount) % sceneCount;
+  const variant = Number.isFinite(Number(options?.variantOverride))
+    ? Math.max(0, Number(options?.variantOverride))
+    : currentGraphVariantForSection(secId);
+  const layoutRng = mulberry32(hashStringToSeed(`random-scene:layout:${seed}:${secId}:${selectedIndex}`) >>> 0);
+  const paramRng = mulberry32(hashStringToSeed(`random-scene:param:${seed}:${secId}:${selectedIndex}:v${variant}`) >>> 0);
+
+  const bgPick = Math.floor(layoutRng() * 4);
+  const bgLayer = (() => {
+    if (bgPick === 0) {
+      return {
+        id: "bg-black",
+        blend: "source-over",
+        opacity: 1,
+        nodes: [{ id: "bg-black", type: "bg.solid", params: { color: "#000000" } }]
+      };
+    }
+    if (bgPick === 1) {
+      return {
+        id: "bg-gradient",
+        blend: "source-over",
+        opacity: 1,
+        nodes: [{ id: "bg-gradient", type: "bg.gradientField", params: { gradientStops: 3 + Math.floor(paramRng() * 3), driftSpeed: 0.008 + paramRng() * 0.016, noiseScale: 0.3 + paramRng() * 0.45, soften: 0.9 + paramRng() * 0.08 } }]
+      };
+    }
+    if (bgPick === 2) {
+      return {
+        id: "bg-vignette",
+        blend: "source-over",
+        opacity: 1,
+        nodes: [{ id: "bg-vignette", type: "bg.vignette", params: { inner: 0.14 + paramRng() * 0.08, outer: 0.7 + paramRng() * 0.2, tintA: "#102338", tintB: "#000000" } }]
+      };
+    }
+    return {
+      id: "bg-bands",
+      blend: "source-over",
+      opacity: 1,
+      nodes: [{ id: "bg-bands", type: "bg.bands", params: { count: 8 + Math.floor(paramRng() * 10), opacity: 0.07 + paramRng() * 0.12 } }]
+    };
+  })();
+  const bgLayer2 = (() => {
+    if (layoutRng() >= 0.32) return null;
+    const pick = Math.floor(layoutRng() * 2);
+    if (pick === 0) {
+      return {
+        id: "bg2-gradient",
+        blend: "screen",
+        opacity: 0.38 + paramRng() * 0.28,
+        nodes: [{ id: "bg2-gradient", type: "bg.gradientField", params: { gradientStops: 3 + Math.floor(paramRng() * 2), driftSpeed: 0.006 + paramRng() * 0.01, noiseScale: 0.3 + paramRng() * 0.35, soften: 0.92 + paramRng() * 0.06 } }]
+      };
+    }
+    return {
+      id: "bg2-bands",
+      blend: "screen",
+      opacity: 0.3 + paramRng() * 0.3,
+      nodes: [{ id: "bg2-bands", type: "bg.bands", params: { count: 8 + Math.floor(paramRng() * 8), opacity: 0.05 + paramRng() * 0.1 } }]
+    };
+  })();
+
+  const fgPool = [
+    { id: "particles", type: "fg.particles", params: { count: 90 + Math.floor(paramRng() * 130), sizeRange: [1.2 + paramRng() * 1.1, 2.6 + paramRng() * 2.4], speed: 0.25 + paramRng() * 0.55, curl: 0.35 + paramRng() * 0.85, opacity: 0.48 + paramRng() * 0.35 } },
+    { id: "pulse", type: "shape.circlePulse", params: { ringCount: 5 + Math.floor(paramRng() * 8), radiusPx: 70 + Math.floor(paramRng() * 70), alpha: 0.14 + paramRng() * 0.2 } },
+    { id: "ribbon", type: "polyline.orbitRibbon", params: { points: 44 + Math.floor(paramRng() * 80), radiusPx: 130 + Math.floor(paramRng() * 90), thicknessPx: 1 + paramRng() * 2.3, phaseHz: 0.04 + paramRng() * 0.1 } },
+    { id: "rosette", type: "curve.rosetteSpiral", params: { mode: ["rosette", "hybrid", "star"][Math.floor(paramRng() * 3)], steps: 520 + Math.floor(paramRng() * 900), turns: 7 + paramRng() * 10, growth: 2 + paramRng() * 2.2, petalCount: 4 + Math.floor(paramRng() * 6), petalAmp: 12 + Math.floor(paramRng() * 20), spin: 0.08 + paramRng() * 0.12, skip: 1 + Math.floor(paramRng() * 3), alpha: 0.4 + paramRng() * 0.4, lineWidth: 0.7 + paramRng() * 1.2, color: paramRng() < 0.2 ? "black" : "palette" } }
+  ];
+  const fgCount = 1 + Math.floor(layoutRng() * 3);
+  const fgNodes: any[] = [];
+  const used = new Set<number>();
+  while (fgNodes.length < fgCount && used.size < fgPool.length) {
+    const idx = Math.floor(layoutRng() * fgPool.length);
+    if (used.has(idx)) continue;
+    used.add(idx);
+    fgNodes.push(cloneRecipe(fgPool[idx]));
+  }
+  if (!fgNodes.length) fgNodes.push(cloneRecipe(fgPool[0]));
+  const lyricRoll = layoutRng();
+  const lyricNode =
+    lyricRoll < 0.35
+      ? { id: "echo", type: "text.echoWord", params: { fontPx: 26 + Math.floor(paramRng() * 14), echoCount: 3 + Math.floor(paramRng() * 3), driftPx: 8 + Math.floor(paramRng() * 10) } }
+      : lyricRoll < 0.7
+        ? { id: "karaoke", type: "text.karaoke", params: { mode: "center", fontSizePx: 28 + Math.floor(paramRng() * 8), lineGapPx: 10, opacity: 0.9 } }
+        : null;
+  const beatTrackNode = layoutRng() < 0.55
+    ? { id: "beat-track", type: "overlay.beatTrack", params: { alpha: 0.9 } }
+    : null;
+  const includeOrb = layoutRng() < 0.5;
+
+  const secTag = (hashStringToSeed(`random:sec:${secId}`) >>> 0).toString(16).slice(0, 6);
+  const vTag = `v${Math.max(0, variant)}`;
+  const fgLayer = {
+    id: `random-main__${secTag}__${vTag}`,
+    blend: "screen",
+    opacity: 1,
+    nodes: fgNodes.map((n: any) => ({ ...n, id: `${String(n.id || "node")}__${secTag}__${vTag}` }))
+  };
+  const lyricLayer = lyricNode
+    ? {
+        id: `random-lyric__${secTag}__${vTag}`,
+        blend: "source-over",
+        opacity: 1,
+        nodes: [{ ...lyricNode, id: `${String((lyricNode as any).id || "lyric")}__${secTag}__${vTag}` }]
+      }
+    : null;
+  const overlayLayer = beatTrackNode
+    ? {
+        id: `random-overlay__${secTag}__${vTag}`,
+        blend: "source-over",
+        opacity: 1,
+        nodes: [{ ...beatTrackNode, id: `${String((beatTrackNode as any).id || "overlay")}__${secTag}__${vTag}` }]
+      }
+    : null;
+
+  return {
+    layers: [
+      bgLayer,
+      ...(bgLayer2 ? [bgLayer2] : []),
+      ...(includeOrb ? baseGraphLayers().filter((l: any) => String(l.id) === "base-orb") : []),
+      fgLayer,
+      ...(lyricLayer ? [lyricLayer] : []),
+      ...(overlayLayer ? [overlayLayer] : [])
+    ],
+    selection: {
+      template: { id: `random-${selectedIndex}`, name: "Random Scene" },
+      templates: Array.from({ length: sceneCount }, (_, i) => ({ id: `random-${i}` })),
+      selectedIndex,
+      autoIndex,
+      isManual,
+      variant
+    }
+  };
+}
+
+function cycleGraphRecipeForSection(baseRecipe: any, sectionId: string, dir: 1 | -1 = 1) {
+  const sel = resolveGraphSelection(baseRecipe, sectionId);
+  const total = Math.max(1, sel.templates.length);
+  const next = (sel.selectedIndex + dir + total) % total;
+  graphManualRecipe = { sectionId: String(sectionId || ""), index: next };
+}
+
+function cycleRandomSceneForSection(sectionId: string, dir: 1 | -1 = 1) {
+  const secId = String(sectionId || "");
+  const sel = randomSceneLayersForSection(secId).selection;
+  const total = Math.max(1, Number(sel?.templates?.length ?? 1));
+  const next = (Number(sel?.selectedIndex ?? 0) + dir + total) % total;
+  graphManualRecipe = { sectionId: secId, index: next };
+}
+
+function resolvePlayerSceneChoice(sectionId: string, sectionType: string, variantOverride = 0) {
+  const sid = String(sectionId || "");
+  const st = String(sectionType || "");
+  const h = hashStringToSeed(`player:${seed}:${sid}:${st}`) >>> 0;
+  // Favor curated recipe scenes in chorus/bridge/outro; allow random scenes elsewhere.
+  const curatedBias = st === "chorus" || st === "bridge" || st === "outro" ? 0.7 : 0.4;
+  const roll = (h % 1000) / 1000;
+  const source: "recipe-view" | "random-scene" = roll < curatedBias ? "recipe-view" : "random-scene";
+  const variant = Math.max(0, Math.floor(Number(variantOverride) || 0));
+  return { source, variant };
+}
+
+function selectTransitionLabel(recipe: any, fromSectionId: string, toSectionId: string) {
+  const transitions = recipe?.transitions ?? {};
+  const fromNorm = normalizeSectionLabel(String(fromSectionId || ""));
+  const toNorm = normalizeSectionLabel(String(toSectionId || ""));
+  const by = Array.isArray(transitions?.bySectionChange) ? transitions.bySectionChange : [];
+  for (const rule of by) {
+    const fromAny = Array.isArray(rule?.fromAny) ? rule.fromAny.map((s: string) => normalizeSectionLabel(String(s))) : null;
+    const toAny = Array.isArray(rule?.toAny) ? rule.toAny.map((s: string) => normalizeSectionLabel(String(s))) : null;
+    const fromOk = !fromAny || fromAny.includes(fromNorm);
+    const toOk = !toAny || toAny.includes(toNorm);
+    if (fromOk && toOk && rule?.transition) {
+      const t = rule.transition;
+      return `${String(t.kind ?? "crossfade")} (${Math.max(1, Number(t.durationMs ?? 900))}ms)`;
+    }
+  }
+  const def = transitions?.default ?? { kind: "crossfade", durationMs: 900 };
+  return `${String(def.kind ?? "crossfade")} (${Math.max(1, Number(def.durationMs ?? 900))}ms)`;
+}
+
+function withModeRecipe(baseRecipe: any, mode: ViewerMode, sectionId: string, sectionType: string, playerVariantOverride = 0) {
+  const recipe = cloneRecipe(baseRecipe || {});
+  recipe.layers = Array.isArray(recipe.layers) ? recipe.layers : [];
+  recipe.graph = typeof recipe.graph === "object" && recipe.graph ? recipe.graph : {};
+  recipe.graph.layers = Array.isArray(recipe.graph.layers) ? recipe.graph.layers : [];
+
+  const nodeType = (n: any) => String(n?.type ?? "").toLowerCase();
+  const isBaseType = (t: string) => t === "bg.gradientfield" || t === "fg.particles" || t === "shape.beatorb";
+
+  if (mode === "hint-edit") {
+    // Keep authoring view stable/classic: base visual stack + beat overlays + karaoke layers.
+    recipe.graph.layers = baseGraphLayers();
+  } else if (mode === "recipe-view") {
+    const picked = graphLayersForSection(baseRecipe, sectionId);
+    recipe.graph.layers = picked.layers;
+  } else if (mode === "random-scene") {
+    const picked = randomSceneLayersForSection(sectionId);
+    recipe.graph.layers = picked.layers;
+  } else if (mode === "player") {
+    const choice = resolvePlayerSceneChoice(sectionId, sectionType, playerVariantOverride);
+    const picked = choice.source === "recipe-view"
+      ? graphLayersForSection(baseRecipe, sectionId, { allowManual: false, variantOverride: choice.variant })
+      : randomSceneLayersForSection(sectionId, { allowManual: false, variantOverride: choice.variant });
+    recipe.graph.layers = picked.layers;
+  }
+
+  if (mode === "primitive-lab") {
+    // Lab should be an isolated primitive sandbox.
+    // Start from a clean render stack; drawPrimitiveLabOverlay handles preview rendering.
+    recipe.layers = [];
+    recipe.graph.layers = [];
+  }
+
+  const hasEchoTextNode = recipe.graph.layers.some((l: any) =>
+    (Array.isArray(l?.nodes) ? l.nodes : []).some((n: any) => {
+      const t = nodeType(n);
+      return (t === "text.echoword" || t === "text.karaoke") && n?.enabled !== false;
+    })
+  );
+  if (hasEchoTextNode) {
+    // Prevent dual lyric visualizations at once.
+    recipe.layers = recipe.layers.filter((layer: any) => {
+      const id = String(layer?.module ?? "").toLowerCase();
+      return !id.startsWith("ui.lyrics");
+    });
+  }
+
+  // Also guard against duplicate base nodes across layers.
+  const seenBase = new Set<string>();
+  for (const layer of recipe.graph.layers) {
+    const nodes = Array.isArray(layer?.nodes) ? layer.nodes : [];
+    layer.nodes = nodes.filter((n: any) => {
+      const t = nodeType(n);
+      if (!isBaseType(t)) return true;
+      if (seenBase.has(t)) return false;
+      seenBase.add(t);
+      return true;
+    });
+  }
+
+  return recipe;
 }
 
 function applyVisualHintsToRecipe(baseRecipe: any, nextTrack: Track | null) {
@@ -1605,6 +2414,7 @@ function runDeterminismProbe(input: {
   sectionType: string;
   signalBus: ViewerSignalBus;
   amp: number;
+  recipe: any;
 }) {
   const stateLike = {
     tMs: input.tMs,
@@ -1614,11 +2424,11 @@ function runDeterminismProbe(input: {
     signalBus: input.signalBus,
     amp: input.amp,
     energy: input.amp,
-    recipe: currentRecipe,
+    recipe: input.recipe,
     track
   };
   try {
-    const layers = Array.isArray(currentRecipe?.layers) ? currentRecipe.layers : [];
+    const layers = Array.isArray(input.recipe?.layers) ? input.recipe.layers : [];
     const layerChecks = layers.map((layer: any) => {
       const once = resolveResolvable(layer?.params ?? {}, {
         tMs: input.tMs,
@@ -1635,7 +2445,7 @@ function runDeterminismProbe(input: {
       return stableStringify(once) === stableStringify(twice);
     });
 
-    const graphLayers = Array.isArray(currentRecipe?.graph?.layers) ? currentRecipe.graph.layers : [];
+    const graphLayers = Array.isArray(input.recipe?.graph?.layers) ? input.recipe.graph.layers : [];
     const graphChecks = graphLayers.flatMap((layer: any, li: number) => {
       const nodes = Array.isArray(layer?.nodes) ? layer.nodes : [];
       return nodes.map((node: any, ni: number) => {
@@ -1725,6 +2535,19 @@ function drawHintOverlays() {
   ctx.restore();
 }
 
+function downbeatCountAt(tMs: number) {
+  const ds = downbeatMarkers.length
+    ? downbeatMarkers.map((m) => Number(m.tMs))
+    : (pulseDownbeatTimesMs ?? []).map((x) => Number(x));
+  if (!ds.length) return 0;
+  let count = 0;
+  for (const x of ds) {
+    if (!Number.isFinite(x)) continue;
+    if (x <= tMs) count += 1;
+  }
+  return count;
+}
+
 function buildScene(nextSeed: number) {
   seed = nextSeed >>> 0;
   engine.reset(seed);
@@ -1774,8 +2597,49 @@ function render() {
   const sec = findCurrentSection(tRenderMs);
   const sectionId = sec?.id ?? "";
   const sectionType = classifySection(sectionId || sec?.id || "");
+  const sectionStartMsRaw = Number(sec?.t0Ms);
+  const sectionStartMs = Number.isFinite(sectionStartMsRaw) ? sectionStartMsRaw : 0;
+  const playerVariantIndex = Math.max(0, downbeatCountAt(tRenderMs) - downbeatCountAt(sectionStartMs - 1));
+  if (viewerMode === "recipe-view" || viewerMode === "random-scene") {
+    if (!graphAutoRefresh && graphManualRecipe && lastGraphSectionId && sectionId !== lastGraphSectionId) {
+      graphManualRecipe = null;
+    }
+    if (graphAutoRefresh && lastGraphSectionId && sectionId !== lastGraphSectionId) {
+      if (viewerMode === "recipe-view") cycleGraphRecipeForSection(currentRecipe, sectionId);
+      else cycleRandomSceneForSection(sectionId);
+    }
+    lastGraphSectionId = sectionId;
+  } else {
+    lastGraphSectionId = "";
+  }
   const pulse = beatPulseInfo(tRenderMs);
+  if (viewerMode === "recipe-view" || viewerMode === "random-scene") {
+    const dbCount = downbeatCountAt(tRenderMs);
+    if (lastAutoDownbeatCount < 0) lastAutoDownbeatCount = dbCount;
+    if (graphAutoRefresh && dbCount > lastAutoDownbeatCount) {
+      const delta = dbCount - lastAutoDownbeatCount;
+      for (let i = 0; i < delta; i += 1) cycleGraphVariantForSection(sectionId);
+    }
+    lastAutoDownbeatCount = dbCount;
+  } else {
+    lastAutoDownbeatCount = -1;
+  }
   const durationSec = Number.isFinite(audio.duration) ? Number(audio.duration) : 0;
+  const modeRecipe = withModeRecipe(currentRecipe, viewerMode, sectionId, sectionType, playerVariantIndex);
+  if (viewerMode === "player") {
+    if (playerLastSectionId && playerLastSectionId !== sectionId) {
+      playerLastTransitionLabel = selectTransitionLabel(modeRecipe, playerLastSectionId, sectionId);
+    }
+    playerLastSectionId = sectionId;
+  } else {
+    playerLastSectionId = "";
+  }
+  const effectiveBeatsMs = beatMarkers.length
+    ? beatMarkers.map((m) => Number(m.tMs)).filter((x) => Number.isFinite(x))
+    : (pulseBeatTimesMs ?? []).map((x) => Number(x)).filter((x) => Number.isFinite(x));
+  const effectiveDownbeatsMs = downbeatMarkers.length
+    ? downbeatMarkers.map((m) => Number(m.tMs)).filter((x) => Number.isFinite(x))
+    : (pulseDownbeatTimesMs ?? []).map((x) => Number(x)).filter((x) => Number.isFinite(x));
   const signalBus = buildSignalBus({
     tAudioMs,
     tRenderMs,
@@ -1793,31 +2657,27 @@ function render() {
     sectionType,
     viewerMode,
     signalBus,
+    beatTrack: {
+      beatsMs: effectiveBeatsMs,
+      downbeatsMs: effectiveDownbeatsMs
+    },
     amp,
     energy: amp,
-    recipe: currentRecipe,
+    recipe: modeRecipe,
     track,
-    lyricsEnabled: isHintEditMode() && lyricsEnabled && hasLyricTiming(),
+    lyricsEnabled: (isHintEditMode() ? lyricsEnabled : true) && hasLyricTiming(),
     lyricMode,
     uiLayout: {
       controlsTopPx: controlsRect.top,
       viewportHeightPx
     }
   });
-  if (determinismProbeRequested) {
-    determinismProbeRequested = false;
-    runDeterminismProbe({
-      tMs: tRenderMs,
-      seed,
-      sectionId,
-      sectionType,
-      signalBus,
-      amp
-    });
+  if (isHintEditMode() && !recipeHasGraphNodeType(modeRecipe, "shape.beatOrb")) {
+    drawBeatOrb(pulse.beat, pulse.downbeat);
   }
-  if (isHintEditMode()) drawBeatOrb(pulse.beat, pulse.downbeat);
   if (viewerMode === "primitive-lab") drawPrimitiveLabOverlay(signalBus);
   if (isHintEditMode()) drawHintOverlays();
+  if (viewerMode === "primitive-lab" && labPrimitive === "overlay.beatTrack") drawHintOverlays();
 
 if (!isSeeking && Number.isFinite(audio.duration) && audio.duration > 0) {
   const max = Math.max(1, Number(seek.max) || SEEK_SCALE);
@@ -1841,8 +2701,19 @@ if (!isSeeking && Number.isFinite(audio.duration) && audio.duration > 0) {
       density: Number(p.density.toFixed(2))
     };
   })();
+  const rosetteLabDebug = labRosetteDebug();
+  const rosetteGraphDebug = graphRosetteDebug(modeRecipe);
+  const playerSceneChoice = viewerMode === "player" ? resolvePlayerSceneChoice(sectionId, sectionType, playerVariantIndex) : null;
+  const graphSel = viewerMode === "recipe-view"
+    ? resolveGraphSelection(currentRecipe, sectionId)
+    : viewerMode === "random-scene"
+      ? randomSceneLayersForSection(sectionId).selection
+      : viewerMode === "player"
+        ? (playerSceneChoice?.source === "recipe-view"
+          ? graphLayersForSection(currentRecipe, sectionId, { allowManual: false, variantOverride: playerSceneChoice?.variant ?? 0 }).selection
+          : randomSceneLayersForSection(sectionId, { allowManual: false, variantOverride: playerSceneChoice?.variant ?? 0 }).selection)
+        : null;
   hud.style.display = hudVisible ? "block" : "none";
-  const showLabFlash = performance.now() < labCopyFlashUntilMs;
   hud.textContent = [
     `title: ${preferredTrackTitle(track)}`,
     `trackId: ${track?.trackId ?? "-"}`,
@@ -1860,21 +2731,31 @@ if (!isSeeking && Number.isFinite(audio.duration) && audio.duration > 0) {
           `aiDownbeats: ${signalBus.hints.aiDownbeats}`
         ]
       : []),
-    `determinism: ${determinismProbeStatus}${determinismProbeAtIso ? ` @ ${determinismProbeAtIso}` : ""}`,
     ...(viewerMode === "primitive-lab"
       ? [
           `labPrimitive: ${labPrimitive}`,
+          `labBackdropPolicy: ${labBackdropPolicy}`,
+          `labBackdrop: ${currentLabBackdropId()}`,
           `labSeed: ${labSeedForPrimitive()}`,
-          `labProfile: ${stableStringify(labProfileRounded)}`,
-          `labSnippet: ${activeLabSnippet().split("\n")[0]}`,
-          ...(showLabFlash ? ["labCopy: copied"] : [])
+          `labProfile: ${stableStringify(labProfileRounded)}`
         ]
       : []),
-    ...(viewerMode === "graph-scene"
+    ...(viewerMode === "player" || viewerMode === "recipe-view" || viewerMode === "random-scene"
       ? [
-          `graphLayers: ${Array.isArray(currentRecipe?.graph?.layers) ? currentRecipe.graph.layers.length : 0}`,
-          `graphSnippet: ${activeGraphSnippet().split("\n")[0]}`,
-          ...(showLabFlash ? ["labCopy: copied"] : [])
+          `graphLayers: ${Array.isArray(modeRecipe?.graph?.layers) ? modeRecipe.graph.layers.length : 0}`,
+          ...(viewerMode === "player"
+            ? [
+                `playerSource: ${playerSceneChoice?.source ?? "-"}`,
+                `playerVariant: ${playerVariantIndex}`,
+                `playerTransition: ${playerLastTransitionLabel}`
+              ]
+            : []),
+          `graphRecipe: ${graphSel?.template?.id ?? "-"} (#${graphSel ? graphSel.selectedIndex + 1 : "-"}/${graphSel?.templates?.length ?? "-"})`,
+          `graphVariant: ${graphSel?.variant ?? 0}`,
+          ...(viewerMode === "player"
+            ? []
+            : [`graphManual: ${graphSel?.isManual ? "on" : "off"} auto=${graphAutoRefresh ? "on" : "off"}`]),
+          `graphMode: ${viewerMode}`
         ]
       : []),
     `sectionId: ${sectionId || "-"}`,
@@ -1884,11 +2765,17 @@ if (!isSeeking && Number.isFinite(audio.duration) && audio.duration > 0) {
     ``,
     `keys: space play/pause`,
     `      left/right seek`,
-    `      r refresh seed`,
+    ...(viewerMode === "player" || viewerMode === "hint-edit" || viewerMode === "primitive-lab" ? [`      r refresh seed`] : []),
     `      v cycle mode`,
-    `      j/k lab primitive prev/next`,
-    `      y lab snippet copy`,
-    `      t determinism probe`,
+    ...(viewerMode === "primitive-lab" ? [`      j/k lab primitive prev/next`] : []),
+    ...(viewerMode === "primitive-lab" ? [`      b lab backdrop off/fixed/random`] : []),
+    ...(viewerMode === "recipe-view" || viewerMode === "random-scene"
+      ? [
+          `      j/k prev/next graph recipe`,
+          `      r refresh graph variant`,
+          `      a auto refresh (downbeat+section)`
+        ]
+      : []),
     ...(isHintEditMode()
       ? [
           `      d = downbeat anchor (keep established tempo)`,
@@ -1912,6 +2799,13 @@ async function loadTrack(nextIndex: number) {
   selectedIndex = (nextIndex + indexEntries.length) % indexEntries.length;
   const entry = indexEntries[selectedIndex];
   const trackId = trackIdFromEntry(entry);
+  graphManualRecipe = null;
+  graphVariantBySection.clear();
+  graphAutoRefresh = false;
+  lastGraphSectionId = "";
+  lastAutoDownbeatCount = -1;
+  playerLastSectionId = "";
+  playerLastTransitionLabel = "crossfade";
   updateUrlParam("track", trackId);
 
   trackUrl = new URL(`/tracks/${entry}`, location.origin).toString();
@@ -2157,6 +3051,36 @@ window.addEventListener("keydown", async (e) => {
     updateUrlParam("hud", hudVisible ? "1" : null);
     return;
   }
+  if ((viewerMode === "recipe-view" || viewerMode === "random-scene") && !e.repeat) {
+    if (e.key.toLowerCase() === "j") {
+      e.preventDefault();
+      if (viewerMode === "recipe-view") cycleGraphRecipeForSection(currentRecipe, currentSectionIdNow(), -1);
+      else cycleRandomSceneForSection(currentSectionIdNow(), -1);
+      return;
+    }
+    if (e.key.toLowerCase() === "k") {
+      e.preventDefault();
+      if (viewerMode === "recipe-view") cycleGraphRecipeForSection(currentRecipe, currentSectionIdNow(), 1);
+      else cycleRandomSceneForSection(currentSectionIdNow(), 1);
+      return;
+    }
+    if (e.key.toLowerCase() === "g") {
+      e.preventDefault();
+      if (viewerMode === "recipe-view") cycleGraphRecipeForSection(currentRecipe, currentSectionIdNow(), 1);
+      else cycleRandomSceneForSection(currentSectionIdNow(), 1);
+      return;
+    }
+    if (e.key.toLowerCase() === "r") {
+      e.preventDefault();
+      cycleGraphVariantForSection(currentSectionIdNow());
+      return;
+    }
+    if (e.key.toLowerCase() === "a") {
+      e.preventDefault();
+      graphAutoRefresh = !graphAutoRefresh;
+      return;
+    }
+  }
   if (isHintEditMode() && e.key.toLowerCase() === "l") {
     e.preventDefault();
     setLyricsEnabled(!lyricsEnabled);
@@ -2173,12 +3097,17 @@ window.addEventListener("keydown", async (e) => {
     cycleViewerMode();
     return;
   }
-  if (e.key.toLowerCase() === "r" && !e.repeat) {
+  if ((viewerMode === "player" || viewerMode === "hint-edit" || viewerMode === "primitive-lab") && e.key.toLowerCase() === "r" && !e.repeat) {
     e.preventDefault();
     randomizeSeed();
     return;
   }
   if (viewerMode === "primitive-lab" && !e.repeat) {
+    if (e.key.toLowerCase() === "b") {
+      e.preventDefault();
+      cycleLabBackdropPolicy();
+      return;
+    }
     if (e.key.toLowerCase() === "j") {
       e.preventDefault();
       cycleLabPrimitive(-1);
@@ -2189,21 +3118,6 @@ window.addEventListener("keydown", async (e) => {
       cycleLabPrimitive(1);
       return;
     }
-    if (e.key.toLowerCase() === "y") {
-      e.preventDefault();
-      await copyLabSnippet();
-      return;
-    }
-  }
-  if (viewerMode === "graph-scene" && !e.repeat && e.key.toLowerCase() === "y") {
-    e.preventDefault();
-    await copyLabSnippet();
-    return;
-  }
-  if (e.key.toLowerCase() === "t" && !e.repeat) {
-    e.preventDefault();
-    determinismProbeRequested = true;
-    return;
   }
   if (isHintEditMode() && e.key.toLowerCase() === "c" && !e.repeat) {
     e.preventDefault();

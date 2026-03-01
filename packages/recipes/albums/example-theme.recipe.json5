@@ -29,6 +29,48 @@
   "graph": {
     "layers": [
       {
+        "id": "base-gradient",
+        "blend": "source-over",
+        "opacity": 1,
+        "nodes": [
+          {
+            "id": "gradient",
+            "type": "bg.gradientField",
+            "params": { "gradientStops": 3, "driftSpeed": 0.012, "noiseScale": 0.45, "soften": 0.94 }
+          }
+        ]
+      },
+      {
+        "id": "base-particles",
+        "blend": "screen",
+        "opacity": 0.55,
+        "nodes": [
+          {
+            "id": "particles",
+            "type": "fg.particles",
+            "params": {
+              "count": 140,
+              "sizeRange": [1.6, 4.8],
+              "speed": 0.48,
+              "curl": 0.55,
+              "opacity": { "add": [0.45, { "mul": [ { "signal": "audio.amp" }, 0.75 ] }] }
+            }
+          }
+        ]
+      },
+      {
+        "id": "base-orb",
+        "blend": "screen",
+        "opacity": 1,
+        "nodes": [
+          {
+            "id": "orb",
+            "type": "shape.beatOrb",
+            "params": { "baseRadiusRatio": 0.048, "blend": "screen" }
+          }
+        ]
+      },
+      {
         "id": "main",
         "blend": "screen",
         "opacity": 1,
@@ -50,6 +92,26 @@
               "radiusPx": 182,
               "thicknessPx": { "map": "beat.pulse", "from": [0, 1], "to": [1.1, 3.2], "ease": "inOut" },
               "phaseHz": { "pick": [0.06, 0.08, 0.1], "w": [1, 2, 1] }
+            }
+          },
+          {
+            "id": "rosetteA",
+            "type": "curve.rosetteSpiral",
+            "params": {
+              "mode": { "pick": ["hybrid", "rosette", "star"], "w": [2, 1, 1] },
+              "steps": 860,
+              "turns": 10.5,
+              "growth": 3.1,
+              "petalCount": { "pick": [5, 6, 7, 8], "w": [1, 2, 2, 1] },
+              "petalAmp": { "map": "audio.amp", "from": [0, 0.35], "to": [14, 28], "ease": "out" },
+              "spin": 0.14,
+              "skip": { "pick": [1, 2, 3], "w": [2, 2, 1] },
+              "connectMode": { "pick": ["sequential", "skip", "chords", "radial"], "w": [2, 2, 1, 1] },
+              "symmetrySnap": { "pick": [0, 5, 6, 7, 8], "w": [2, 1, 2, 2, 1] },
+              "symmetryMix": { "map": "beat.downbeatPulse", "from": [0, 1], "to": [0.45, 0.82], "ease": "out" },
+              "color": { "pick": ["palette", "black"], "w": [5, 1] },
+              "alpha": { "map": "beat.downbeatPulse", "from": [0, 1], "to": [0.32, 0.7], "ease": "out" },
+              "lineWidth": { "map": "beat.pulse", "from": [0, 1], "to": [0.8, 1.8], "ease": "inOut" }
             }
           },
           {

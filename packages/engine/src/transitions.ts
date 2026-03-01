@@ -1,8 +1,8 @@
-import { hashStringToSeed } from "./rng";
 import { normalizeSectionLabel } from "./sections";
+import { renderRegisteredTransition } from "./transitionRegistry";
 
 export type TransitionDef = {
-  kind?: "crossfade" | "wipe" | "noiseDissolve";
+  kind?: string;
   durationMs?: number;
   easing?: string;
   params?: Record<string, any>;
@@ -41,7 +41,6 @@ export function compositeTransition({
   drawToFn: (c: CanvasRenderingContext2D) => void;
   seed: number;
 }) {
-  const kind = transitionDef?.kind ?? "crossfade";
   const p = clamp01(progress);
 
   clear(tempCtx, width, height);
@@ -51,34 +50,26 @@ export function compositeTransition({
   clear(ctx, width, height);
   ctx.drawImage(fromCanvas, 0, 0, width, height);
 
-  if (kind === "wipe") {
-    ctx.save();
-    ctx.beginPath();
-    ctx.rect(0, 0, Math.floor(width * p), height);
-    ctx.clip();
-    ctx.drawImage(toCanvas, 0, 0, width, height);
-    ctx.restore();
-    return;
+  const handled = renderRegisteredTransition({
+    ctx,
+    width,
+    height,
+    fromCanvas,
+    toCanvas,
+    progress: p,
+    seed,
+    transitionDef: { ...transitionDef, kind: transitionDef?.kind ?? "crossfade" }
+  });
+  if (!handled) {
+    renderRegisteredTransition({
+      ctx,
+      width,
+      height,
+      fromCanvas,
+      toCanvas,
+      progress: p,
+      seed,
+      transitionDef: { ...transitionDef, kind: "crossfade" }
+    });
   }
-
-  if (kind === "noiseDissolve") {
-    const cell = Math.max(6, Number(transitionDef?.params?.cell ?? 9));
-    const salt = hashStringToSeed("noiseDissolve") ^ seed;
-    for (let y = 0; y < height; y += cell) {
-      for (let x = 0; x < width; x += cell) {
-        const h = ((Math.imul((x + 1), 73856093) ^ Math.imul((y + 1), 19349663) ^ salt) >>> 0) / 4294967295;
-        if (h <= p) {
-          const w = Math.min(cell, width - x);
-          const hCell = Math.min(cell, height - y);
-          ctx.drawImage(toCanvas, x, y, w, hCell, x, y, w, hCell);
-        }
-      }
-    }
-    return;
-  }
-
-  // crossfade default
-  ctx.globalAlpha = p;
-  ctx.drawImage(toCanvas, 0, 0, width, height);
-  ctx.globalAlpha = 1;
 }

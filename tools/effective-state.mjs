@@ -274,6 +274,135 @@ function normalizeIsoAt(v) {
   return Number.isFinite(t) ? t : 0;
 }
 
+function nearestInList(targetMs, list) {
+  const t = Math.max(0, Math.round(Number(targetMs) || 0));
+  const xs = Array.isArray(list) ? list : [];
+  if (!xs.length) return { value: t, diff: Number.POSITIVE_INFINITY };
+  let best = Number(xs[0]);
+  let bestDiff = Math.abs(best - t);
+  for (let i = 1; i < xs.length; i += 1) {
+    const v = Number(xs[i]);
+    const d = Math.abs(v - t);
+    if (d < bestDiff) {
+      best = v;
+      bestDiff = d;
+    }
+  }
+  return { value: Math.max(0, Math.round(best)), diff: bestDiff };
+}
+
+function medianStepMs(msList) {
+  const xs = uniqSortedMs(msList || []);
+  if (xs.length < 2) return 500;
+  const ds = [];
+  for (let i = 1; i < xs.length; i += 1) {
+    const d = xs[i] - xs[i - 1];
+    if (d > 40 && d < 6000) ds.push(d);
+  }
+  const m = median(ds);
+  return Number.isFinite(m) && m > 0 ? m : 500;
+}
+
+function resolveSectionBoundaries({
+  sections,
+  beatsMs,
+  downbeatsMs,
+  lyricLines,
+  words
+}) {
+  const inputSections = Array.isArray(sections) ? sections : [];
+  if (!inputSections.length) return { sections: [], method: "none", adjusted: 0, avgSnapMs: 0 };
+  const beats = uniqSortedMs(beatsMs || []);
+  const downs = uniqSortedMs(downbeatsMs || []);
+  const beatLike = downs.length ? downs : beats;
+  const lineStarts = Array.isArray(lyricLines)
+    ? lyricLines.map((l) => Number(l?.t0Ms)).filter((n) => Number.isFinite(n)).map((n) => Math.max(0, Math.round(n)))
+    : [];
+  const lineEnds = Array.isArray(lyricLines)
+    ? lyricLines.map((l) => Number(l?.t1Ms)).filter((n) => Number.isFinite(n)).map((n) => Math.max(0, Math.round(n)))
+    : [];
+  const wordStarts = Array.isArray(words)
+    ? words.map((w) => Number(w?.t0Ms)).filter((n) => Number.isFinite(n)).map((n) => Math.max(0, Math.round(n)))
+    : [];
+  const wordEnds = Array.isArray(words)
+    ? words.map((w) => Number(w?.t1Ms)).filter((n) => Number.isFinite(n)).map((n) => Math.max(0, Math.round(n)))
+    : [];
+  const lyricStartMs = uniqSortedMs([...lineStarts, ...wordStarts]);
+  const lyricEndMs = uniqSortedMs([...lineEnds, ...wordEnds]);
+  const lastMediaMs = Math.max(
+    0,
+    beats.length ? beats[beats.length - 1] : 0,
+    lyricEndMs.length ? lyricEndMs[lyricEndMs.length - 1] : 0
+  );
+  const stepMs = medianStepMs(beatLike.length ? beatLike : beats);
+  const maxSnapMs = Math.max(220, Math.min(1400, Math.round(stepMs * 1.4)));
+  const minGapMs = Math.max(250, Math.round(stepMs * 0.9));
+  const sectionCount = inputSections.length;
+
+  function sectionAnchorFromLyrics(i) {
+    if (!lyricStartMs.length) return null;
+    if (i <= 0) return 0;
+    if (sectionCount <= 1) return 0;
+    const pos = i / sectionCount;
+    const idx = Math.max(0, Math.min(lyricStartMs.length - 1, Math.round(pos * (lyricStartMs.length - 1))));
+    return lyricStartMs[idx];
+  }
+
+  function sectionAnchorFromSpan(i) {
+    if (sectionCount <= 1) return 0;
+    const spanEnd = Math.max(lastMediaMs, minGapMs * sectionCount);
+    const t = i / sectionCount;
+    return Math.round(spanEnd * t);
+  }
+
+  const resolved = [];
+  let adjusted = 0;
+  let snapSum = 0;
+  let prevStart = 0;
+  for (let i = 0; i < inputSections.length; i += 1) {
+    const s = inputSections[i] || {};
+    const declaredStart = Number(s?.t0Ms);
+    const fallback = i === 0 ? 0 : prevStart + minGapMs;
+    const baseStart = Number.isFinite(declaredStart)
+      ? Math.max(0, Math.round(declaredStart))
+      : (sectionAnchorFromLyrics(i) ?? sectionAnchorFromSpan(i) ?? fallback);
+    const targetStart = baseStart;
+    const snap = nearestInList(targetStart, beatLike.length ? beatLike : beats);
+    const snappedStart = snap.diff <= maxSnapMs ? snap.value : baseStart;
+    const start = i === 0 ? 0 : Math.max(prevStart + minGapMs, snappedStart);
+    if (Math.abs(start - baseStart) > 60) {
+      adjusted += 1;
+      snapSum += Math.abs(start - baseStart);
+    }
+    resolved.push({
+      id: String(s?.id || `section-${i + 1}`),
+      labelRaw: s?.labelRaw,
+      t0Ms: start
+    });
+    prevStart = start;
+  }
+
+  for (let i = 0; i < resolved.length; i += 1) {
+    const nextStart = i + 1 < resolved.length ? Number(resolved[i + 1].t0Ms) : Number.POSITIVE_INFINITY;
+    const declaredEnd = Number(inputSections[i]?.t1Ms);
+    let end = Number.isFinite(declaredEnd) ? Math.max(Number(resolved[i].t0Ms) + minGapMs, Math.round(declaredEnd)) : nextStart;
+    if (!Number.isFinite(end)) {
+      const tail = Math.max(Number(resolved[i].t0Ms) + minGapMs, lastMediaMs + Math.round(stepMs * 2));
+      end = tail;
+    }
+    if (i + 1 < resolved.length) end = Math.min(end, Number(resolved[i + 1].t0Ms));
+    resolved[i].t1Ms = Math.max(Number(resolved[i].t0Ms) + minGapMs, Math.round(end));
+  }
+
+  const avgSnapMs = adjusted > 0 ? Math.round(snapSum / adjusted) : 0;
+  return {
+    sections: resolved,
+    method: "downbeat+lyrics",
+    adjusted,
+    avgSnapMs
+  };
+}
+
 function canonicalizeBarHintsByMeasure(rawHintEvents, tempoMs, anchorDownbeatMs) {
   const barHints = rawHintEvents
     .filter((h) => h.type === "hint/barBeat")
@@ -508,7 +637,8 @@ export function reduceEffectiveState({
   beats,
   words,
   events,
-  lockedTempoBpm
+  lockedTempoBpm,
+  trackMeta
 }) {
   const beatsMs = normalizeMsList(beats?.beatTimesMs);
   const downbeatMs = normalizeMsList(beats?.downbeatTimesMs);
@@ -852,6 +982,7 @@ export function reduceEffectiveState({
       subdivisionFactor,
       lockedTempoBpm: Number.isFinite(Number(lockedTempoBpm)) ? Number(lockedTempoBpm) : 0,
       beatFusionMode,
+      sectionBoundaryResolver: null,
       fusionWindowsSec: fusionWindows.map((w) => ({
         t0Sec: Number(w.startMs) / 1000,
         t1Sec: Number(w.endMs) / 1000
@@ -869,6 +1000,24 @@ export function reduceEffectiveState({
     },
     overlays: hintEvents
   };
+
+  const sectionResolution = resolveSectionBoundaries({
+    sections: (Array.isArray(trackMeta?.timing?.sections) && trackMeta.timing.sections.length
+      ? trackMeta.timing.sections
+      : (Array.isArray(trackMeta?.sections) ? trackMeta.sections : [])),
+    beatsMs: effectiveBeats,
+    downbeatsMs: effectiveDownbeats,
+    lyricLines: trackMeta?.timing?.lyricsLines || [],
+    words: Array.isArray(trackMeta?.timing?.words) ? trackMeta.timing.words : (Array.isArray(words?.words) ? words.words : [])
+  });
+  if (sectionResolution.sections.length) {
+    effective.effective.sections = sectionResolution.sections;
+    effective.hints.sectionBoundaryResolver = {
+      method: sectionResolution.method,
+      adjusted: sectionResolution.adjusted,
+      avgSnapMs: sectionResolution.avgSnapMs
+    };
+  }
 
   return {
     effective,
@@ -898,7 +1047,7 @@ export function reduceTrackToEffective({
   const beats = readJsonIfExists(beatsPath) || {};
   const words = readJsonIfExists(wordsPath) || {};
   const events = readEventsJsonl(eventsPath);
-  const reduced = reduceEffectiveState({ trackId, workId, beats, words, events, lockedTempoBpm });
+  const reduced = reduceEffectiveState({ trackId, workId, beats, words, events, lockedTempoBpm, trackMeta });
   writeJson(effectivePath, reduced.effective);
 
   if (trackId && fs.existsSync(trackPath)) {

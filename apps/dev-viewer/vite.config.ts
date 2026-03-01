@@ -274,9 +274,26 @@ export default defineConfig(({ mode }) => {
                 res.setHeader("Content-Type", "application/json; charset=utf-8");
                 res.end(JSON.stringify(resolved));
               } catch (err) {
+                const msg = err instanceof Error ? err.message : String(err);
+                const missingAlbum = /Album recipe not found:/i.test(msg);
+                if (missingAlbum && albumId && albumId !== "example-theme") {
+                  try {
+                    const fallback = resolveRecipe({ albumId: "example-theme", trackOverrideId: trackOverrideId || undefined });
+                    res.statusCode = 200;
+                    res.setHeader("Content-Type", "application/json; charset=utf-8");
+                    res.end(JSON.stringify({ ...fallback, recipeFallbackAlbumId: "example-theme" }));
+                    return;
+                  } catch (fallbackErr) {
+                    const fallbackMsg = fallbackErr instanceof Error ? fallbackErr.message : String(fallbackErr);
+                    res.statusCode = 400;
+                    res.setHeader("Content-Type", "application/json; charset=utf-8");
+                    res.end(JSON.stringify({ error: fallbackMsg }));
+                    return;
+                  }
+                }
                 res.statusCode = 400;
                 res.setHeader("Content-Type", "application/json; charset=utf-8");
-                res.end(JSON.stringify({ error: err instanceof Error ? err.message : String(err) }));
+                res.end(JSON.stringify({ error: msg }));
               }
               return;
             }

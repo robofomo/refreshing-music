@@ -11,11 +11,15 @@ type EngineState = {
   tMs: number;
   sectionId?: string;
   sectionType?: SectionType;
+  nextSectionId?: string;
+  nextSectionType?: SectionType;
+  nextSectionStartMs?: number;
   viewerMode?: string;
   signalBus?: any;
   amp?: number;
   energy?: number;
   recipe?: any;
+  nextRecipe?: any;
   track?: any;
   lyricsEnabled?: boolean;
   lyricMode?: string;
@@ -68,10 +72,14 @@ export function createEngine({
   let lastSectionType: SectionType = "other";
   let lastRecipe: any = null;
   let sectionChangeT0Ms = -1;
+  let sectionChangeT1Ms = -1;
   let activeTransition: TransitionDef | null = null;
   let transitionFromSectionId = "";
   let transitionFromSectionType: SectionType = "other";
   let transitionFromRecipe: any = null;
+  let transitionToSectionId = "";
+  let transitionToSectionType: SectionType = "other";
+  let transitionToRecipe: any = null;
 
   function makeScratchCanvas() {
     const Ctor = (globalThis as any).OffscreenCanvas;
@@ -241,10 +249,14 @@ export function createEngine({
     lastSectionType = "other";
     lastRecipe = null;
     sectionChangeT0Ms = -1;
+    sectionChangeT1Ms = -1;
     activeTransition = null;
     transitionFromSectionId = "";
     transitionFromSectionType = "other";
     transitionFromRecipe = null;
+    transitionToSectionId = "";
+    transitionToSectionType = "other";
+    transitionToRecipe = null;
   }
 
   function renderFrame(state: EngineState) {
@@ -260,6 +272,7 @@ export function createEngine({
     const audioState = getAudioState ? getAudioState() : {};
     const tMs = state?.tMs ?? timeState?.tMs ?? 0;
     const recipe = state?.recipe ?? {};
+    const nextRecipe = state?.nextRecipe ?? recipe;
     const track = state?.track ?? {};
     const refreshTitle = track?.composer?.headerMap?.["Refresh Title"];
     const palette = selectPalette({
@@ -287,19 +300,80 @@ export function createEngine({
     const width = canvas.width;
     const height = canvas.height;
     ensureScratchSize(width, height);
+    let frameInfo: any = {
+      sectionId,
+      sectionType,
+      lyricIndex: -1,
+      lyricText: "",
+      transition: {
+        armed: false,
+        active: false,
+        progress: 0,
+        t0Ms: -1,
+        t1Ms: -1,
+        fromSectionId: "",
+        toSectionId: ""
+      }
+    };
 
-    if (lastSectionId && sectionId !== lastSectionId) {
+    const nextSectionId = String(state?.nextSectionId ?? "");
+    const nextSectionType = (state?.nextSectionType as SectionType) || classifySection(nextSectionId);
+    const nextSectionStartMs = Number(state?.nextSectionStartMs);
+    const transForNext = nextSectionId && nextSectionId !== sectionId
+      ? selectTransitionDef(recipe, sectionId, nextSectionId)
+      : null;
+    const nextDurationMs = transForNext ? Math.max(1, Number(transForNext.durationMs ?? 900)) : 0;
+    const nextT0 = Number.isFinite(nextSectionStartMs) ? (nextSectionStartMs - nextDurationMs) : NaN;
+    if (Number.isFinite(nextT0) && nextSectionId && nextSectionId !== sectionId && tMs < nextSectionStartMs) {
+      frameInfo.transition = {
+        armed: tMs < nextT0,
+        active: tMs >= nextT0,
+        progress: tMs < nextT0 ? 0 : Math.max(0, Math.min(1, (tMs - nextT0) / Math.max(1, nextDurationMs))),
+        t0Ms: nextT0,
+        t1Ms: nextSectionStartMs,
+        fromSectionId: sectionId,
+        toSectionId: nextSectionId
+      };
+    }
+    const canPreRoll =
+      !activeTransition &&
+      Number.isFinite(nextSectionStartMs) &&
+      nextSectionStartMs > tMs &&
+      nextSectionId &&
+      nextSectionId !== sectionId;
+    if (canPreRoll) {
+      const trans = selectTransitionDef(recipe, sectionId, nextSectionId);
+      const durationMs = Math.max(1, Number(trans.durationMs ?? 900));
+      const t0 = nextSectionStartMs - durationMs;
+      if (tMs >= t0) {
+        activeTransition = trans;
+        sectionChangeT0Ms = t0;
+        sectionChangeT1Ms = nextSectionStartMs;
+        transitionFromSectionId = sectionId;
+        transitionFromSectionType = sectionType;
+        transitionFromRecipe = recipe;
+        transitionToSectionId = nextSectionId;
+        transitionToSectionType = nextSectionType;
+        transitionToRecipe = nextRecipe;
+      }
+    }
+
+    if (!activeTransition && lastSectionId && sectionId !== lastSectionId) {
       transitionFromSectionId = lastSectionId;
       transitionFromSectionType = lastSectionType;
       transitionFromRecipe = lastRecipe ?? recipe;
       sectionChangeT0Ms = tMs;
       activeTransition = selectTransitionDef(recipe, lastSectionId, sectionId);
+      const durationMs = Math.max(1, Number(activeTransition.durationMs ?? 900));
+      sectionChangeT1Ms = tMs + durationMs;
+      transitionToSectionId = sectionId;
+      transitionToSectionType = sectionType;
+      transitionToRecipe = recipe;
     }
     lastSectionId = sectionId;
     lastSectionType = sectionType;
     lastRecipe = recipe;
 
-    let frameInfo = { sectionId, sectionType, lyricIndex: -1, lyricText: "" };
     const drawScene = ({
       targetCtx,
       sceneSectionId,
@@ -370,11 +444,22 @@ export function createEngine({
     };
 
     if (activeTransition && sectionChangeT0Ms >= 0) {
-      const durationMs = Math.max(1, Number(activeTransition.durationMs ?? 900));
-      const progress = Math.max(0, Math.min(1, (tMs - sectionChangeT0Ms) / durationMs));
+      const t1 = sectionChangeT1Ms > sectionChangeT0Ms
+        ? sectionChangeT1Ms
+        : sectionChangeT0Ms + Math.max(1, Number(activeTransition.durationMs ?? 900));
+      const progress = Math.max(0, Math.min(1, (tMs - sectionChangeT0Ms) / Math.max(1, t1 - sectionChangeT0Ms)));
 
-      const fromSectionId = transitionFromSectionId || sectionId;
-      const fromSectionType = transitionFromSectionType || sectionType;
+      const fromSectionId = transitionFromSectionId || lastSectionId || sectionId;
+      const fromSectionType = transitionFromSectionType || lastSectionType || sectionType;
+      frameInfo.transition = {
+        armed: false,
+        active: true,
+        progress,
+        t0Ms: sectionChangeT0Ms,
+        t1Ms: t1,
+        fromSectionId,
+        toSectionId: transitionToSectionId || sectionId
+      };
       drawScene({
         targetCtx: scratchACtx,
         sceneSectionId: fromSectionId,
@@ -393,19 +478,23 @@ export function createEngine({
         transitionDef: activeTransition,
         drawToFn: (targetCtx) => drawScene({
           targetCtx,
-          sceneSectionId: sectionId,
-          sceneSectionType: sectionType,
-          sceneRecipe: recipe,
+          sceneSectionId: transitionToSectionId || sectionId,
+          sceneSectionType: transitionToSectionType || sectionType,
+          sceneRecipe: transitionToRecipe ?? recipe,
           captureInfo: true
         }),
         seed
       });
       if (progress >= 1) {
         sectionChangeT0Ms = -1;
+        sectionChangeT1Ms = -1;
         activeTransition = null;
         transitionFromSectionId = "";
         transitionFromSectionType = "other";
         transitionFromRecipe = null;
+        transitionToSectionId = "";
+        transitionToSectionType = "other";
+        transitionToRecipe = null;
       }
       return frameInfo;
     }

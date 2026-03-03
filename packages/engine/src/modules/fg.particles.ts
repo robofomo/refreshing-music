@@ -73,6 +73,7 @@ export function renderParticles({
   canvas,
   tMs,
   amp,
+  reactive,
   colors,
   seed,
   params
@@ -81,6 +82,14 @@ export function renderParticles({
   canvas: HTMLCanvasElement;
   tMs: number;
   amp?: number;
+  reactive?: {
+    ampFast?: number;
+    ampSlow?: number;
+    low?: number;
+    mid?: number;
+    high?: number;
+    onsetPulse?: number;
+  };
   colors: string[];
   seed: number;
   params?: Record<string, any>;
@@ -108,12 +117,15 @@ export function renderParticles({
   const speed = Number(params?.speed ?? 0.45);
   const curl = Number(params?.curl ?? 0.55);
   const baseOpacity = clamp01(Number(params?.opacity ?? 0.62));
-  const ampIn = clamp01(Number(amp ?? 0));
+  const ampIn = clamp01(Number(reactive?.ampFast ?? amp ?? 0));
+  const high = clamp01(Number(reactive?.high ?? 0));
+  const low = clamp01(Number(reactive?.low ?? 0));
+  const onset = clamp01(Number(reactive?.onsetPulse ?? 0));
   const ampTarget = clamp01(ampIn * 3.2);
   const maxStep = 0.025;
   const nextAmp = cache.smoothAmp + clamp(ampTarget - cache.smoothAmp, -maxStep, maxStep);
   cache.smoothAmp = nextAmp;
-  const ampBoost = 1 + nextAmp * 0.55;
+  const ampBoost = 1 + nextAmp * 0.5 + high * 0.25 + onset * 0.12;
 
   ctx.save();
   const sec = tMs / 1000;
@@ -129,9 +141,9 @@ export function renderParticles({
       nextAmp * 0.16;
     const driftX = Math.sin(sec * (0.34 + speed * 0.22) + p.phase * 1.7) * (16 + 34 * p.drift) * (0.45 + curl);
     const driftY = Math.cos(sec * (0.31 + speed * 0.2) + p.phase * 1.2) * (14 + 28 * p.drift) * (0.45 + curl);
-    const tx = cx + baseDx * radial + driftX;
-    const ty = cy + baseDy * radial + driftY;
-    const r = p.size * (1.02 + nextAmp * 0.8 + 0.12 * Math.sin(sec * (0.8 + p.drift * 0.4) + p.phase));
+    const tx = cx + baseDx * radial + driftX * (1 + onset * 0.18);
+    const ty = cy + baseDy * radial + driftY * (1 + low * 0.14);
+    const r = p.size * (1.02 + nextAmp * 0.74 + high * 0.2 + 0.12 * Math.sin(sec * (0.8 + p.drift * 0.4) + p.phase));
     const a = baseOpacity * (0.45 + 0.35 * Math.sin(sec * (0.7 + p.drift * 0.5) + p.phase)) * ampBoost;
     ctx.fillStyle = toRgba(p.color, clamp01(a));
     ctx.beginPath();

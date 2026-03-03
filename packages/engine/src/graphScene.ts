@@ -82,15 +82,27 @@ function drawOrbitRibbon(args: {
   amp: number;
   beat: number;
   downbeat: number;
+  reactive?: {
+    ampFast?: number;
+    ampSlow?: number;
+    low?: number;
+    mid?: number;
+    high?: number;
+    onsetPulse?: number;
+  };
   nodeSeed: number;
   params?: Record<string, any>;
 }) {
-  const { ctx, canvas, colors, tMs, amp, beat, downbeat, nodeSeed, params } = args;
+  const { ctx, canvas, colors, tMs, amp, beat, downbeat, reactive, nodeSeed, params } = args;
   const w = canvas.width;
   const h = canvas.height;
   const cx = w * 0.5;
   const cy = h * 0.5;
   const t = tMs / 1000;
+  const low = clamp01(Number(reactive?.low ?? amp));
+  const mid = clamp01(Number(reactive?.mid ?? amp));
+  const high = clamp01(Number(reactive?.high ?? amp));
+  const onset = clamp01(Number(reactive?.onsetPulse ?? 0));
   const points = Math.max(16, Math.min(220, Number(params?.points ?? 56)));
   const radius = Math.max(24, Number(params?.radiusPx ?? Math.min(w, h) * 0.24));
   const thickness = Math.max(0.8, Number(params?.thicknessPx ?? 1.6) + beat * 0.9);
@@ -101,15 +113,31 @@ function drawOrbitRibbon(args: {
   const mode = modeRaw === "auto"
     ? (["flow", "pulse-rotate", "drift"][nodeSeed % 3] as "flow" | "pulse-rotate" | "drift")
     : (modeRaw as "flow" | "pulse-rotate" | "drift");
-  const audioWarp = 1 + amp * 0.85 + downbeat * 0.18;
-  const tempoMul = mode === "pulse-rotate" ? 0.72 : mode === "drift" ? 1.08 : 1;
-  const phaseBeatPush = mode === "pulse-rotate" ? (downbeat * 0.08 + beat * 0.03) : (beat * 0.015);
+  const profileRaw = String(params?.motionProfile ?? "auto").toLowerCase();
+  const profile = profileRaw === "auto"
+    ? (["elastic", "wobble", "precess", "breathe"][Math.floor((nodeSeed >>> 3) % 4)] as "elastic" | "wobble" | "precess" | "breathe")
+    : (profileRaw as "elastic" | "wobble" | "precess" | "breathe");
+  const audioWarp = 1 + amp * 0.6 + mid * 0.25 + downbeat * 0.18 + onset * 0.08;
+  const tempoMul = mode === "pulse-rotate" ? 0.72 : mode === "drift" ? (1.02 + high * 0.08) : (1 + low * 0.05);
+  const phaseBeatPush = mode === "pulse-rotate" ? (downbeat * 0.08 + beat * 0.03) : (beat * 0.015 + onset * 0.03);
   const radiusBoostBase = mode === "pulse-rotate"
-    ? (1 + amp * 0.14 + beat * 0.11 + downbeat * 0.09)
-    : (1 + amp * 0.18 + beat * 0.07);
-  const yAxisScale = mode === "drift" ? (0.72 + 0.18 * Math.sin(t * (0.33 + amp * 0.5) + seedPhase)) : (0.68 + 0.14 * Math.sin(t * (0.45 + amp * 0.9)));
+    ? (1 + amp * 0.1 + high * 0.08 + beat * 0.11 + downbeat * 0.09)
+    : (1 + amp * 0.12 + low * 0.1 + beat * 0.07);
+  const yAxisScale = mode === "drift"
+    ? (0.72 + 0.18 * Math.sin(t * (0.33 + mid * 0.5) + seedPhase))
+    : (0.68 + 0.14 * Math.sin(t * (0.45 + high * 0.9) + seedPhase * 0.5));
   const driftFreqMul = mode === "drift" ? 2.2 : mode === "pulse-rotate" ? 1.1 : 1.6;
-  const driftAmp = mode === "pulse-rotate" ? (0.12 + amp * 0.09) : (0.15 + amp * 0.12);
+  const driftAmp = mode === "pulse-rotate"
+    ? (0.12 + high * 0.1 + onset * 0.05)
+    : (0.13 + mid * 0.12 + onset * 0.04);
+  const profileNudge =
+    profile === "elastic"
+      ? Math.sin(t * (0.7 + low * 1.2)) * (0.06 + low * 0.04)
+      : profile === "wobble"
+        ? Math.sin(t * (1.4 + high * 1.6) + seedPhase) * (0.05 + high * 0.06)
+        : profile === "precess"
+          ? Math.sin(t * (0.26 + mid * 0.4) + seedPhase * 0.7) * 0.04
+          : Math.sin(t * (0.18 + low * 0.22) + seedPhase * 0.35) * 0.08;
   ctx.strokeStyle = pickFrom(colors, nodeSeed, "#89D6FF");
   if (!String(ctx.strokeStyle).startsWith("#")) ctx.globalAlpha = clamp01(0.44 + amp * 0.24 + downbeat * 0.1);
   else ctx.globalAlpha = clamp01(0.52 + amp * 0.22 + downbeat * 0.1);
@@ -122,7 +150,12 @@ function drawOrbitRibbon(args: {
     const a = u * Math.PI * 2 + t * 2 * Math.PI * speedHz * audioWarp * tempoMul + seedPhase + phaseBeatPush;
     // Use periodic, continuous drift so the stroke stays smooth and avoids seam spikes.
     const drift = 1 + driftAmp * Math.sin(driftBaseFreq * a * driftFreqMul + t * (0.45 + amp * 0.45) + driftPhase);
-    const radiusBoost = radiusBoostBase + (mode === "drift" ? 0.03 * Math.sin(t * 0.4 + u * Math.PI * 2) : 0);
+    const radiusBoost =
+      radiusBoostBase +
+      profileNudge +
+      (mode === "drift" ? 0.03 * Math.sin(t * (0.35 + mid * 0.2) + u * Math.PI * 2) : 0) +
+      (profile === "wobble" ? 0.035 * Math.sin(u * Math.PI * 8 + t * (0.3 + high * 0.6) + seedPhase) : 0) +
+      (profile === "precess" ? 0.025 * Math.cos(t * (0.2 + low * 0.2) + u * Math.PI * 2) : 0);
     const x = cx + Math.cos(a) * radius * radiusBoost * drift;
     const y = cy + Math.sin(a) * radius * radiusBoost * drift * yAxisScale;
     if (i === 0) ctx.moveTo(x, y);
@@ -194,15 +227,27 @@ function drawRosetteSpiral(args: {
   amp: number;
   beat: number;
   downbeat: number;
+  reactive?: {
+    ampFast?: number;
+    ampSlow?: number;
+    low?: number;
+    mid?: number;
+    high?: number;
+    onsetPulse?: number;
+  };
   nodeSeed: number;
   params?: Record<string, any>;
 }) {
-  const { ctx, canvas, colors, tMs, amp, beat, downbeat, nodeSeed, params } = args;
+  const { ctx, canvas, colors, tMs, amp, beat, downbeat, reactive, nodeSeed, params } = args;
   const w = canvas.width;
   const h = canvas.height;
   const cx = w * 0.5;
   const cy = h * 0.5;
   const t = tMs / 1000;
+  const low = clamp01(Number(reactive?.low ?? amp));
+  const mid = clamp01(Number(reactive?.mid ?? amp));
+  const high = clamp01(Number(reactive?.high ?? amp));
+  const onset = clamp01(Number(reactive?.onsetPulse ?? 0));
   const rng = createRng(nodeSeed);
 
   const steps = Math.max(80, Math.min(2800, Math.round(Number(params?.steps ?? 820))));
@@ -230,6 +275,10 @@ function drawRosetteSpiral(args: {
   const animationMode = animationRaw === "auto"
     ? (["step-rotate", "counterspin", "twist"][nodeSeed % 3] as "step-rotate" | "counterspin" | "twist")
     : (animationRaw as "step-rotate" | "counterspin" | "twist");
+  const profileRaw = String(params?.motionProfile ?? "auto").toLowerCase();
+  const profile = profileRaw === "auto"
+    ? (["petal-breathe", "gear", "spiral-surge", "glass"][Math.floor((nodeSeed >>> 4) % 4)] as "petal-breathe" | "gear" | "spiral-surge" | "glass")
+    : (profileRaw as "petal-breathe" | "gear" | "spiral-surge" | "glass");
   const hueDrift = Number(params?.hueDrift ?? 0.2);
   const centerJitter = Math.max(0, Number(params?.centerJitter ?? 0));
   const cxJ = cx + Math.sin(t * 0.19 + basePhase) * centerJitter;
@@ -245,7 +294,7 @@ function drawRosetteSpiral(args: {
     const thetaN = Math.pow(theta, radiusPow);
     const spiralR = growth * thetaN;
 
-    const petalWave = Math.cos(theta * petalCount + basePhase + timePhase);
+    const petalWave = Math.cos(theta * petalCount + basePhase + timePhase + high * 0.6 + onset * 0.2);
     const rosetteR = spiralR + petalAmp * petalWave;
     const starR = spiralR + petalAmp * Math.sign(petalWave);
 
@@ -259,12 +308,20 @@ function drawRosetteSpiral(args: {
 
     const stepAngle = (Math.PI * 2) / Math.max(8, petalCount * 2);
     const stepRotate = Math.round((t * 0.95 + downbeat * 0.75) / 0.33) * stepAngle;
+    const profileOffset =
+      profile === "petal-breathe"
+        ? Math.sin(t * (0.25 + low * 0.35) + u * Math.PI * 2 + basePhase) * (0.08 + low * 0.05)
+        : profile === "gear"
+          ? Math.sign(Math.sin(t * (0.65 + mid * 0.35) + basePhase + u * Math.PI * 6)) * (0.045 + mid * 0.04)
+          : profile === "spiral-surge"
+            ? Math.sin(t * (0.9 + onset * 0.8) + u * Math.PI * 3) * (0.07 + high * 0.04)
+            : Math.sin(t * (0.38 + mid * 0.45) + u * Math.PI * 10 + basePhase) * (0.035 + high * 0.025);
     const motionOffset =
       animationMode === "step-rotate"
-        ? stepRotate
+        ? stepRotate + profileOffset
         : animationMode === "counterspin"
-          ? ((u < 0.45 ? -1 : 1) * t * 0.28 + beat * 0.06)
-          : Math.sin(t * 0.55 + u * Math.PI * 2 + basePhase) * (0.16 + downbeat * 0.08);
+          ? ((u < 0.45 ? -1 : 1) * t * (0.22 + mid * 0.2) + beat * 0.06 + profileOffset)
+          : Math.sin(t * (0.45 + high * 0.65) + u * Math.PI * 2 + basePhase) * (0.14 + downbeat * 0.08 + onset * 0.04) + profileOffset;
     const spinTerm = animationMode === "counterspin" ? spin * theta * (u < 0.5 ? -1 : 1) : spin * theta;
     const twistTerm = twistAmp * Math.sin(theta * twistHz + basePhase + timePhase + (animationMode === "twist" ? t * 0.45 : 0));
     const phi =
@@ -638,9 +695,24 @@ export function renderGraphScene({
         drawVignetteBg({ ctx, canvas, params: resolvedParams });
       } else if (type === "bg.bands") {
         drawBandsBg({ ctx, canvas, tMs, nodeSeed, params: resolvedParams });
-      } else if (type === "bg.gradientfield" || type === "fg.particles") {
+      } else if (
+        type === "bg.gradientfield" ||
+        type === "bg.radialgradientdrift" ||
+        type === "fg.particles" ||
+        type === "fg.shockrings" ||
+        type === "fg.constellationlinks"
+      ) {
         renderRegisteredModule({
-          moduleId: type === "bg.gradientfield" ? "bg.gradientField" : "fg.particles",
+          moduleId:
+            type === "bg.gradientfield"
+              ? "bg.gradientField"
+              : type === "bg.radialgradientdrift"
+                ? "bg.radialGradientDrift"
+                : type === "fg.shockrings"
+                  ? "fg.shockRings"
+                  : type === "fg.constellationlinks"
+                    ? "fg.constellationLinks"
+                    : "fg.particles",
           ctx,
           canvas,
           tMs,
@@ -679,6 +751,7 @@ export function renderGraphScene({
           amp,
           beat,
           downbeat,
+          reactive: state?.signalBus?.reactive,
           nodeSeed,
           params: resolvedParams
         });
@@ -705,6 +778,18 @@ export function renderGraphScene({
           sectionType: String(state?.sectionType ?? "default") as any,
           state
         });
+      } else if (type === "text.wordtrails") {
+        renderRegisteredModule({
+          moduleId: "text.wordTrails",
+          ctx,
+          canvas,
+          tMs,
+          seed: nodeSeed,
+          params: resolvedParams,
+          colors,
+          sectionType: String(state?.sectionType ?? "default") as any,
+          state
+        });
       } else if (type === "overlay.beattrack") {
         drawBeatTrackOverlay({
           ctx,
@@ -721,6 +806,7 @@ export function renderGraphScene({
           amp,
           beat,
           downbeat,
+          reactive: state?.signalBus?.reactive,
           nodeSeed,
           params: resolvedParams
         });

@@ -1,5 +1,9 @@
 import { renderGradientField } from "./modules/bg.gradientField";
 import { renderParticles } from "./modules/fg.particles";
+import { renderRadialGradientDrift } from "./modules/bg.radialGradientDrift";
+import { renderShockRings } from "./modules/fg.shockRings";
+import { renderConstellationLinks } from "./modules/fg.constellationLinks";
+import { renderWordTrails } from "./modules/text.wordTrails";
 import { renderLyricsKaraoke } from "./modules/ui.lyricsKaraoke";
 import { assertDeterministicParams } from "./determinism";
 import type { SectionType } from "./sections";
@@ -56,9 +60,57 @@ function registerBuiltins() {
       canvas: args.canvas,
       tMs: args.tMs,
       amp: args.state?.amp,
+      reactive: args.state?.signalBus?.reactive,
       colors: args.colors,
       seed: args.seed,
       params: args.params
+    });
+  });
+
+  registerModule("bg.radialGradientDrift", (args) => {
+    renderRadialGradientDrift({
+      ctx: args.ctx,
+      canvas: args.canvas,
+      tMs: args.tMs,
+      colors: args.colors,
+      seed: args.seed,
+      params: args.params,
+      state: args.state
+    });
+  });
+
+  registerModule("fg.shockRings", (args) => {
+    renderShockRings({
+      ctx: args.ctx,
+      canvas: args.canvas,
+      tMs: args.tMs,
+      colors: args.colors,
+      seed: args.seed,
+      params: args.params,
+      state: args.state
+    });
+  });
+
+  registerModule("fg.constellationLinks", (args) => {
+    renderConstellationLinks({
+      ctx: args.ctx,
+      canvas: args.canvas,
+      tMs: args.tMs,
+      colors: args.colors,
+      seed: args.seed,
+      params: args.params,
+      state: args.state
+    });
+  });
+
+  registerModule("text.wordTrails", (args) => {
+    renderWordTrails({
+      ctx: args.ctx,
+      canvas: args.canvas,
+      tMs: args.tMs,
+      track: args.state?.track,
+      params: args.params,
+      state: args.state
     });
   });
 

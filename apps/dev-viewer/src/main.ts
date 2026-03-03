@@ -90,6 +90,7 @@ type LabPrimitiveId =
   | "polyline.orbitRibbon"
   | "curve.rosetteSpiral"
   | "text.echoWord"
+  | "text.wordTrails"
   | "text.karaoke";
 const LAB_PRIMITIVES: LabPrimitiveId[] = [
   "bg.gradientField",
@@ -100,6 +101,7 @@ const LAB_PRIMITIVES: LabPrimitiveId[] = [
   "polyline.orbitRibbon",
   "curve.rosetteSpiral",
   "text.echoWord",
+  "text.wordTrails",
   "text.karaoke"
 ];
 type ViewerSignalBus = {
@@ -137,6 +139,15 @@ type ViewerSignalBus = {
   audio: {
     amp: number;
     seed: number;
+  };
+  reactive: {
+    ampFast: number;
+    ampSlow: number;
+    low: number;
+    mid: number;
+    high: number;
+    onsetScore: number;
+    onsetPulse: number;
   };
 };
 
@@ -257,6 +268,13 @@ let masterGain: GainNode | null = null;
 let primaryGain: GainNode | null = null;
 let vocalsGain: GainNode | null = null;
 let audioData: Uint8Array<ArrayBuffer> | null = null;
+let audioFreqData: Uint8Array<ArrayBuffer> | null = null;
+let reactiveAmpFast = 0;
+let reactiveAmpSlow = 0;
+let reactiveOnsetScore = 0;
+let reactiveOnsetPulse = 0;
+let reactiveLastOnsetMs = -1e9;
+let reactivePrevSpectrum: number[] = [];
 const DEBUG_AUDIO = false;
 let lastDebugLogTs = 0;
 let lowAmpSinceMs = 0;
@@ -271,7 +289,7 @@ const engine = createEngine({
   canvas,
   dpr: Math.max(1, Math.min(window.devicePixelRatio || 1, 2)),
   getTimeState: () => ({ tMs: audio.currentTime * 1000 }),
-  getAudioState: () => ({ amp: rmsAmplitude(), paused: audio.paused })
+  getAudioState: () => ({ amp: reactiveAmpFast, paused: audio.paused })
 });
 
 function mulberry32(a: number) {
@@ -385,6 +403,7 @@ function currentLabProfile() {
     "polyline.orbitRibbon": { scale: [0.7, 2.4], density: [0.4, 3.9] },
     "curve.rosetteSpiral": { scale: [0.7, 2.5], density: [0.45, 4.2] },
     "text.echoWord": { scale: [0.7, 2.0], density: [0.5, 2.3] },
+    "text.wordTrails": { scale: [0.7, 2.0], density: [0.8, 2.5] },
     "text.karaoke": { scale: [0.8, 1.3], density: [0.8, 1.4] }
   };
   const ranges = primitiveRanges[labPrimitive] ?? primitiveRanges["shape.circlePulse"];
@@ -533,6 +552,17 @@ function labPrimitiveNode(profile: { scale: number; density: number; variant: nu
       }
     };
   }
+  if (labPrimitive === "text.wordTrails") {
+    return {
+      id: "lab-primitive",
+      type: "text.wordTrails",
+      params: {
+        fontPx: Math.round(42 * scale),
+        trailCount: Math.max(3, Math.round(4 * density)),
+        driftPx: Math.max(8, Math.round(14 * scale))
+      }
+    };
+  }
   return {
     id: "lab-primitive",
     type: "text.echoWord",
@@ -624,6 +654,17 @@ function activeLabSnippet() {
     "fontSizePx": ${Math.round(30 * scale)},
     "lineGapPx": ${Math.max(8, Math.round(10 * density))},
     "opacity": 0.92
+  }
+}`;
+  }
+  if (labPrimitive === "text.wordTrails") {
+    return `{
+  "id": "lab-word-trails",
+  "type": "text.wordTrails",
+  "params": {
+    "fontPx": ${Math.round(42 * scale)},
+    "trailCount": ${Math.max(3, Math.round(4 * density))},
+    "driftPx": ${Math.max(8, Math.round(14 * scale))}
   }
 }`;
   }
@@ -1526,6 +1567,12 @@ function isAtTrackEnd() {
 function resetAmpHistory(reason: string) {
   ampHistory.length = 0;
   lowAmpSinceMs = 0;
+  reactiveAmpFast = 0;
+  reactiveAmpSlow = 0;
+  reactiveOnsetScore = 0;
+  reactiveOnsetPulse = 0;
+  reactiveLastOnsetMs = -1e9;
+  reactivePrevSpectrum = [];
   logAudioState("amp-history-reset", { reason });
 }
 
@@ -1662,6 +1709,7 @@ function ensureAudioGraph() {
   analyser = audioCtx.createAnalyser();
   analyser.fftSize = 1024;
   audioData = new Uint8Array(new ArrayBuffer(analyser.fftSize));
+  audioFreqData = new Uint8Array(new ArrayBuffer(analyser.frequencyBinCount));
 
   masterGain = audioCtx.createGain();
   primaryGain = audioCtx.createGain();
@@ -1685,15 +1733,82 @@ function rebuildAudioGraph(reason: string) {
   ensureAudioGraph();
 }
 
-function rmsAmplitude() {
-  if (!analyser || !audioData) return 0;
+function meanBand(data: Uint8Array<ArrayBuffer>, from: number, to: number) {
+  const lo = Math.max(0, Math.min(data.length, Math.floor(from)));
+  const hi = Math.max(lo + 1, Math.min(data.length, Math.floor(to)));
+  let sum = 0;
+  for (let i = lo; i < hi; i += 1) sum += data[i] / 255;
+  return sum / Math.max(1, hi - lo);
+}
+
+function sampleReactiveAudio(tAudioMs: number) {
+  if (!analyser || !audioData || !audioFreqData) {
+    return {
+      ampRms: 0,
+      ampFast: reactiveAmpFast,
+      ampSlow: reactiveAmpSlow,
+      low: 0,
+      mid: 0,
+      high: 0,
+      onsetScore: reactiveOnsetScore,
+      onsetPulse: reactiveOnsetPulse
+    };
+  }
+
   analyser.getByteTimeDomainData(audioData);
+  analyser.getByteFrequencyData(audioFreqData);
+
   let sum = 0;
   for (const v of audioData) {
     const n = (v - 128) / 128;
     sum += n * n;
   }
-  return Math.sqrt(sum / audioData.length);
+  const ampRms = Math.sqrt(sum / audioData.length);
+
+  const bins = audioFreqData.length;
+  const lowEnd = Math.max(2, Math.floor(bins * 0.08));
+  const midEnd = Math.max(lowEnd + 2, Math.floor(bins * 0.35));
+  const low = meanBand(audioFreqData, 0, lowEnd);
+  const mid = meanBand(audioFreqData, lowEnd, midEnd);
+  const high = meanBand(audioFreqData, midEnd, bins);
+
+  if (!reactivePrevSpectrum.length || reactivePrevSpectrum.length !== bins) {
+    reactivePrevSpectrum = Array.from(audioFreqData, (v) => v / 255);
+  }
+  let flux = 0;
+  for (let i = 0; i < bins; i += 1) {
+    const cur = audioFreqData[i] / 255;
+    const prev = reactivePrevSpectrum[i] ?? cur;
+    const d = cur - prev;
+    if (d > 0) flux += d;
+    reactivePrevSpectrum[i] = cur;
+  }
+  const onsetScoreRaw = flux / Math.max(1, bins);
+
+  reactiveAmpFast += (ampRms - reactiveAmpFast) * 0.32;
+  reactiveAmpSlow += (ampRms - reactiveAmpSlow) * 0.06;
+  reactiveOnsetScore += (onsetScoreRaw - reactiveOnsetScore) * 0.24;
+
+  const threshold = reactiveOnsetScore * 1.18 + 0.0045;
+  const refractoryMs = 120;
+  const canTrigger = tAudioMs - reactiveLastOnsetMs >= refractoryMs;
+  if (canTrigger && onsetScoreRaw > threshold) {
+    reactiveOnsetPulse = 1;
+    reactiveLastOnsetMs = tAudioMs;
+  } else {
+    reactiveOnsetPulse *= 0.84;
+  }
+
+  return {
+    ampRms,
+    ampFast: reactiveAmpFast,
+    ampSlow: reactiveAmpSlow,
+    low,
+    mid,
+    high,
+    onsetScore: reactiveOnsetScore,
+    onsetPulse: reactiveOnsetPulse
+  };
 }
 
 function fmtMs(ms: number) {
@@ -1703,16 +1818,42 @@ function fmtMs(ms: number) {
   return `${m}:${String(s).padStart(2, "0")}`;
 }
 
-function findCurrentSection(currentTimeMs: number) {
-  const sections = track?.timing?.sections ?? [];
-  let best: TimingSection | null = null;
-  for (const s of sections) {
-    if (typeof s.t0Ms !== "number") continue;
-    const open = currentTimeMs >= s.t0Ms;
-    const close = typeof s.t1Ms !== "number" || currentTimeMs < s.t1Ms;
-    if (open && close) best = s;
+function sortedTimedSections() {
+  const sections = Array.isArray(track?.timing?.sections) ? track.timing.sections : [];
+  return sections
+    .filter((s: any) => Number.isFinite(Number(s?.t0Ms)))
+    .slice()
+    .sort((a: any, b: any) => Number(a.t0Ms) - Number(b.t0Ms));
+}
+
+function currentSectionIndex(currentTimeMs: number) {
+  const sections = sortedTimedSections();
+  let idx = -1;
+  for (let i = 0; i < sections.length; i += 1) {
+    const t0 = Number(sections[i].t0Ms);
+    const t1Explicit = Number.isFinite(Number(sections[i].t1Ms)) ? Number(sections[i].t1Ms) : Number.POSITIVE_INFINITY;
+    const t1Next = i + 1 < sections.length ? Number(sections[i + 1].t0Ms) : Number.POSITIVE_INFINITY;
+    const t1 = Math.min(t1Explicit, t1Next);
+    if (currentTimeMs >= t0 && currentTimeMs < t1) {
+      idx = i;
+      break;
+    }
+    if (currentTimeMs >= t0) idx = i;
   }
-  return best;
+  return { sections, idx };
+}
+
+function findCurrentSection(currentTimeMs: number) {
+  const { sections, idx } = currentSectionIndex(currentTimeMs);
+  if (idx < 0 || idx >= sections.length) return null;
+  return sections[idx];
+}
+
+function findNextSection(currentTimeMs: number) {
+  const { sections, idx } = currentSectionIndex(currentTimeMs);
+  const nextIdx = idx + 1;
+  if (nextIdx < 0 || nextIdx >= sections.length) return null;
+  return sections[nextIdx];
 }
 
 function findCurrentLyricLine(currentTimeMs: number) {
@@ -2138,6 +2279,15 @@ function buildSignalBus(input: {
   tRenderMs: number;
   durationSec: number;
   amp: number;
+  reactive: {
+    ampFast: number;
+    ampSlow: number;
+    low: number;
+    mid: number;
+    high: number;
+    onsetScore: number;
+    onsetPulse: number;
+  };
   sectionId: string;
   sectionType: string;
   pulse: { beat: number; downbeat: number };
@@ -2177,6 +2327,15 @@ function buildSignalBus(input: {
     audio: {
       amp: input.amp,
       seed
+    },
+    reactive: {
+      ampFast: input.reactive.ampFast,
+      ampSlow: input.reactive.ampSlow,
+      low: input.reactive.low,
+      mid: input.reactive.mid,
+      high: input.reactive.high,
+      onsetScore: input.reactive.onsetScore,
+      onsetPulse: input.reactive.onsetPulse
     }
   };
 }
@@ -2391,6 +2550,7 @@ function graphLayersForSection(baseRecipe: any, sectionId: string, options?: { a
 function randomSceneLayersForSection(sectionId: string, options?: { allowManual?: boolean; variantOverride?: number }) {
   const allowManual = options?.allowManual !== false;
   const secId = String(sectionId || "");
+  const sectionType = classifySection(secId || "");
   const sceneCount = 1024;
   const autoIndex = (hashStringToSeed(`random-scene:auto:${seed}:${secId}`) >>> 0) % sceneCount;
   let selectedIndex = autoIndex;
@@ -2408,8 +2568,36 @@ function randomSceneLayersForSection(sectionId: string, options?: { allowManual?
     : currentGraphVariantForSection(secId);
   const layoutRng = mulberry32(hashStringToSeed(`random-scene:layout:${seed}:${secId}:${selectedIndex}`) >>> 0);
   const paramRng = mulberry32(hashStringToSeed(`random-scene:param:${seed}:${secId}:${selectedIndex}:v${variant}`) >>> 0);
+  const pickWeighted = (items: Array<{ value: string; w: number }>) => {
+    const total = items.reduce((s, it) => s + Math.max(0, it.w), 0);
+    if (total <= 0) return items[0]?.value ?? "auto";
+    let u = paramRng() * total;
+    for (const it of items) {
+      u -= Math.max(0, it.w);
+      if (u <= 0) return it.value;
+    }
+    return items[items.length - 1]?.value ?? "auto";
+  };
+  const ribbonProfile = (() => {
+    if (sectionType === "intro") return pickWeighted([{ value: "breathe", w: 5 }, { value: "precess", w: 3 }, { value: "elastic", w: 1 }, { value: "wobble", w: 1 }]);
+    if (sectionType === "verse") return pickWeighted([{ value: "precess", w: 4 }, { value: "breathe", w: 3 }, { value: "elastic", w: 2 }, { value: "wobble", w: 1 }]);
+    if (sectionType === "chorus") return pickWeighted([{ value: "elastic", w: 4 }, { value: "wobble", w: 3 }, { value: "precess", w: 2 }, { value: "breathe", w: 1 }]);
+    if (sectionType === "bridge") return pickWeighted([{ value: "wobble", w: 4 }, { value: "precess", w: 3 }, { value: "elastic", w: 2 }, { value: "breathe", w: 1 }]);
+    if (sectionType === "outro") return pickWeighted([{ value: "breathe", w: 4 }, { value: "precess", w: 3 }, { value: "elastic", w: 2 }, { value: "wobble", w: 1 }]);
+    return pickWeighted([{ value: "precess", w: 3 }, { value: "elastic", w: 3 }, { value: "wobble", w: 2 }, { value: "breathe", w: 2 }]);
+  })();
+  const rosetteProfile = (() => {
+    if (sectionType === "intro") return pickWeighted([{ value: "glass", w: 5 }, { value: "petal-breathe", w: 3 }, { value: "gear", w: 1 }, { value: "spiral-surge", w: 1 }]);
+    if (sectionType === "verse") return pickWeighted([{ value: "petal-breathe", w: 4 }, { value: "glass", w: 3 }, { value: "gear", w: 2 }, { value: "spiral-surge", w: 1 }]);
+    if (sectionType === "chorus") return pickWeighted([{ value: "spiral-surge", w: 4 }, { value: "gear", w: 3 }, { value: "petal-breathe", w: 2 }, { value: "glass", w: 1 }]);
+    if (sectionType === "bridge") return pickWeighted([{ value: "gear", w: 4 }, { value: "spiral-surge", w: 3 }, { value: "petal-breathe", w: 2 }, { value: "glass", w: 1 }]);
+    if (sectionType === "outro") return pickWeighted([{ value: "glass", w: 4 }, { value: "petal-breathe", w: 3 }, { value: "gear", w: 2 }, { value: "spiral-surge", w: 1 }]);
+    return pickWeighted([{ value: "petal-breathe", w: 3 }, { value: "gear", w: 3 }, { value: "spiral-surge", w: 2 }, { value: "glass", w: 2 }]);
+  })();
+  const ribbonAnim = pickWeighted([{ value: "flow", w: 3 }, { value: "pulse-rotate", w: 3 }, { value: "drift", w: 2 }]);
+  const rosetteAnim = pickWeighted([{ value: "step-rotate", w: 3 }, { value: "counterspin", w: 3 }, { value: "twist", w: 2 }]);
 
-  const bgPick = Math.floor(layoutRng() * 4);
+  const bgPick = Math.floor(layoutRng() * 5);
   const bgLayer = (() => {
     if (bgPick === 0) {
       return {
@@ -2433,6 +2621,14 @@ function randomSceneLayersForSection(sectionId: string, options?: { allowManual?
         blend: "source-over",
         opacity: 1,
         nodes: [{ id: "bg-vignette", type: "bg.vignette", params: { inner: 0.14 + paramRng() * 0.08, outer: 0.7 + paramRng() * 0.2, tintA: "#102338", tintB: "#000000" } }]
+      };
+    }
+    if (bgPick === 3) {
+      return {
+        id: "bg-radial",
+        blend: "source-over",
+        opacity: 1,
+        nodes: [{ id: "bg-radial", type: "bg.radialGradientDrift", params: { drift: 0.08 + paramRng() * 0.12 } }]
       };
     }
     return {
@@ -2463,9 +2659,11 @@ function randomSceneLayersForSection(sectionId: string, options?: { allowManual?
 
   const fgPool = [
     { id: "particles", type: "fg.particles", params: { count: 90 + Math.floor(paramRng() * 130), sizeRange: [1.2 + paramRng() * 1.1, 2.6 + paramRng() * 2.4], speed: 0.25 + paramRng() * 0.55, curl: 0.35 + paramRng() * 0.85, opacity: 0.48 + paramRng() * 0.35 } },
+    { id: "constellation", type: "fg.constellationLinks", params: { count: 16 + Math.floor(paramRng() * 30), linkDistPx: 72 + Math.floor(paramRng() * 120), dotRadiusPx: 0.8 + paramRng() * 1.8, lineWidthPx: 0.5 + paramRng() * 1.1 } },
+    { id: "shock-rings", type: "fg.shockRings", params: { ringCount: 4 + Math.floor(paramRng() * 8), speedHz: 0.22 + paramRng() * 0.4, spreadPx: 150 + Math.floor(paramRng() * 420), thicknessPx: 0.8 + paramRng() * 1.8 } },
     { id: "pulse", type: "shape.circlePulse", params: { ringCount: 5 + Math.floor(paramRng() * 8), radiusPx: 70 + Math.floor(paramRng() * 70), alpha: 0.14 + paramRng() * 0.2 } },
-    { id: "ribbon", type: "polyline.orbitRibbon", params: { points: 44 + Math.floor(paramRng() * 80), radiusPx: 130 + Math.floor(paramRng() * 90), thicknessPx: 1 + paramRng() * 2.3, phaseHz: 0.04 + paramRng() * 0.1 } },
-    { id: "rosette", type: "curve.rosetteSpiral", params: { mode: ["rosette", "hybrid", "star"][Math.floor(paramRng() * 3)], steps: 520 + Math.floor(paramRng() * 900), turns: 7 + paramRng() * 10, growth: 2 + paramRng() * 2.2, petalCount: 4 + Math.floor(paramRng() * 6), petalAmp: 12 + Math.floor(paramRng() * 20), spin: 0.08 + paramRng() * 0.12, skip: 1 + Math.floor(paramRng() * 3), alpha: 0.4 + paramRng() * 0.4, lineWidth: 0.7 + paramRng() * 1.2, color: paramRng() < 0.2 ? "black" : "palette" } }
+    { id: "ribbon", type: "polyline.orbitRibbon", params: { points: 44 + Math.floor(paramRng() * 80), radiusPx: 130 + Math.floor(paramRng() * 90), thicknessPx: 1 + paramRng() * 2.3, phaseHz: 0.04 + paramRng() * 0.1, animationMode: ribbonAnim, motionProfile: ribbonProfile } },
+    { id: "rosette", type: "curve.rosetteSpiral", params: { mode: ["rosette", "hybrid", "star"][Math.floor(paramRng() * 3)], steps: 520 + Math.floor(paramRng() * 900), turns: 7 + paramRng() * 10, growth: 2 + paramRng() * 2.2, petalCount: 4 + Math.floor(paramRng() * 6), petalAmp: 12 + Math.floor(paramRng() * 20), spin: 0.08 + paramRng() * 0.12, skip: 1 + Math.floor(paramRng() * 3), alpha: 0.4 + paramRng() * 0.4, lineWidth: 0.7 + paramRng() * 1.2, color: paramRng() < 0.2 ? "black" : "palette", animationMode: rosetteAnim, motionProfile: rosetteProfile } }
   ];
   const fgCount = 1 + Math.floor(layoutRng() * 3);
   const fgNodes: any[] = [];
@@ -2479,9 +2677,11 @@ function randomSceneLayersForSection(sectionId: string, options?: { allowManual?
   if (!fgNodes.length) fgNodes.push(cloneRecipe(fgPool[0]));
   const lyricRoll = layoutRng();
   const lyricNode =
-    lyricRoll < 0.35
+    lyricRoll < 0.28
       ? { id: "echo", type: "text.echoWord", params: { fontPx: 26 + Math.floor(paramRng() * 14), echoCount: 3 + Math.floor(paramRng() * 3), driftPx: 8 + Math.floor(paramRng() * 10) } }
-      : lyricRoll < 0.7
+      : lyricRoll < 0.56
+        ? { id: "word-trails", type: "text.wordTrails", params: { fontPx: 40 + Math.floor(paramRng() * 26), trailCount: 3 + Math.floor(paramRng() * 5), driftPx: 10 + Math.floor(paramRng() * 18) } }
+        : lyricRoll < 0.8
         ? { id: "karaoke", type: "text.karaoke", params: { mode: "center", fontSizePx: 28 + Math.floor(paramRng() * 8), lineGapPx: 10, opacity: 0.9 } }
         : null;
   const includeOrb = layoutRng() < 0.5;
@@ -2933,7 +3133,8 @@ function render() {
   if (!audio.paused) {
     void resumeAudioContext();
   }
-  const ampNow = rmsAmplitude();
+  const reactiveNow = sampleReactiveAudio(tAudioMs);
+  const ampNow = reactiveNow.ampRms;
   if (!audio.paused) {
     if (ampNow < 0.004) {
       if (!lowAmpSinceMs) lowAmpSinceMs = tAudioMs;
@@ -2951,11 +3152,18 @@ function render() {
   pushAmplitudeSample(tAudioMs, ampNow);
   const amp = amplitudeAt(tRenderMs, ampNow);
   const sec = findCurrentSection(tRenderMs);
+  const nextSec = findNextSection(tRenderMs);
   const sectionId = sec?.id ?? "";
   const sectionType = classifySection(sectionId || sec?.id || "");
+  const nextSectionId = nextSec?.id ?? "";
+  const nextSectionType = classifySection(nextSectionId || nextSec?.id || "");
+  const nextSectionStartMs = Number.isFinite(Number(nextSec?.t0Ms)) ? Number(nextSec?.t0Ms) : NaN;
   const sectionStartMsRaw = Number(sec?.t0Ms);
   const sectionStartMs = Number.isFinite(sectionStartMsRaw) ? sectionStartMsRaw : 0;
   const playerVariantIndex = Math.max(0, downbeatCountAt(tRenderMs) - downbeatCountAt(sectionStartMs - 1));
+  const nextPlayerVariantIndex = Number.isFinite(nextSectionStartMs)
+    ? Math.max(0, downbeatCountAt(nextSectionStartMs) - downbeatCountAt(nextSectionStartMs - 1))
+    : 0;
   if (viewerMode === "recipe-view" || viewerMode === "random-scene") {
     if (!graphAutoRefresh && graphManualRecipe && lastGraphSectionId && sectionId !== lastGraphSectionId) {
       graphManualRecipe = null;
@@ -2982,6 +3190,9 @@ function render() {
   }
   const durationSec = Number.isFinite(audio.duration) ? Number(audio.duration) : 0;
   const modeRecipe = withModeRecipe(currentRecipe, viewerMode, sectionId, sectionType, playerVariantIndex);
+  const nextModeRecipe = nextSectionId
+    ? withModeRecipe(currentRecipe, viewerMode, nextSectionId, nextSectionType, nextPlayerVariantIndex)
+    : null;
   if (viewerMode === "player") {
     if (playerLastSectionId && playerLastSectionId !== sectionId) {
       playerLastTransitionLabel = selectTransitionLabel(modeRecipe, playerLastSectionId, sectionId);
@@ -3001,6 +3212,15 @@ function render() {
     tRenderMs,
     durationSec,
     amp,
+    reactive: {
+      ampFast: reactiveNow.ampFast,
+      ampSlow: reactiveNow.ampSlow,
+      low: reactiveNow.low,
+      mid: reactiveNow.mid,
+      high: reactiveNow.high,
+      onsetScore: reactiveNow.onsetScore,
+      onsetPulse: reactiveNow.onsetPulse
+    },
     sectionId,
     sectionType,
     pulse
@@ -3011,6 +3231,9 @@ function render() {
     tMs: tRenderMs,
     sectionId,
     sectionType,
+    nextSectionId,
+    nextSectionType,
+    nextSectionStartMs,
     viewerMode,
     signalBus,
     beatTrack: {
@@ -3020,6 +3243,7 @@ function render() {
     amp,
     energy: amp,
     recipe: modeRecipe,
+    nextRecipe: nextModeRecipe,
     track,
     lyricsEnabled: (isHintEditMode() ? lyricsEnabled : true) && hasLyricTiming(),
     lyricMode,
@@ -3059,6 +3283,7 @@ if (!isSeeking && Number.isFinite(audio.duration) && audio.duration > 0) {
   const rosetteLabDebug = labRosetteDebug();
   const rosetteGraphDebug = graphRosetteDebug(modeRecipe);
   const playerSceneChoice = viewerMode === "player" ? resolvePlayerSceneChoice(sectionId, sectionType, playerVariantIndex) : null;
+  const nextSectionInMs = Number.isFinite(nextSectionStartMs) ? Math.round(nextSectionStartMs - tRenderMs) : NaN;
   const graphSel = viewerMode === "recipe-view"
     ? resolveGraphSelection(currentRecipe, sectionId)
     : viewerMode === "random-scene"
@@ -3085,7 +3310,8 @@ if (!isSeeking && Number.isFinite(audio.duration) && audio.duration > 0) {
           `downbeats: ${signalBus.beat.downbeatCount}`,
           `sections: ${sectionMarkers.length}`,
           `end: ${endMarkerMs > 0 ? fmtMs(endMarkerMs) : "-"}`,
-          `aiDownbeats: ${signalBus.hints.aiDownbeats}`
+          `aiDownbeats: ${signalBus.hints.aiDownbeats}`,
+          `reactive: L${signalBus.reactive.low.toFixed(2)} M${signalBus.reactive.mid.toFixed(2)} H${signalBus.reactive.high.toFixed(2)} O${signalBus.reactive.onsetPulse.toFixed(2)}`
         ]
       : []),
     ...(viewerMode === "primitive-lab"
@@ -3104,7 +3330,8 @@ if (!isSeeking && Number.isFinite(audio.duration) && audio.duration > 0) {
             ? [
                 `playerSource: ${playerSceneChoice?.source ?? "-"}`,
                 `playerVariant: ${playerVariantIndex}`,
-                `playerTransition: ${playerLastTransitionLabel}`
+                `playerTransition: ${playerLastTransitionLabel}`,
+                `nextSection: ${nextSectionId || "-"} in ${Number.isFinite(nextSectionInMs) ? `${nextSectionInMs}ms` : "-"}`
               ]
             : []),
           `graphRecipe: ${graphSel?.template?.id ?? "-"} (#${graphSel ? graphSel.selectedIndex + 1 : "-"}/${graphSel?.templates?.length ?? "-"})`,

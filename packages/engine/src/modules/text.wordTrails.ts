@@ -38,9 +38,23 @@ export function renderWordTrails({
 
   const w = canvas.width;
   const h = canvas.height;
-  const low = clamp01(Number(state?.signalBus?.reactive?.low ?? 0));
-  const high = clamp01(Number(state?.signalBus?.reactive?.high ?? 0));
-  const onset = clamp01(Number(state?.signalBus?.reactive?.onsetPulse ?? 0));
+  const reactive = state?.signalBus?.reactive ?? {};
+  const src = String(params?.signalSource ?? "auto").toLowerCase();
+  const master = reactive?.sources?.master ?? reactive;
+  const backing = reactive?.sources?.backing ?? master;
+  const vocals = reactive?.sources?.vocals ?? master;
+  const vocalsActive = Number(reactive?.vocalsActive ?? 0);
+  const chosen =
+    src === "vocals"
+      ? (vocalsActive > 0.05 ? vocals : backing)
+      : src === "backing"
+        ? backing
+        : src === "master"
+          ? master
+          : (vocalsActive > 0.3 ? vocals : backing);
+  const low = clamp01(Number(chosen?.low ?? master?.low ?? 0));
+  const high = clamp01(Number(chosen?.high ?? master?.high ?? 0));
+  const onset = clamp01(Number(chosen?.onsetPulse ?? master?.onsetPulse ?? 0));
   const beat = clamp01(Number(state?.signalBus?.beat?.pulse ?? 0));
   const downbeat = clamp01(Number(state?.signalBus?.beat?.downbeatPulse ?? 0));
   const conf = clamp01(Number.isFinite(Number(cur?.conf)) ? Number(cur.conf) : 0.75);
@@ -75,4 +89,3 @@ export function renderWordTrails({
   ctx.fillText(text, x, y);
   ctx.restore();
 }
-

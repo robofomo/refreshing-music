@@ -12,7 +12,7 @@ type TimingSection = { id?: string; t0Ms?: number; t1Ms?: number };
 type TimingLyric = { i?: number; t0Ms?: number; t1Ms?: number };
 type TimingWord = { i?: number; t0Ms?: number; t1Ms?: number; text?: string; conf?: number };
 type HintOverlay = {
-  type: "hint/downbeat" | "hint/beat" | "hint/barBeat" | "hint/sectionMarker" | "hint/endMarker";
+  type: "hint/downbeat" | "hint/beat" | "hint/barBeat" | "hint/sectionMarker" | "hint/endMarker" | "hint/lyricSuppress";
   tSec: number;
   payload?: { beatInBar?: number; action?: "set" | "clear" };
   at?: string;
@@ -27,6 +27,8 @@ type EffectiveState = {
     downbeatMarkers?: Array<{ tMs?: number; source?: "hint" | "inferred" | "ai" | "corrected" }>;
     aiDownbeatMarkers?: Array<{ tMs?: number; source?: "ai" }>;
     sectionMarkers?: Array<{ tMs?: number; source?: "default" | "hint" }>;
+    lyricSuppressMarkers?: Array<{ tMs?: number; source?: "hint" }>;
+    lyricSuppressWindows?: Array<{ t0Ms?: number; t1Ms?: number }>;
     sections?: Array<{ id?: string; labelRaw?: string; t0Ms?: number; t1Ms?: number }>;
   };
   hints?: {
@@ -235,6 +237,8 @@ let downbeatMarkers: Array<{ tMs: number; source: "hint" | "inferred" | "ai" | "
 let aiDownbeatMarkers: Array<{ tMs: number; source: "ai" }> = [];
 let hintOverlays: HintOverlay[] = [];
 let sectionMarkers: Array<{ tMs: number; source: "default" | "hint" }> = [];
+let lyricSuppressMarkers: Array<{ tMs: number; source: "hint" }> = [];
+let lyricSuppressWindows: Array<{ t0Ms: number; t1Ms: number }> = [];
 let activeHintCount = 0;
 let beatFusionModeLabel = "-";
 let fusionWindowsMs: Array<{ t0Ms: number; t1Ms: number }> = [];
@@ -247,7 +251,7 @@ let hintRevision = 0;
 let latestQueuedBatchRevision = 0;
 const HINT_PERSIST_DEBOUNCE_MS = 1000;
 const pendingHintEvents: Array<{
-  type: "hint/downbeat" | "hint/beat" | "hint/barBeat" | "hint/sectionMarker" | "hint/endMarker";
+  type: "hint/downbeat" | "hint/beat" | "hint/barBeat" | "hint/sectionMarker" | "hint/endMarker" | "hint/lyricSuppress";
   tSec: number;
   payload?: { beatInBar?: number; action?: "set" | "clear"; groupId?: string };
 }> = [];
@@ -1187,7 +1191,7 @@ function makeHintGroupId() {
 }
 
 function applyHintEventOptimistic(event: {
-  type: "hint/downbeat" | "hint/beat" | "hint/barBeat" | "hint/sectionMarker" | "hint/endMarker";
+  type: "hint/downbeat" | "hint/beat" | "hint/barBeat" | "hint/sectionMarker" | "hint/endMarker" | "hint/lyricSuppress";
   tSec: number;
   payload?: { beatInBar?: number; action?: "set" | "clear"; groupId?: string };
 }) {
@@ -1220,6 +1224,23 @@ function applyHintEventOptimistic(event: {
     activeHintCount = hintOverlays.length;
     return;
   }
+  if (event.type === "hint/lyricSuppress") {
+    const action = event?.payload?.action === "clear" ? "clear" : "set";
+    if (action === "clear") {
+      removeLyricSuppressMarkerNear(tMs, 140);
+    } else if (!hasLyricSuppressMarkerNear(tMs, 100)) {
+      lyricSuppressMarkers.push({ tMs, source: "hint" });
+      lyricSuppressMarkers = lyricSuppressMarkers
+        .map((m) => ({ tMs: Math.max(0, Math.round(Number(m.tMs) || 0)), source: "hint" as const }))
+        .filter((m) => Number.isFinite(m.tMs))
+        .sort((a, b) => a.tMs - b.tMs);
+    }
+    hintOverlays.push({ type: event.type, tSec: event.tSec, payload: event.payload, actor: "user", at: new Date().toISOString() });
+    hintOverlays.sort((a, b) => a.tSec - b.tSec);
+    rebuildLyricSuppressFromHintOverlays();
+    activeHintCount = hintOverlays.length;
+    return;
+  }
   if (event.type === "hint/beat" || event.type === "hint/barBeat" || event.type === "hint/downbeat") {
     pulseBeatTimesMs = normalizeMsList([...pulseBeatTimesMs, tMs]);
     addOrUpdateMarker(beatMarkers, tMs, "hint");
@@ -1240,7 +1261,7 @@ function applyHintEventOptimistic(event: {
 
 async function postAuthoringHintEvents(
   events: Array<{
-    type: "hint/downbeat" | "hint/beat" | "hint/barBeat" | "hint/sectionMarker" | "hint/endMarker";
+    type: "hint/downbeat" | "hint/beat" | "hint/barBeat" | "hint/sectionMarker" | "hint/endMarker" | "hint/lyricSuppress";
     tSec: number;
     payload?: { beatInBar?: number; action?: "set" | "clear"; groupId?: string };
   }>,
@@ -1278,7 +1299,7 @@ async function postAuthoringHintEvents(
 }
 
 function queueHintEvent(event: {
-  type: "hint/downbeat" | "hint/beat" | "hint/barBeat" | "hint/sectionMarker" | "hint/endMarker";
+  type: "hint/downbeat" | "hint/beat" | "hint/barBeat" | "hint/sectionMarker" | "hint/endMarker" | "hint/lyricSuppress";
   tSec: number;
   payload?: { beatInBar?: number; action?: "set" | "clear"; groupId?: string };
 }) {
@@ -1328,6 +1349,70 @@ function currentHintCaptureSec() {
   return Math.max(0, shifted);
 }
 
+function hasLyricSuppressMarkerNear(tMs: number, tolMs = 120) {
+  const ms = Math.max(0, Math.round(Number(tMs) || 0));
+  return lyricSuppressMarkers.some((m) => Math.abs(m.tMs - ms) <= tolMs);
+}
+
+function removeLyricSuppressMarkerNear(tMs: number, tolMs = 120) {
+  const ms = Math.max(0, Math.round(Number(tMs) || 0));
+  let removed = false;
+  for (let i = lyricSuppressMarkers.length - 1; i >= 0; i -= 1) {
+    if (Math.abs(lyricSuppressMarkers[i].tMs - ms) <= tolMs) {
+      lyricSuppressMarkers.splice(i, 1);
+      removed = true;
+    }
+  }
+  return removed;
+}
+
+function rebuildLyricSuppressFromHintOverlays() {
+  const rows = [...hintOverlays].sort((a, b) => {
+    const atA = Number.isFinite(Date.parse(String(a?.at || ""))) ? Date.parse(String(a?.at || "")) : 0;
+    const atB = Number.isFinite(Date.parse(String(b?.at || ""))) ? Date.parse(String(b?.at || "")) : 0;
+    if (atA !== atB) return atA - atB;
+    return Number(a.tSec) - Number(b.tSec);
+  });
+  const out: Array<{ tMs: number; source: "hint" }> = [];
+  const windows: Array<{ t0Ms: number; t1Ms: number }> = [];
+  let openMs = Number.NaN;
+  const maxTrackMs = Math.max(
+    0,
+    Number.isFinite(Number(audio.duration)) ? Math.round(Number(audio.duration) * 1000) : 0,
+    ...pulseBeatTimesMs.map((x) => Math.max(0, Math.round(Number(x) || 0)))
+  );
+  for (const row of rows) {
+    if (row.type !== "hint/lyricSuppress") continue;
+    const tMs = Math.max(0, Math.round(Number(row.tSec) * 1000));
+    const action = row?.payload?.action === "clear" ? "clear" : "set";
+    if (action === "clear") {
+      if (Number.isFinite(openMs)) {
+        windows.push({ t0Ms: Math.min(openMs, tMs), t1Ms: Math.max(openMs, tMs) });
+        openMs = Number.NaN;
+      }
+      for (let i = out.length - 1; i >= 0; i -= 1) {
+        if (Math.abs(out[i].tMs - tMs) <= 140) out.splice(i, 1);
+      }
+    } else if (!out.some((x) => Math.abs(x.tMs - tMs) <= 90)) {
+      out.push({ tMs, source: "hint" });
+      openMs = tMs;
+    }
+  }
+  lyricSuppressMarkers = out.sort((a, b) => a.tMs - b.tMs);
+  if (Number.isFinite(openMs)) {
+    windows.push({ t0Ms: Math.max(0, Math.round(openMs)), t1Ms: Math.max(Math.max(0, Math.round(openMs)), maxTrackMs) });
+  }
+  lyricSuppressWindows = windows
+    .map((w) => ({ t0Ms: Math.max(0, Math.round(Number(w.t0Ms) || 0)), t1Ms: Math.max(0, Math.round(Number(w.t1Ms) || 0)) }))
+    .filter((w) => Number.isFinite(w.t0Ms) && Number.isFinite(w.t1Ms) && w.t1Ms >= w.t0Ms)
+    .sort((a, b) => a.t0Ms - b.t0Ms);
+}
+
+function isLyricSuppressedAt(tMs: number) {
+  const ms = Math.max(0, Math.round(Number(tMs) || 0));
+  return lyricSuppressWindows.some((w) => ms >= w.t0Ms && ms <= w.t1Ms);
+}
+
 async function clearHintEventsForCurrentTrack() {
   if (!__AUTHORING_MODE__ || !track?.trackId || !track?.workId) return;
   pendingHintEvents.splice(0, pendingHintEvents.length);
@@ -1340,6 +1425,8 @@ async function clearHintEventsForCurrentTrack() {
   beatMarkers = [];
   downbeatMarkers = [];
   aiDownbeatMarkers = [];
+  lyricSuppressMarkers = [];
+  lyricSuppressWindows = [];
   activeHintCount = 0;
   await fetch("/authoring/events/clear", {
     method: "POST",
@@ -1427,6 +1514,8 @@ async function loadEffectiveGuidance(nextTrack: Track, baseTrackUrl: string) {
   aiDownbeatMarkers = [];
   hintOverlays = [];
   sectionMarkers = [];
+  lyricSuppressMarkers = [];
+  lyricSuppressWindows = [];
   activeHintCount = 0;
   beatFusionModeLabel = "-";
   fusionWindowsMs = [];
@@ -1492,6 +1581,24 @@ async function loadEffectiveGuidance(nextTrack: Track, baseTrackUrl: string) {
           .filter((m) => Number.isFinite(m.tMs))
           .sort((a, b) => a.tMs - b.tMs)
         : [];
+      lyricSuppressMarkers = Array.isArray(j?.effective?.lyricSuppressMarkers)
+        ? j.effective.lyricSuppressMarkers
+          .map((m) => ({
+            tMs: Math.max(0, Math.round(Number(m?.tMs))),
+            source: "hint" as const
+          }))
+          .filter((m) => Number.isFinite(m.tMs))
+          .sort((a, b) => a.tMs - b.tMs)
+        : [];
+      lyricSuppressWindows = Array.isArray(j?.effective?.lyricSuppressWindows)
+        ? j.effective.lyricSuppressWindows
+          .map((w) => ({
+            t0Ms: Math.max(0, Math.round(Number(w?.t0Ms))),
+            t1Ms: Math.max(0, Math.round(Number(w?.t1Ms)))
+          }))
+          .filter((w) => Number.isFinite(w.t0Ms) && Number.isFinite(w.t1Ms) && w.t1Ms >= w.t0Ms)
+          .sort((a, b) => a.t0Ms - b.t0Ms)
+        : [];
       if (Array.isArray(j?.effective?.sections) && j.effective.sections.length) {
         if (!nextTrack.timing) nextTrack.timing = {};
         nextTrack.timing.sections = j.effective.sections
@@ -1514,6 +1621,7 @@ async function loadEffectiveGuidance(nextTrack: Track, baseTrackUrl: string) {
         : [];
       mergeHintOverlays(Array.isArray(j?.overlays) ? j.overlays : []);
       if (!sectionMarkers.length) rebuildSectionMarkersFromHintOverlays();
+      if (!lyricSuppressMarkers.length) rebuildLyricSuppressFromHintOverlays();
       activeHintCount = hintOverlays.length;
       return;
     }
@@ -2988,6 +3096,36 @@ function withModeRecipe(baseRecipe: any, mode: ViewerMode, sectionId: string, se
   return recipe;
 }
 
+function applyRuntimeLyricSuppression(recipeIn: any, suppressed: boolean) {
+  if (!suppressed) return recipeIn;
+  const recipe = cloneRecipe(recipeIn || {});
+  recipe.layers = Array.isArray(recipe.layers) ? recipe.layers : [];
+  recipe.graph = typeof recipe.graph === "object" && recipe.graph ? recipe.graph : {};
+  recipe.graph.layers = Array.isArray(recipe.graph.layers) ? recipe.graph.layers : [];
+  recipe.layers = recipe.layers.map((layer: any) => {
+    const moduleId = String(layer?.module || "").toLowerCase();
+    if (moduleId.includes("ui.lyrics")) {
+      const next = { ...(layer || {}) };
+      next.params = { ...(next.params || {}), mode: "off" };
+      next.enabled = false;
+      next.opacity = 0;
+      return next;
+    }
+    return layer;
+  });
+  for (const layer of recipe.graph.layers) {
+    const nodes = Array.isArray(layer?.nodes) ? layer.nodes : [];
+    layer.nodes = nodes.map((node: any) => {
+      const t = String(node?.type || "").toLowerCase();
+      if (t === "text.echoword" || t === "text.wordtrails" || t === "text.karaoke") {
+        return { ...(node || {}), enabled: false };
+      }
+      return node;
+    });
+  }
+  return recipe;
+}
+
 function applyVisualHintsToRecipe(baseRecipe: any, nextTrack: Track | null) {
   const hints = nextTrack?.visualHints;
   if (!hints || typeof hints !== "object") return baseRecipe;
@@ -3226,6 +3364,44 @@ function drawHintOverlays() {
     ctx.stroke();
   }
 
+  const lyricLineStartsMs = (Array.isArray(track?.timing?.lyricsLines) ? track.timing.lyricsLines : [])
+    .map((row: any) => Number(row?.t0Ms))
+    .filter((n: number) => Number.isFinite(n))
+    .map((n: number) => Math.max(0, Math.round(n)))
+    .sort((a: number, b: number) => a - b);
+  for (const ms of lyricLineStartsMs) {
+    const tSecRaw = ms / 1000;
+    const tSec = Math.max(0, Math.min(durationSec, tSecRaw + renderOffsetMs / 1000));
+    const x = Math.max(0, Math.min(canvas.width, (tSec / durationSec) * canvas.width));
+    ctx.strokeStyle = "#4FC3F7";
+    ctx.lineWidth = 2;
+    ctx.globalAlpha = 0.78;
+    ctx.beginPath();
+    ctx.moveTo(x, y0 - 18);
+    ctx.lineTo(x, y0 - 6);
+    ctx.stroke();
+  }
+
+  const lyricSuppressOverlayRows = hintOverlays
+    .filter((h) => h.type === "hint/lyricSuppress")
+    .map((h) => ({
+      tMs: Math.max(0, Math.round(Number(h.tSec) * 1000)),
+      action: h?.payload?.action === "clear" ? "clear" : "set"
+    }));
+  for (const marker of lyricSuppressOverlayRows) {
+    const ms = marker.tMs;
+    const tSecRaw = ms / 1000;
+    const tSec = Math.max(0, Math.min(durationSec, tSecRaw + renderOffsetMs / 1000));
+    const x = Math.max(0, Math.min(canvas.width, (tSec / durationSec) * canvas.width));
+    ctx.strokeStyle = marker.action === "clear" ? "#FF8A65" : "#EC4BC3";
+    ctx.lineWidth = 3;
+    ctx.globalAlpha = 0.95;
+    ctx.beginPath();
+    ctx.moveTo(x, y0 - 12);
+    ctx.lineTo(x, y1);
+    ctx.stroke();
+  }
+
   const seekPreviewSec = (isSeeking || seekInFlight)
     ? Math.max(0, Math.min(durationSec, durationSec * pendingSeekRatio))
     : Math.max(0, Number(audio.currentTime) || 0);
@@ -3414,6 +3590,9 @@ function render() {
     sectionType,
     pulse
   });
+  const lyricsSuppressedNow = isLyricSuppressedAt(tRenderMs);
+  const runtimeRecipe = applyRuntimeLyricSuppression(modeRecipe, lyricsSuppressedNow);
+  const runtimeNextRecipe = applyRuntimeLyricSuppression(nextModeRecipe, lyricsSuppressedNow);
   const controlsRect = controls.getBoundingClientRect();
   const viewportHeightPx = window.visualViewport?.height ?? window.innerHeight;
   const frameInfo = engine.renderFrame({
@@ -3431,10 +3610,10 @@ function render() {
     },
     amp,
     energy: amp,
-    recipe: modeRecipe,
-    nextRecipe: nextModeRecipe,
+    recipe: runtimeRecipe,
+    nextRecipe: runtimeNextRecipe,
     track,
-    lyricsEnabled: (isHintEditMode() ? lyricsEnabled : true) && hasLyricTiming(),
+    lyricsEnabled: (isHintEditMode() ? lyricsEnabled : true) && hasLyricTiming() && !lyricsSuppressedNow,
     lyricMode,
     uiLayout: {
       controlsTopPx: controlsRect.top,
@@ -3499,8 +3678,15 @@ if (!isSeeking && Number.isFinite(audio.duration) && audio.duration > 0) {
           `downbeats: ${signalBus.beat.downbeatCount}`,
           `sections: ${sectionMarkers.length}`,
           `end: ${endMarkerMs > 0 ? fmtMs(endMarkerMs) : "-"}`,
+          `lyricsSuppressedNow: ${lyricsSuppressedNow ? "yes" : "no"}`,
           `aiDownbeats: ${signalBus.hints.aiDownbeats}`,
           `reactive: L${signalBus.reactive.low.toFixed(2)} M${signalBus.reactive.mid.toFixed(2)} H${signalBus.reactive.high.toFixed(2)} O${signalBus.reactive.onsetPulse.toFixed(2)} VA${signalBus.reactive.vocalsActive.toFixed(2)}`
+        ]
+      : []),
+    ...(isHintEditMode()
+      ? [
+          `lyricSuppressMarkers: ${lyricSuppressMarkers.length}`,
+          `lyricSuppressWindows: ${lyricSuppressWindows.length}`
         ]
       : []),
     ...(viewerMode === "primitive-lab"
@@ -3560,6 +3746,7 @@ if (!isSeeking && Number.isFinite(audio.duration) && audio.duration > 0) {
           `      c clear hints`
         ]
       : []),
+    ...(isHintEditMode() ? [`      x toggle lyric-suppression marker`] : []),
     `      [ ] offset`,
     `      o cycle offset preset`,
     `      \\ reset offset`,
@@ -3810,11 +3997,6 @@ window.addEventListener("keydown", async (e) => {
   }
   if (isHintEditMode() && !e.repeat && (e.key.toLowerCase() === "d" || e.key.toLowerCase() === "b" || ["1", "2", "3", "4"].includes(e.key))) {
     const tSec = currentHintCaptureSec();
-    const tMs = Math.max(0, Math.round(tSec * 1000));
-    if (hasSectionMarkerNear(tMs, 140)) {
-      applyHintEventOptimistic({ type: "hint/sectionMarker", tSec, payload: { action: "clear" } });
-      queueHintEvent({ type: "hint/sectionMarker", tSec, payload: { action: "clear" } });
-    }
     if (e.key.toLowerCase() === "d") {
       applyHintEventOptimistic({ type: "hint/downbeat", tSec });
       queueHintEvent({ type: "hint/downbeat", tSec });
@@ -3846,6 +4028,17 @@ window.addEventListener("keydown", async (e) => {
     const tSec = currentHintCaptureSec();
     applyHintEventOptimistic({ type: "hint/endMarker", tSec });
     queueHintEvent({ type: "hint/endMarker", tSec });
+    return;
+  }
+  if (isHintEditMode() && !e.repeat && e.key.toLowerCase() === "x") {
+    e.preventDefault();
+    const tSec = currentHintCaptureSec();
+    const tMs = Math.max(0, Math.round(tSec * 1000));
+    const action = hasLyricSuppressMarkerNear(tMs, 140)
+      ? "clear"
+      : (isLyricSuppressedAt(tMs) ? "clear" : "set");
+    applyHintEventOptimistic({ type: "hint/lyricSuppress", tSec, payload: { action } });
+    queueHintEvent({ type: "hint/lyricSuppress", tSec, payload: { action } });
     return;
   }
   if (e.key.toLowerCase() === "n" || e.key === "." || e.key === ">") {

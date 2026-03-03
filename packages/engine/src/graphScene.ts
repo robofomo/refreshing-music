@@ -26,6 +26,32 @@ function pickFrom<T>(xs: T[], idxSeed: number, fallback: T) {
   return xs[i];
 }
 
+function resolveReactiveSource(
+  reactive: any,
+  sourceRaw: any
+): { low: number; mid: number; high: number; onsetPulse: number; ampFast: number } {
+  const src = String(sourceRaw ?? "auto").toLowerCase();
+  const master = reactive?.sources?.master ?? reactive ?? {};
+  const backing = reactive?.sources?.backing ?? master;
+  const vocals = reactive?.sources?.vocals ?? master;
+  const vocalsActive = Number(reactive?.vocalsActive ?? 0);
+  const chosen =
+    src === "vocals"
+      ? (vocalsActive > 0.05 ? vocals : backing)
+      : src === "backing"
+        ? backing
+        : src === "master"
+          ? master
+          : (vocalsActive > 0.3 ? vocals : backing);
+  return {
+    low: clamp01(Number(chosen?.low ?? master?.low ?? 0)),
+    mid: clamp01(Number(chosen?.mid ?? master?.mid ?? 0)),
+    high: clamp01(Number(chosen?.high ?? master?.high ?? 0)),
+    onsetPulse: clamp01(Number(chosen?.onsetPulse ?? master?.onsetPulse ?? 0)),
+    ampFast: clamp01(Number(chosen?.ampFast ?? master?.ampFast ?? 0))
+  };
+}
+
 function stableNodeSeed(seed: number, layerId: string, nodeId: string) {
   return (seed ^ hashStringToSeed(`${layerId}:${nodeId}`)) >>> 0;
 }
@@ -99,10 +125,11 @@ function drawOrbitRibbon(args: {
   const cx = w * 0.5;
   const cy = h * 0.5;
   const t = tMs / 1000;
-  const low = clamp01(Number(reactive?.low ?? amp));
-  const mid = clamp01(Number(reactive?.mid ?? amp));
-  const high = clamp01(Number(reactive?.high ?? amp));
-  const onset = clamp01(Number(reactive?.onsetPulse ?? 0));
+  const rr = resolveReactiveSource(reactive, params?.signalSource ?? "auto");
+  const low = rr.low;
+  const mid = rr.mid;
+  const high = rr.high;
+  const onset = rr.onsetPulse;
   const points = Math.max(16, Math.min(220, Number(params?.points ?? 56)));
   const radius = Math.max(24, Number(params?.radiusPx ?? Math.min(w, h) * 0.24));
   const thickness = Math.max(0.8, Number(params?.thicknessPx ?? 1.6) + beat * 0.9);
@@ -244,10 +271,11 @@ function drawRosetteSpiral(args: {
   const cx = w * 0.5;
   const cy = h * 0.5;
   const t = tMs / 1000;
-  const low = clamp01(Number(reactive?.low ?? amp));
-  const mid = clamp01(Number(reactive?.mid ?? amp));
-  const high = clamp01(Number(reactive?.high ?? amp));
-  const onset = clamp01(Number(reactive?.onsetPulse ?? 0));
+  const rr = resolveReactiveSource(reactive, params?.signalSource ?? "auto");
+  const low = rr.low;
+  const mid = rr.mid;
+  const high = rr.high;
+  const onset = rr.onsetPulse;
   const rng = createRng(nodeSeed);
 
   const steps = Math.max(80, Math.min(2800, Math.round(Number(params?.steps ?? 820))));

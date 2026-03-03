@@ -2,7 +2,7 @@ import crypto from "node:crypto";
 import fs from "node:fs";
 import path from "node:path";
 
-const KNOWN_HINT_TYPES = new Set(["hint/downbeat", "hint/beat", "hint/barBeat", "hint/sectionMarker", "hint/endMarker"]);
+const KNOWN_HINT_TYPES = new Set(["hint/downbeat", "hint/beat", "hint/barBeat", "hint/sectionMarker", "hint/endMarker", "hint/lyricSuppress"]);
 
 function toPosix(p) {
   return String(p || "").split(path.sep).join("/");
@@ -862,6 +862,56 @@ function resolveEndMarkerMs(events, beatsMs) {
   return rawMs;
 }
 
+function resolveLyricSuppressState(events, beatsMs, trackEndMs) {
+  const rows = (Array.isArray(events) ? events : [])
+    .filter((e) => String(e?.type || "") === "hint/lyricSuppress")
+    .map((e, idx) => ({
+      idx,
+      atMs: normalizeIsoAt(e?.at),
+      tSec: Number(e?.tSec),
+      action: e?.payload?.action === "clear" ? "clear" : "set"
+    }))
+    .filter((e) => Number.isFinite(e.tSec) && e.tSec >= 0)
+    .sort((a, b) => {
+      if (a.atMs !== b.atMs) return a.atMs - b.atMs;
+      if (a.tSec !== b.tSec) return a.tSec - b.tSec;
+      return a.idx - b.idx;
+    });
+  const markers = [];
+  const windows = [];
+  let openMs = Number.NaN;
+  for (const row of rows) {
+    const rawMs = Math.max(0, Math.round(row.tSec * 1000));
+    const ms = Array.isArray(beatsMs) && beatsMs.length ? nearestBeatMs(rawMs, beatsMs) : rawMs;
+    if (row.action === "set") {
+      markers.push({ tMs: ms, source: "hint" });
+      openMs = ms;
+      continue;
+    }
+    for (let i = markers.length - 1; i >= 0; i -= 1) {
+      if (Math.abs(markers[i].tMs - ms) <= 140) markers.splice(i, 1);
+    }
+    if (Number.isFinite(openMs)) {
+      windows.push({ t0Ms: Math.min(openMs, ms), t1Ms: Math.max(openMs, ms) });
+      openMs = Number.NaN;
+    }
+  }
+  const trackMax = Math.max(0, Math.round(Number(trackEndMs) || 0));
+  if (Number.isFinite(openMs)) {
+    windows.push({ t0Ms: Math.round(openMs), t1Ms: Math.max(Math.round(openMs), trackMax) });
+  }
+  return {
+    markers: uniqSortedMs(markers.map((m) => m.tMs)).map((tMs) => ({ tMs, source: "hint" })),
+    windows: windows
+      .map((w) => ({
+        t0Ms: Math.max(0, Math.round(Number(w?.t0Ms) || 0)),
+        t1Ms: Math.max(0, Math.round(Number(w?.t1Ms) || 0))
+      }))
+      .filter((w) => Number.isFinite(w.t0Ms) && Number.isFinite(w.t1Ms) && w.t1Ms >= w.t0Ms)
+      .sort((a, b) => a.t0Ms - b.t0Ms)
+  };
+}
+
 export function reduceEffectiveState({
   trackId,
   workId,
@@ -1274,6 +1324,7 @@ export function reduceEffectiveState({
     lyricLineEndMs.length ? lyricLineEndMs[lyricLineEndMs.length - 1] : 0,
     sectionResolution.sections.length ? Number(sectionResolution.sections[sectionResolution.sections.length - 1]?.t1Ms || 0) : 0
   );
+  const lyricSuppress = resolveLyricSuppressState(rawHintEvents, effectiveBeats, trackEndMs);
   const markerSections = resolveSectionsFromMarkers({
     sectionMarkers,
     canonicalSections: sectionResolution.sections,
@@ -1281,6 +1332,8 @@ export function reduceEffectiveState({
     preferMarkers: Array.isArray(savedSectionMarkersMs) && savedSectionMarkersMs.length > 0
   });
   effective.effective.sectionMarkers = sectionMarkers;
+  effective.effective.lyricSuppressMarkers = lyricSuppress.markers;
+  effective.effective.lyricSuppressWindows = lyricSuppress.windows;
   if (markerSections.sections.length || sectionResolution.sections.length) {
     effective.effective.sections = markerSections.sections.length ? markerSections.sections : sectionResolution.sections;
     effective.hints.sectionBoundaryResolver = {

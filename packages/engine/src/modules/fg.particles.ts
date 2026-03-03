@@ -68,6 +68,32 @@ type CacheState = {
 
 let cache: CacheState | null = null;
 
+function resolveSource(
+  reactive: any,
+  sourceRaw: any
+): { low: number; mid: number; high: number; onsetPulse: number; ampFast: number } {
+  const src = String(sourceRaw ?? "auto").toLowerCase();
+  const master = reactive?.sources?.master ?? reactive ?? {};
+  const backing = reactive?.sources?.backing ?? master;
+  const vocals = reactive?.sources?.vocals ?? master;
+  const vocalsActive = Number(reactive?.vocalsActive ?? 0);
+  const chosen =
+    src === "vocals"
+      ? (vocalsActive > 0.05 ? vocals : backing)
+      : src === "backing"
+        ? backing
+        : src === "master"
+          ? master
+          : (vocalsActive > 0.3 ? vocals : backing);
+  return {
+    low: clamp01(Number(chosen?.low ?? master?.low ?? 0)),
+    mid: clamp01(Number(chosen?.mid ?? master?.mid ?? 0)),
+    high: clamp01(Number(chosen?.high ?? master?.high ?? 0)),
+    onsetPulse: clamp01(Number(chosen?.onsetPulse ?? master?.onsetPulse ?? 0)),
+    ampFast: clamp01(Number(chosen?.ampFast ?? master?.ampFast ?? 0))
+  };
+}
+
 export function renderParticles({
   ctx,
   canvas,
@@ -117,10 +143,16 @@ export function renderParticles({
   const speed = Number(params?.speed ?? 0.45);
   const curl = Number(params?.curl ?? 0.55);
   const baseOpacity = clamp01(Number(params?.opacity ?? 0.62));
-  const ampIn = clamp01(Number(reactive?.ampFast ?? amp ?? 0));
-  const high = clamp01(Number(reactive?.high ?? 0));
-  const low = clamp01(Number(reactive?.low ?? 0));
-  const onset = clamp01(Number(reactive?.onsetPulse ?? 0));
+  const sourceMode = String(params?.signalSource ?? "auto").toLowerCase();
+  const splitVocalsRatio = clamp01(Number(params?.splitVocalsRatio ?? 0.35));
+  const rrBacking = resolveSource(reactive, "backing");
+  const rrVocals = resolveSource(reactive, "vocals");
+  const vocalsActive = Number(reactive?.vocalsActive ?? 0);
+  const rrBase = resolveSource(reactive, sourceMode === "split" ? "auto" : sourceMode);
+  const ampIn = clamp01(Number(rrBase.ampFast ?? amp ?? 0));
+  const high = rrBase.high;
+  const low = rrBase.low;
+  const onset = rrBase.onsetPulse;
   const ampTarget = clamp01(ampIn * 3.2);
   const maxStep = 0.025;
   const nextAmp = cache.smoothAmp + clamp(ampTarget - cache.smoothAmp, -maxStep, maxStep);
@@ -133,18 +165,28 @@ export function renderParticles({
   const cy = height * 0.5;
   for (let i = 0; i < cache.particles.length; i += 1) {
     const p = cache.particles[i];
+    const splitChooseVocals =
+      sourceMode === "split" &&
+      vocalsActive > 0.05 &&
+      ((((seed >>> 0) ^ ((i + 1) * 2654435761)) >>> 0) / 4294967295) < splitVocalsRatio;
+    const rr = splitChooseVocals ? rrVocals : (sourceMode === "split" ? rrBacking : rrBase);
+    const l = rr.low;
+    const m = rr.mid;
+    const h = rr.high;
+    const o = rr.onsetPulse;
+    const aFast = rr.ampFast;
     const baseDx = p.x - cx;
     const baseDy = p.y - cy;
     const radial =
       1 +
-      Math.sin(sec * (0.22 + p.drift * 0.16) + p.phase) * (0.06 + curl * 0.06) +
-      nextAmp * 0.16;
-    const driftX = Math.sin(sec * (0.34 + speed * 0.22) + p.phase * 1.7) * (16 + 34 * p.drift) * (0.45 + curl);
-    const driftY = Math.cos(sec * (0.31 + speed * 0.2) + p.phase * 1.2) * (14 + 28 * p.drift) * (0.45 + curl);
-    const tx = cx + baseDx * radial + driftX * (1 + onset * 0.18);
-    const ty = cy + baseDy * radial + driftY * (1 + low * 0.14);
-    const r = p.size * (1.02 + nextAmp * 0.74 + high * 0.2 + 0.12 * Math.sin(sec * (0.8 + p.drift * 0.4) + p.phase));
-    const a = baseOpacity * (0.45 + 0.35 * Math.sin(sec * (0.7 + p.drift * 0.5) + p.phase)) * ampBoost;
+      Math.sin(sec * (0.22 + p.drift * (0.16 + m * 0.06)) + p.phase) * (0.06 + curl * 0.06) +
+      (0.12 + l * 0.08) * (0.4 + aFast);
+    const driftX = Math.sin(sec * (0.34 + speed * (0.2 + h * 0.12)) + p.phase * 1.7) * (16 + 34 * p.drift) * (0.45 + curl);
+    const driftY = Math.cos(sec * (0.31 + speed * (0.18 + l * 0.1)) + p.phase * 1.2) * (14 + 28 * p.drift) * (0.45 + curl);
+    const tx = cx + baseDx * radial + driftX * (1 + o * 0.18);
+    const ty = cy + baseDy * radial + driftY * (1 + l * 0.14);
+    const r = p.size * (1.02 + aFast * 0.74 + h * 0.2 + 0.12 * Math.sin(sec * (0.8 + p.drift * 0.4) + p.phase));
+    const a = baseOpacity * (0.45 + 0.35 * Math.sin(sec * (0.7 + p.drift * 0.5) + p.phase)) * (1 + aFast * 0.5 + h * 0.25 + o * 0.12);
     ctx.fillStyle = toRgba(p.color, clamp01(a));
     ctx.beginPath();
     ctx.arc(tx, ty, r, 0, Math.PI * 2);

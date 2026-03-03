@@ -65,8 +65,13 @@ export function createEngine({
 
   let seed = 1;
   let lastSectionId = "";
+  let lastSectionType: SectionType = "other";
+  let lastRecipe: any = null;
   let sectionChangeT0Ms = -1;
   let activeTransition: TransitionDef | null = null;
+  let transitionFromSectionId = "";
+  let transitionFromSectionType: SectionType = "other";
+  let transitionFromRecipe: any = null;
 
   function makeScratchCanvas() {
     const Ctor = (globalThis as any).OffscreenCanvas;
@@ -233,8 +238,13 @@ export function createEngine({
   function reset(nextSeed: number) {
     seed = nextSeed >>> 0;
     lastSectionId = "";
+    lastSectionType = "other";
+    lastRecipe = null;
     sectionChangeT0Ms = -1;
     activeTransition = null;
+    transitionFromSectionId = "";
+    transitionFromSectionType = "other";
+    transitionFromRecipe = null;
   }
 
   function renderFrame(state: EngineState) {
@@ -279,21 +289,35 @@ export function createEngine({
     ensureScratchSize(width, height);
 
     if (lastSectionId && sectionId !== lastSectionId) {
-      scratchACtx.setTransform(1, 0, 0, 1, 0, 0);
-      scratchACtx.globalAlpha = 1;
-      scratchACtx.globalCompositeOperation = "source-over";
-      scratchACtx.clearRect(0, 0, width, height);
-      scratchACtx.drawImage(canvas, 0, 0, width, height);
+      transitionFromSectionId = lastSectionId;
+      transitionFromSectionType = lastSectionType;
+      transitionFromRecipe = lastRecipe ?? recipe;
       sectionChangeT0Ms = tMs;
       activeTransition = selectTransitionDef(recipe, lastSectionId, sectionId);
     }
     lastSectionId = sectionId;
+    lastSectionType = sectionType;
+    lastRecipe = recipe;
 
     let frameInfo = { sectionId, sectionType, lyricIndex: -1, lyricText: "" };
-    const drawToFn = (targetCtx: CanvasRenderingContext2D) => {
-      const hasGraphLayers = Array.isArray(recipe?.graph?.layers) && recipe.graph.layers.length > 0;
+    const drawScene = ({
+      targetCtx,
+      sceneSectionId,
+      sceneSectionType,
+      sceneRecipe,
+      captureInfo
+    }: {
+      targetCtx: CanvasRenderingContext2D;
+      sceneSectionId: string;
+      sceneSectionType: SectionType;
+      sceneRecipe: any;
+      captureInfo: boolean;
+    }) => {
+      const sceneState = { ...state, sectionId: sceneSectionId, sectionType: sceneSectionType };
+      const hasGraphLayers = Array.isArray(sceneRecipe?.graph?.layers) && sceneRecipe.graph.layers.length > 0;
       const useGraphPipeline =
         viewerMode === "player" ||
+        viewerMode === "primitive-lab" ||
         viewerMode === "recipe-view" ||
         viewerMode === "random-scene" ||
         (viewerMode === "graph-scene") ||
@@ -308,8 +332,8 @@ export function createEngine({
           canvas,
           tMs,
           seed,
-          state,
-          recipe,
+          state: sceneState,
+          recipe: sceneRecipe,
           colors: palette
         });
         if (viewerMode === "hint-edit") {
@@ -318,20 +342,29 @@ export function createEngine({
             const renderInfo = renderLayers({
               targetCtx,
               layers: uiLayers,
-              state,
+              state: sceneState,
               palette,
               tMs,
-              recipe,
-              sectionType,
-              sectionId,
+              recipe: sceneRecipe,
+              sectionType: sceneSectionType,
+              sectionId: sceneSectionId,
               clearFirst: false
             });
-            frameInfo = { ...frameInfo, ...renderInfo };
+            if (captureInfo) frameInfo = { ...frameInfo, ...renderInfo };
           }
         }
       } else {
-        const renderInfo = renderLayers({ targetCtx, layers, state, palette, tMs, recipe, sectionType, sectionId });
-        frameInfo = { ...frameInfo, ...renderInfo };
+        const renderInfo = renderLayers({
+          targetCtx,
+          layers,
+          state: sceneState,
+          palette,
+          tMs,
+          recipe: sceneRecipe,
+          sectionType: sceneSectionType,
+          sectionId: sceneSectionId
+        });
+        if (captureInfo) frameInfo = { ...frameInfo, ...renderInfo };
       }
       void audioState;
     };
@@ -339,6 +372,17 @@ export function createEngine({
     if (activeTransition && sectionChangeT0Ms >= 0) {
       const durationMs = Math.max(1, Number(activeTransition.durationMs ?? 900));
       const progress = Math.max(0, Math.min(1, (tMs - sectionChangeT0Ms) / durationMs));
+
+      const fromSectionId = transitionFromSectionId || sectionId;
+      const fromSectionType = transitionFromSectionType || sectionType;
+      drawScene({
+        targetCtx: scratchACtx,
+        sceneSectionId: fromSectionId,
+        sceneSectionType: fromSectionType,
+        sceneRecipe: transitionFromRecipe ?? recipe,
+        captureInfo: false
+      });
+
       compositeTransition({
         ctx,
         width,
@@ -347,17 +391,32 @@ export function createEngine({
         tempCtx: scratchBCtx,
         progress,
         transitionDef: activeTransition,
-        drawToFn,
+        drawToFn: (targetCtx) => drawScene({
+          targetCtx,
+          sceneSectionId: sectionId,
+          sceneSectionType: sectionType,
+          sceneRecipe: recipe,
+          captureInfo: true
+        }),
         seed
       });
       if (progress >= 1) {
         sectionChangeT0Ms = -1;
         activeTransition = null;
+        transitionFromSectionId = "";
+        transitionFromSectionType = "other";
+        transitionFromRecipe = null;
       }
       return frameInfo;
     }
 
-    drawToFn(ctx);
+    drawScene({
+      targetCtx: ctx,
+      sceneSectionId: sectionId,
+      sceneSectionType: sectionType,
+      sceneRecipe: recipe,
+      captureInfo: true
+    });
     return frameInfo;
   }
 

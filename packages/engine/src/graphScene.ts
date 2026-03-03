@@ -97,19 +97,34 @@ function drawOrbitRibbon(args: {
   const speedHz = Math.max(0.01, Number(params?.phaseHz ?? 0.08));
   const rng = createRng(nodeSeed);
   const seedPhase = rng.float() * Math.PI * 2;
+  const modeRaw = String(params?.animationMode ?? "auto").toLowerCase();
+  const mode = modeRaw === "auto"
+    ? (["flow", "pulse-rotate", "drift"][nodeSeed % 3] as "flow" | "pulse-rotate" | "drift")
+    : (modeRaw as "flow" | "pulse-rotate" | "drift");
   const audioWarp = 1 + amp * 0.85 + downbeat * 0.18;
-  const radiusBoost = 1 + amp * 0.18 + beat * 0.07;
+  const tempoMul = mode === "pulse-rotate" ? 0.72 : mode === "drift" ? 1.08 : 1;
+  const phaseBeatPush = mode === "pulse-rotate" ? (downbeat * 0.08 + beat * 0.03) : (beat * 0.015);
+  const radiusBoostBase = mode === "pulse-rotate"
+    ? (1 + amp * 0.14 + beat * 0.11 + downbeat * 0.09)
+    : (1 + amp * 0.18 + beat * 0.07);
+  const yAxisScale = mode === "drift" ? (0.72 + 0.18 * Math.sin(t * (0.33 + amp * 0.5) + seedPhase)) : (0.68 + 0.14 * Math.sin(t * (0.45 + amp * 0.9)));
+  const driftFreqMul = mode === "drift" ? 2.2 : mode === "pulse-rotate" ? 1.1 : 1.6;
+  const driftAmp = mode === "pulse-rotate" ? (0.12 + amp * 0.09) : (0.15 + amp * 0.12);
   ctx.strokeStyle = pickFrom(colors, nodeSeed, "#89D6FF");
   if (!String(ctx.strokeStyle).startsWith("#")) ctx.globalAlpha = clamp01(0.44 + amp * 0.24 + downbeat * 0.1);
   else ctx.globalAlpha = clamp01(0.52 + amp * 0.22 + downbeat * 0.1);
   ctx.lineWidth = thickness * (1 + amp * 0.2);
   ctx.beginPath();
+  const driftBaseFreq = 3.4 + rng.float() * 1.1;
+  const driftPhase = seedPhase * (0.8 + rng.float() * 0.6);
   for (let i = 0; i <= points; i += 1) {
     const u = i / points;
-    const a = u * Math.PI * 2 + t * 2 * Math.PI * speedHz * audioWarp + seedPhase;
-    const drift = 1 + (0.15 + amp * 0.12) * Math.sin((3.4 + rng.float() * 1.1) * a + t * (0.45 + amp * 0.45));
+    const a = u * Math.PI * 2 + t * 2 * Math.PI * speedHz * audioWarp * tempoMul + seedPhase + phaseBeatPush;
+    // Use periodic, continuous drift so the stroke stays smooth and avoids seam spikes.
+    const drift = 1 + driftAmp * Math.sin(driftBaseFreq * a * driftFreqMul + t * (0.45 + amp * 0.45) + driftPhase);
+    const radiusBoost = radiusBoostBase + (mode === "drift" ? 0.03 * Math.sin(t * 0.4 + u * Math.PI * 2) : 0);
     const x = cx + Math.cos(a) * radius * radiusBoost * drift;
-    const y = cy + Math.sin(a) * radius * radiusBoost * drift * (0.68 + 0.14 * Math.sin(t * (0.45 + amp * 0.9)));
+    const y = cy + Math.sin(a) * radius * radiusBoost * drift * yAxisScale;
     if (i === 0) ctx.moveTo(x, y);
     else ctx.lineTo(x, y);
   }
@@ -211,6 +226,10 @@ function drawRosetteSpiral(args: {
   const lineWidth = Math.max(0.5, Number(params?.lineWidth ?? 1.2));
   const timePhase = Number(params?.timePhase ?? 0.2) * t;
   const basePhase = Number(params?.phase ?? (rng.float() * Math.PI * 2));
+  const animationRaw = String(params?.animationMode ?? "auto").toLowerCase();
+  const animationMode = animationRaw === "auto"
+    ? (["step-rotate", "counterspin", "twist"][nodeSeed % 3] as "step-rotate" | "counterspin" | "twist")
+    : (animationRaw as "step-rotate" | "counterspin" | "twist");
   const hueDrift = Number(params?.hueDrift ?? 0.2);
   const centerJitter = Math.max(0, Number(params?.centerJitter ?? 0));
   const cxJ = cx + Math.sin(t * 0.19 + basePhase) * centerJitter;
@@ -238,11 +257,22 @@ function drawRosetteSpiral(args: {
       r = spiralR * (1 - blend) + rosetteR * blend;
     }
 
+    const stepAngle = (Math.PI * 2) / Math.max(8, petalCount * 2);
+    const stepRotate = Math.round((t * 0.95 + downbeat * 0.75) / 0.33) * stepAngle;
+    const motionOffset =
+      animationMode === "step-rotate"
+        ? stepRotate
+        : animationMode === "counterspin"
+          ? ((u < 0.45 ? -1 : 1) * t * 0.28 + beat * 0.06)
+          : Math.sin(t * 0.55 + u * Math.PI * 2 + basePhase) * (0.16 + downbeat * 0.08);
+    const spinTerm = animationMode === "counterspin" ? spin * theta * (u < 0.5 ? -1 : 1) : spin * theta;
+    const twistTerm = twistAmp * Math.sin(theta * twistHz + basePhase + timePhase + (animationMode === "twist" ? t * 0.45 : 0));
     const phi =
       theta +
-      spin * theta +
-      twistAmp * Math.sin(theta * twistHz + basePhase + timePhase) +
-      beat * 0.08;
+      spinTerm +
+      twistTerm +
+      beat * 0.08 +
+      motionOffset;
     const snapStep = symmetrySnap > 1 ? (Math.PI * 2) / symmetrySnap : 0;
     const snappedPhi = snapStep > 0 ? Math.round(phi / snapStep) * snapStep : phi;
     const phiFinal = snapStep > 0 ? (phi * (1 - symmetryMix) + snappedPhi * symmetryMix) : phi;
@@ -252,6 +282,15 @@ function drawRosetteSpiral(args: {
   }
 
   if (pts.length < 2) return;
+  const stepDistances: number[] = [];
+  for (let i = 1; i < pts.length; i += 1) {
+    const dx = pts[i].x - pts[i - 1].x;
+    const dy = pts[i].y - pts[i - 1].y;
+    stepDistances.push(Math.hypot(dx, dy));
+  }
+  const sorted = [...stepDistances].sort((a, b) => a - b);
+  const medianStep = sorted.length ? sorted[Math.floor(sorted.length / 2)] : 0;
+  const jumpBreakPx = Math.max(24, medianStep * 4.8);
   const col = useBlack ? "#000000" : pickFrom(colors, nodeSeed, "#88CFFF");
   ctx.save();
   if (useBlack) {
@@ -272,7 +311,8 @@ function drawRosetteSpiral(args: {
   }
 
   const resolvedConnectMode = connectMode === "auto"
-    ? (skip > 1 ? "skip" : (symmetrySnap > 1 ? "chords" : "sequential"))
+    // Auto should favor smooth continuity; chord links can look like center spikes.
+    ? (skip > 1 ? "skip" : "sequential")
     : connectMode;
 
   if (resolvedConnectMode === "radial") {
@@ -296,21 +336,33 @@ function drawRosetteSpiral(args: {
     for (let start = 0; start < skip; start += 1) {
       ctx.beginPath();
       let first = true;
+      let prev: { x: number; y: number } | null = null;
       for (let i = start; i < pts.length; i += skip) {
         const p = pts[i];
-        if (first) {
+        const shouldBreak = prev ? Math.hypot(p.x - prev.x, p.y - prev.y) > jumpBreakPx : false;
+        if (first || shouldBreak) {
           ctx.moveTo(p.x, p.y);
           first = false;
         } else {
           ctx.lineTo(p.x, p.y);
         }
+        prev = p;
       }
       ctx.stroke();
     }
   } else {
     ctx.beginPath();
     ctx.moveTo(pts[0].x, pts[0].y);
-    for (let i = 1; i < pts.length; i += 1) ctx.lineTo(pts[i].x, pts[i].y);
+    let prev = pts[0];
+    for (let i = 1; i < pts.length; i += 1) {
+      const p = pts[i];
+      if (Math.hypot(p.x - prev.x, p.y - prev.y) > jumpBreakPx) {
+        ctx.moveTo(p.x, p.y);
+      } else {
+        ctx.lineTo(p.x, p.y);
+      }
+      prev = p;
+    }
     ctx.stroke();
   }
 

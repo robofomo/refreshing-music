@@ -12,15 +12,19 @@
       <canvas id="stage"></canvas>
       <div id="hud" class="panel"></div>
       <div id="controls" class="panel">
-        <button id="prevBtn" title="Previous">|&lt;</button>
-        <button id="playBtn" title="Play/Pause">&#9654;</button>
-        <button id="nextBtn" title="Next">&gt;|</button>
+        <div id="controlsMain">
+          <button id="prevBtn" title="Previous">|&lt;</button>
+          <button id="playBtn" title="Play/Pause">&#9654;</button>
+          <button id="nextBtn" title="Next">&gt;|</button>
+          <button id="offsetDecBtn" title="Offset -10ms">[</button>
+          <button id="offsetCycleBtn" title="Cycle Offset Preset">-240Ms (o)</button>
+          <button id="offsetIncBtn" title="Offset +10ms">]</button>
+          <button id="seedBtn" title="New Seed">&#8634;</button>
+          <button id="shareBtn" title="Copy Share Link">&#10548;</button>
+          <button id="hudBtn" title="Toggle HUD">?</button>
+        </div>
         <input id="seek" type="range" min="0" max="1000" value="0" />
         <div id="mixer"></div>
-        <button id="modeBtn" title="Viewer Mode">playback</button>
-        <button id="labCopyBtn" title="Copy Primitive Snippet">lab copy</button>
-        <button id="seedBtn" title="New Seed">&#8634;</button>
-        <button id="hudBtn" title="Toggle HUD">?</button>
       </div>
     </div>
     <audio id="audio" preload="metadata" crossorigin="anonymous"></audio>

@@ -12,19 +12,21 @@ type TimingSection = { id?: string; t0Ms?: number; t1Ms?: number };
 type TimingLyric = { i?: number; t0Ms?: number; t1Ms?: number };
 type TimingWord = { i?: number; t0Ms?: number; t1Ms?: number; text?: string; conf?: number };
 type HintOverlay = {
-  type: "hint/downbeat" | "hint/beat" | "hint/barBeat";
+  type: "hint/downbeat" | "hint/beat" | "hint/barBeat" | "hint/sectionMarker" | "hint/endMarker";
   tSec: number;
-  payload?: { beatInBar?: number };
+  payload?: { beatInBar?: number; action?: "set" | "clear" };
   at?: string;
   actor?: string;
 };
 type EffectiveState = {
   effective?: {
     beatsMs?: number[];
+    endMarkerMs?: number;
     downbeatTimesMs?: number[];
     beatMarkers?: Array<{ tMs?: number; source?: "hint" | "inferred" | "ai" | "corrected" }>;
     downbeatMarkers?: Array<{ tMs?: number; source?: "hint" | "inferred" | "ai" | "corrected" }>;
     aiDownbeatMarkers?: Array<{ tMs?: number; source?: "ai" }>;
+    sectionMarkers?: Array<{ tMs?: number; source?: "default" | "hint" }>;
     sections?: Array<{ id?: string; labelRaw?: string; t0Ms?: number; t1Ms?: number }>;
   };
   hints?: {
@@ -155,8 +157,11 @@ const prevBtn = document.getElementById("prevBtn") as HTMLButtonElement;
 const nextBtn = document.getElementById("nextBtn") as HTMLButtonElement;
 const seedBtn = document.getElementById("seedBtn") as HTMLButtonElement;
 const modeBtn = document.getElementById("modeBtn") as HTMLButtonElement;
-const labCopyBtn = document.getElementById("labCopyBtn") as HTMLButtonElement;
 const hudBtn = document.getElementById("hudBtn") as HTMLButtonElement;
+const shareBtn = document.getElementById("shareBtn") as HTMLButtonElement;
+const offsetDecBtn = document.getElementById("offsetDecBtn") as HTMLButtonElement;
+const offsetCycleBtn = document.getElementById("offsetCycleBtn") as HTMLButtonElement;
+const offsetIncBtn = document.getElementById("offsetIncBtn") as HTMLButtonElement;
 const controls = document.getElementById("controls") as HTMLDivElement;
 const mixer = document.getElementById("mixer") as HTMLDivElement;
 const seek = document.getElementById("seek") as HTMLInputElement;
@@ -188,9 +193,11 @@ let beatMarkers: Array<{ tMs: number; source: "hint" | "inferred" | "ai" }> = []
 let downbeatMarkers: Array<{ tMs: number; source: "hint" | "inferred" | "ai" | "corrected" }> = [];
 let aiDownbeatMarkers: Array<{ tMs: number; source: "ai" }> = [];
 let hintOverlays: HintOverlay[] = [];
+let sectionMarkers: Array<{ tMs: number; source: "default" | "hint" }> = [];
 let activeHintCount = 0;
 let beatFusionModeLabel = "-";
 let fusionWindowsMs: Array<{ t0Ms: number; t1Ms: number }> = [];
+let endMarkerMs = 0;
 let lastSeekTargetSec = 0;
 let lastSeekActualSec = 0;
 let lastSeekErrorMs = 0;
@@ -199,9 +206,9 @@ let hintRevision = 0;
 let latestQueuedBatchRevision = 0;
 const HINT_PERSIST_DEBOUNCE_MS = 1000;
 const pendingHintEvents: Array<{
-  type: "hint/downbeat" | "hint/beat" | "hint/barBeat";
+  type: "hint/downbeat" | "hint/beat" | "hint/barBeat" | "hint/sectionMarker" | "hint/endMarker";
   tSec: number;
-  payload?: { beatInBar?: number; groupId?: string };
+  payload?: { beatInBar?: number; action?: "set" | "clear"; groupId?: string };
 }> = [];
 const SEEK_SCALE = 100000;
 
@@ -209,6 +216,7 @@ let seed = 1;
 const DEFAULT_RENDER_OFFSET_MS = -240;
 const MIN_RENDER_OFFSET_MS = -500;
 const MAX_RENDER_OFFSET_MS = 500;
+const OFFSET_PRESETS_MS = [-240, -70, 0];
 let renderOffsetMs = DEFAULT_RENDER_OFFSET_MS;
 let hudVisible = new URL(location.href).searchParams.get("hud") === "1";
 let lyricsEnabled = new URL(location.href).searchParams.get("lyrics") !== "0";
@@ -323,14 +331,12 @@ function cycleViewerMode() {
   const i = VIEWER_MODES.indexOf(viewerMode);
   const next = VIEWER_MODES[(i + 1) % VIEWER_MODES.length];
   setViewerMode(next);
-  refreshLabControls();
 }
 
 function cycleLabPrimitive(dir: 1 | -1) {
   const i = LAB_PRIMITIVES.indexOf(labPrimitive);
   const next = (i + dir + LAB_PRIMITIVES.length) % LAB_PRIMITIVES.length;
   labPrimitive = LAB_PRIMITIVES[next];
-  refreshLabControls();
 }
 
 function cycleLabBackdropPolicy() {
@@ -386,6 +392,179 @@ function currentLabProfile() {
   const density = ranges.density[0] + rng() * (ranges.density[1] - ranges.density[0]);
   const variant = Math.floor(rng() * 1000);
   return { scale, density, variant };
+}
+
+function labBackdropNode(backdrop: LabBackdropId, profile: { scale: number; density: number }) {
+  if (backdrop === "black") {
+    return { id: "lab-bg-black", type: "bg.solid", params: { color: "#000000" } };
+  }
+  if (backdrop === "gradient") {
+    return {
+      id: "lab-bg-gradient",
+      type: "bg.gradientField",
+      params: {
+        gradientStops: Math.max(3, Math.min(7, Math.round(2 + profile.density))),
+        driftSpeed: 0.006 + profile.scale * 0.01,
+        noiseScale: 0.25 + profile.density * 0.22,
+        soften: 0.9 + Math.min(0.08, profile.scale * 0.03)
+      }
+    };
+  }
+  if (backdrop === "vignette") {
+    return {
+      id: "lab-bg-vignette",
+      type: "bg.vignette",
+      params: {
+        inner: 0.16,
+        outer: 0.82,
+        tintA: "#102338",
+        tintB: "#000000"
+      }
+    };
+  }
+  return {
+    id: "lab-bg-bands",
+    type: "bg.bands",
+    params: {
+      count: 12,
+      opacity: 0.11
+    }
+  };
+}
+
+function labPrimitiveNode(profile: { scale: number; density: number; variant: number }, backdrop: LabBackdropId) {
+  const scale = profile.scale;
+  const density = profile.density;
+  if (labPrimitive === "bg.gradientField") {
+    return {
+      id: "lab-primitive",
+      type: "bg.gradientField",
+      params: {
+        gradientStops: Math.max(3, Math.min(7, Math.round(2 + density))),
+        driftSpeed: 0.006 + scale * 0.01,
+        noiseScale: 0.25 + density * 0.22,
+        soften: 0.9 + Math.min(0.08, scale * 0.03)
+      }
+    };
+  }
+  if (labPrimitive === "fg.particles") {
+    return {
+      id: "lab-primitive",
+      type: "fg.particles",
+      params: {
+        count: Math.max(24, Math.round(42 * density)),
+        sizeRange: [1.0 + scale * 0.5, 2.5 + scale * 1.6],
+        speed: 0.2 + scale * 0.28,
+        curl: 0.25 + density * 0.2,
+        opacity: 0.32 + Math.min(0.5, density * 0.14)
+      }
+    };
+  }
+  if (labPrimitive === "shape.beatOrb") {
+    return {
+      id: "lab-primitive",
+      type: "shape.beatOrb",
+      params: {
+        baseRadiusRatio: 0.026 + scale * 0.02,
+        blend: "screen"
+      }
+    };
+  }
+  if (labPrimitive === "overlay.beatTrack") {
+    return { id: "lab-primitive", type: "overlay.beatTrack", params: {} };
+  }
+  if (labPrimitive === "shape.circlePulse") {
+    return {
+      id: "lab-primitive",
+      type: "shape.circlePulse",
+      params: {
+        radiusPx: Math.max(40, 120 * scale),
+        ringCount: Math.max(4, Math.round(9 * density)),
+        alpha: 0.22
+      }
+    };
+  }
+  if (labPrimitive === "polyline.orbitRibbon") {
+    return {
+      id: "lab-primitive",
+      type: "polyline.orbitRibbon",
+      params: {
+        points: Math.max(24, Math.round(48 * density)),
+        radiusPx: Math.round(130 * scale),
+        thicknessPx: 1.2 + Math.min(2.2, density * 0.45),
+        phaseHz: [0.05, 0.08, 0.12][profile.variant % 3],
+        animationMode: "auto"
+      }
+    };
+  }
+  if (labPrimitive === "curve.rosetteSpiral") {
+    const petals = Math.max(3, Math.round(3 + density * 2.8));
+    const symmetrySnap = density > 2.3 ? petals : density > 1.2 ? Math.max(4, petals - 1) : 0;
+    return {
+      id: "lab-primitive",
+      type: "curve.rosetteSpiral",
+      params: {
+        mode: density > 2.6 ? "star" : density > 1.7 ? "hybrid" : "rosette",
+        steps: Math.max(420, Math.round(520 * density)),
+        turns: Number((6 + density * 2.4).toFixed(2)),
+        growth: Number((2.2 + scale * 1.1).toFixed(2)),
+        petalCount: petals,
+        petalAmp: Math.round(10 + scale * 16),
+        spin: Number((0.08 + density * 0.06).toFixed(3)),
+        skip: density > 2.8 ? 3 : density > 1.9 ? 2 : 1,
+        connectMode: density > 3.1 ? "chords" : density > 2.1 ? "skip" : density < 0.95 ? "radial" : "sequential",
+        symmetrySnap,
+        symmetryMix: symmetrySnap > 0 ? 0.72 : 0,
+        color: scale < 0.95 && backdrop !== "black" ? "black" : "palette",
+        alpha: 0.68,
+        animationMode: "auto"
+      }
+    };
+  }
+  if (labPrimitive === "text.karaoke") {
+    return {
+      id: "lab-primitive",
+      type: "text.karaoke",
+      params: {
+        mode: "center",
+        fontSizePx: Math.round(30 * scale),
+        lineGapPx: Math.max(8, Math.round(10 * density)),
+        opacity: 0.92
+      }
+    };
+  }
+  return {
+    id: "lab-primitive",
+    type: "text.echoWord",
+    params: {
+      fontPx: Math.round(42 * scale),
+      echoCount: Math.max(2, Math.round(5 * density)),
+      driftPx: Math.round(12 * scale)
+    }
+  };
+}
+
+function labGraphLayers() {
+  const profile = currentLabProfile();
+  const backdrop = currentLabBackdropId();
+  const primary = labPrimitiveNode(profile, backdrop);
+  const layers: any[] = [];
+  const isBackgroundPrimitive = labPrimitive === "bg.gradientField";
+  if (!isBackgroundPrimitive) {
+    layers.push({
+      id: "lab-backdrop",
+      blend: "source-over",
+      opacity: 1,
+      nodes: [labBackdropNode(backdrop, profile)]
+    });
+  }
+  layers.push({
+    id: "lab-main",
+    blend: "screen",
+    opacity: 1,
+    nodes: [primary]
+  });
+  return layers;
 }
 
 function activeLabSnippet() {
@@ -544,14 +723,32 @@ function activeGraphSnippet() {
 }`;
 }
 
-function refreshLabControls() {
-  if (!labCopyBtn) return;
-  labCopyBtn.disabled = true;
-  labCopyBtn.textContent = "lab off";
+function storageAvailable() {
+  try {
+    const k = "__rmv_storage_test__";
+    localStorage.setItem(k, "1");
+    localStorage.removeItem(k);
+    return true;
+  } catch {
+    return false;
+  }
 }
 
-async function copyLabSnippet() {
-  void viewerMode;
+function loadStoredOffsetMs() {
+  if (!storageAvailable()) return null;
+  const raw = localStorage.getItem("rmv.offsetMs");
+  if (!raw) return null;
+  const n = Number(raw);
+  return Number.isFinite(n) ? Math.round(n) : null;
+}
+
+function saveStoredOffsetMs(v: number) {
+  if (!storageAvailable()) return;
+  try {
+    localStorage.setItem("rmv.offsetMs", String(Math.round(v)));
+  } catch {
+    // ignore storage failures in strict sandbox iframes
+  }
 }
 
 function clampOffset(v: number) {
@@ -559,9 +756,50 @@ function clampOffset(v: number) {
   return Math.max(MIN_RENDER_OFFSET_MS, Math.min(MAX_RENDER_OFFSET_MS, Math.round(v)));
 }
 
+function updateOffsetButtons() {
+  if (offsetCycleBtn) offsetCycleBtn.textContent = `${renderOffsetMs}Ms (o)`;
+}
+
 function setRenderOffset(next: number) {
   renderOffsetMs = clampOffset(next);
   updateUrlParam("offset", String(renderOffsetMs));
+  saveStoredOffsetMs(renderOffsetMs);
+  updateOffsetButtons();
+}
+
+function cycleOffsetPreset() {
+  const current = renderOffsetMs;
+  let bestIdx = 0;
+  let bestDiff = Number.POSITIVE_INFINITY;
+  for (let i = 0; i < OFFSET_PRESETS_MS.length; i += 1) {
+    const d = Math.abs(OFFSET_PRESETS_MS[i] - current);
+    if (d < bestDiff) {
+      bestDiff = d;
+      bestIdx = i;
+    }
+  }
+  const nextIdx = (bestIdx + 1) % OFFSET_PRESETS_MS.length;
+  setRenderOffset(OFFSET_PRESETS_MS[nextIdx]);
+}
+
+async function copyShareUrl() {
+  const u = new URL(location.href);
+  u.searchParams.set("offset", String(renderOffsetMs));
+  const text = u.toString();
+  let ok = false;
+  try {
+    await navigator.clipboard.writeText(text);
+    ok = true;
+  } catch {
+    ok = false;
+  }
+  if (shareBtn) {
+    const prev = shareBtn.textContent || "";
+    shareBtn.textContent = ok ? "\u2713" : "\u26A0";
+    window.setTimeout(() => {
+      shareBtn.textContent = prev || "\u2914";
+    }, 900);
+  }
 }
 
 function setLyricsEnabled(next: boolean) {
@@ -783,6 +1021,49 @@ function mergeHintOverlays(overlays: HintOverlay[]) {
   activeHintCount = hintOverlays.length;
 }
 
+function hasSectionMarkerNear(tMs: number, tolMs = 120) {
+  const ms = Math.max(0, Math.round(Number(tMs) || 0));
+  return sectionMarkers.some((m) => Math.abs(m.tMs - ms) <= tolMs);
+}
+
+function removeSectionMarkerNear(tMs: number, tolMs = 120) {
+  const ms = Math.max(0, Math.round(Number(tMs) || 0));
+  let removed = false;
+  for (let i = sectionMarkers.length - 1; i >= 0; i -= 1) {
+    if (Math.abs(sectionMarkers[i].tMs - ms) <= tolMs) {
+      sectionMarkers.splice(i, 1);
+      removed = true;
+    }
+  }
+  return removed;
+}
+
+function rebuildSectionMarkersFromHintOverlays() {
+  const rows = [...hintOverlays].sort((a, b) => {
+    const atA = Number.isFinite(Date.parse(String(a?.at || ""))) ? Date.parse(String(a?.at || "")) : 0;
+    const atB = Number.isFinite(Date.parse(String(b?.at || ""))) ? Date.parse(String(b?.at || "")) : 0;
+    if (atA !== atB) return atA - atB;
+    return Number(a.tSec) - Number(b.tSec);
+  });
+  const out: Array<{ tMs: number; source: "default" | "hint" }> = [];
+  for (const row of rows) {
+    if (row.type !== "hint/sectionMarker") continue;
+    const tMs = Math.max(0, Math.round(Number(row.tSec) * 1000));
+    const action = row?.payload?.action === "clear" ? "clear" : "set";
+    if (action === "clear") {
+      for (let i = out.length - 1; i >= 0; i -= 1) {
+        if (Math.abs(out[i].tMs - tMs) <= 140) out.splice(i, 1);
+      }
+    } else if (!out.some((x) => Math.abs(x.tMs - tMs) <= 90)) {
+      out.push({ tMs, source: "hint" });
+    }
+  }
+  sectionMarkers = out
+    .map((m) => ({ tMs: Math.max(0, Math.round(Number(m.tMs) || 0)), source: m.source === "hint" ? "hint" : "default" }))
+    .filter((m) => Number.isFinite(m.tMs))
+    .sort((a, b) => a.tMs - b.tMs);
+}
+
 function addOrUpdateMarker(
   markers: Array<{ tMs: number; source: "hint" | "inferred" | "ai" }>,
   tMs: number,
@@ -820,8 +1101,40 @@ function makeHintGroupId() {
   return `grp_${Date.now()}_${Math.floor(Math.random() * 1_000_000)}`;
 }
 
-function applyHintEventOptimistic(event: { type: "hint/downbeat" | "hint/beat" | "hint/barBeat"; tSec: number; payload?: { beatInBar?: number; groupId?: string } }) {
+function applyHintEventOptimistic(event: {
+  type: "hint/downbeat" | "hint/beat" | "hint/barBeat" | "hint/sectionMarker" | "hint/endMarker";
+  tSec: number;
+  payload?: { beatInBar?: number; action?: "set" | "clear"; groupId?: string };
+}) {
   const tMs = Math.max(0, Math.round(event.tSec * 1000));
+  if (event.type === "hint/endMarker") {
+    endMarkerMs = tMs;
+    pulseBeatTimesMs = normalizeMsList(pulseBeatTimesMs.filter((x) => Number(x) <= endMarkerMs));
+    pulseDownbeatTimesMs = normalizeMsList(pulseDownbeatTimesMs.filter((x) => Number(x) <= endMarkerMs));
+    beatMarkers = beatMarkers.filter((m) => Number(m.tMs) <= endMarkerMs);
+    downbeatMarkers = downbeatMarkers.filter((m) => Number(m.tMs) <= endMarkerMs);
+    aiDownbeatMarkers = aiDownbeatMarkers.filter((m) => Number(m.tMs) <= endMarkerMs);
+    hintOverlays.push({ type: event.type, tSec: event.tSec, payload: event.payload, actor: "user", at: new Date().toISOString() });
+    hintOverlays.sort((a, b) => a.tSec - b.tSec);
+    activeHintCount = hintOverlays.length;
+    return;
+  }
+  if (event.type === "hint/sectionMarker") {
+    const action = event?.payload?.action === "clear" ? "clear" : "set";
+    if (action === "clear") {
+      removeSectionMarkerNear(tMs, 140);
+    } else if (!hasSectionMarkerNear(tMs, 100)) {
+      sectionMarkers.push({ tMs, source: "hint" });
+      sectionMarkers = sectionMarkers
+        .map((m) => ({ tMs: Math.max(0, Math.round(Number(m.tMs) || 0)), source: m.source === "hint" ? "hint" : "default" }))
+        .filter((m) => Number.isFinite(m.tMs))
+        .sort((a, b) => a.tMs - b.tMs);
+    }
+    hintOverlays.push({ type: event.type, tSec: event.tSec, payload: event.payload, actor: "user", at: new Date().toISOString() });
+    hintOverlays.sort((a, b) => a.tSec - b.tSec);
+    activeHintCount = hintOverlays.length;
+    return;
+  }
   if (event.type === "hint/beat" || event.type === "hint/barBeat" || event.type === "hint/downbeat") {
     pulseBeatTimesMs = normalizeMsList([...pulseBeatTimesMs, tMs]);
     addOrUpdateMarker(beatMarkers, tMs, "hint");
@@ -841,7 +1154,11 @@ function applyHintEventOptimistic(event: { type: "hint/downbeat" | "hint/beat" |
 }
 
 async function postAuthoringHintEvents(
-  events: Array<{ type: "hint/downbeat" | "hint/beat" | "hint/barBeat"; tSec: number; payload?: { beatInBar?: number; groupId?: string } }>,
+  events: Array<{
+    type: "hint/downbeat" | "hint/beat" | "hint/barBeat" | "hint/sectionMarker" | "hint/endMarker";
+    tSec: number;
+    payload?: { beatInBar?: number; action?: "set" | "clear"; groupId?: string };
+  }>,
   batchRevision: number
 ) {
   if (!events.length || !track?.trackId || !track?.workId) return;
@@ -875,7 +1192,11 @@ async function postAuthoringHintEvents(
   }
 }
 
-function queueHintEvent(event: { type: "hint/downbeat" | "hint/beat" | "hint/barBeat"; tSec: number; payload?: { beatInBar?: number; groupId?: string } }) {
+function queueHintEvent(event: {
+  type: "hint/downbeat" | "hint/beat" | "hint/barBeat" | "hint/sectionMarker" | "hint/endMarker";
+  tSec: number;
+  payload?: { beatInBar?: number; action?: "set" | "clear"; groupId?: string };
+}) {
   if (!__AUTHORING_MODE__) return;
   hintRevision += 1;
   pendingHintEvents.push(event);
@@ -1020,9 +1341,11 @@ async function loadEffectiveGuidance(nextTrack: Track, baseTrackUrl: string) {
   downbeatMarkers = [];
   aiDownbeatMarkers = [];
   hintOverlays = [];
+  sectionMarkers = [];
   activeHintCount = 0;
   beatFusionModeLabel = "-";
   fusionWindowsMs = [];
+  endMarkerMs = 0;
 
   const assetDirUrl = resolveAssetDirUrl(nextTrack, baseTrackUrl);
   if (!assetDirUrl) return;
@@ -1036,6 +1359,9 @@ async function loadEffectiveGuidance(nextTrack: Track, baseTrackUrl: string) {
       const j = (await r.json()) as EffectiveState;
       const beats = normalizeMsList(j?.effective?.beatsMs);
       const downbeats = normalizeMsList(j?.effective?.downbeatTimesMs);
+      endMarkerMs = Number.isFinite(Number(j?.effective?.endMarkerMs))
+        ? Math.max(0, Math.round(Number(j?.effective?.endMarkerMs)))
+        : 0;
       if (beats.length) pulseBeatTimesMs = beats;
       if (downbeats.length) pulseDownbeatTimesMs = downbeats;
       beatMarkers = Array.isArray(j?.effective?.beatMarkers)
@@ -1072,6 +1398,15 @@ async function loadEffectiveGuidance(nextTrack: Track, baseTrackUrl: string) {
           }))
           .filter((m) => Number.isFinite(m.tMs))
         : [];
+      sectionMarkers = Array.isArray(j?.effective?.sectionMarkers)
+        ? j.effective.sectionMarkers
+          .map((m) => ({
+            tMs: Math.max(0, Math.round(Number(m?.tMs))),
+            source: m?.source === "hint" ? "hint" as const : "default" as const
+          }))
+          .filter((m) => Number.isFinite(m.tMs))
+          .sort((a, b) => a.tMs - b.tMs)
+        : [];
       if (Array.isArray(j?.effective?.sections) && j.effective.sections.length) {
         if (!nextTrack.timing) nextTrack.timing = {};
         nextTrack.timing.sections = j.effective.sections
@@ -1093,9 +1428,8 @@ async function loadEffectiveGuidance(nextTrack: Track, baseTrackUrl: string) {
           .filter((w) => Number.isFinite(w.t0Ms) && Number.isFinite(w.t1Ms) && w.t1Ms >= w.t0Ms)
         : [];
       mergeHintOverlays(Array.isArray(j?.overlays) ? j.overlays : []);
-      activeHintCount = Number.isFinite(Number(j?.hints?.eventsCount))
-        ? Math.max(0, Math.round(Number(j?.hints?.eventsCount)))
-        : hintOverlays.length;
+      if (!sectionMarkers.length) rebuildSectionMarkersFromHintOverlays();
+      activeHintCount = hintOverlays.length;
       return;
     }
   } catch {
@@ -2150,9 +2484,6 @@ function randomSceneLayersForSection(sectionId: string, options?: { allowManual?
       : lyricRoll < 0.7
         ? { id: "karaoke", type: "text.karaoke", params: { mode: "center", fontSizePx: 28 + Math.floor(paramRng() * 8), lineGapPx: 10, opacity: 0.9 } }
         : null;
-  const beatTrackNode = layoutRng() < 0.55
-    ? { id: "beat-track", type: "overlay.beatTrack", params: { alpha: 0.9 } }
-    : null;
   const includeOrb = layoutRng() < 0.5;
 
   const secTag = (hashStringToSeed(`random:sec:${secId}`) >>> 0).toString(16).slice(0, 6);
@@ -2171,23 +2502,13 @@ function randomSceneLayersForSection(sectionId: string, options?: { allowManual?
         nodes: [{ ...lyricNode, id: `${String((lyricNode as any).id || "lyric")}__${secTag}__${vTag}` }]
       }
     : null;
-  const overlayLayer = beatTrackNode
-    ? {
-        id: `random-overlay__${secTag}__${vTag}`,
-        blend: "source-over",
-        opacity: 1,
-        nodes: [{ ...beatTrackNode, id: `${String((beatTrackNode as any).id || "overlay")}__${secTag}__${vTag}` }]
-      }
-    : null;
-
   return {
     layers: [
       bgLayer,
       ...(bgLayer2 ? [bgLayer2] : []),
       ...(includeOrb ? baseGraphLayers().filter((l: any) => String(l.id) === "base-orb") : []),
       fgLayer,
-      ...(lyricLayer ? [lyricLayer] : []),
-      ...(overlayLayer ? [overlayLayer] : [])
+      ...(lyricLayer ? [lyricLayer] : [])
     ],
     selection: {
       template: { id: `random-${selectedIndex}`, name: "Random Scene" },
@@ -2273,10 +2594,18 @@ function withModeRecipe(baseRecipe: any, mode: ViewerMode, sectionId: string, se
   }
 
   if (mode === "primitive-lab") {
-    // Lab should be an isolated primitive sandbox.
-    // Start from a clean render stack; drawPrimitiveLabOverlay handles preview rendering.
+    // Lab runs through graph primitives so behavior matches player/recipe/random modes.
     recipe.layers = [];
-    recipe.graph.layers = [];
+    recipe.graph.layers = labGraphLayers();
+  }
+
+  if (mode === "player" || mode === "recipe-view" || mode === "random-scene") {
+    // Keep beat-track overlay out of playback-focused scene modes.
+    for (const layer of recipe.graph.layers) {
+      const nodes = Array.isArray(layer?.nodes) ? layer.nodes : [];
+      layer.nodes = nodes.filter((n: any) => String(n?.type ?? "").toLowerCase() !== "overlay.beattrack");
+    }
+    recipe.graph.layers = recipe.graph.layers.filter((l: any) => (Array.isArray(l?.nodes) ? l.nodes.length > 0 : false));
   }
 
   const hasEchoTextNode = recipe.graph.layers.some((l: any) =>
@@ -2520,6 +2849,33 @@ function drawHintOverlays() {
     ctx.stroke();
   }
 
+  for (const marker of sectionMarkers) {
+    const ms = Math.max(0, Math.round(Number(marker.tMs)));
+    const tSecRaw = Number(ms) / 1000;
+    const tSec = Math.max(0, Math.min(durationSec, tSecRaw + renderOffsetMs / 1000));
+    const x = Math.max(0, Math.min(canvas.width, (tSec / durationSec) * canvas.width));
+    ctx.strokeStyle = marker.source === "hint" ? "#F44336" : "#C62828";
+    ctx.lineWidth = marker.source === "hint" ? 3 : 2;
+    ctx.globalAlpha = marker.source === "hint" ? 0.95 : 0.75;
+    ctx.beginPath();
+    ctx.moveTo(x, y0 - 6);
+    ctx.lineTo(x, y1);
+    ctx.stroke();
+  }
+
+  if (endMarkerMs > 0) {
+    const tSecRaw = Number(endMarkerMs) / 1000;
+    const tSec = Math.max(0, Math.min(durationSec, tSecRaw + renderOffsetMs / 1000));
+    const x = Math.max(0, Math.min(canvas.width, (tSec / durationSec) * canvas.width));
+    ctx.strokeStyle = "#B71C1C";
+    ctx.lineWidth = 4;
+    ctx.globalAlpha = 1;
+    ctx.beginPath();
+    ctx.moveTo(x, y0 - 8);
+    ctx.lineTo(x, y1 + 2);
+    ctx.stroke();
+  }
+
   const seekPreviewSec = (isSeeking || seekInFlight)
     ? Math.max(0, Math.min(durationSec, durationSec * pendingSeekRatio))
     : Math.max(0, Number(audio.currentTime) || 0);
@@ -2675,7 +3031,6 @@ function render() {
   if (isHintEditMode() && !recipeHasGraphNodeType(modeRecipe, "shape.beatOrb")) {
     drawBeatOrb(pulse.beat, pulse.downbeat);
   }
-  if (viewerMode === "primitive-lab") drawPrimitiveLabOverlay(signalBus);
   if (isHintEditMode()) drawHintOverlays();
   if (viewerMode === "primitive-lab" && labPrimitive === "overlay.beatTrack") drawHintOverlays();
 
@@ -2728,6 +3083,8 @@ if (!isSeeking && Number.isFinite(audio.duration) && audio.duration > 0) {
           `fusion: ${signalBus.hints.fusionModeLabel} (now: ${signalBus.beat.fusionMode})`,
           `beats: ${signalBus.beat.beatCount}`,
           `downbeats: ${signalBus.beat.downbeatCount}`,
+          `sections: ${sectionMarkers.length}`,
+          `end: ${endMarkerMs > 0 ? fmtMs(endMarkerMs) : "-"}`,
           `aiDownbeats: ${signalBus.hints.aiDownbeats}`
         ]
       : []),
@@ -2781,11 +3138,14 @@ if (!isSeeking && Number.isFinite(audio.duration) && audio.duration > 0) {
           `      d = downbeat anchor (keep established tempo)`,
           `      1/2/3/4 = measure tempo hints`,
           `      b = single beat hint`,
+          `      s = toggle section marker`,
+          `      e = set ending marker`,
           `      u undo last hint group`,
           `      c clear hints`
         ]
       : []),
     `      [ ] offset`,
+    `      o cycle offset preset`,
     `      \\ reset offset`,
     `      h/? hud`,
     ...(isHintEditMode() ? [`      l lyrics on/off`] : [])
@@ -2886,12 +3246,13 @@ async function init() {
   const lyricModeParam = url.searchParams.get("lyricMode");
   const modeParam = url.searchParams.get("mode");
   seed = seedParam ? Number(seedParam) : NaN;
-  setRenderOffset(offsetParam ? Number(offsetParam) : DEFAULT_RENDER_OFFSET_MS);
+  const storedOffset = loadStoredOffsetMs();
+  const initialOffset = offsetParam ? Number(offsetParam) : (storedOffset ?? DEFAULT_RENDER_OFFSET_MS);
+  setRenderOffset(initialOffset);
   setLyricsEnabled(lyricsParam !== "0");
   lyricMode = lyricModeParam === "fixed" || lyricModeParam === "off" ? lyricModeParam : "center";
   updateUrlParam("lyricMode", lyricMode);
   setViewerMode(normalizeViewerMode(modeParam));
-  refreshLabControls();
 
   const byTrackId = requestedTrackId
     ? indexEntries.findIndex((entry) => trackIdFromEntry(entry) === requestedTrackId)
@@ -2977,8 +3338,23 @@ modeBtn?.addEventListener("click", () => {
   showControlsTemporarily();
 });
 
-labCopyBtn?.addEventListener("click", () => {
-  void copyLabSnippet();
+offsetDecBtn?.addEventListener("click", () => {
+  setRenderOffset(renderOffsetMs - 10);
+  showControlsTemporarily();
+});
+
+offsetCycleBtn?.addEventListener("click", () => {
+  cycleOffsetPreset();
+  showControlsTemporarily();
+});
+
+offsetIncBtn?.addEventListener("click", () => {
+  setRenderOffset(renderOffsetMs + 10);
+  showControlsTemporarily();
+});
+
+shareBtn?.addEventListener("click", () => {
+  void copyShareUrl();
   showControlsTemporarily();
 });
 
@@ -3018,6 +3394,11 @@ window.addEventListener("keydown", async (e) => {
   }
   if (isHintEditMode() && !e.repeat && (e.key.toLowerCase() === "d" || e.key.toLowerCase() === "b" || ["1", "2", "3", "4"].includes(e.key))) {
     const tSec = currentHintCaptureSec();
+    const tMs = Math.max(0, Math.round(tSec * 1000));
+    if (hasSectionMarkerNear(tMs, 140)) {
+      applyHintEventOptimistic({ type: "hint/sectionMarker", tSec, payload: { action: "clear" } });
+      queueHintEvent({ type: "hint/sectionMarker", tSec, payload: { action: "clear" } });
+    }
     if (e.key.toLowerCase() === "d") {
       applyHintEventOptimistic({ type: "hint/downbeat", tSec });
       queueHintEvent({ type: "hint/downbeat", tSec });
@@ -3034,6 +3415,22 @@ window.addEventListener("keydown", async (e) => {
       queueHintEvent({ type: "hint/barBeat", tSec, payload: { beatInBar } });
       return;
     }
+  }
+  if (isHintEditMode() && !e.repeat && e.key.toLowerCase() === "s") {
+    e.preventDefault();
+    const tSec = currentHintCaptureSec();
+    const tMs = Math.max(0, Math.round(tSec * 1000));
+    const action = hasSectionMarkerNear(tMs, 140) ? "clear" : "set";
+    applyHintEventOptimistic({ type: "hint/sectionMarker", tSec, payload: { action } });
+    queueHintEvent({ type: "hint/sectionMarker", tSec, payload: { action } });
+    return;
+  }
+  if (isHintEditMode() && !e.repeat && e.key.toLowerCase() === "e") {
+    e.preventDefault();
+    const tSec = currentHintCaptureSec();
+    applyHintEventOptimistic({ type: "hint/endMarker", tSec });
+    queueHintEvent({ type: "hint/endMarker", tSec });
+    return;
   }
   if (e.key.toLowerCase() === "n" || e.key === "." || e.key === ">") {
     e.preventDefault();
@@ -3127,6 +3524,11 @@ window.addEventListener("keydown", async (e) => {
   if (isHintEditMode() && e.key.toLowerCase() === "u" && !e.repeat) {
     e.preventDefault();
     await undoLastHintGroupForCurrentTrack();
+    return;
+  }
+  if (e.key.toLowerCase() === "o" && !e.repeat) {
+    e.preventDefault();
+    cycleOffsetPreset();
     return;
   }
   if (e.code === "BracketLeft") {

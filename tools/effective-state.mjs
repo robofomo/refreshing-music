@@ -2,7 +2,7 @@ import crypto from "node:crypto";
 import fs from "node:fs";
 import path from "node:path";
 
-const KNOWN_HINT_TYPES = new Set(["hint/downbeat", "hint/beat", "hint/barBeat"]);
+const KNOWN_HINT_TYPES = new Set(["hint/downbeat", "hint/beat", "hint/barBeat", "hint/sectionMarker", "hint/endMarker"]);
 
 function toPosix(p) {
   return String(p || "").split(path.sep).join("/");
@@ -403,6 +403,212 @@ function resolveSectionBoundaries({
   };
 }
 
+function resolveEffectiveSectionMarkers({
+  resolvedSections,
+  events,
+  beatsMs,
+  savedMarkersMs
+}) {
+  const defaultsFromSave = uniqSortedMs(
+    (Array.isArray(savedMarkersMs) ? savedMarkersMs : [])
+      .map((n) => Number(n))
+      .filter((n) => Number.isFinite(n) && n > 0)
+  );
+  const defaultsFromSections = uniqSortedMs(
+    (Array.isArray(resolvedSections) ? resolvedSections : [])
+      .map((s) => Number(s?.t0Ms))
+      .filter((n) => Number.isFinite(n) && n > 0)
+  );
+  const defaultsSeed = defaultsFromSave.length ? defaultsFromSave : defaultsFromSections;
+  const defaults = defaultsSeed.map((ms) => (Array.isArray(beatsMs) && beatsMs.length ? nearestBeatMs(ms, beatsMs) : ms));
+  const markers = defaults.map((tMs) => ({ tMs, source: "default" }));
+  const sectionEvents = (Array.isArray(events) ? events : [])
+    .filter((e) => String(e?.type || "") === "hint/sectionMarker")
+    .map((e, idx) => ({
+      idx,
+      atMs: normalizeIsoAt(e?.at),
+      tSec: Number(e?.tSec),
+      action: e?.payload?.action === "clear" ? "clear" : "set"
+    }))
+    .filter((e) => Number.isFinite(e.tSec) && e.tSec >= 0)
+    .sort((a, b) => {
+      if (a.atMs !== b.atMs) return a.atMs - b.atMs;
+      return a.idx - b.idx;
+    });
+  const stepMs = medianStepMs(beatsMs);
+  const tolMs = Math.max(120, Math.round(stepMs * 0.35));
+  for (const ev of sectionEvents) {
+    const rawMs = Math.max(0, Math.round(ev.tSec * 1000));
+    const ms = Array.isArray(beatsMs) && beatsMs.length ? nearestBeatMs(rawMs, beatsMs) : rawMs;
+    let nearestIdx = -1;
+    let nearestDiff = Number.POSITIVE_INFINITY;
+    for (let i = 0; i < markers.length; i += 1) {
+      const d = Math.abs(Number(markers[i].tMs) - ms);
+      if (d < nearestDiff) {
+        nearestDiff = d;
+        nearestIdx = i;
+      }
+    }
+    if (ev.action === "clear") {
+      if (nearestIdx >= 0 && nearestDiff <= tolMs) markers.splice(nearestIdx, 1);
+      continue;
+    }
+    if (nearestIdx >= 0 && nearestDiff <= tolMs) {
+      markers[nearestIdx] = { tMs: ms, source: "hint" };
+    } else {
+      markers.push({ tMs: ms, source: "hint" });
+    }
+  }
+  return markers
+    .map((m) => ({
+      tMs: Math.max(0, Math.round(Number(m?.tMs) || 0)),
+      source: m?.source === "hint" ? "hint" : "default"
+    }))
+    .filter((m) => Number.isFinite(m.tMs))
+    .sort((a, b) => a.tMs - b.tMs);
+}
+
+function overlapMs(a0, a1, b0, b1) {
+  const s = Math.max(Number(a0) || 0, Number(b0) || 0);
+  const e = Math.min(Number(a1) || 0, Number(b1) || 0);
+  return Math.max(0, e - s);
+}
+
+function suffixAlpha(n) {
+  const i = Math.max(0, Number(n) || 0);
+  const code = "a".charCodeAt(0) + (i % 26);
+  return String.fromCharCode(code);
+}
+
+function resolveSectionsFromMarkers({
+  sectionMarkers,
+  canonicalSections,
+  trackEndMs,
+  preferMarkers
+}) {
+  const canon = (Array.isArray(canonicalSections) ? canonicalSections : [])
+    .map((s, i) => ({
+      idx: i,
+      id: String(s?.id || `section-${i + 1}`),
+      labelRaw: s?.labelRaw,
+      t0Ms: Math.max(0, Math.round(Number(s?.t0Ms) || 0)),
+      t1Ms: Math.max(0, Math.round(Number(s?.t1Ms) || 0))
+    }))
+    .filter((s) => s.t1Ms > s.t0Ms);
+  const markerRows = Array.isArray(sectionMarkers) ? sectionMarkers : [];
+  const hasHintMarkers = markerRows.some((m) => String(m?.source || "") === "hint");
+  if (!hasHintMarkers && !preferMarkers && canon.length) {
+    return { sections: canon.map((s) => ({ id: s.id, labelRaw: s.labelRaw, t0Ms: s.t0Ms, t1Ms: s.t1Ms, source: "lyric-resolved" })), method: "downbeat+lyrics", splitCount: 0, combinedCount: 0 };
+  }
+  const markerMs = uniqSortedMs(
+    markerRows
+      .map((m) => Number(m?.tMs))
+      .filter((n) => Number.isFinite(n) && n > 0)
+  );
+  if (!markerMs.length && canon.length) {
+    return { sections: canon.map((s) => ({ id: s.id, labelRaw: s.labelRaw, t0Ms: s.t0Ms, t1Ms: s.t1Ms, source: "lyric-resolved" })), method: "downbeat+lyrics", splitCount: 0, combinedCount: 0 };
+  }
+  if (!markerMs.length && !canon.length) {
+    return { sections: [], method: "none", splitCount: 0, combinedCount: 0 };
+  }
+
+  const endMs = Math.max(
+    Math.round(Number(trackEndMs) || 0),
+    canon.length ? canon[canon.length - 1].t1Ms : 0,
+    markerMs[markerMs.length - 1] + 1000
+  );
+  const boundaries = uniqSortedMs([0, ...markerMs.filter((m) => m < endMs), endMs]);
+  const windows = [];
+  for (let i = 0; i < boundaries.length - 1; i += 1) {
+    const t0Ms = boundaries[i];
+    const t1Ms = boundaries[i + 1];
+    if (t1Ms - t0Ms >= 120) windows.push({ t0Ms, t1Ms, idx: i });
+  }
+  if (!windows.length) {
+    if (canon.length) return { sections: canon.map((s) => ({ id: s.id, labelRaw: s.labelRaw, t0Ms: s.t0Ms, t1Ms: s.t1Ms, source: "lyric-resolved" })), method: "downbeat+lyrics", splitCount: 0, combinedCount: 0 };
+    return { sections: [], method: "none", splitCount: 0, combinedCount: 0 };
+  }
+
+  if (!canon.length) {
+    return {
+      sections: windows.map((w, i) => ({
+        id: `section-${i + 1}`,
+        labelRaw: "",
+        t0Ms: w.t0Ms,
+        t1Ms: w.t1Ms,
+        source: "marker"
+      })),
+      method: "markers-only",
+      splitCount: 0,
+      combinedCount: 0
+    };
+  }
+
+  const assigned = [];
+  let prevCanonIdx = 0;
+  let combinedCount = 0;
+  for (const w of windows) {
+    let bestIdx = prevCanonIdx;
+    let bestScore = Number.NEGATIVE_INFINITY;
+    for (let ci = prevCanonIdx; ci < canon.length; ci += 1) {
+      const c = canon[ci];
+      const ov = overlapMs(w.t0Ms, w.t1Ms, c.t0Ms, c.t1Ms);
+      const centerW = (w.t0Ms + w.t1Ms) / 2;
+      const centerC = (c.t0Ms + c.t1Ms) / 2;
+      const centerPenalty = Math.abs(centerW - centerC) * 0.01;
+      const score = ov - centerPenalty;
+      if (score > bestScore) {
+        bestScore = score;
+        bestIdx = ci;
+      }
+    }
+    prevCanonIdx = bestIdx;
+    const c = canon[bestIdx];
+    const combinedFrom = canon
+      .filter((x) => overlapMs(w.t0Ms, w.t1Ms, x.t0Ms, x.t1Ms) >= Math.max(400, (w.t1Ms - w.t0Ms) * 0.2))
+      .map((x) => x.id);
+    if (combinedFrom.length > 1) combinedCount += 1;
+    assigned.push({
+      ...w,
+      canonIdx: bestIdx,
+      baseId: c.id,
+      labelRaw: c.labelRaw,
+      combinedFrom
+    });
+  }
+
+  const byBase = new Map();
+  for (const row of assigned) {
+    const k = String(row.baseId);
+    byBase.set(k, (byBase.get(k) || 0) + 1);
+  }
+  const seen = new Map();
+  let splitCount = 0;
+  const out = assigned.map((row) => {
+    const total = byBase.get(String(row.baseId)) || 1;
+    const idx = seen.get(String(row.baseId)) || 0;
+    seen.set(String(row.baseId), idx + 1);
+    const isSplit = total > 1;
+    if (isSplit) splitCount += 1;
+    const id = isSplit ? `${row.baseId}-${suffixAlpha(idx)}` : row.baseId;
+    return {
+      id,
+      baseId: row.baseId,
+      labelRaw: row.labelRaw,
+      t0Ms: row.t0Ms,
+      t1Ms: row.t1Ms,
+      source: "marker",
+      combinedFrom: row.combinedFrom.length > 1 ? row.combinedFrom : undefined
+    };
+  });
+  return {
+    sections: out,
+    method: "markers+lyrics-label",
+    splitCount,
+    combinedCount
+  };
+}
+
 function canonicalizeBarHintsByMeasure(rawHintEvents, tempoMs, anchorDownbeatMs) {
   const barHints = rawHintEvents
     .filter((h) => h.type === "hint/barBeat")
@@ -627,8 +833,33 @@ function hintOverlaysFromEvents(events) {
     };
     overlays.push(row);
   }
-  overlays.sort((a, b) => a.tSec - b.tSec);
+  overlays.sort((a, b) => {
+    const atA = normalizeIsoAt(a.at);
+    const atB = normalizeIsoAt(b.at);
+    if (atA !== atB) return atA - atB;
+    return a.tSec - b.tSec;
+  });
   return overlays;
+}
+
+function resolveEndMarkerMs(events, beatsMs) {
+  const rows = (Array.isArray(events) ? events : [])
+    .filter((e) => String(e?.type || "") === "hint/endMarker")
+    .map((e, idx) => ({
+      idx,
+      atMs: normalizeIsoAt(e?.at),
+      tSec: Number(e?.tSec)
+    }))
+    .filter((e) => Number.isFinite(e.tSec) && e.tSec >= 0)
+    .sort((a, b) => {
+      if (a.atMs !== b.atMs) return a.atMs - b.atMs;
+      return a.idx - b.idx;
+    });
+  if (!rows.length) return 0;
+  const last = rows[rows.length - 1];
+  const rawMs = Math.max(0, Math.round(last.tSec * 1000));
+  if (Array.isArray(beatsMs) && beatsMs.length) return nearestBeatMs(rawMs, beatsMs);
+  return rawMs;
 }
 
 export function reduceEffectiveState({
@@ -638,15 +869,19 @@ export function reduceEffectiveState({
   words,
   events,
   lockedTempoBpm,
-  trackMeta
+  trackMeta,
+  savedSectionMarkersMs
 }) {
   const beatsMs = normalizeMsList(beats?.beatTimesMs);
   const downbeatMs = normalizeMsList(beats?.downbeatTimesMs);
   const rawHintEvents = hintOverlaysFromEvents(events);
-  const rawBarHints = rawHintEvents.filter((h) => h.type === "hint/barBeat");
+  const rhythmHintEvents = rawHintEvents.filter((h) =>
+    h.type === "hint/downbeat" || h.type === "hint/beat" || h.type === "hint/barBeat"
+  );
+  const rawBarHints = rhythmHintEvents.filter((h) => h.type === "hint/barBeat");
   const singleSetHintSnapMode = (() => {
-    if (rawHintEvents.length !== 1) return false;
-    const h = rawHintEvents[0];
+    if (rhythmHintEvents.length !== 1) return false;
+    const h = rhythmHintEvents[0];
     if (h.type === "hint/downbeat") return beatsMs.length > 0;
     if (h.type === "hint/barBeat" && Number(h?.payload?.beatInBar) === 1) return beatsMs.length > 0;
     return false;
@@ -660,12 +895,12 @@ export function reduceEffectiveState({
     if (!at) return best;
     return !best || at > best ? at : best;
   }, "");
-  let establishedTempoMs = deriveTempoFromBarHints(rawHintEvents);
+  let establishedTempoMs = deriveTempoFromBarHints(rhythmHintEvents);
   const lockedTempoMs = Number.isFinite(Number(lockedTempoBpm)) && Number(lockedTempoBpm) > 0
     ? 60000 / Number(lockedTempoBpm)
     : 0;
-  const rawMinMs = rawHintEvents.length ? Math.min(...rawHintEvents.map((h) => Math.max(0, Math.round(Number(h.tSec) * 1000)))) : 0;
-  const rawMaxMs = rawHintEvents.length ? Math.max(...rawHintEvents.map((h) => Math.max(0, Math.round(Number(h.tSec) * 1000)))) : 0;
+  const rawMinMs = rhythmHintEvents.length ? Math.min(...rhythmHintEvents.map((h) => Math.max(0, Math.round(Number(h.tSec) * 1000)))) : 0;
+  const rawMaxMs = rhythmHintEvents.length ? Math.max(...rhythmHintEvents.map((h) => Math.max(0, Math.round(Number(h.tSec) * 1000)))) : 0;
   let tempoMode = rawBarHints.length >= 2 && establishedTempoMs > 0;
   const firstBar = rawBarHints[0];
   let anchorDownbeatMs = 0;
@@ -676,7 +911,7 @@ export function reduceEffectiveState({
     anchorDownbeatMs = Math.round(firstMs - (Math.max(1, Math.min(4, firstBeatInBar || 1)) - 1) * establishedTempoMs);
     if (anchorDownbeatMs < 0) anchorDownbeatMs = 0;
     for (let i = 0; i < 3; i += 1) {
-      canonicalBarHints = canonicalizeBarHintsByMeasure(rawHintEvents, establishedTempoMs, anchorDownbeatMs);
+      canonicalBarHints = canonicalizeBarHintsByMeasure(rhythmHintEvents, establishedTempoMs, anchorDownbeatMs);
       if (canonicalBarHints.length >= 2) {
         const refined = deriveTempoFromCanonicalBarHints(canonicalBarHints);
         if (refined > 0) establishedTempoMs = refined;
@@ -687,7 +922,7 @@ export function reduceEffectiveState({
         if (anchorDownbeatMs < 0) anchorDownbeatMs = 0;
       }
     }
-    canonicalBarHints = canonicalizeBarHintsByMeasure(rawHintEvents, establishedTempoMs, anchorDownbeatMs);
+    canonicalBarHints = canonicalizeBarHintsByMeasure(rhythmHintEvents, establishedTempoMs, anchorDownbeatMs);
     tempoMode = canonicalBarHints.length >= 2 && establishedTempoMs > 0;
   }
   if (tempoMode && lockedTempoMs > 0 && establishedTempoMs > 0) {
@@ -697,7 +932,7 @@ export function reduceEffectiveState({
     }
   }
 
-  for (const h of rawHintEvents) {
+  for (const h of rhythmHintEvents) {
     if (h.type === "hint/barBeat" && tempoMode) continue;
     const rawMs = Math.max(0, Math.round(Number(h.tSec) * 1000));
     let ms = rawMs;
@@ -781,7 +1016,7 @@ export function reduceEffectiveState({
       });
       if (hasStructuredMeasureHints && beatsMs.length > 0) {
         const rawHintWindows = clusterHintWindowsMs(resolvedBarHints, establishedTempoMs);
-        const setTimes = setHintTimesMs(rawHintEvents);
+        const setTimes = setHintTimesMs(rhythmHintEvents);
         tempoOverrideWindows = extendWindowsToNextSet(rawHintWindows, setTimes, Math.max(Math.max(0, rangeMin), rangeMax));
         aiReferenceBeats = subdivisionFactor > 1
           ? primaryAiBeatsAgainstGrid(beatsMs, grid, establishedTempoMs)
@@ -817,6 +1052,11 @@ export function reduceEffectiveState({
         fusionWindows = [];
       }
     }
+  }
+  const endMarkerMs = resolveEndMarkerMs(rawHintEvents, effectiveBeats);
+  if (endMarkerMs > 0) {
+    effectiveBeats = effectiveBeats.filter((ms) => ms <= endMarkerMs);
+    aiReferenceBeats = aiReferenceBeats.filter((ms) => ms <= endMarkerMs);
   }
   const controlEvents = [];
   for (const h of hintEvents) {
@@ -890,7 +1130,7 @@ export function reduceEffectiveState({
   const effectiveDownbeats = effectiveBeats.filter((_, i) => downbeatMask[i]);
   const survivingHintDownbeats = uniqSortedMs(explicitSetDownbeats);
   const activeDownbeatAnchors = survivingHintDownbeats.map((ms) => ({ ms, beatInBar: 1 }));
-  const hasUserHints = hintEvents.length > 0;
+  const hasUserHints = rawHintEvents.length > 0;
   const explicitHintBeatIdxSet = new Set();
   for (const h of hintEvents) {
     if (!(h.type === "hint/beat" || h.type === "hint/downbeat" || h.type === "hint/barBeat")) continue;
@@ -975,13 +1215,14 @@ export function reduceEffectiveState({
       wordsCount: Array.isArray(words?.words) ? words.words.length : 0
     },
     hints: {
-      eventsCount: hintEvents.length,
+      eventsCount: rawHintEvents.length,
       lastHintAt: lastHintAt || "",
       downbeatAnchorsCount: activeDownbeatAnchors.length,
       establishedTempoMs: establishedTempoMs || 0,
       subdivisionFactor,
       lockedTempoBpm: Number.isFinite(Number(lockedTempoBpm)) ? Number(lockedTempoBpm) : 0,
       beatFusionMode,
+      endMarkerSec: endMarkerMs > 0 ? endMarkerMs / 1000 : 0,
       sectionBoundaryResolver: null,
       fusionWindowsSec: fusionWindows.map((w) => ({
         t0Sec: Number(w.startMs) / 1000,
@@ -993,12 +1234,13 @@ export function reduceEffectiveState({
     },
     effective: {
       beatsMs: effectiveBeats,
+      endMarkerMs: endMarkerMs > 0 ? endMarkerMs : undefined,
       downbeatTimesMs: effectiveDownbeats,
       beatMarkers,
       downbeatMarkers,
       aiDownbeatMarkers
     },
-    overlays: hintEvents
+    overlays: rawHintEvents
   };
 
   const sectionResolution = resolveSectionBoundaries({
@@ -1010,12 +1252,43 @@ export function reduceEffectiveState({
     lyricLines: trackMeta?.timing?.lyricsLines || [],
     words: Array.isArray(trackMeta?.timing?.words) ? trackMeta.timing.words : (Array.isArray(words?.words) ? words.words : [])
   });
-  if (sectionResolution.sections.length) {
-    effective.effective.sections = sectionResolution.sections;
+  const sectionMarkers = resolveEffectiveSectionMarkers({
+    resolvedSections: sectionResolution.sections,
+    events: rawHintEvents,
+    beatsMs: effectiveBeats,
+    savedMarkersMs: savedSectionMarkersMs
+  });
+  const lyricWordEndMs = (Array.isArray(trackMeta?.timing?.words) ? trackMeta.timing.words : (Array.isArray(words?.words) ? words.words : []))
+    .map((w) => Number(w?.t1Ms))
+    .filter((n) => Number.isFinite(n))
+    .map((n) => Math.max(0, Math.round(n)));
+  const lyricLineEndMs = (Array.isArray(trackMeta?.timing?.lyricsLines) ? trackMeta.timing.lyricsLines : [])
+    .map((l) => Number(l?.t1Ms))
+    .filter((n) => Number.isFinite(n))
+    .map((n) => Math.max(0, Math.round(n)));
+  const trackEndMs = Math.max(
+    0,
+    endMarkerMs > 0 ? endMarkerMs : 0,
+    effectiveBeats.length ? effectiveBeats[effectiveBeats.length - 1] : 0,
+    lyricWordEndMs.length ? lyricWordEndMs[lyricWordEndMs.length - 1] : 0,
+    lyricLineEndMs.length ? lyricLineEndMs[lyricLineEndMs.length - 1] : 0,
+    sectionResolution.sections.length ? Number(sectionResolution.sections[sectionResolution.sections.length - 1]?.t1Ms || 0) : 0
+  );
+  const markerSections = resolveSectionsFromMarkers({
+    sectionMarkers,
+    canonicalSections: sectionResolution.sections,
+    trackEndMs,
+    preferMarkers: Array.isArray(savedSectionMarkersMs) && savedSectionMarkersMs.length > 0
+  });
+  effective.effective.sectionMarkers = sectionMarkers;
+  if (markerSections.sections.length || sectionResolution.sections.length) {
+    effective.effective.sections = markerSections.sections.length ? markerSections.sections : sectionResolution.sections;
     effective.hints.sectionBoundaryResolver = {
-      method: sectionResolution.method,
+      method: markerSections.method || sectionResolution.method,
       adjusted: sectionResolution.adjusted,
-      avgSnapMs: sectionResolution.avgSnapMs
+      avgSnapMs: sectionResolution.avgSnapMs,
+      splitCount: Number(markerSections.splitCount || 0),
+      combinedCount: Number(markerSections.combinedCount || 0)
     };
   }
 
@@ -1039,6 +1312,7 @@ export function reduceTrackToEffective({
   const beatsPath = path.join(assetDirAbs, "beats.json");
   const wordsPath = path.join(assetDirAbs, "words.json");
   const eventsPath = path.join(assetDirAbs, "events.jsonl");
+  const sectionSavePath = path.join(assetDirAbs, "section-markers.save.json");
   const effectivePath = path.join(assetDirAbs, "effective.json");
   const tracksRoot = path.join(path.resolve(repoRoot || "."), "tracks");
   const trackPath = trackId ? path.join(tracksRoot, `${trackId}.track.json`) : "";
@@ -1047,7 +1321,23 @@ export function reduceTrackToEffective({
   const beats = readJsonIfExists(beatsPath) || {};
   const words = readJsonIfExists(wordsPath) || {};
   const events = readEventsJsonl(eventsPath);
-  const reduced = reduceEffectiveState({ trackId, workId, beats, words, events, lockedTempoBpm, trackMeta });
+  const sectionSave = readJsonIfExists(sectionSavePath) || {};
+  const savedSectionMarkersMs = Array.isArray(sectionSave?.markers)
+    ? sectionSave.markers
+      .map((m) => Number.isFinite(Number(m?.rawMs)) ? Number(m.rawMs) : Number(m?.snappedToCurrentDownbeatMs))
+      .filter((n) => Number.isFinite(n) && n > 0)
+      .map((n) => Math.max(0, Math.round(n)))
+    : [];
+  const reduced = reduceEffectiveState({
+    trackId,
+    workId,
+    beats,
+    words,
+    events,
+    lockedTempoBpm,
+    trackMeta,
+    savedSectionMarkersMs
+  });
   writeJson(effectivePath, reduced.effective);
 
   if (trackId && fs.existsSync(trackPath)) {

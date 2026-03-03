@@ -148,6 +148,36 @@ type ViewerSignalBus = {
     high: number;
     onsetScore: number;
     onsetPulse: number;
+    vocalsActive: number;
+    sources: {
+      master: {
+        ampFast: number;
+        ampSlow: number;
+        low: number;
+        mid: number;
+        high: number;
+        onsetScore: number;
+        onsetPulse: number;
+      };
+      backing: {
+        ampFast: number;
+        ampSlow: number;
+        low: number;
+        mid: number;
+        high: number;
+        onsetScore: number;
+        onsetPulse: number;
+      };
+      vocals: {
+        ampFast: number;
+        ampSlow: number;
+        low: number;
+        mid: number;
+        high: number;
+        onsetScore: number;
+        onsetPulse: number;
+      };
+    };
   };
 };
 
@@ -264,17 +294,31 @@ seek.step = "1";
 
 let audioCtx: AudioContext | null = null;
 let analyser: AnalyserNode | null = null;
+let backingAnalyser: AnalyserNode | null = null;
+let vocalsAnalyser: AnalyserNode | null = null;
 let masterGain: GainNode | null = null;
 let primaryGain: GainNode | null = null;
 let vocalsGain: GainNode | null = null;
 let audioData: Uint8Array<ArrayBuffer> | null = null;
 let audioFreqData: Uint8Array<ArrayBuffer> | null = null;
-let reactiveAmpFast = 0;
-let reactiveAmpSlow = 0;
-let reactiveOnsetScore = 0;
-let reactiveOnsetPulse = 0;
-let reactiveLastOnsetMs = -1e9;
-let reactivePrevSpectrum: number[] = [];
+let backingData: Uint8Array<ArrayBuffer> | null = null;
+let backingFreqData: Uint8Array<ArrayBuffer> | null = null;
+let vocalsData: Uint8Array<ArrayBuffer> | null = null;
+let vocalsFreqData: Uint8Array<ArrayBuffer> | null = null;
+type ReactiveState = {
+  ampFast: number;
+  ampSlow: number;
+  onsetScore: number;
+  onsetPulse: number;
+  lastOnsetMs: number;
+  prevSpectrum: number[];
+};
+function makeReactiveState(): ReactiveState {
+  return { ampFast: 0, ampSlow: 0, onsetScore: 0, onsetPulse: 0, lastOnsetMs: -1e9, prevSpectrum: [] };
+}
+let reactiveMaster = makeReactiveState();
+let reactiveBacking = makeReactiveState();
+let reactiveVocals = makeReactiveState();
 const DEBUG_AUDIO = false;
 let lastDebugLogTs = 0;
 let lowAmpSinceMs = 0;
@@ -289,7 +333,7 @@ const engine = createEngine({
   canvas,
   dpr: Math.max(1, Math.min(window.devicePixelRatio || 1, 2)),
   getTimeState: () => ({ tMs: audio.currentTime * 1000 }),
-  getAudioState: () => ({ amp: reactiveAmpFast, paused: audio.paused })
+  getAudioState: () => ({ amp: reactiveMaster.ampFast, paused: audio.paused })
 });
 
 function mulberry32(a: number) {
@@ -1567,12 +1611,9 @@ function isAtTrackEnd() {
 function resetAmpHistory(reason: string) {
   ampHistory.length = 0;
   lowAmpSinceMs = 0;
-  reactiveAmpFast = 0;
-  reactiveAmpSlow = 0;
-  reactiveOnsetScore = 0;
-  reactiveOnsetPulse = 0;
-  reactiveLastOnsetMs = -1e9;
-  reactivePrevSpectrum = [];
+  reactiveMaster = makeReactiveState();
+  reactiveBacking = makeReactiveState();
+  reactiveVocals = makeReactiveState();
   logAudioState("amp-history-reset", { reason });
 }
 
@@ -1707,9 +1748,17 @@ function ensureAudioGraph() {
   }
   audioCtx = new AudioContext();
   analyser = audioCtx.createAnalyser();
+  backingAnalyser = audioCtx.createAnalyser();
+  vocalsAnalyser = audioCtx.createAnalyser();
   analyser.fftSize = 1024;
+  backingAnalyser.fftSize = 1024;
+  vocalsAnalyser.fftSize = 1024;
   audioData = new Uint8Array(new ArrayBuffer(analyser.fftSize));
   audioFreqData = new Uint8Array(new ArrayBuffer(analyser.frequencyBinCount));
+  backingData = new Uint8Array(new ArrayBuffer(backingAnalyser.fftSize));
+  backingFreqData = new Uint8Array(new ArrayBuffer(backingAnalyser.frequencyBinCount));
+  vocalsData = new Uint8Array(new ArrayBuffer(vocalsAnalyser.fftSize));
+  vocalsFreqData = new Uint8Array(new ArrayBuffer(vocalsAnalyser.frequencyBinCount));
 
   masterGain = audioCtx.createGain();
   primaryGain = audioCtx.createGain();
@@ -1721,6 +1770,8 @@ function ensureAudioGraph() {
   vocalsSrc.connect(vocalsGain);
   primaryGain.connect(masterGain);
   vocalsGain.connect(masterGain);
+  primaryGain.connect(backingAnalyser);
+  vocalsGain.connect(vocalsAnalyser);
   masterGain.connect(analyser);
   analyser.connect(audioCtx.destination);
   applyMixerGains();
@@ -1741,73 +1792,115 @@ function meanBand(data: Uint8Array<ArrayBuffer>, from: number, to: number) {
   return sum / Math.max(1, hi - lo);
 }
 
-function sampleReactiveAudio(tAudioMs: number) {
-  if (!analyser || !audioData || !audioFreqData) {
+function sampleReactiveFromAnalyser(
+  analyserNode: AnalyserNode | null,
+  timeData: Uint8Array<ArrayBuffer> | null,
+  freqData: Uint8Array<ArrayBuffer> | null,
+  state: ReactiveState,
+  tAudioMs: number
+) {
+  if (!analyserNode || !timeData || !freqData) {
     return {
       ampRms: 0,
-      ampFast: reactiveAmpFast,
-      ampSlow: reactiveAmpSlow,
+      ampFast: state.ampFast,
+      ampSlow: state.ampSlow,
       low: 0,
       mid: 0,
       high: 0,
-      onsetScore: reactiveOnsetScore,
-      onsetPulse: reactiveOnsetPulse
+      onsetScore: state.onsetScore,
+      onsetPulse: state.onsetPulse
     };
   }
 
-  analyser.getByteTimeDomainData(audioData);
-  analyser.getByteFrequencyData(audioFreqData);
+  analyserNode.getByteTimeDomainData(timeData);
+  analyserNode.getByteFrequencyData(freqData);
 
   let sum = 0;
-  for (const v of audioData) {
+  for (const v of timeData) {
     const n = (v - 128) / 128;
     sum += n * n;
   }
-  const ampRms = Math.sqrt(sum / audioData.length);
+  const ampRms = Math.sqrt(sum / timeData.length);
 
-  const bins = audioFreqData.length;
+  const bins = freqData.length;
   const lowEnd = Math.max(2, Math.floor(bins * 0.08));
   const midEnd = Math.max(lowEnd + 2, Math.floor(bins * 0.35));
-  const low = meanBand(audioFreqData, 0, lowEnd);
-  const mid = meanBand(audioFreqData, lowEnd, midEnd);
-  const high = meanBand(audioFreqData, midEnd, bins);
+  const low = meanBand(freqData, 0, lowEnd);
+  const mid = meanBand(freqData, lowEnd, midEnd);
+  const high = meanBand(freqData, midEnd, bins);
 
-  if (!reactivePrevSpectrum.length || reactivePrevSpectrum.length !== bins) {
-    reactivePrevSpectrum = Array.from(audioFreqData, (v) => v / 255);
+  if (!state.prevSpectrum.length || state.prevSpectrum.length !== bins) {
+    state.prevSpectrum = Array.from(freqData, (v) => v / 255);
   }
   let flux = 0;
   for (let i = 0; i < bins; i += 1) {
-    const cur = audioFreqData[i] / 255;
-    const prev = reactivePrevSpectrum[i] ?? cur;
+    const cur = freqData[i] / 255;
+    const prev = state.prevSpectrum[i] ?? cur;
     const d = cur - prev;
     if (d > 0) flux += d;
-    reactivePrevSpectrum[i] = cur;
+    state.prevSpectrum[i] = cur;
   }
   const onsetScoreRaw = flux / Math.max(1, bins);
+  state.ampFast += (ampRms - state.ampFast) * 0.32;
+  state.ampSlow += (ampRms - state.ampSlow) * 0.06;
+  state.onsetScore += (onsetScoreRaw - state.onsetScore) * 0.24;
 
-  reactiveAmpFast += (ampRms - reactiveAmpFast) * 0.32;
-  reactiveAmpSlow += (ampRms - reactiveAmpSlow) * 0.06;
-  reactiveOnsetScore += (onsetScoreRaw - reactiveOnsetScore) * 0.24;
-
-  const threshold = reactiveOnsetScore * 1.18 + 0.0045;
+  const threshold = state.onsetScore * 1.18 + 0.0045;
   const refractoryMs = 120;
-  const canTrigger = tAudioMs - reactiveLastOnsetMs >= refractoryMs;
+  const canTrigger = tAudioMs - state.lastOnsetMs >= refractoryMs;
   if (canTrigger && onsetScoreRaw > threshold) {
-    reactiveOnsetPulse = 1;
-    reactiveLastOnsetMs = tAudioMs;
+    state.onsetPulse = 1;
+    state.lastOnsetMs = tAudioMs;
   } else {
-    reactiveOnsetPulse *= 0.84;
+    state.onsetPulse *= 0.84;
   }
 
   return {
     ampRms,
-    ampFast: reactiveAmpFast,
-    ampSlow: reactiveAmpSlow,
+    ampFast: state.ampFast,
+    ampSlow: state.ampSlow,
     low,
     mid,
     high,
-    onsetScore: reactiveOnsetScore,
-    onsetPulse: reactiveOnsetPulse
+    onsetScore: state.onsetScore,
+    onsetPulse: state.onsetPulse
+  };
+}
+
+function vocalsWordGateAt(tMs: number) {
+  const words = Array.isArray(track?.timing?.words) ? track.timing.words : [];
+  if (!words.length) return 0;
+  let best = 0;
+  for (const w of words) {
+    const t0 = Number(w?.t0Ms);
+    const t1 = Number(w?.t1Ms);
+    if (!Number.isFinite(t0)) continue;
+    const end = Number.isFinite(t1) ? t1 : t0 + 180;
+    const open = t0 - 1200;
+    const close = end + 900;
+    if (tMs < open || tMs > close) continue;
+    if (tMs >= t0 && tMs <= end) return 1;
+    const u = tMs < t0 ? (tMs - open) / Math.max(1, t0 - open) : (close - tMs) / Math.max(1, close - end);
+    if (u > best) best = u;
+  }
+  return Math.max(0, Math.min(1, best));
+}
+
+function sampleReactiveAudio(tAudioMs: number) {
+  const master = sampleReactiveFromAnalyser(analyser, audioData, audioFreqData, reactiveMaster, tAudioMs);
+  const backing = sampleReactiveFromAnalyser(backingAnalyser, backingData, backingFreqData, reactiveBacking, tAudioMs);
+  const vocalsRaw = sampleReactiveFromAnalyser(vocalsAnalyser, vocalsData, vocalsFreqData, reactiveVocals, tAudioMs);
+  const wordGate = vocalsWordGateAt(tAudioMs);
+  const vocalEnergyGate = Math.max(
+    0,
+    Math.min(1, (Number(vocalsRaw.ampFast) - 0.012) / 0.08)
+  );
+  const vocalsActive = stemsActive() ? Math.max(wordGate * 0.9, vocalEnergyGate * 0.65) : 0;
+  return {
+    master,
+    backing: stemsActive() ? backing : master,
+    vocals: stemsActive() ? vocalsRaw : { ...master, ampFast: 0, ampSlow: 0, low: 0, mid: 0, high: 0, onsetScore: 0, onsetPulse: 0, ampRms: 0 },
+    vocalsActive
   };
 }
 
@@ -2287,6 +2380,36 @@ function buildSignalBus(input: {
     high: number;
     onsetScore: number;
     onsetPulse: number;
+    vocalsActive: number;
+    sources: {
+      master: {
+        ampFast: number;
+        ampSlow: number;
+        low: number;
+        mid: number;
+        high: number;
+        onsetScore: number;
+        onsetPulse: number;
+      };
+      backing: {
+        ampFast: number;
+        ampSlow: number;
+        low: number;
+        mid: number;
+        high: number;
+        onsetScore: number;
+        onsetPulse: number;
+      };
+      vocals: {
+        ampFast: number;
+        ampSlow: number;
+        low: number;
+        mid: number;
+        high: number;
+        onsetScore: number;
+        onsetPulse: number;
+      };
+    };
   };
   sectionId: string;
   sectionType: string;
@@ -2335,7 +2458,9 @@ function buildSignalBus(input: {
       mid: input.reactive.mid,
       high: input.reactive.high,
       onsetScore: input.reactive.onsetScore,
-      onsetPulse: input.reactive.onsetPulse
+      onsetPulse: input.reactive.onsetPulse,
+      vocalsActive: input.reactive.vocalsActive,
+      sources: input.reactive.sources
     }
   };
 }
@@ -2596,6 +2721,31 @@ function randomSceneLayersForSection(sectionId: string, options?: { allowManual?
   })();
   const ribbonAnim = pickWeighted([{ value: "flow", w: 3 }, { value: "pulse-rotate", w: 3 }, { value: "drift", w: 2 }]);
   const rosetteAnim = pickWeighted([{ value: "step-rotate", w: 3 }, { value: "counterspin", w: 3 }, { value: "twist", w: 2 }]);
+  const ribbonSignalSource = pickWeighted([
+    { value: "auto", w: 5 },
+    { value: "backing", w: 3 },
+    { value: "master", w: 2 },
+    { value: "vocals", w: sectionType === "chorus" || sectionType === "bridge" ? 2 : 1 }
+  ]);
+  const rosetteSignalSource = pickWeighted([
+    { value: "backing", w: 4 },
+    { value: "auto", w: 4 },
+    { value: "master", w: 2 },
+    { value: "vocals", w: sectionType === "chorus" ? 2 : 1 }
+  ]);
+  const particleSignalSource = pickWeighted([
+    { value: "split", w: 5 },
+    { value: "backing", w: 3 },
+    { value: "auto", w: 3 },
+    { value: "master", w: 2 },
+    { value: "vocals", w: sectionType === "chorus" || sectionType === "bridge" ? 2 : 1 }
+  ]);
+  const wordSignalSource = pickWeighted([
+    { value: "auto", w: 5 },
+    { value: "vocals", w: 4 },
+    { value: "master", w: 1 },
+    { value: "backing", w: 1 }
+  ]);
 
   const bgPick = Math.floor(layoutRng() * 5);
   const bgLayer = (() => {
@@ -2658,12 +2808,12 @@ function randomSceneLayersForSection(sectionId: string, options?: { allowManual?
   })();
 
   const fgPool = [
-    { id: "particles", type: "fg.particles", params: { count: 90 + Math.floor(paramRng() * 130), sizeRange: [1.2 + paramRng() * 1.1, 2.6 + paramRng() * 2.4], speed: 0.25 + paramRng() * 0.55, curl: 0.35 + paramRng() * 0.85, opacity: 0.48 + paramRng() * 0.35 } },
+    { id: "particles", type: "fg.particles", params: { count: 90 + Math.floor(paramRng() * 130), sizeRange: [1.2 + paramRng() * 1.1, 2.6 + paramRng() * 2.4], speed: 0.25 + paramRng() * 0.55, curl: 0.35 + paramRng() * 0.85, opacity: 0.48 + paramRng() * 0.35, signalSource: particleSignalSource, splitVocalsRatio: 0.2 + paramRng() * 0.45 } },
     { id: "constellation", type: "fg.constellationLinks", params: { count: 16 + Math.floor(paramRng() * 30), linkDistPx: 72 + Math.floor(paramRng() * 120), dotRadiusPx: 0.8 + paramRng() * 1.8, lineWidthPx: 0.5 + paramRng() * 1.1 } },
     { id: "shock-rings", type: "fg.shockRings", params: { ringCount: 4 + Math.floor(paramRng() * 8), speedHz: 0.22 + paramRng() * 0.4, spreadPx: 150 + Math.floor(paramRng() * 420), thicknessPx: 0.8 + paramRng() * 1.8 } },
     { id: "pulse", type: "shape.circlePulse", params: { ringCount: 5 + Math.floor(paramRng() * 8), radiusPx: 70 + Math.floor(paramRng() * 70), alpha: 0.14 + paramRng() * 0.2 } },
-    { id: "ribbon", type: "polyline.orbitRibbon", params: { points: 44 + Math.floor(paramRng() * 80), radiusPx: 130 + Math.floor(paramRng() * 90), thicknessPx: 1 + paramRng() * 2.3, phaseHz: 0.04 + paramRng() * 0.1, animationMode: ribbonAnim, motionProfile: ribbonProfile } },
-    { id: "rosette", type: "curve.rosetteSpiral", params: { mode: ["rosette", "hybrid", "star"][Math.floor(paramRng() * 3)], steps: 520 + Math.floor(paramRng() * 900), turns: 7 + paramRng() * 10, growth: 2 + paramRng() * 2.2, petalCount: 4 + Math.floor(paramRng() * 6), petalAmp: 12 + Math.floor(paramRng() * 20), spin: 0.08 + paramRng() * 0.12, skip: 1 + Math.floor(paramRng() * 3), alpha: 0.4 + paramRng() * 0.4, lineWidth: 0.7 + paramRng() * 1.2, color: paramRng() < 0.2 ? "black" : "palette", animationMode: rosetteAnim, motionProfile: rosetteProfile } }
+    { id: "ribbon", type: "polyline.orbitRibbon", params: { points: 44 + Math.floor(paramRng() * 80), radiusPx: 130 + Math.floor(paramRng() * 90), thicknessPx: 1 + paramRng() * 2.3, phaseHz: 0.04 + paramRng() * 0.1, animationMode: ribbonAnim, motionProfile: ribbonProfile, signalSource: ribbonSignalSource } },
+    { id: "rosette", type: "curve.rosetteSpiral", params: { mode: ["rosette", "hybrid", "star"][Math.floor(paramRng() * 3)], steps: 520 + Math.floor(paramRng() * 900), turns: 7 + paramRng() * 10, growth: 2 + paramRng() * 2.2, petalCount: 4 + Math.floor(paramRng() * 6), petalAmp: 12 + Math.floor(paramRng() * 20), spin: 0.08 + paramRng() * 0.12, skip: 1 + Math.floor(paramRng() * 3), alpha: 0.4 + paramRng() * 0.4, lineWidth: 0.7 + paramRng() * 1.2, color: paramRng() < 0.2 ? "black" : "palette", animationMode: rosetteAnim, motionProfile: rosetteProfile, signalSource: rosetteSignalSource } }
   ];
   const fgCount = 1 + Math.floor(layoutRng() * 3);
   const fgNodes: any[] = [];
@@ -2680,7 +2830,7 @@ function randomSceneLayersForSection(sectionId: string, options?: { allowManual?
     lyricRoll < 0.28
       ? { id: "echo", type: "text.echoWord", params: { fontPx: 26 + Math.floor(paramRng() * 14), echoCount: 3 + Math.floor(paramRng() * 3), driftPx: 8 + Math.floor(paramRng() * 10) } }
       : lyricRoll < 0.56
-        ? { id: "word-trails", type: "text.wordTrails", params: { fontPx: 40 + Math.floor(paramRng() * 26), trailCount: 3 + Math.floor(paramRng() * 5), driftPx: 10 + Math.floor(paramRng() * 18) } }
+        ? { id: "word-trails", type: "text.wordTrails", params: { fontPx: 40 + Math.floor(paramRng() * 26), trailCount: 3 + Math.floor(paramRng() * 5), driftPx: 10 + Math.floor(paramRng() * 18), signalSource: wordSignalSource } }
         : lyricRoll < 0.8
         ? { id: "karaoke", type: "text.karaoke", params: { mode: "center", fontSizePx: 28 + Math.floor(paramRng() * 8), lineGapPx: 10, opacity: 0.9 } }
         : null;
@@ -3134,7 +3284,7 @@ function render() {
     void resumeAudioContext();
   }
   const reactiveNow = sampleReactiveAudio(tAudioMs);
-  const ampNow = reactiveNow.ampRms;
+  const ampNow = reactiveNow.master.ampRms;
   if (!audio.paused) {
     if (ampNow < 0.004) {
       if (!lowAmpSinceMs) lowAmpSinceMs = tAudioMs;
@@ -3151,8 +3301,9 @@ function render() {
   }
   pushAmplitudeSample(tAudioMs, ampNow);
   const amp = amplitudeAt(tRenderMs, ampNow);
-  const sec = findCurrentSection(tRenderMs);
-  const nextSec = findNextSection(tRenderMs);
+  const sectionClockMs = tAudioMs;
+  const sec = findCurrentSection(sectionClockMs);
+  const nextSec = findNextSection(sectionClockMs);
   const sectionId = sec?.id ?? "";
   const sectionType = classifySection(sectionId || sec?.id || "");
   const nextSectionId = nextSec?.id ?? "";
@@ -3160,7 +3311,7 @@ function render() {
   const nextSectionStartMs = Number.isFinite(Number(nextSec?.t0Ms)) ? Number(nextSec?.t0Ms) : NaN;
   const sectionStartMsRaw = Number(sec?.t0Ms);
   const sectionStartMs = Number.isFinite(sectionStartMsRaw) ? sectionStartMsRaw : 0;
-  const playerVariantIndex = Math.max(0, downbeatCountAt(tRenderMs) - downbeatCountAt(sectionStartMs - 1));
+  const playerVariantIndex = Math.max(0, downbeatCountAt(sectionClockMs) - downbeatCountAt(sectionStartMs - 1));
   const nextPlayerVariantIndex = Number.isFinite(nextSectionStartMs)
     ? Math.max(0, downbeatCountAt(nextSectionStartMs) - downbeatCountAt(nextSectionStartMs - 1))
     : 0;
@@ -3190,9 +3341,17 @@ function render() {
   }
   const durationSec = Number.isFinite(audio.duration) ? Number(audio.duration) : 0;
   const modeRecipe = withModeRecipe(currentRecipe, viewerMode, sectionId, sectionType, playerVariantIndex);
-  const nextModeRecipe = nextSectionId
+  let nextModeRecipe = nextSectionId
     ? withModeRecipe(currentRecipe, viewerMode, nextSectionId, nextSectionType, nextPlayerVariantIndex)
     : null;
+  if (viewerMode === "player" && nextModeRecipe) {
+    const curGraphSig = stableStringify(modeRecipe?.graph?.layers ?? []);
+    const nextGraphSig = stableStringify(nextModeRecipe?.graph?.layers ?? []);
+    if (curGraphSig === nextGraphSig) {
+      // Ensure section transitions stay visually legible when hash picks collide.
+      nextModeRecipe = withModeRecipe(currentRecipe, viewerMode, nextSectionId, nextSectionType, nextPlayerVariantIndex + 1);
+    }
+  }
   if (viewerMode === "player") {
     if (playerLastSectionId && playerLastSectionId !== sectionId) {
       playerLastTransitionLabel = selectTransitionLabel(modeRecipe, playerLastSectionId, sectionId);
@@ -3213,13 +3372,43 @@ function render() {
     durationSec,
     amp,
     reactive: {
-      ampFast: reactiveNow.ampFast,
-      ampSlow: reactiveNow.ampSlow,
-      low: reactiveNow.low,
-      mid: reactiveNow.mid,
-      high: reactiveNow.high,
-      onsetScore: reactiveNow.onsetScore,
-      onsetPulse: reactiveNow.onsetPulse
+      ampFast: reactiveNow.master.ampFast,
+      ampSlow: reactiveNow.master.ampSlow,
+      low: reactiveNow.master.low,
+      mid: reactiveNow.master.mid,
+      high: reactiveNow.master.high,
+      onsetScore: reactiveNow.master.onsetScore,
+      onsetPulse: reactiveNow.master.onsetPulse,
+      vocalsActive: reactiveNow.vocalsActive,
+      sources: {
+        master: {
+          ampFast: reactiveNow.master.ampFast,
+          ampSlow: reactiveNow.master.ampSlow,
+          low: reactiveNow.master.low,
+          mid: reactiveNow.master.mid,
+          high: reactiveNow.master.high,
+          onsetScore: reactiveNow.master.onsetScore,
+          onsetPulse: reactiveNow.master.onsetPulse
+        },
+        backing: {
+          ampFast: reactiveNow.backing.ampFast,
+          ampSlow: reactiveNow.backing.ampSlow,
+          low: reactiveNow.backing.low,
+          mid: reactiveNow.backing.mid,
+          high: reactiveNow.backing.high,
+          onsetScore: reactiveNow.backing.onsetScore,
+          onsetPulse: reactiveNow.backing.onsetPulse
+        },
+        vocals: {
+          ampFast: reactiveNow.vocals.ampFast,
+          ampSlow: reactiveNow.vocals.ampSlow,
+          low: reactiveNow.vocals.low,
+          mid: reactiveNow.vocals.mid,
+          high: reactiveNow.vocals.high,
+          onsetScore: reactiveNow.vocals.onsetScore,
+          onsetPulse: reactiveNow.vocals.onsetPulse
+        }
+      }
     },
     sectionId,
     sectionType,
@@ -3283,7 +3472,7 @@ if (!isSeeking && Number.isFinite(audio.duration) && audio.duration > 0) {
   const rosetteLabDebug = labRosetteDebug();
   const rosetteGraphDebug = graphRosetteDebug(modeRecipe);
   const playerSceneChoice = viewerMode === "player" ? resolvePlayerSceneChoice(sectionId, sectionType, playerVariantIndex) : null;
-  const nextSectionInMs = Number.isFinite(nextSectionStartMs) ? Math.round(nextSectionStartMs - tRenderMs) : NaN;
+  const nextSectionInMs = Number.isFinite(nextSectionStartMs) ? Math.round(nextSectionStartMs - sectionClockMs) : NaN;
   const graphSel = viewerMode === "recipe-view"
     ? resolveGraphSelection(currentRecipe, sectionId)
     : viewerMode === "random-scene"
@@ -3311,7 +3500,7 @@ if (!isSeeking && Number.isFinite(audio.duration) && audio.duration > 0) {
           `sections: ${sectionMarkers.length}`,
           `end: ${endMarkerMs > 0 ? fmtMs(endMarkerMs) : "-"}`,
           `aiDownbeats: ${signalBus.hints.aiDownbeats}`,
-          `reactive: L${signalBus.reactive.low.toFixed(2)} M${signalBus.reactive.mid.toFixed(2)} H${signalBus.reactive.high.toFixed(2)} O${signalBus.reactive.onsetPulse.toFixed(2)}`
+          `reactive: L${signalBus.reactive.low.toFixed(2)} M${signalBus.reactive.mid.toFixed(2)} H${signalBus.reactive.high.toFixed(2)} O${signalBus.reactive.onsetPulse.toFixed(2)} VA${signalBus.reactive.vocalsActive.toFixed(2)}`
         ]
       : []),
     ...(viewerMode === "primitive-lab"

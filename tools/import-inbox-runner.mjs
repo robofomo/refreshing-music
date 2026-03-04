@@ -26,20 +26,22 @@ function parseRunnerArgs(argv) {
   return out;
 }
 
-function toTrackIdCsv(report) {
-  const ids = new Set();
-  for (const g of report?.groups ?? []) {
-    if (g?.status === "imported" && g?.trackId) ids.add(String(g.trackId));
-  }
-  return Array.from(ids).join(",");
-}
-
-function importedTrackIds(report) {
+function processedTrackIds(report) {
   const ids = [];
   for (const g of report?.groups ?? []) {
-    if (g?.status === "imported" && g?.trackId) ids.push(String(g.trackId));
+    const status = String(g?.status ?? "");
+    if (status === "skipped") continue;
+    if (g?.trackId) ids.push(String(g.trackId));
   }
   return ids;
+}
+
+function toTrackIdCsv(report) {
+  const ids = new Set();
+  for (const id of processedTrackIds(report)) {
+    if (id) ids.add(id);
+  }
+  return Array.from(ids).join(",");
 }
 
 function trackNeedsLyricRepair(repoRoot, trackId) {
@@ -67,7 +69,7 @@ function trackNeedsLyricRepair(repoRoot, trackId) {
 
 function findLyricRepairTrackIds(report, repoRoot) {
   const out = [];
-  for (const trackId of importedTrackIds(report)) {
+  for (const trackId of processedTrackIds(report)) {
     if (trackNeedsLyricRepair(repoRoot, trackId)) out.push(trackId);
   }
   return out;

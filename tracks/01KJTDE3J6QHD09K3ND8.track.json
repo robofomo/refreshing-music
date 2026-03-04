@@ -1,0 +1,1095 @@
+{
+  "workId": "proof-by-induction-at-dawn",
+  "trackId": "01KJTDE3J6QHD09K3ND8",
+  "recipeRef": {
+    "albumId": "random",
+    "trackOverrideId": "01KJTDE3J6QHD09K3ND8"
+  },
+  "createdAt": "2026-03-01T00:00:00.000Z",
+  "slug": "proof-by-induction-at-dawn",
+  "title": "Proof by Induction at Dawn",
+  "audio": {
+    "filename": "mix.mp3",
+    "path": "../assets/proof-by-induction-at-dawn/01KJTDE3J6QHD09K3ND8/mix.mp3",
+    "cidOrTx": "",
+    "mime": "audio/mpeg",
+    "bytes": 2275316
+  },
+  "composer": {
+    "rawText": "[Song Title: Proof by Induction at Dawn]\r\n[Style: math rock, interlocking clean electric guitars, tapping harmonics, shifting odd meter drums, punchy bass with counterpoint runs, dynamic stops and starts, clean studio recording, grounded male lead]\r\n[Caption: Counting beats in 7 while the universe counts back.]\r\n[Image: A chalkboard filled with equations morphing into constellations.]\r\n[Refresh Title: Random 6]\r\n[Theme: Random]\r\n[Gradients: 6]\r\n[Rank: 4]\r\n[Title Rarity: 0.65]\r\n[Tempo Lock BPM: 133]\r\n[Created: 2026-03-01]\r\n[Seeds: 615, A:46, B:18, C:52, D:84]\r\n[Perspective: system_voice]\r\n[Concept: From simple axioms and random seeds, complex worlds unfold—deterministic steps dancing with chance.]\r\n[Topic: Complexity & Emergence → simple_rules_deep_worlds]\r\n[Genre Bias: math rock]\r\n[Style Change: Reset]\r\n[Modulation: lift up a whole step into Final Chorus]\r\n[Hook Prominence: medium]\r\n[Deviation: dropout before final chorus]\r\n[Visual Mood: uplifting]\r\n[Visual Motion: high]\r\n[Visual Density: dense]\r\n[Visual Lyric Presence: auto]\r\n[Visual Color Bias: neutral]\r\n[Composer Version: v2.8]\r\n\r\n[Intro]\r\n[angular tapping motif cycling in 7/8 with accents shifting each bar]\r\n[second guitar answers in 5/4 creating polymeter tension]\r\n[bass outlines root–minor third–tritone figure]\r\n[drums enter with tight rim clicks before full kit opens]\r\n\r\n[Fragment A]\r\n[Visual: scene=hold; motion=high; density=normal; focus=rhythm]\r\n[melody leaps in asymmetrical phrases, landing off the downbeat]\r\nOne axiom placed in open air  \r\nA point, a line, a careful stare  \r\n\r\n[Reset]\r\n[abrupt silence, then staccato unison riff in 11/8]\r\n[Style Change: drums halve tempo feel while guitars stay rapid]\r\nZero rolls a silent die  \r\nRandom seed, but laws apply  \r\n\r\n[Fragment B]\r\n[descending contour broken by sudden octave spikes]\r\nIf A implies that B is true  \r\nThen B implies what we must do  \r\n\r\n[Bridge]\r\n[Visual: scene=contrast; motion=medium; density=sparse; focus=melody]\r\n[clean arpeggios with long sustained notes over 4/4 release]\r\nDeterministic gears align  \r\nEach step follows strict design  \r\nYet chaos blooms from simple code  \r\nA branching tree from single node  \r\n\r\n[Final Chorus]\r\n[Key Change: lift up a whole step into Final Chorus]\r\n[anthemic unison hook with syncopated accents in 9/8]\r\nCount the beats and count again  \r\nPrime and pattern, loss and gain  \r\nFlip a coin, but trace the chain  \r\nHidden constants still remain  \r\n\r\n[Ending]\r\n[refrain_tag]\r\nHidden constants still remain",
+    "headerMap": {
+      "Song Title": "Proof by Induction at Dawn",
+      "Style": "math rock, interlocking clean electric guitars, tapping harmonics, shifting odd meter drums, punchy bass with counterpoint runs, dynamic stops and starts, clean studio recording, grounded male lead",
+      "Caption": "Counting beats in 7 while the universe counts back.",
+      "Image": "A chalkboard filled with equations morphing into constellations.",
+      "Refresh Title": "Random 6",
+      "Theme": "Random",
+      "Gradients": "6",
+      "Rank": "4",
+      "Title Rarity": "0.65",
+      "Tempo Lock BPM": "133",
+      "Created": "2026-03-01",
+      "Seeds": "615, A:46, B:18, C:52, D:84",
+      "Perspective": "system_voice",
+      "Concept": "From simple axioms and random seeds, complex worlds unfold—deterministic steps dancing with chance.",
+      "Topic": "Complexity & Emergence → simple_rules_deep_worlds",
+      "Genre Bias": "math rock",
+      "Style Change": "Reset",
+      "Modulation": "lift up a whole step into Final Chorus",
+      "Hook Prominence": "medium",
+      "Deviation": "dropout before final chorus",
+      "Visual Mood": "uplifting",
+      "Visual Motion": "high",
+      "Visual Density": "dense",
+      "Visual Lyric Presence": "auto",
+      "Visual Color Bias": "neutral",
+      "Composer Version": "v2.8"
+    }
+  },
+  "sections": [
+    {
+      "id": "intro-1",
+      "labelRaw": "Intro",
+      "notesRaw": "angular tapping motif cycling in 7/8 with accents shifting each bar\nsecond guitar answers in 5/4 creating polymeter tension\nbass outlines root–minor third–tritone figure\ndrums enter with tight rim clicks before full kit opens"
+    },
+    {
+      "id": "fragment-a-1",
+      "labelRaw": "Fragment A",
+      "notesRaw": "Visual: scene=hold; motion=high; density=normal; focus=rhythm\nmelody leaps in asymmetrical phrases, landing off the downbeat"
+    },
+    {
+      "id": "reset-1",
+      "labelRaw": "Reset",
+      "notesRaw": "abrupt silence, then staccato unison riff in 11/8\nStyle Change: drums halve tempo feel while guitars stay rapid"
+    },
+    {
+      "id": "fragment-b-1",
+      "labelRaw": "Fragment B",
+      "notesRaw": "descending contour broken by sudden octave spikes"
+    },
+    {
+      "id": "bridge-1",
+      "labelRaw": "Bridge",
+      "notesRaw": "Visual: scene=contrast; motion=medium; density=sparse; focus=melody\nclean arpeggios with long sustained notes over 4/4 release"
+    },
+    {
+      "id": "final-chorus-1",
+      "labelRaw": "Final Chorus",
+      "notesRaw": "Key Change: lift up a whole step into Final Chorus\nanthemic unison hook with syncopated accents in 9/8"
+    },
+    {
+      "id": "ending-1",
+      "labelRaw": "Ending",
+      "notesRaw": "refrain_tag"
+    }
+  ],
+  "lyrics": {
+    "rawText": "\nOne axiom placed in open air  \nA point, a line, a careful stare  \n\nZero rolls a silent die  \nRandom seed, but laws apply  \n\nIf A implies that B is true  \nThen B implies what we must do  \n\nDeterministic gears align  \nEach step follows strict design  \nYet chaos blooms from simple code  \nA branching tree from single node  \n\nCount the beats and count again  \nPrime and pattern, loss and gain  \nFlip a coin, but trace the chain  \nHidden constants still remain  \n\nHidden constants still remain"
+  },
+  "visualHints": {
+    "mood": "uplifting",
+    "motion": "high",
+    "density": "dense",
+    "lyricPresence": "auto",
+    "colorBias": "neutral",
+    "sectionFocus": "",
+    "noGo": []
+  },
+  "sourceGroupKey": "loose:proof-by-induction-at-dawn-stems-140bpm",
+  "assetDir": "assets/proof-by-induction-at-dawn/01KJTDE3J6QHD09K3ND8",
+  "createdLocalRaw": "2026-03-01",
+  "createdDateOnly": true,
+  "timing": {
+    "beatsMs": [
+      325,
+      685,
+      1045,
+      1393,
+      1765,
+      2113,
+      2438,
+      2786,
+      3088,
+      3413,
+      3738,
+      4063,
+      4389,
+      4702,
+      5016,
+      5341,
+      5666,
+      5991,
+      6316,
+      6641,
+      6966,
+      7268,
+      7593,
+      7918,
+      8243,
+      8580,
+      8940,
+      9311,
+      9636,
+      9961,
+      10263,
+      10588,
+      10913,
+      11238,
+      11564,
+      11865,
+      12190,
+      12516,
+      12841,
+      13166,
+      13491,
+      13816,
+      14141,
+      14443,
+      14768,
+      15093,
+      15418,
+      15743,
+      16115,
+      16486,
+      16811,
+      17136,
+      17461,
+      17798,
+      18112,
+      18425,
+      18739,
+      19075,
+      19389,
+      19714,
+      20039,
+      20364,
+      20666,
+      20991,
+      21316,
+      21641,
+      21966,
+      22291,
+      22593,
+      22872,
+      23150,
+      23452,
+      23777,
+      24102,
+      24427,
+      24729,
+      25054,
+      25379,
+      25704,
+      26018,
+      26285,
+      26564,
+      26889,
+      27214,
+      27516,
+      27841,
+      28166,
+      28491,
+      28816,
+      29141,
+      29443,
+      29722,
+      30000,
+      30302,
+      30627,
+      30952,
+      31277,
+      31602,
+      31927,
+      32253,
+      32694,
+      33088,
+      33530,
+      33948,
+      34516,
+      35120,
+      35666,
+      36235,
+      36850,
+      37384,
+      37918,
+      38452,
+      38986,
+      39520,
+      40054,
+      40600,
+      41146,
+      41680,
+      42214,
+      42748,
+      43282,
+      43816,
+      44350,
+      44884,
+      45418,
+      45952,
+      46486,
+      47044,
+      47578,
+      48112,
+      48646,
+      49180,
+      49714,
+      50248,
+      50782,
+      51316,
+      51850,
+      52384,
+      52918,
+      53452,
+      53986,
+      54520,
+      55066,
+      55612,
+      56146,
+      56680,
+      57214,
+      57748,
+      58282,
+      58816,
+      59350,
+      59884,
+      60418,
+      60964,
+      61533,
+      62090,
+      62578,
+      63042,
+      63507,
+      63948,
+      64377,
+      64807,
+      65236,
+      65666,
+      66107,
+      66548,
+      66966,
+      67384,
+      67814,
+      68243,
+      68661,
+      69103,
+      69532,
+      69962,
+      70391,
+      70821,
+      71250,
+      71680,
+      72110,
+      72539,
+      72969,
+      73398,
+      73816,
+      74246,
+      74675,
+      75093,
+      75535,
+      75952,
+      76394,
+      76812,
+      77253,
+      77694,
+      78112,
+      78530,
+      78971,
+      79389,
+      79819,
+      80248,
+      80666,
+      81107,
+      81537,
+      81966,
+      82384,
+      82791,
+      83209,
+      83534,
+      83894,
+      84254,
+      84614,
+      84962,
+      85287,
+      85612,
+      85937,
+      86239,
+      86552,
+      86889,
+      87214,
+      87539,
+      87876,
+      88224,
+      88573,
+      88909,
+      89234,
+      89559,
+      89884,
+      90210,
+      90535,
+      90860,
+      91162,
+      91487,
+      91812,
+      92137,
+      92462,
+      92787,
+      93089,
+      93414,
+      93739,
+      94064,
+      94389,
+      94737,
+      95097,
+      95457,
+      95817,
+      96154,
+      96525,
+      96850,
+      97176,
+      97501,
+      97802,
+      98128,
+      98453,
+      98778,
+      99103,
+      99428,
+      99730,
+      100008,
+      100287,
+      100600,
+      100914,
+      101239,
+      101564,
+      101889,
+      102214,
+      102528,
+      102841,
+      103166,
+      103503,
+      103828,
+      104165,
+      104490,
+      104826,
+      105163,
+      105500,
+      105837,
+      106162,
+      106487,
+      106812,
+      107137,
+      107462,
+      107787,
+      108100,
+      108426,
+      108739,
+      109064,
+      109389,
+      109691,
+      110016,
+      110353,
+      110690,
+      111026,
+      111363,
+      111711,
+      112060,
+      112408,
+      112768,
+      113104
+    ],
+    "lyricsLines": [
+      {
+        "i": 1,
+        "t0Ms": 31958,
+        "t1Ms": 34942
+      },
+      {
+        "i": 2,
+        "t0Ms": 34962,
+        "t1Ms": 38307
+      },
+      {
+        "i": 4,
+        "t0Ms": 39108,
+        "t1Ms": 41771
+      },
+      {
+        "i": 5,
+        "t0Ms": 41812,
+        "t1Ms": 45256
+      },
+      {
+        "i": 7,
+        "t0Ms": 45296,
+        "t1Ms": 48441
+      },
+      {
+        "i": 8,
+        "t0Ms": 48461,
+        "t1Ms": 51865
+      },
+      {
+        "i": 10,
+        "t0Ms": 51885,
+        "t1Ms": 55470
+      },
+      {
+        "i": 11,
+        "t0Ms": 55510,
+        "t1Ms": 58673
+      },
+      {
+        "i": 12,
+        "t0Ms": 58714,
+        "t1Ms": 62358
+      },
+      {
+        "i": 13,
+        "t0Ms": 62978,
+        "t1Ms": 66002
+      },
+      {
+        "i": 15,
+        "t0Ms": 69125,
+        "t1Ms": 71528
+      },
+      {
+        "i": 16,
+        "t0Ms": 71688,
+        "t1Ms": 74291
+      },
+      {
+        "i": 17,
+        "t0Ms": 75132,
+        "t1Ms": 77575
+      },
+      {
+        "i": 18,
+        "t0Ms": 77615,
+        "t1Ms": 82941
+      },
+      {
+        "i": 20,
+        "t0Ms": 85267,
+        "t1Ms": 89455
+      }
+    ],
+    "words": [
+      {
+        "i": 1,
+        "t0Ms": 31958,
+        "t1Ms": 32258,
+        "text": "one",
+        "conf": 0.72
+      },
+      {
+        "i": 1,
+        "t0Ms": 32439,
+        "t1Ms": 33039,
+        "text": "axiom",
+        "conf": 0.879
+      },
+      {
+        "i": 1,
+        "t0Ms": 33100,
+        "t1Ms": 33540,
+        "text": "placed",
+        "conf": 0.866
+      },
+      {
+        "i": 1,
+        "t0Ms": 33660,
+        "t1Ms": 33780,
+        "text": "in",
+        "conf": 0.879
+      },
+      {
+        "i": 1,
+        "t0Ms": 33961,
+        "t1Ms": 34361,
+        "text": "open",
+        "conf": 0.811
+      },
+      {
+        "i": 1,
+        "t0Ms": 34662,
+        "t1Ms": 34942,
+        "text": "air",
+        "conf": 0.696
+      },
+      {
+        "i": 2,
+        "t0Ms": 34962,
+        "t1Ms": 35583,
+        "text": "a",
+        "conf": 0.925
+      },
+      {
+        "i": 2,
+        "t0Ms": 35683,
+        "t1Ms": 36104,
+        "text": "point",
+        "conf": 0.865
+      },
+      {
+        "i": 2,
+        "t0Ms": 36244,
+        "t1Ms": 36284,
+        "text": "a",
+        "conf": 0.815
+      },
+      {
+        "i": 2,
+        "t0Ms": 36364,
+        "t1Ms": 36905,
+        "text": "line",
+        "conf": 0.843
+      },
+      {
+        "i": 2,
+        "t0Ms": 36925,
+        "t1Ms": 36945,
+        "text": "a",
+        "conf": 0.999
+      },
+      {
+        "i": 2,
+        "t0Ms": 37165,
+        "t1Ms": 37666,
+        "text": "careful",
+        "conf": 0.887
+      },
+      {
+        "i": 2,
+        "t0Ms": 37766,
+        "t1Ms": 38307,
+        "text": "stare",
+        "conf": 0.829
+      },
+      {
+        "i": 4,
+        "t0Ms": 39108,
+        "t1Ms": 39669,
+        "text": "zero",
+        "conf": 0.952
+      },
+      {
+        "i": 4,
+        "t0Ms": 39809,
+        "t1Ms": 40410,
+        "text": "rolls",
+        "conf": 0.846
+      },
+      {
+        "i": 4,
+        "t0Ms": 40510,
+        "t1Ms": 40550,
+        "text": "a",
+        "conf": 0.877
+      },
+      {
+        "i": 4,
+        "t0Ms": 40650,
+        "t1Ms": 41211,
+        "text": "silent",
+        "conf": 0.93
+      },
+      {
+        "i": 4,
+        "t0Ms": 41271,
+        "t1Ms": 41771,
+        "text": "die",
+        "conf": 0.874
+      },
+      {
+        "i": 5,
+        "t0Ms": 41812,
+        "t1Ms": 43093,
+        "text": "random",
+        "conf": 0.791
+      },
+      {
+        "i": 5,
+        "t0Ms": 43193,
+        "t1Ms": 43754,
+        "text": "seed",
+        "conf": 0.979
+      },
+      {
+        "i": 5,
+        "t0Ms": 43854,
+        "t1Ms": 44015,
+        "text": "but",
+        "conf": 0.924
+      },
+      {
+        "i": 5,
+        "t0Ms": 44075,
+        "t1Ms": 44515,
+        "text": "laws",
+        "conf": 0.946
+      },
+      {
+        "i": 5,
+        "t0Ms": 44595,
+        "t1Ms": 45256,
+        "text": "apply",
+        "conf": 0.898
+      },
+      {
+        "i": 7,
+        "t0Ms": 45296,
+        "t1Ms": 45336,
+        "text": "if",
+        "conf": 0.5
+      },
+      {
+        "i": 7,
+        "t0Ms": 46178,
+        "t1Ms": 46338,
+        "text": "a",
+        "conf": 0.955
+      },
+      {
+        "i": 7,
+        "t0Ms": 46478,
+        "t1Ms": 47239,
+        "text": "implies",
+        "conf": 0.932
+      },
+      {
+        "i": 7,
+        "t0Ms": 47319,
+        "t1Ms": 47459,
+        "text": "that",
+        "conf": 0.901
+      },
+      {
+        "i": 7,
+        "t0Ms": 47539,
+        "t1Ms": 47780,
+        "text": "b",
+        "conf": 0.886
+      },
+      {
+        "i": 7,
+        "t0Ms": 47900,
+        "t1Ms": 47980,
+        "text": "is",
+        "conf": 0.942
+      },
+      {
+        "i": 7,
+        "t0Ms": 48100,
+        "t1Ms": 48441,
+        "text": "true",
+        "conf": 0.826
+      },
+      {
+        "i": 8,
+        "t0Ms": 48461,
+        "t1Ms": 48541,
+        "text": "then",
+        "conf": 0.251
+      },
+      {
+        "i": 8,
+        "t0Ms": 49021,
+        "t1Ms": 49802,
+        "text": "b",
+        "conf": 0.765
+      },
+      {
+        "i": 8,
+        "t0Ms": 49903,
+        "t1Ms": 50644,
+        "text": "implies",
+        "conf": 0.923
+      },
+      {
+        "i": 8,
+        "t0Ms": 50724,
+        "t1Ms": 50904,
+        "text": "what",
+        "conf": 0.963
+      },
+      {
+        "i": 8,
+        "t0Ms": 50984,
+        "t1Ms": 51184,
+        "text": "we",
+        "conf": 0.993
+      },
+      {
+        "i": 8,
+        "t0Ms": 51264,
+        "t1Ms": 51505,
+        "text": "must",
+        "conf": 0.906
+      },
+      {
+        "i": 8,
+        "t0Ms": 51585,
+        "t1Ms": 51865,
+        "text": "do",
+        "conf": 0.894
+      },
+      {
+        "i": 10,
+        "t0Ms": 51885,
+        "t1Ms": 53848,
+        "text": "determinists",
+        "conf": 0.762
+      },
+      {
+        "i": 10,
+        "t0Ms": 53828,
+        "t1Ms": 54769,
+        "text": "Gears",
+        "conf": 0.691
+      },
+      {
+        "i": 10,
+        "t0Ms": 54869,
+        "t1Ms": 55470,
+        "text": "align",
+        "conf": 0.716
+      },
+      {
+        "i": 11,
+        "t0Ms": 55510,
+        "t1Ms": 56091,
+        "text": "Each",
+        "conf": 0.663
+      },
+      {
+        "i": 11,
+        "t0Ms": 56171,
+        "t1Ms": 56591,
+        "text": "step",
+        "conf": 0.928
+      },
+      {
+        "i": 11,
+        "t0Ms": 56671,
+        "t1Ms": 57352,
+        "text": "follows",
+        "conf": 0.803
+      },
+      {
+        "i": 11,
+        "t0Ms": 57432,
+        "t1Ms": 57933,
+        "text": "strict",
+        "conf": 0.702
+      },
+      {
+        "i": 11,
+        "t0Ms": 58013,
+        "t1Ms": 58673,
+        "text": "design",
+        "conf": 0.815
+      },
+      {
+        "i": 12,
+        "t0Ms": 58714,
+        "t1Ms": 59354,
+        "text": "Yet",
+        "conf": 0.747
+      },
+      {
+        "i": 12,
+        "t0Ms": 59655,
+        "t1Ms": 60395,
+        "text": "chaos",
+        "conf": 0.921
+      },
+      {
+        "i": 12,
+        "t0Ms": 60476,
+        "t1Ms": 60916,
+        "text": "blooms",
+        "conf": 0.705
+      },
+      {
+        "i": 12,
+        "t0Ms": 60976,
+        "t1Ms": 61136,
+        "text": "from",
+        "conf": 0.982
+      },
+      {
+        "i": 12,
+        "t0Ms": 61216,
+        "t1Ms": 61737,
+        "text": "simple",
+        "conf": 0.908
+      },
+      {
+        "i": 12,
+        "t0Ms": 61857,
+        "t1Ms": 62358,
+        "text": "code",
+        "conf": 0.799
+      },
+      {
+        "i": 13,
+        "t0Ms": 62978,
+        "t1Ms": 63018,
+        "text": "A",
+        "conf": 0.994
+      },
+      {
+        "i": 13,
+        "t0Ms": 63099,
+        "t1Ms": 63679,
+        "text": "branching",
+        "conf": 0.937
+      },
+      {
+        "i": 13,
+        "t0Ms": 63759,
+        "t1Ms": 64140,
+        "text": "tree",
+        "conf": 0.902
+      },
+      {
+        "i": 13,
+        "t0Ms": 64400,
+        "t1Ms": 64620,
+        "text": "from",
+        "conf": 0.481
+      },
+      {
+        "i": 13,
+        "t0Ms": 64820,
+        "t1Ms": 65361,
+        "text": "single",
+        "conf": 0.818
+      },
+      {
+        "i": 13,
+        "t0Ms": 65501,
+        "t1Ms": 66002,
+        "text": "node",
+        "conf": 0.635
+      },
+      {
+        "i": 15,
+        "t0Ms": 69125,
+        "t1Ms": 69566,
+        "text": "Count",
+        "conf": 0.951
+      },
+      {
+        "i": 15,
+        "t0Ms": 69626,
+        "t1Ms": 69766,
+        "text": "the",
+        "conf": 0.916
+      },
+      {
+        "i": 15,
+        "t0Ms": 69806,
+        "t1Ms": 70227,
+        "text": "beats",
+        "conf": 0.853
+      },
+      {
+        "i": 15,
+        "t0Ms": 70307,
+        "t1Ms": 70387,
+        "text": "and",
+        "conf": 0.85
+      },
+      {
+        "i": 15,
+        "t0Ms": 70427,
+        "t1Ms": 70907,
+        "text": "count",
+        "conf": 0.709
+      },
+      {
+        "i": 15,
+        "t0Ms": 70967,
+        "t1Ms": 71528,
+        "text": "again",
+        "conf": 0.885
+      },
+      {
+        "i": 16,
+        "t0Ms": 71688,
+        "t1Ms": 72169,
+        "text": "Prime",
+        "conf": 0.657
+      },
+      {
+        "i": 16,
+        "t0Ms": 72229,
+        "t1Ms": 72309,
+        "text": "and",
+        "conf": 0.813
+      },
+      {
+        "i": 16,
+        "t0Ms": 72369,
+        "t1Ms": 72990,
+        "text": "pattern,",
+        "conf": 0.552
+      },
+      {
+        "i": 16,
+        "t0Ms": 73010,
+        "t1Ms": 73430,
+        "text": "loss",
+        "conf": 0.944
+      },
+      {
+        "i": 16,
+        "t0Ms": 73510,
+        "t1Ms": 73610,
+        "text": "and",
+        "conf": 0.852
+      },
+      {
+        "i": 16,
+        "t0Ms": 73650,
+        "t1Ms": 74291,
+        "text": "gain",
+        "conf": 0.776
+      },
+      {
+        "i": 17,
+        "t0Ms": 75132,
+        "t1Ms": 75453,
+        "text": "Flip",
+        "conf": 0.918
+      },
+      {
+        "i": 17,
+        "t0Ms": 75593,
+        "t1Ms": 75693,
+        "text": "a",
+        "conf": 0.813
+      },
+      {
+        "i": 17,
+        "t0Ms": 75773,
+        "t1Ms": 76193,
+        "text": "coin",
+        "conf": 0.906
+      },
+      {
+        "i": 17,
+        "t0Ms": 76233,
+        "t1Ms": 76354,
+        "text": "but",
+        "conf": 0.863
+      },
+      {
+        "i": 17,
+        "t0Ms": 76414,
+        "t1Ms": 76834,
+        "text": "trace",
+        "conf": 0.923
+      },
+      {
+        "i": 17,
+        "t0Ms": 76894,
+        "t1Ms": 76994,
+        "text": "the",
+        "conf": 0.902
+      },
+      {
+        "i": 17,
+        "t0Ms": 77054,
+        "t1Ms": 77575,
+        "text": "tain",
+        "conf": 0.89
+      },
+      {
+        "i": 18,
+        "t0Ms": 77615,
+        "t1Ms": 79137,
+        "text": "Hidden",
+        "conf": 0.586
+      },
+      {
+        "i": 18,
+        "t0Ms": 79217,
+        "t1Ms": 79938,
+        "text": "constants",
+        "conf": 0.842
+      },
+      {
+        "i": 18,
+        "t0Ms": 80018,
+        "t1Ms": 80438,
+        "text": "still",
+        "conf": 0.935
+      },
+      {
+        "i": 18,
+        "t0Ms": 80518,
+        "t1Ms": 82941,
+        "text": "remain",
+        "conf": 0.777
+      },
+      {
+        "i": 20,
+        "t0Ms": 85267,
+        "t1Ms": 85952,
+        "text": "Hidden",
+        "conf": 0.562
+      },
+      {
+        "i": 20,
+        "t0Ms": 86052,
+        "t1Ms": 86797,
+        "text": "constants",
+        "conf": 0.88
+      },
+      {
+        "i": 20,
+        "t0Ms": 86858,
+        "t1Ms": 87301,
+        "text": "still",
+        "conf": 0.988
+      },
+      {
+        "i": 20,
+        "t0Ms": 87381,
+        "t1Ms": 89455,
+        "text": "remain",
+        "conf": 0.794
+      }
+    ]
+  },
+  "import": {
+    "firstImportedAt": "2026-03-03T17:55:05.705Z",
+    "lastImportedAt": "2026-03-03T17:55:05.705Z",
+    "inputHashes": {
+      "Proof by Induction at Dawn Stems (140BPM).txt": "9f5ae76a2a73bc90c49bd935895b517ef6092bf7c11c43156daf52713fccc959",
+      "Proof by Induction at Dawn Stems (140BPM).zip": "1bc45297468a821c658572798d01443703ad2b6cbd4b2d0db405de1e4d0ba709"
+    },
+    "hashSource": "assets/proof-by-induction-at-dawn/01KJTDE3J6QHD09K3ND8/instrumental.wav",
+    "hashSourceSha256": "56083dfc0d9fd25505dacf5ff25ab386327fccdc9a187d1228ddc21b4bcef116",
+    "filenameBpm": 140,
+    "sourceGroupKey": "loose:proof-by-induction-at-dawn-stems-140bpm",
+    "archivedTo": "D:/seva/FOMO/Songs/the-refresh/refreshing-music/inbox/_done/2026-03-03/loose/proof-by-induction-at-dawn-stems-140bpm/consumed.json"
+  },
+  "assetPaths": {
+    "mix": "assets/proof-by-induction-at-dawn/01KJTDE3J6QHD09K3ND8/mix.mp3",
+    "mixWav": "",
+    "stemsZip": "assets/proof-by-induction-at-dawn/01KJTDE3J6QHD09K3ND8/stems.zip",
+    "effective": "assets/proof-by-induction-at-dawn/01KJTDE3J6QHD09K3ND8/effective.json",
+    "instrumental": "assets/proof-by-induction-at-dawn/01KJTDE3J6QHD09K3ND8/instrumental.mp3",
+    "instrumentalWav": "assets/proof-by-induction-at-dawn/01KJTDE3J6QHD09K3ND8/instrumental.wav",
+    "vocals": "assets/proof-by-induction-at-dawn/01KJTDE3J6QHD09K3ND8/vocals.mp3",
+    "vocalsWav": "assets/proof-by-induction-at-dawn/01KJTDE3J6QHD09K3ND8/vocals.wav",
+    "composer": "assets/proof-by-induction-at-dawn/01KJTDE3J6QHD09K3ND8/composer.txt"
+  },
+  "hasUserHints": true,
+  "lastHintAt": "2026-03-03T18:19:34.697Z"
+}

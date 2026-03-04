@@ -261,7 +261,7 @@ let seed = 1;
 const DEFAULT_RENDER_OFFSET_MS = -240;
 const MIN_RENDER_OFFSET_MS = -500;
 const MAX_RENDER_OFFSET_MS = 500;
-const OFFSET_PRESETS_MS = [-240, -70, 0];
+const OFFSET_PRESETS_MS = [-240, -120, 0, 120, 240];
 let renderOffsetMs = DEFAULT_RENDER_OFFSET_MS;
 let hudVisible = new URL(location.href).searchParams.get("hud") === "1";
 let lyricsEnabled = new URL(location.href).searchParams.get("lyrics") !== "0";

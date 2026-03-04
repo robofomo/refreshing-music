@@ -38,7 +38,7 @@ body,
   left: 50%;
   right: auto;
   transform: translateX(-50%);
-  width: min(680px, calc(100% - 24px));
+  width: min(340px, calc(100% - 24px));
   bottom: calc(49px + env(safe-area-inset-bottom));
   display: grid;
   grid-template-columns: 1fr;
@@ -46,6 +46,7 @@ body,
   padding: 10px;
   opacity: 1;
   transition: opacity 240ms ease, transform 240ms ease;
+  touch-action: manipulation;
 }
 
 #controls.is-hidden {
@@ -63,14 +64,29 @@ body,
   padding: 8px 9px;
   font-size: 15px;
   cursor: pointer;
+  touch-action: manipulation;
+  user-select: none;
+  -webkit-user-select: none;
+  -webkit-touch-callout: none;
+  -webkit-tap-highlight-color: transparent;
 }
 
 #controlsMain {
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: 6px;
+}
+
+.controls-row {
   display: flex;
   flex-wrap: wrap;
   justify-content: center;
   gap: 8px;
   align-items: center;
+}
+
+.controls-row-offset {
+  gap: 6px;
 }
 
 #offsetCycleBtn {

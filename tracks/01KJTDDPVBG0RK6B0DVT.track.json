@@ -1,0 +1,1529 @@
+{
+  "workId": "margin-of-error",
+  "trackId": "01KJTDDPVBG0RK6B0DVT",
+  "recipeRef": {
+    "albumId": "random",
+    "trackOverrideId": "01KJTDDPVBG0RK6B0DVT"
+  },
+  "createdAt": "2026-03-01T00:00:00.000Z",
+  "slug": "margin-of-error",
+  "title": "Margin of Error",
+  "audio": {
+    "filename": "mix.mp3",
+    "path": "../assets/margin-of-error/01KJTDDPVBG0RK6B0DVT/mix.mp3",
+    "cidOrTx": "",
+    "mime": "audio/mpeg",
+    "bytes": 4304756
+  },
+  "composer": {
+    "rawText": "[Song Title: Margin of Error]\r\n[Style: breakbeat, math rock, chopped Amen-style drum breaks, glitchy percussion edits, interlocking clean electric guitars with tapping, syncopated bass stabs, granular synth textures, sidechain compression, clean studio recording, expressive male lead]\r\n[Caption: Trust oscillates between signal and noise.]\r\n[Image: A waveform splitting into jagged fragments over a fractured grid.]\r\n[Refresh Title: Random 3]\r\n[Theme: Random]\r\n[Gradients: 3]\r\n[Rank: 17]\r\n[Title Rarity: 1.58]\r\n[Tempo Lock BPM: 142]\r\n[Created: 2026-03-01]\r\n[Seeds: 884, A:53, B:1, C:73, D:43]\r\n[Perspective: i_reflect]\r\n[Concept: In a world of probabilistic errors and broken signals, trust is a fragile proof we try to verify.]\r\n[Topic: Complexity & Emergence → order_from_noise]\r\n[Genre Bias: breakbeat (→ math rock)]\r\n[Style Change: Bridge]\r\n[Modulation: none]\r\n[Hook Prominence: medium]\r\n[Deviation: instrumental_break before final chorus]\r\n[Visual Mood: tense]\r\n[Visual Motion: high]\r\n[Visual Density: dense]\r\n[Visual Lyric Presence: auto]\r\n[Visual Color Bias: cool]\r\n[Composer Version: v2.8]\r\n\r\n[Intro]\r\n[chopped drum break stuttering in 13/8 then snapping to 4/4]\r\n[guitar harmonics outlining diminished intervals]\r\n[sub bass pulses on irregular accents]\r\n[glitch textures pan left to right in microbursts]\r\n\r\n[Verse]\r\n[Visual: scene=hold; motion=high; density=normal; focus=rhythm]\r\n[angular melody with clipped phrasing and abrupt rests]\r\nI measure truth in decimal dust  \r\nRounding off the edges of trust  \r\nError bars around each claim  \r\nConfidence without a name  \r\n\r\n[Pre-Chorus]\r\n[rising chromatic line over half-time drums]\r\nEvery promise quantified  \r\nStandard deviance inside  \r\n\r\n[Chorus]\r\n[Visual: scene=lift; motion=high; density=dense; focus=vocal]\r\n[wide-interval hook landing hard on offbeats]\r\nMargin of error, wide as a lie  \r\nSignal is clean but the data will cry  \r\nTrust is a theorem we try to defend  \r\nProof in the middle that breaks at the end  \r\n\r\n[Verse]\r\n[melody drops to lower register with syncopated bass counterpoint]\r\nFeedback loops in hidden code  \r\nBias on a heavy load  \r\nRandom noise across the wire  \r\nTruth compressed in sampled fire  \r\n\r\n[Bridge]\r\n[Visual: scene=contrast; motion=medium; density=sparse; focus=texture]\r\n[Style Change: guitars thin out, breakbeat fractures into granular clicks]\r\n[sustained vocal notes over shifting polyrhythms]\r\nIf I flip the coin enough  \r\nHeads feels honest, tails feels rough  \r\nYet both obey the silent law  \r\nChance and pattern interlock  \r\n\r\n[Instrumental Break]\r\n[instrumental_break mutation — drums solo with sliced fills]\r\n[tapping guitar motif in 7/8 over steady 4/4 kick]\r\n[bass slides through tritone tension]\r\n[noise sweep builds toward re-entry]\r\n\r\n[Final Chorus]\r\n[hook restated with added harmony and doubled guitars]\r\nMargin of error, drawn in red  \r\nFacts we trust and lies we spread  \r\nBetween the doubt and what we know  \r\nDeterministic undertow  \r\n\r\n[Ending]\r\n[hook_echo]\r\nMargin of error",
+    "headerMap": {
+      "Song Title": "Margin of Error",
+      "Style": "breakbeat, math rock, chopped Amen-style drum breaks, glitchy percussion edits, interlocking clean electric guitars with tapping, syncopated bass stabs, granular synth textures, sidechain compression, clean studio recording, expressive male lead",
+      "Caption": "Trust oscillates between signal and noise.",
+      "Image": "A waveform splitting into jagged fragments over a fractured grid.",
+      "Refresh Title": "Random 3",
+      "Theme": "Random",
+      "Gradients": "3",
+      "Rank": "17",
+      "Title Rarity": "1.58",
+      "Tempo Lock BPM": "142",
+      "Created": "2026-03-01",
+      "Seeds": "884, A:53, B:1, C:73, D:43",
+      "Perspective": "i_reflect",
+      "Concept": "In a world of probabilistic errors and broken signals, trust is a fragile proof we try to verify.",
+      "Topic": "Complexity & Emergence → order_from_noise",
+      "Genre Bias": "breakbeat (→ math rock)",
+      "Style Change": "Bridge",
+      "Modulation": "none",
+      "Hook Prominence": "medium",
+      "Deviation": "instrumental_break before final chorus",
+      "Visual Mood": "tense",
+      "Visual Motion": "high",
+      "Visual Density": "dense",
+      "Visual Lyric Presence": "auto",
+      "Visual Color Bias": "cool",
+      "Composer Version": "v2.8"
+    }
+  },
+  "sections": [
+    {
+      "id": "intro-1",
+      "labelRaw": "Intro",
+      "notesRaw": "chopped drum break stuttering in 13/8 then snapping to 4/4\nguitar harmonics outlining diminished intervals\nsub bass pulses on irregular accents\nglitch textures pan left to right in microbursts"
+    },
+    {
+      "id": "verse-1",
+      "labelRaw": "Verse",
+      "notesRaw": "Visual: scene=hold; motion=high; density=normal; focus=rhythm\nangular melody with clipped phrasing and abrupt rests"
+    },
+    {
+      "id": "pre-chorus-1",
+      "labelRaw": "Pre-Chorus",
+      "notesRaw": "rising chromatic line over half-time drums"
+    },
+    {
+      "id": "chorus-1",
+      "labelRaw": "Chorus",
+      "notesRaw": "Visual: scene=lift; motion=high; density=dense; focus=vocal\nwide-interval hook landing hard on offbeats"
+    },
+    {
+      "id": "verse-2",
+      "labelRaw": "Verse",
+      "notesRaw": "melody drops to lower register with syncopated bass counterpoint"
+    },
+    {
+      "id": "bridge-1",
+      "labelRaw": "Bridge",
+      "notesRaw": "Visual: scene=contrast; motion=medium; density=sparse; focus=texture\nStyle Change: guitars thin out, breakbeat fractures into granular clicks\nsustained vocal notes over shifting polyrhythms"
+    },
+    {
+      "id": "instrumental-break-1",
+      "labelRaw": "Instrumental Break",
+      "notesRaw": "instrumental_break mutation — drums solo with sliced fills\ntapping guitar motif in 7/8 over steady 4/4 kick\nbass slides through tritone tension\nnoise sweep builds toward re-entry"
+    },
+    {
+      "id": "final-chorus-1",
+      "labelRaw": "Final Chorus",
+      "notesRaw": "hook restated with added harmony and doubled guitars"
+    },
+    {
+      "id": "ending-1",
+      "labelRaw": "Ending",
+      "notesRaw": "hook_echo"
+    }
+  ],
+  "lyrics": {
+    "rawText": "\nI measure truth in decimal dust  \nRounding off the edges of trust  \nError bars around each claim  \nConfidence without a name  \n\nEvery promise quantified  \nStandard deviance inside  \n\nMargin of error, wide as a lie  \nSignal is clean but the data will cry  \nTrust is a theorem we try to defend  \nProof in the middle that breaks at the end  \n\nFeedback loops in hidden code  \nBias on a heavy load  \nRandom noise across the wire  \nTruth compressed in sampled fire  \n\nIf I flip the coin enough  \nHeads feels honest, tails feels rough  \nYet both obey the silent law  \nChance and pattern interlock  \n\n\nMargin of error, drawn in red  \nFacts we trust and lies we spread  \nBetween the doubt and what we know  \nDeterministic undertow  \n\nMargin of error"
+  },
+  "visualHints": {
+    "mood": "tense",
+    "motion": "high",
+    "density": "dense",
+    "lyricPresence": "auto",
+    "colorBias": "cool",
+    "sectionFocus": "",
+    "noGo": []
+  },
+  "sourceGroupKey": "loose:margin-of-error-stems-105bpm",
+  "assetDir": "assets/margin-of-error/01KJTDDPVBG0RK6B0DVT",
+  "createdLocalRaw": "2026-03-01",
+  "createdDateOnly": true,
+  "timing": {
+    "beatsMs": [
+      511,
+      1045,
+      1579,
+      2101,
+      2624,
+      3181,
+      3750,
+      4319,
+      4899,
+      5468,
+      6037,
+      6606,
+      7175,
+      7744,
+      8313,
+      8893,
+      9462,
+      10031,
+      10600,
+      11169,
+      11749,
+      12318,
+      12887,
+      13468,
+      14036,
+      14605,
+      15174,
+      15743,
+      16324,
+      16893,
+      17461,
+      18030,
+      18599,
+      19180,
+      19749,
+      20317,
+      20898,
+      21467,
+      22036,
+      22605,
+      23174,
+      23754,
+      24323,
+      24892,
+      25472,
+      26041,
+      26610,
+      27179,
+      27748,
+      28317,
+      28886,
+      29466,
+      30035,
+      30604,
+      31184,
+      31753,
+      32322,
+      32891,
+      33460,
+      34040,
+      34609,
+      35178,
+      35747,
+      36316,
+      36897,
+      37465,
+      38034,
+      38603,
+      39172,
+      39753,
+      40321,
+      40890,
+      41459,
+      42028,
+      42609,
+      43178,
+      43746,
+      44315,
+      44884,
+      45465,
+      46034,
+      46602,
+      47183,
+      47752,
+      48321,
+      48901,
+      49470,
+      50039,
+      50608,
+      51177,
+      51746,
+      52326,
+      52895,
+      53464,
+      54033,
+      54613,
+      55182,
+      55751,
+      56320,
+      56889,
+      57469,
+      58038,
+      58607,
+      59188,
+      59757,
+      60325,
+      60883,
+      61463,
+      62032,
+      62601,
+      63170,
+      63739,
+      64319,
+      64888,
+      65457,
+      66038,
+      66606,
+      67175,
+      67756,
+      68325,
+      68894,
+      69462,
+      70031,
+      70600,
+      71169,
+      71750,
+      72319,
+      72887,
+      73468,
+      74037,
+      74606,
+      75175,
+      75743,
+      76312,
+      76881,
+      77450,
+      78019,
+      78588,
+      79157,
+      79737,
+      80318,
+      80898,
+      81467,
+      82036,
+      82605,
+      83174,
+      83743,
+      84312,
+      84892,
+      85473,
+      86042,
+      86610,
+      87179,
+      87748,
+      88317,
+      88886,
+      89455,
+      90035,
+      90604,
+      91173,
+      91742,
+      92323,
+      92880,
+      93460,
+      94029,
+      94598,
+      95179,
+      95747,
+      96316,
+      96897,
+      97454,
+      98035,
+      98604,
+      99172,
+      99753,
+      100322,
+      100891,
+      101460,
+      102028,
+      102609,
+      103166,
+      103747,
+      104316,
+      104885,
+      105453,
+      106022,
+      106591,
+      107172,
+      107741,
+      108309,
+      108878,
+      109459,
+      110028,
+      110597,
+      111166,
+      111734,
+      112315,
+      112884,
+      113453,
+      114033,
+      114614,
+      115183,
+      115751,
+      116320,
+      116889,
+      117458,
+      118027,
+      118608,
+      119176,
+      119745,
+      120314,
+      120883,
+      121464,
+      122032,
+      122601,
+      123170,
+      123739,
+      124320,
+      124889,
+      125457,
+      126038,
+      126607,
+      127176,
+      127745,
+      128313,
+      128894,
+      129463,
+      130032,
+      130601,
+      131170,
+      131738,
+      132307,
+      132876,
+      133457,
+      134026,
+      134606,
+      135175,
+      135744,
+      136313,
+      136882,
+      137462,
+      138031,
+      138600,
+      139169,
+      139738,
+      140318,
+      140875,
+      141456,
+      142025,
+      142594,
+      143163,
+      143732,
+      144312,
+      144893,
+      145450,
+      146019,
+      146588,
+      147145,
+      147725,
+      148306,
+      148875,
+      149444,
+      150024,
+      150593,
+      151162,
+      151731,
+      152300,
+      152880,
+      153449,
+      154018,
+      154598,
+      155167,
+      155736,
+      156305,
+      156886,
+      157466,
+      158035,
+      158604,
+      159173,
+      159753,
+      160322,
+      160891,
+      161460,
+      162029,
+      162609,
+      163178,
+      163747,
+      164328,
+      164885,
+      165465,
+      166034,
+      166603,
+      167172,
+      167741,
+      168321,
+      168890,
+      169459,
+      170028,
+      170597,
+      171178,
+      171746,
+      172315,
+      172884,
+      173453,
+      174034,
+      174602,
+      175171,
+      175752,
+      176321,
+      176890,
+      177458,
+      178027,
+      178596,
+      179177,
+      179757,
+      180326,
+      180883,
+      181464,
+      182033,
+      182602,
+      183171,
+      183740,
+      184320,
+      184889,
+      185458,
+      186038,
+      186596,
+      187176,
+      187745,
+      188314,
+      188894,
+      189463,
+      190032,
+      190601,
+      191170,
+      191739,
+      192308,
+      192877,
+      193457,
+      194038,
+      194606,
+      195175,
+      195744,
+      196313,
+      196882,
+      197462,
+      198031,
+      198600,
+      199169,
+      199738,
+      200319,
+      200887,
+      201456,
+      202037,
+      202594,
+      203175,
+      203743,
+      204312,
+      204881,
+      205450,
+      206031,
+      206611,
+      207168,
+      207749,
+      208318,
+      208887,
+      209456,
+      210024,
+      210593,
+      211162,
+      211731,
+      212312,
+      212881,
+      213461,
+      214042,
+      214622
+    ],
+    "lyricsLines": [
+      {
+        "i": 1,
+        "t0Ms": 31,
+        "t1Ms": 26007
+      },
+      {
+        "i": 2,
+        "t0Ms": 26027,
+        "t1Ms": 29532
+      },
+      {
+        "i": 3,
+        "t0Ms": 31079,
+        "t1Ms": 32783
+      },
+      {
+        "i": 4,
+        "t0Ms": 32903,
+        "t1Ms": 34788
+      },
+      {
+        "i": 6,
+        "t0Ms": 39299,
+        "t1Ms": 43128
+      },
+      {
+        "i": 7,
+        "t0Ms": 43449,
+        "t1Ms": 47318
+      },
+      {
+        "i": 9,
+        "t0Ms": 62148,
+        "t1Ms": 65814
+      },
+      {
+        "i": 10,
+        "t0Ms": 65934,
+        "t1Ms": 71042
+      },
+      {
+        "i": 11,
+        "t0Ms": 71142,
+        "t1Ms": 75109
+      },
+      {
+        "i": 12,
+        "t0Ms": 75750,
+        "t1Ms": 80477
+      },
+      {
+        "i": 14,
+        "t0Ms": 98446,
+        "t1Ms": 100548
+      },
+      {
+        "i": 15,
+        "t0Ms": 100908,
+        "t1Ms": 102830
+      },
+      {
+        "i": 16,
+        "t0Ms": 103191,
+        "t1Ms": 105313
+      },
+      {
+        "i": 17,
+        "t0Ms": 105353,
+        "t1Ms": 107615
+      },
+      {
+        "i": 19,
+        "t0Ms": 107635,
+        "t1Ms": 114281
+      },
+      {
+        "i": 20,
+        "t0Ms": 114301,
+        "t1Ms": 118285
+      },
+      {
+        "i": 21,
+        "t0Ms": 118926,
+        "t1Ms": 123130
+      },
+      {
+        "i": 22,
+        "t0Ms": 123470,
+        "t1Ms": 127474
+      },
+      {
+        "i": 25,
+        "t0Ms": 176425,
+        "t1Ms": 180129
+      },
+      {
+        "i": 26,
+        "t0Ms": 181170,
+        "t1Ms": 184694
+      },
+      {
+        "i": 27,
+        "t0Ms": 184714,
+        "t1Ms": 189139
+      },
+      {
+        "i": 28,
+        "t0Ms": 189179,
+        "t1Ms": 193844
+      },
+      {
+        "i": 30,
+        "t0Ms": 202053,
+        "t1Ms": 203935
+      }
+    ],
+    "words": [
+      {
+        "i": 1,
+        "t0Ms": 31,
+        "t1Ms": 51,
+        "text": "I",
+        "conf": 0.005
+      },
+      {
+        "i": 1,
+        "t0Ms": 91,
+        "t1Ms": 2655,
+        "text": "measure",
+        "conf": 0.578
+      },
+      {
+        "i": 1,
+        "t0Ms": 21761,
+        "t1Ms": 22382,
+        "text": "truth",
+        "conf": 0.887
+      },
+      {
+        "i": 1,
+        "t0Ms": 22482,
+        "t1Ms": 22602,
+        "text": "in",
+        "conf": 0.901
+      },
+      {
+        "i": 1,
+        "t0Ms": 22662,
+        "t1Ms": 23744,
+        "text": "decimal",
+        "conf": 0.818
+      },
+      {
+        "i": 1,
+        "t0Ms": 23804,
+        "t1Ms": 26007,
+        "text": "dusts",
+        "conf": 0.738
+      },
+      {
+        "i": 2,
+        "t0Ms": 26027,
+        "t1Ms": 26648,
+        "text": "Rounding",
+        "conf": 0.866
+      },
+      {
+        "i": 2,
+        "t0Ms": 26808,
+        "t1Ms": 26948,
+        "text": "off",
+        "conf": 0.989
+      },
+      {
+        "i": 2,
+        "t0Ms": 27009,
+        "t1Ms": 27129,
+        "text": "the",
+        "conf": 0.884
+      },
+      {
+        "i": 2,
+        "t0Ms": 27169,
+        "t1Ms": 27810,
+        "text": "edges",
+        "conf": 0.896
+      },
+      {
+        "i": 2,
+        "t0Ms": 28030,
+        "t1Ms": 28230,
+        "text": "of",
+        "conf": 0.874
+      },
+      {
+        "i": 2,
+        "t0Ms": 28330,
+        "t1Ms": 29532,
+        "text": "trust",
+        "conf": 0.947
+      },
+      {
+        "t0Ms": 30457,
+        "t1Ms": 30858,
+        "text": "There",
+        "conf": 0.298
+      },
+      {
+        "t0Ms": 30878,
+        "t1Ms": 30998,
+        "text": "are",
+        "conf": 0.741
+      },
+      {
+        "i": 3,
+        "t0Ms": 31079,
+        "t1Ms": 31500,
+        "text": "bars",
+        "conf": 0.823
+      },
+      {
+        "i": 3,
+        "t0Ms": 31520,
+        "t1Ms": 31921,
+        "text": "around",
+        "conf": 0.873
+      },
+      {
+        "i": 3,
+        "t0Ms": 31941,
+        "t1Ms": 32221,
+        "text": "each",
+        "conf": 0.808
+      },
+      {
+        "i": 3,
+        "t0Ms": 32301,
+        "t1Ms": 32783,
+        "text": "claim,",
+        "conf": 0.972
+      },
+      {
+        "i": 4,
+        "t0Ms": 32903,
+        "t1Ms": 33605,
+        "text": "confidence",
+        "conf": 0.913
+      },
+      {
+        "i": 4,
+        "t0Ms": 33665,
+        "t1Ms": 34226,
+        "text": "without",
+        "conf": 0.926
+      },
+      {
+        "i": 4,
+        "t0Ms": 34286,
+        "t1Ms": 34306,
+        "text": "a",
+        "conf": 0.825
+      },
+      {
+        "i": 4,
+        "t0Ms": 34407,
+        "t1Ms": 34788,
+        "text": "name.",
+        "conf": 0.568
+      },
+      {
+        "i": 6,
+        "t0Ms": 39299,
+        "t1Ms": 39840,
+        "text": "Every",
+        "conf": 0.829
+      },
+      {
+        "i": 6,
+        "t0Ms": 40020,
+        "t1Ms": 41063,
+        "text": "promise",
+        "conf": 0.835
+      },
+      {
+        "i": 6,
+        "t0Ms": 41183,
+        "t1Ms": 43128,
+        "text": "quantified,",
+        "conf": 0.765
+      },
+      {
+        "i": 7,
+        "t0Ms": 43449,
+        "t1Ms": 45133,
+        "text": "standard",
+        "conf": 0.885
+      },
+      {
+        "i": 7,
+        "t0Ms": 45173,
+        "t1Ms": 46576,
+        "text": "deviance",
+        "conf": 0.757
+      },
+      {
+        "i": 7,
+        "t0Ms": 46596,
+        "t1Ms": 47318,
+        "text": "inside.",
+        "conf": 0.426
+      },
+      {
+        "i": 9,
+        "t0Ms": 62148,
+        "t1Ms": 62909,
+        "text": "Margin",
+        "conf": 0.712
+      },
+      {
+        "i": 9,
+        "t0Ms": 63029,
+        "t1Ms": 63390,
+        "text": "of",
+        "conf": 0.41
+      },
+      {
+        "i": 9,
+        "t0Ms": 63410,
+        "t1Ms": 63971,
+        "text": "error,",
+        "conf": 0.843
+      },
+      {
+        "i": 9,
+        "t0Ms": 64051,
+        "t1Ms": 64672,
+        "text": "wide",
+        "conf": 0.863
+      },
+      {
+        "i": 9,
+        "t0Ms": 64792,
+        "t1Ms": 64932,
+        "text": "as",
+        "conf": 0.99
+      },
+      {
+        "i": 9,
+        "t0Ms": 65033,
+        "t1Ms": 65053,
+        "text": "a",
+        "conf": 0.736
+      },
+      {
+        "i": 9,
+        "t0Ms": 65193,
+        "t1Ms": 65814,
+        "text": "line.",
+        "conf": 0.795
+      },
+      {
+        "i": 10,
+        "t0Ms": 65934,
+        "t1Ms": 67456,
+        "text": "Signal",
+        "conf": 0.893
+      },
+      {
+        "i": 10,
+        "t0Ms": 67557,
+        "t1Ms": 67657,
+        "text": "is",
+        "conf": 0.732
+      },
+      {
+        "i": 10,
+        "t0Ms": 67737,
+        "t1Ms": 68198,
+        "text": "clean,",
+        "conf": 0.868
+      },
+      {
+        "i": 10,
+        "t0Ms": 68218,
+        "t1Ms": 68558,
+        "text": "but",
+        "conf": 0.975
+      },
+      {
+        "i": 10,
+        "t0Ms": 68638,
+        "t1Ms": 68758,
+        "text": "the",
+        "conf": 0.816
+      },
+      {
+        "i": 10,
+        "t0Ms": 68899,
+        "t1Ms": 69440,
+        "text": "data",
+        "conf": 0.93
+      },
+      {
+        "i": 10,
+        "t0Ms": 69480,
+        "t1Ms": 69680,
+        "text": "will",
+        "conf": 0.869
+      },
+      {
+        "i": 10,
+        "t0Ms": 69740,
+        "t1Ms": 71042,
+        "text": "cry.",
+        "conf": 0.918
+      },
+      {
+        "i": 11,
+        "t0Ms": 71142,
+        "t1Ms": 71923,
+        "text": "Trust",
+        "conf": 0.936
+      },
+      {
+        "i": 11,
+        "t0Ms": 71944,
+        "t1Ms": 72064,
+        "text": "is",
+        "conf": 0.97
+      },
+      {
+        "i": 11,
+        "t0Ms": 72144,
+        "t1Ms": 72184,
+        "text": "a",
+        "conf": 0.963
+      },
+      {
+        "i": 11,
+        "t0Ms": 72324,
+        "t1Ms": 73105,
+        "text": "theorem",
+        "conf": 0.852
+      },
+      {
+        "i": 11,
+        "t0Ms": 73185,
+        "t1Ms": 73346,
+        "text": "we",
+        "conf": 0.99
+      },
+      {
+        "i": 11,
+        "t0Ms": 73446,
+        "t1Ms": 73826,
+        "text": "try",
+        "conf": 0.959
+      },
+      {
+        "i": 11,
+        "t0Ms": 73887,
+        "t1Ms": 74247,
+        "text": "to",
+        "conf": 0.936
+      },
+      {
+        "i": 11,
+        "t0Ms": 74287,
+        "t1Ms": 75109,
+        "text": "defend.",
+        "conf": 0.883
+      },
+      {
+        "i": 12,
+        "t0Ms": 75750,
+        "t1Ms": 76230,
+        "text": "Proof",
+        "conf": 0.839
+      },
+      {
+        "i": 12,
+        "t0Ms": 76431,
+        "t1Ms": 76591,
+        "text": "in",
+        "conf": 0.734
+      },
+      {
+        "i": 12,
+        "t0Ms": 76671,
+        "t1Ms": 76751,
+        "text": "the",
+        "conf": 0.938
+      },
+      {
+        "i": 12,
+        "t0Ms": 76911,
+        "t1Ms": 77733,
+        "text": "middle",
+        "conf": 0.839
+      },
+      {
+        "i": 12,
+        "t0Ms": 77833,
+        "t1Ms": 77953,
+        "text": "that",
+        "conf": 0.446
+      },
+      {
+        "i": 12,
+        "t0Ms": 78053,
+        "t1Ms": 78474,
+        "text": "breaks",
+        "conf": 0.943
+      },
+      {
+        "i": 12,
+        "t0Ms": 78714,
+        "t1Ms": 78854,
+        "text": "at",
+        "conf": 0.927
+      },
+      {
+        "i": 12,
+        "t0Ms": 79035,
+        "t1Ms": 79195,
+        "text": "the",
+        "conf": 0.572
+      },
+      {
+        "i": 12,
+        "t0Ms": 79516,
+        "t1Ms": 80477,
+        "text": "end.",
+        "conf": 0.847
+      },
+      {
+        "i": 14,
+        "t0Ms": 98446,
+        "t1Ms": 99167,
+        "text": "Feedback",
+        "conf": 0.698
+      },
+      {
+        "i": 14,
+        "t0Ms": 99207,
+        "t1Ms": 99487,
+        "text": "loops",
+        "conf": 0.794
+      },
+      {
+        "i": 14,
+        "t0Ms": 99607,
+        "t1Ms": 99707,
+        "text": "in",
+        "conf": 0.914
+      },
+      {
+        "i": 14,
+        "t0Ms": 99767,
+        "t1Ms": 100108,
+        "text": "hidden",
+        "conf": 0.889
+      },
+      {
+        "i": 14,
+        "t0Ms": 100168,
+        "t1Ms": 100548,
+        "text": "code.",
+        "conf": 0.702
+      },
+      {
+        "i": 15,
+        "t0Ms": 100908,
+        "t1Ms": 101449,
+        "text": "Bias",
+        "conf": 0.826
+      },
+      {
+        "i": 15,
+        "t0Ms": 101689,
+        "t1Ms": 101769,
+        "text": "on",
+        "conf": 0.789
+      },
+      {
+        "i": 15,
+        "t0Ms": 101889,
+        "t1Ms": 101969,
+        "text": "a",
+        "conf": 0.923
+      },
+      {
+        "i": 15,
+        "t0Ms": 102029,
+        "t1Ms": 102370,
+        "text": "heavy",
+        "conf": 0.792
+      },
+      {
+        "i": 15,
+        "t0Ms": 102450,
+        "t1Ms": 102830,
+        "text": "load.",
+        "conf": 0.815
+      },
+      {
+        "i": 16,
+        "t0Ms": 103191,
+        "t1Ms": 103691,
+        "text": "Random",
+        "conf": 0.902
+      },
+      {
+        "i": 16,
+        "t0Ms": 103791,
+        "t1Ms": 104091,
+        "text": "noise",
+        "conf": 0.889
+      },
+      {
+        "i": 16,
+        "t0Ms": 104172,
+        "t1Ms": 104592,
+        "text": "across",
+        "conf": 0.886
+      },
+      {
+        "i": 16,
+        "t0Ms": 104652,
+        "t1Ms": 104732,
+        "text": "the",
+        "conf": 0.931
+      },
+      {
+        "i": 16,
+        "t0Ms": 104792,
+        "t1Ms": 105313,
+        "text": "wire.",
+        "conf": 0.877
+      },
+      {
+        "i": 17,
+        "t0Ms": 105353,
+        "t1Ms": 105733,
+        "text": "Truth",
+        "conf": 0.49
+      },
+      {
+        "i": 17,
+        "t0Ms": 105773,
+        "t1Ms": 106354,
+        "text": "compressed",
+        "conf": 0.916
+      },
+      {
+        "i": 17,
+        "t0Ms": 106414,
+        "t1Ms": 106534,
+        "text": "in",
+        "conf": 0.928
+      },
+      {
+        "i": 17,
+        "t0Ms": 106594,
+        "t1Ms": 106974,
+        "text": "sample",
+        "conf": 0.937
+      },
+      {
+        "i": 17,
+        "t0Ms": 107054,
+        "t1Ms": 107615,
+        "text": "fire.",
+        "conf": 0.973
+      },
+      {
+        "i": 19,
+        "t0Ms": 107635,
+        "t1Ms": 107675,
+        "text": "If",
+        "conf": 0.496
+      },
+      {
+        "i": 19,
+        "t0Ms": 110017,
+        "t1Ms": 110157,
+        "text": "I",
+        "conf": 0.836
+      },
+      {
+        "i": 19,
+        "t0Ms": 110858,
+        "t1Ms": 111298,
+        "text": "flip",
+        "conf": 0.644
+      },
+      {
+        "i": 19,
+        "t0Ms": 111439,
+        "t1Ms": 111999,
+        "text": "the",
+        "conf": 0.828
+      },
+      {
+        "i": 19,
+        "t0Ms": 112019,
+        "t1Ms": 112640,
+        "text": "coin",
+        "conf": 0.875
+      },
+      {
+        "i": 19,
+        "t0Ms": 112980,
+        "t1Ms": 114281,
+        "text": "enough.",
+        "conf": 0.356
+      },
+      {
+        "i": 20,
+        "t0Ms": 114301,
+        "t1Ms": 114762,
+        "text": "Heads",
+        "conf": 0.731
+      },
+      {
+        "i": 20,
+        "t0Ms": 114902,
+        "t1Ms": 115462,
+        "text": "feels",
+        "conf": 0.924
+      },
+      {
+        "i": 20,
+        "t0Ms": 115903,
+        "t1Ms": 116584,
+        "text": "honest.",
+        "conf": 0.658
+      },
+      {
+        "i": 20,
+        "t0Ms": 116604,
+        "t1Ms": 117084,
+        "text": "Tails",
+        "conf": 0.709
+      },
+      {
+        "i": 20,
+        "t0Ms": 117184,
+        "t1Ms": 117665,
+        "text": "feels",
+        "conf": 0.867
+      },
+      {
+        "i": 20,
+        "t0Ms": 117785,
+        "t1Ms": 118285,
+        "text": "rough.",
+        "conf": 0.541
+      },
+      {
+        "t0Ms": 118726,
+        "t1Ms": 118806,
+        "text": "They",
+        "conf": 0.247
+      },
+      {
+        "i": 21,
+        "t0Ms": 118926,
+        "t1Ms": 119727,
+        "text": "both",
+        "conf": 0.892
+      },
+      {
+        "i": 21,
+        "t0Ms": 119747,
+        "t1Ms": 120527,
+        "text": "obey",
+        "conf": 0.906
+      },
+      {
+        "i": 21,
+        "t0Ms": 120627,
+        "t1Ms": 121148,
+        "text": "the",
+        "conf": 0.834
+      },
+      {
+        "i": 21,
+        "t0Ms": 121608,
+        "t1Ms": 122309,
+        "text": "silent",
+        "conf": 0.773
+      },
+      {
+        "i": 21,
+        "t0Ms": 122369,
+        "t1Ms": 123130,
+        "text": "law.",
+        "conf": 0.925
+      },
+      {
+        "i": 22,
+        "t0Ms": 123470,
+        "t1Ms": 124051,
+        "text": "Chance",
+        "conf": 0.918
+      },
+      {
+        "i": 22,
+        "t0Ms": 124331,
+        "t1Ms": 124551,
+        "text": "and",
+        "conf": 0.844
+      },
+      {
+        "i": 22,
+        "t0Ms": 124631,
+        "t1Ms": 125752,
+        "text": "pattern",
+        "conf": 0.858
+      },
+      {
+        "i": 22,
+        "t0Ms": 126073,
+        "t1Ms": 127474,
+        "text": "interlock.",
+        "conf": 0.522
+      },
+      {
+        "t0Ms": 157475,
+        "t1Ms": 158020,
+        "text": "Oh.",
+        "conf": 0.605
+      },
+      {
+        "i": 25,
+        "t0Ms": 176425,
+        "t1Ms": 177226,
+        "text": "Margin",
+        "conf": 0.79
+      },
+      {
+        "i": 25,
+        "t0Ms": 177346,
+        "t1Ms": 177406,
+        "text": "of",
+        "conf": 0.574
+      },
+      {
+        "i": 25,
+        "t0Ms": 177726,
+        "t1Ms": 178207,
+        "text": "error",
+        "conf": 0.639
+      },
+      {
+        "i": 25,
+        "t0Ms": 178307,
+        "t1Ms": 178928,
+        "text": "drawn",
+        "conf": 0.83
+      },
+      {
+        "i": 25,
+        "t0Ms": 179168,
+        "t1Ms": 179328,
+        "text": "in",
+        "conf": 0.669
+      },
+      {
+        "i": 25,
+        "t0Ms": 179468,
+        "t1Ms": 180129,
+        "text": "red",
+        "conf": 0.835
+      },
+      {
+        "i": 26,
+        "t0Ms": 181170,
+        "t1Ms": 181571,
+        "text": "Facts",
+        "conf": 0.86
+      },
+      {
+        "i": 26,
+        "t0Ms": 181651,
+        "t1Ms": 181871,
+        "text": "we",
+        "conf": 0.916
+      },
+      {
+        "i": 26,
+        "t0Ms": 181991,
+        "t1Ms": 182472,
+        "text": "trust",
+        "conf": 0.959
+      },
+      {
+        "i": 26,
+        "t0Ms": 182632,
+        "t1Ms": 182772,
+        "text": "and",
+        "conf": 0.786
+      },
+      {
+        "i": 26,
+        "t0Ms": 182892,
+        "t1Ms": 183453,
+        "text": "lies",
+        "conf": 0.935
+      },
+      {
+        "i": 26,
+        "t0Ms": 183513,
+        "t1Ms": 183833,
+        "text": "we",
+        "conf": 0.914
+      },
+      {
+        "i": 26,
+        "t0Ms": 183933,
+        "t1Ms": 184694,
+        "text": "spread",
+        "conf": 0.74
+      },
+      {
+        "i": 27,
+        "t0Ms": 184714,
+        "t1Ms": 186336,
+        "text": "Between",
+        "conf": 0.712
+      },
+      {
+        "i": 27,
+        "t0Ms": 186376,
+        "t1Ms": 186476,
+        "text": "the",
+        "conf": 0.88
+      },
+      {
+        "i": 27,
+        "t0Ms": 186596,
+        "t1Ms": 187097,
+        "text": "doubt",
+        "conf": 0.855
+      },
+      {
+        "i": 27,
+        "t0Ms": 187237,
+        "t1Ms": 187377,
+        "text": "and",
+        "conf": 0.826
+      },
+      {
+        "i": 27,
+        "t0Ms": 187477,
+        "t1Ms": 187978,
+        "text": "what",
+        "conf": 0.899
+      },
+      {
+        "i": 27,
+        "t0Ms": 188058,
+        "t1Ms": 188478,
+        "text": "we",
+        "conf": 0.946
+      },
+      {
+        "i": 27,
+        "t0Ms": 188598,
+        "t1Ms": 189139,
+        "text": "know",
+        "conf": 0.868
+      },
+      {
+        "i": 28,
+        "t0Ms": 189179,
+        "t1Ms": 192022,
+        "text": "Deterministic",
+        "conf": 0.839
+      },
+      {
+        "i": 28,
+        "t0Ms": 192422,
+        "t1Ms": 193844,
+        "text": "undertow",
+        "conf": 0.787
+      },
+      {
+        "i": 30,
+        "t0Ms": 202053,
+        "t1Ms": 202694,
+        "text": "Margin",
+        "conf": 0.937
+      },
+      {
+        "i": 30,
+        "t0Ms": 202854,
+        "t1Ms": 202914,
+        "text": "of",
+        "conf": 0.79
+      },
+      {
+        "i": 30,
+        "t0Ms": 203154,
+        "t1Ms": 203935,
+        "text": "error",
+        "conf": 0.602
+      }
+    ]
+  },
+  "import": {
+    "firstImportedAt": "2026-03-03T17:55:05.705Z",
+    "lastImportedAt": "2026-03-03T17:55:05.705Z",
+    "inputHashes": {
+      "Margin of Error Stems (105BPM).txt": "4296ec88b79d6dd97a583a02bf1207dff8214bf181aab8a305665ce01bb78e99",
+      "Margin of Error Stems (105BPM).zip": "5434e49c7247e85f8a449b7202e6082c48b170b578c5a4282dfb092a79ba1389"
+    },
+    "hashSource": "assets/margin-of-error/01KJTDDPVBG0RK6B0DVT/instrumental.wav",
+    "hashSourceSha256": "b7b04d4f6335147753deea80b8fd0c432d1aa206d178e1dacb157b15aad6f5e5",
+    "filenameBpm": 105,
+    "sourceGroupKey": "loose:margin-of-error-stems-105bpm",
+    "archivedTo": "D:/seva/FOMO/Songs/the-refresh/refreshing-music/inbox/_done/2026-03-03/loose/margin-of-error-stems-105bpm/consumed.json"
+  },
+  "assetPaths": {
+    "mix": "assets/margin-of-error/01KJTDDPVBG0RK6B0DVT/mix.mp3",
+    "mixWav": "",
+    "stemsZip": "assets/margin-of-error/01KJTDDPVBG0RK6B0DVT/stems.zip",
+    "effective": "assets/margin-of-error/01KJTDDPVBG0RK6B0DVT/effective.json",
+    "instrumental": "assets/margin-of-error/01KJTDDPVBG0RK6B0DVT/instrumental.mp3",
+    "instrumentalWav": "assets/margin-of-error/01KJTDDPVBG0RK6B0DVT/instrumental.wav",
+    "vocals": "assets/margin-of-error/01KJTDDPVBG0RK6B0DVT/vocals.mp3",
+    "vocalsWav": "assets/margin-of-error/01KJTDDPVBG0RK6B0DVT/vocals.wav",
+    "composer": "assets/margin-of-error/01KJTDDPVBG0RK6B0DVT/composer.txt"
+  },
+  "hasUserHints": true,
+  "lastHintAt": "2026-03-03T18:09:39.514Z"
+}

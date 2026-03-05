@@ -52,6 +52,35 @@ function resolveReactiveSource(
   };
 }
 
+function resolveThemeState(state: any) {
+  const theme = state?.signalBus?.theme ?? {};
+  const beat = state?.signalBus?.beat ?? {};
+  return {
+    coherence: clamp01(Number(theme?.coherence ?? 0.6)),
+    pressure: clamp01(Number(theme?.pressure ?? 0.25)),
+    lyricActivity: clamp01(Number(theme?.lyricActivity ?? 0)),
+    sectionEnergy: clamp01(Number(theme?.sectionEnergy ?? 0.4)),
+    beatPulse: clamp01(Number(beat?.pulse ?? 0)),
+    downbeatPulse: clamp01(Number(beat?.downbeatPulse ?? 0))
+  };
+}
+
+function sectionStyleFactors(state: any) {
+  const st = String(state?.sectionType ?? "").toLowerCase();
+  if (st === "chorus") return { coherence: 1.14, pressure: 1.28, noise: 0.72, warp: 0.68, glitch: 0.62 };
+  if (st === "bridge") return { coherence: 0.78, pressure: 1.22, noise: 1.4, warp: 1.45, glitch: 1.5 };
+  if (st === "intro") return { coherence: 0.92, pressure: 0.8, noise: 1.08, warp: 1.06, glitch: 0.82 };
+  if (st === "verse") return { coherence: 1.0, pressure: 1.0, noise: 1.0, warp: 1.0, glitch: 1.0 };
+  if (st === "outro" || st === "ending") return { coherence: 1.08, pressure: 0.84, noise: 0.9, warp: 0.86, glitch: 0.76 };
+  return { coherence: 1, pressure: 1, noise: 1, warp: 1, glitch: 1 };
+}
+
+function performanceDensityScale(state: any) {
+  const v = Number(state?.signalBus?.perf?.densityScale ?? 1);
+  if (!Number.isFinite(v)) return 1;
+  return Math.max(0.45, Math.min(1, v));
+}
+
 function stableNodeSeed(seed: number, layerId: string, nodeId: string) {
   return (seed ^ hashStringToSeed(`${layerId}:${nodeId}`)) >>> 0;
 }
@@ -66,14 +95,16 @@ function drawCirclePulse(args: {
   downbeat: number;
   nodeSeed: number;
   params?: Record<string, any>;
+  state?: any;
 }) {
-  const { ctx, canvas, colors, tMs, amp, beat, downbeat, nodeSeed, params } = args;
+  const { ctx, canvas, colors, tMs, amp, beat, downbeat, nodeSeed, params, state } = args;
   const w = canvas.width;
   const h = canvas.height;
   const cx = w * 0.5;
   const cy = h * 0.5;
   const t = tMs / 1000;
-  const ringCount = Math.max(3, Math.min(18, Number(params?.ringCount ?? 8)));
+  const ringCountBase = Math.max(3, Math.min(18, Number(params?.ringCount ?? 8)));
+  const ringCount = Math.max(3, Math.round(ringCountBase * performanceDensityScale(state)));
   const baseR = Math.max(12, Number(params?.radiusPx ?? Math.min(w, h) * 0.1));
   const rng = createRng(nodeSeed);
   for (let i = 0; i < ringCount; i += 1) {
@@ -116,10 +147,11 @@ function drawOrbitRibbon(args: {
     high?: number;
     onsetPulse?: number;
   };
+  state?: any;
   nodeSeed: number;
   params?: Record<string, any>;
 }) {
-  const { ctx, canvas, colors, tMs, amp, beat, downbeat, reactive, nodeSeed, params } = args;
+  const { ctx, canvas, colors, tMs, amp, beat, downbeat, reactive, state, nodeSeed, params } = args;
   const w = canvas.width;
   const h = canvas.height;
   const cx = w * 0.5;
@@ -130,7 +162,8 @@ function drawOrbitRibbon(args: {
   const mid = rr.mid;
   const high = rr.high;
   const onset = rr.onsetPulse;
-  const points = Math.max(16, Math.min(220, Number(params?.points ?? 56)));
+  const pointsBase = Math.max(16, Math.min(220, Number(params?.points ?? 56)));
+  const points = Math.max(16, Math.round(pointsBase * performanceDensityScale(state)));
   const radius = Math.max(24, Number(params?.radiusPx ?? Math.min(w, h) * 0.24));
   const thickness = Math.max(0.8, Number(params?.thicknessPx ?? 1.6) + beat * 0.9);
   const speedHz = Math.max(0.01, Number(params?.phaseHz ?? 0.08));
@@ -246,6 +279,440 @@ function drawBeatTrackOverlay(args: {
   ctx.restore();
 }
 
+function drawSignalNoiseBlend(args: {
+  ctx: CanvasRenderingContext2D;
+  canvas: HTMLCanvasElement;
+  tMs: number;
+  nodeSeed: number;
+  colors: string[];
+  state?: any;
+  params?: Record<string, any>;
+}) {
+  const { ctx, canvas, tMs, nodeSeed, colors, state, params } = args;
+  const w = canvas.width;
+  const h = canvas.height;
+  const rng = createRng(nodeSeed ^ hashStringToSeed("field.signalNoiseBlend"));
+  const t = tMs / 1000;
+  const theme = resolveThemeState(state);
+  const sectionMul = sectionStyleFactors(state);
+  const perfScale = performanceDensityScale(state);
+  const pointCountBase = Math.max(40, Math.min(420, Math.round(Number(params?.pointCount ?? 160))));
+  const lineCountBase = Math.max(4, Math.min(120, Math.round(Number(params?.lineCount ?? 24))));
+  const pointCount = Math.max(30, Math.round(pointCountBase * perfScale));
+  const lineCount = Math.max(3, Math.round(lineCountBase * perfScale));
+  const driftPx = Math.max(0, Math.min(80, Number(params?.driftPx ?? 16)));
+  const noiseOpacity = clamp01(Number(params?.noiseOpacity ?? 0.2));
+  const lineOpacity = clamp01(Number(params?.lineOpacity ?? 0.16));
+  const coherence = clamp01(theme.coherence * sectionMul.coherence);
+  const pressure = clamp01(theme.pressure * sectionMul.pressure);
+  const blend = clamp01(((1 - coherence) * 0.75 + pressure * 0.25) * sectionMul.noise);
+  // Slow state morph: particles become lines and lines become particles over time.
+  const morph = (Math.sin(t * 0.12 + (nodeSeed % 37) * 0.17) + 1) * 0.5;
+  const pointMix = 1 - 0.35 * morph;
+  const lineMix = 1 + 0.35 * morph;
+  const effectivePoints = Math.max(24, Math.round(pointCount * pointMix));
+  const effectiveLines = Math.max(3, Math.round(lineCount * lineMix));
+  const zipChance = clamp01(Number(params?.zipChance ?? 0.16));
+  const zipSpeedPx = Math.max(120, Math.min(2600, Number(params?.zipSpeedPx ?? 760)));
+
+  ctx.save();
+  ctx.globalCompositeOperation = "screen";
+
+  for (let i = 0; i < effectivePoints; i += 1) {
+    const x0 = rng.float() * w;
+    const y0 = rng.float() * h;
+    const phase = rng.float() * Math.PI * 2;
+    const drift = (0.3 + rng.float() * 0.7) * driftPx * (0.4 + blend);
+    const baseX = x0 + Math.sin(t * (0.22 + rng.float() * 0.45) + phase) * drift;
+    const baseY = y0 + Math.cos(t * (0.19 + rng.float() * 0.4) + phase * 0.7) * drift;
+    let x = baseX;
+    let y = baseY;
+    const isZip = rng.float() < zipChance;
+    if (isZip) {
+      const dir = rng.float() * Math.PI * 2;
+      const speed = zipSpeedPx * (0.6 + rng.float() * 0.9) * (0.5 + pressure * 0.8);
+      const travel = t * speed;
+      x = ((x0 + Math.cos(dir) * travel) % w + w) % w;
+      y = ((y0 + Math.sin(dir) * travel) % h + h) % h;
+      const streakLen = 6 + speed * 0.015;
+      const xPrev = ((x - Math.cos(dir) * streakLen) % w + w) % w;
+      const yPrev = ((y - Math.sin(dir) * streakLen) % h + h) % h;
+      ctx.strokeStyle = `rgba(190,235,255,${(0.08 + noiseOpacity * 0.35).toFixed(4)})`;
+      ctx.lineWidth = 0.9 + pressure * 1.1;
+      ctx.beginPath();
+      ctx.moveTo(xPrev, yPrev);
+      ctx.lineTo(x, y);
+      ctx.stroke();
+    }
+    const r = 0.7 + rng.float() * (1.1 + theme.pressure * 1.8);
+    ctx.fillStyle = `rgba(170,210,255,${(0.12 + noiseOpacity * 0.9 * (0.25 + blend)).toFixed(4)})`;
+    ctx.beginPath();
+    ctx.arc(x, y, r, 0, Math.PI * 2);
+    ctx.fill();
+  }
+
+  const lineColor = pickFrom(colors, nodeSeed, "#7FC9FF");
+  for (let i = 0; i < effectiveLines; i += 1) {
+    const yNorm = i / Math.max(1, lineCount - 1);
+    const yBase = yNorm * h;
+    const amp = (2 + blend * 16) * (0.2 + rng.float() * 1.1);
+    const freq = 0.6 + rng.float() * 2.2;
+    const phase = rng.float() * Math.PI * 2;
+    ctx.strokeStyle = String(lineColor).startsWith("#")
+      ? `rgba(140,208,255,${(lineOpacity * (0.3 + (1 - blend) * 0.7)).toFixed(4)})`
+      : String(lineColor);
+    ctx.globalAlpha = clamp01(lineOpacity * (0.45 + (1 - blend) * 0.55));
+    ctx.lineWidth = 0.8 + (1 - blend) * 0.9;
+    const asDashes = morph > 0.55 && (i % 2 === 0);
+    ctx.beginPath();
+    for (let x = 0; x <= w; x += Math.max(8, Math.round(w / 96))) {
+      const u = x / Math.max(1, w);
+      const y = yBase + Math.sin(u * Math.PI * 2 * freq + t * (0.35 + theme.sectionEnergy * 0.3) + phase) * amp;
+      if (x === 0) ctx.moveTo(x, y);
+      else if (asDashes && (x / Math.max(1, Math.round(w / 96))) % 3 === 0) ctx.moveTo(x, y);
+      else ctx.lineTo(x, y);
+    }
+    ctx.stroke();
+  }
+  ctx.restore();
+}
+
+function drawPhaseLockGrid(args: {
+  ctx: CanvasRenderingContext2D;
+  canvas: HTMLCanvasElement;
+  tMs: number;
+  nodeSeed: number;
+  state?: any;
+  params?: Record<string, any>;
+}) {
+  const { ctx, canvas, tMs, nodeSeed, state, params } = args;
+  const w = canvas.width;
+  const h = canvas.height;
+  const t = tMs / 1000;
+  const theme = resolveThemeState(state);
+  const sectionMul = sectionStyleFactors(state);
+  const spacing = Math.max(12, Math.min(120, Number(params?.spacingPx ?? 36)));
+  const warpPx = Math.max(0, Math.min(64, Number(params?.warpPx ?? 14)));
+  const alpha = clamp01(Number(params?.alpha ?? 0.24));
+  const lineWidth = Math.max(0.5, Math.min(4, Number(params?.lineWidth ?? 1.1)));
+  // Keep phase-lock lighter by default: fewer lines, then compensate with weight/brightness.
+  const densityScale = clamp01(Number(params?.densityScale ?? 0.4));
+  const rng = createRng(nodeSeed ^ hashStringToSeed("grid.phaseLock"));
+  const coherence = clamp01(theme.coherence * sectionMul.coherence);
+  const pressure = clamp01(theme.pressure * sectionMul.pressure);
+  const lock = clamp01(coherence * 0.8 + theme.downbeatPulse * 0.2);
+  const warpGain = (1 - lock) * (0.65 + pressure * 0.6) * sectionMul.warp;
+  const rotateDeg = Number(params?.rotateDeg ?? 45);
+  const rotateHz = Math.max(0, Math.min(0.3, Number(params?.rotateHz ?? 0)));
+  const perspectiveTilt = clamp01(Number(params?.perspectiveTilt ?? 0.12));
+  const perspectiveHz = Math.max(0, Math.min(0.25, Number(params?.perspectiveHz ?? 0)));
+  const rot = (rotateDeg * Math.PI) / 180;
+  const tilt = perspectiveTilt * (1 + 0.15 * Math.sin(t * Math.PI * 2 * perspectiveHz + (nodeSeed % 23) * 0.11));
+
+  ctx.save();
+  ctx.translate(w * 0.5, h * 0.5);
+  ctx.rotate(rot);
+  ctx.transform(1, 0, tilt * 0.35, 1, 0, 0);
+  ctx.translate(-w * 0.5, -h * 0.5);
+  ctx.globalCompositeOperation = "screen";
+  ctx.strokeStyle = `rgba(146,202,255,${(alpha * (0.4 + lock * 0.6)).toFixed(4)})`;
+  ctx.lineWidth = lineWidth;
+
+  const centerRelief = clamp01(Number(params?.centerRelief ?? 0.8));
+  const spacingEff = spacing / Math.max(0.14, densityScale);
+  const xPositions: number[] = [w * 0.5];
+  const pad = Math.max(spacingEff * 2, Math.hypot(w, h) * 0.6);
+  const minX = -pad;
+  const maxX = w + pad;
+  const minY = -pad;
+  const maxY = h + pad;
+  for (let dir of [-1, 1] as const) {
+    let x = w * 0.5;
+    let guard = 0;
+    while (x >= minX && x <= maxX && guard < 4096) {
+      const distNorm = Math.min(1, Math.abs((x - w * 0.5) / Math.max(1, w * 0.5)));
+      const localStep = spacingEff * (1 + centerRelief * Math.exp(-Math.pow(distNorm * 3.2, 2)));
+      x += dir * localStep;
+      xPositions.push(x);
+      guard += 1;
+    }
+  }
+  xPositions.sort((a, b) => a - b);
+  for (let ci = 0; ci < xPositions.length; ci += 1) {
+    const xBase = xPositions[ci];
+    if (xBase < minX || xBase > maxX) continue;
+    const distNorm = Math.min(1, Math.abs((xBase - w * 0.5) / Math.max(1, w * 0.5)));
+    const phase = rng.float() * Math.PI * 2;
+    const hue = Math.round(198 + 38 * (1 - distNorm));
+    const sat = Math.round(70 + 18 * (1 - distNorm));
+    const lit = Math.round(58 + 16 * (1 - distNorm));
+    const centerFalloff = 0.45 + 0.8 * Math.pow(1 - distNorm, 1.4);
+    const aLine = clamp01(alpha * 1.35 * (0.3 + lock * 0.62) * centerFalloff);
+    ctx.strokeStyle = `hsla(${hue}, ${sat}%, ${lit}%, ${aLine.toFixed(4)})`;
+    ctx.lineWidth = Math.min(5.2, lineWidth * 1.3);
+    ctx.beginPath();
+    let first = true;
+    for (let y = minY; y <= maxY; y += Math.max(14, Math.round(h / 54))) {
+      const u = y / Math.max(1, h);
+      const x = xBase + Math.sin(u * Math.PI * (1.2 + rng.float() * 2.1) + t * (0.5 + theme.sectionEnergy * 0.5) + phase) * warpPx * warpGain;
+      if (first) {
+        ctx.moveTo(x, y);
+        first = false;
+      } else ctx.lineTo(x, y);
+    }
+    ctx.stroke();
+  }
+
+  const yPositions: number[] = [h * 0.5];
+  for (let dir of [-1, 1] as const) {
+    let y = h * 0.5;
+    let guard = 0;
+    while (y >= minY && y <= maxY && guard < 4096) {
+      const distNorm = Math.min(1, Math.abs((y - h * 0.5) / Math.max(1, h * 0.5)));
+      const localStep = spacingEff * (1 + centerRelief * Math.exp(-Math.pow(distNorm * 3.2, 2)));
+      y += dir * localStep;
+      yPositions.push(y);
+      guard += 1;
+    }
+  }
+  yPositions.sort((a, b) => a - b);
+  for (let ri = 0; ri < yPositions.length; ri += 1) {
+    const yBase = yPositions[ri];
+    if (yBase < minY || yBase > maxY) continue;
+    const distNorm = Math.min(1, Math.abs((yBase - h * 0.5) / Math.max(1, h * 0.5)));
+    const phase = rng.float() * Math.PI * 2;
+    const hue = Math.round(206 + 30 * (1 - distNorm));
+    const sat = Math.round(68 + 22 * (1 - distNorm));
+    const lit = Math.round(56 + 16 * (1 - distNorm));
+    const centerFalloff = 0.45 + 0.8 * Math.pow(1 - distNorm, 1.4);
+    const aLine = clamp01(alpha * 1.35 * (0.3 + lock * 0.62) * centerFalloff);
+    ctx.strokeStyle = `hsla(${hue}, ${sat}%, ${lit}%, ${aLine.toFixed(4)})`;
+    ctx.lineWidth = Math.min(5.2, lineWidth * 1.3);
+    ctx.beginPath();
+    let first = true;
+    for (let x = minX; x <= maxX; x += Math.max(14, Math.round(w / 54))) {
+      const u = x / Math.max(1, w);
+      const y = yBase + Math.cos(u * Math.PI * (1.2 + rng.float() * 2.1) + t * (0.45 + theme.sectionEnergy * 0.45) + phase) * warpPx * warpGain;
+      if (first) {
+        ctx.moveTo(x, y);
+        first = false;
+      } else ctx.lineTo(x, y);
+    }
+    ctx.stroke();
+  }
+  ctx.restore();
+}
+
+function drawPersistentOffsetGlitch(args: {
+  ctx: CanvasRenderingContext2D;
+  canvas: HTMLCanvasElement;
+  tMs: number;
+  nodeSeed: number;
+  state?: any;
+  params?: Record<string, any>;
+}) {
+  const { ctx, canvas, tMs, nodeSeed, state, params } = args;
+  const w = canvas.width;
+  const h = canvas.height;
+  const t = tMs / 1000;
+  const theme = resolveThemeState(state);
+  const sectionMul = sectionStyleFactors(state);
+  const bandCountBase = Math.max(3, Math.min(64, Math.round(Number(params?.bandCount ?? 14))));
+  const bandCount = Math.max(3, Math.round(bandCountBase * performanceDensityScale(state)));
+  const maxShiftPx = Math.max(1, Math.min(40, Number(params?.maxShiftPx ?? 8)));
+  const alpha = clamp01(Number(params?.alpha ?? 0.18));
+  const pulseGain = clamp01(Number(params?.pulseGain ?? 0.36));
+  const rng = createRng(nodeSeed ^ hashStringToSeed("glitch.persistentOffset"));
+  const coherence = clamp01(theme.coherence * sectionMul.coherence);
+  const pressure = clamp01(theme.pressure * sectionMul.pressure);
+  const strength = clamp01(((1 - coherence) * 0.45 + pressure * 0.25 + 0.24) * sectionMul.glitch);
+
+  ctx.save();
+  ctx.globalCompositeOperation = "screen";
+  for (let layer = 0; layer < 2; layer += 1) {
+    const dir = layer === 0 ? 1 : -1;
+    const driftHz = layer === 0 ? 0.06 : 0.09;
+    for (let i = 0; i < bandCount; i += 1) {
+      const yBase = (i / bandCount) * h;
+      const yDrift = Math.sin(t * (driftHz + 0.015 * (i % 7)) + (nodeSeed % 31) * 0.11 + i * 0.37) * (8 + 18 * strength) * dir;
+      const y0 = Math.max(-24, Math.min(h + 24, yBase + yDrift));
+      const y1 = Math.min(h + 24, y0 + h / bandCount * (0.52 + rng.float() * 0.9));
+      const shift = Math.sin(t * (0.08 + rng.float() * 0.22) + rng.float() * Math.PI * 2 + i * 0.19) * maxShiftPx * strength * dir;
+      const bandA = alpha * (0.26 + rng.float() * 0.54) * (0.84 + 0.22 * layer);
+      ctx.fillStyle = layer === 0
+        ? `rgba(255,120,120,${bandA.toFixed(4)})`
+        : `rgba(120,200,255,${(bandA * 0.92).toFixed(4)})`;
+      ctx.fillRect(shift, y0, w, Math.max(1, y1 - y0));
+    }
+  }
+  ctx.restore();
+}
+
+function drawBranchGrowth(args: {
+  ctx: CanvasRenderingContext2D;
+  canvas: HTMLCanvasElement;
+  tMs: number;
+  nodeSeed: number;
+  colors: string[];
+  state?: any;
+  params?: Record<string, any>;
+}) {
+  const { ctx, canvas, tMs, nodeSeed, colors, state, params } = args;
+  const w = canvas.width;
+  const h = canvas.height;
+  const t = tMs / 1000;
+  const theme = resolveThemeState(state);
+  const mul = sectionStyleFactors(state);
+  const roots = Math.max(1, Math.min(6, Math.round(Number(params?.rootCount ?? 2))));
+  const depth = Math.max(2, Math.min(8, Math.round(Number(params?.depth ?? 5))));
+  const spreadDeg = Math.max(6, Math.min(60, Number(params?.spreadDeg ?? 24)));
+  const seg = Math.max(8, Math.min(120, Number(params?.segmentPx ?? 28)));
+  const alpha = clamp01(Number(params?.alpha ?? 0.22));
+  const modeRaw = String(params?.mode ?? "network").toLowerCase();
+  const mode = (modeRaw as "tree" | "network" | "roots");
+  const rng = createRng(nodeSeed ^ hashStringToSeed("graph.branchGrowth"));
+  const trunkColor = pickFrom(colors, nodeSeed, "#8ED0FF");
+  const branchEnergy = clamp01((theme.sectionEnergy * 0.45 + theme.pressure * 0.35 + theme.downbeatPulse * 0.2) * mul.pressure);
+
+  const drawBranch = (x0: number, y0: number, angle: number, len: number, lvl: number, rootPhase: number) => {
+    if (lvl <= 0 || len < 3) return;
+    const sway = Math.sin(t * (0.35 + rootPhase * 0.12) + lvl * 0.9 + rootPhase) * (0.06 + branchEnergy * 0.08);
+    const a = angle + sway;
+    const x1 = x0 + Math.cos(a) * len;
+    const y1 = y0 - Math.sin(a) * len;
+    ctx.beginPath();
+    ctx.moveTo(x0, y0);
+    ctx.lineTo(x1, y1);
+    ctx.stroke();
+    const baseSpread = (spreadDeg * Math.PI) / 180;
+    const fan = baseSpread * (0.45 + branchEnergy * 0.7);
+    const childLen = len * (0.64 + rng.float() * 0.08);
+    drawBranch(x1, y1, a + fan * (0.6 + rng.float() * 0.6), childLen, lvl - 1, rootPhase + 0.7);
+    drawBranch(x1, y1, a - fan * (0.6 + rng.float() * 0.6), childLen, lvl - 1, rootPhase + 1.1);
+    if (lvl >= 3 && branchEnergy > 0.3 && rng.float() < 0.45) {
+      drawBranch(x1, y1, a + (rng.float() - 0.5) * fan * 0.9, childLen * 0.82, lvl - 2, rootPhase + 1.7);
+    }
+  };
+
+  ctx.save();
+  ctx.globalCompositeOperation = "screen";
+  ctx.strokeStyle = String(trunkColor).startsWith("#")
+    ? `rgba(145,214,255,${(clamp01(alpha * 1.3 * (0.5 + branchEnergy * 0.5))).toFixed(4)})`
+    : String(trunkColor);
+
+  if (mode === "network") {
+    // Denser by design (about +30%) to read as a more intentional graph.
+    const cols = Math.max(4, Math.min(12, Math.round((depth + 1) * 1.2)));
+    const rows = Math.max(3, Math.min(8, Math.round((roots + 1) * 1.2)));
+    const nodes: Array<{ x: number; y: number }> = [];
+    for (let c = 0; c < cols; c += 1) {
+      const x = w * (0.12 + (c / Math.max(1, cols - 1)) * 0.76);
+      for (let r = 0; r < rows; r += 1) {
+        const yBase = h * (0.2 + (r / Math.max(1, rows - 1)) * 0.62);
+        const yJitter = (rng.float() - 0.5) * (18 + 18 * (1 - theme.coherence));
+        nodes.push({ x: x + (rng.float() - 0.5) * 12, y: yBase + yJitter });
+      }
+    }
+    ctx.lineWidth = (0.9 + branchEnergy * 1.3) * 1.3;
+    for (let c = 0; c < cols - 1; c += 1) {
+      for (let r = 0; r < rows; r += 1) {
+        const i0 = c * rows + r;
+        const from = nodes[i0];
+        const fan = 1 + Math.floor(rng.float() * (1.6 + branchEnergy * 2.8));
+        for (let k = 0; k < fan; k += 1) {
+          const rr = Math.max(0, Math.min(rows - 1, r + Math.floor((rng.float() - 0.35) * 2.5)));
+          const to = nodes[(c + 1) * rows + rr];
+          const bend = (rng.float() - 0.5) * (16 + 24 * branchEnergy);
+          ctx.beginPath();
+          ctx.moveTo(from.x, from.y);
+          ctx.quadraticCurveTo((from.x + to.x) * 0.5, (from.y + to.y) * 0.5 + bend, to.x, to.y);
+          ctx.stroke();
+        }
+      }
+    }
+    const nodeA = clamp01(alpha * 1.3 * (0.35 + branchEnergy * 0.55));
+    for (const n of nodes) {
+      ctx.fillStyle = `rgba(170,228,255,${nodeA.toFixed(4)})`;
+      ctx.beginPath();
+      ctx.arc(n.x, n.y, (1.4 + branchEnergy * 1.8) * 1.2, 0, Math.PI * 2);
+      ctx.fill();
+    }
+  } else {
+    const yBase = mode === "roots" ? h * (0.5 + 0.04 * Math.sin(t * 0.2 + (nodeSeed % 13))) : h * 0.88;
+    for (let r = 0; r < roots; r += 1) {
+      const u = roots === 1 ? 0.5 : r / Math.max(1, roots - 1);
+      const x = w * (0.18 + u * 0.64 + (rng.float() - 0.5) * 0.06);
+      const y = yBase + (mode === "roots" ? (rng.float() - 0.5) * h * 0.36 : h * (rng.float() * 0.06));
+      const lineW = Math.max(0.7, (1.5 - r * 0.15) * (1 + branchEnergy * 0.4) * 1.3);
+      ctx.lineWidth = lineW;
+      const dir = mode === "roots" ? (rng.float() < 0.5 ? Math.PI / 2 : -Math.PI / 2) : Math.PI / 2;
+      drawBranch(x, y, dir + (rng.float() - 0.5) * 0.35, seg * (1.25 + rng.float() * 0.5), depth, r + 1);
+    }
+  }
+  ctx.restore();
+}
+
+function drawPressureBloom(args: {
+  ctx: CanvasRenderingContext2D;
+  canvas: HTMLCanvasElement;
+  tMs: number;
+  nodeSeed: number;
+  colors: string[];
+  state?: any;
+  params?: Record<string, any>;
+}) {
+  const { ctx, canvas, tMs, nodeSeed, colors, state, params } = args;
+  const w = canvas.width;
+  const h = canvas.height;
+  const t = tMs / 1000;
+  const theme = resolveThemeState(state);
+  const mul = sectionStyleFactors(state);
+  const bloomCountBase = Math.max(2, Math.min(12, Math.round(Number(params?.bloomCount ?? 5))));
+  const bloomCount = Math.max(2, Math.round(bloomCountBase * performanceDensityScale(state)));
+  const baseR = Math.max(6, Math.min(300, Number(params?.baseRadiusPx ?? 40)));
+  const maxR = Math.max(baseR + 10, Math.min(Math.max(w, h), Number(params?.maxRadiusPx ?? 220)));
+  const alpha = clamp01(Number(params?.alpha ?? 0.18));
+  const ringW = Math.max(0.5, Math.min(8, Number(params?.ringWidth ?? 1.4)));
+  const rng = createRng(nodeSeed ^ hashStringToSeed("energy.pressureBloom"));
+  const pressure = clamp01(theme.pressure * mul.pressure);
+  const burst = clamp01(theme.downbeatPulse * 0.65 + theme.beatPulse * 0.25 + pressure * 0.35);
+  const centerRadiusRel = Math.max(0.08, Math.min(0.38, Number(params?.centerRadiusRel ?? 0.22)));
+  const centerJitterRel = Math.max(0, Math.min(0.18, Number(params?.centerJitterRel ?? 0.05)));
+  const color = pickFrom(colors, nodeSeed, "#85D3FF");
+
+  ctx.save();
+  ctx.globalCompositeOperation = "screen";
+  for (let i = 0; i < bloomCount; i += 1) {
+    const u = i / Math.max(1, bloomCount - 1);
+    const phase = rng.float() * Math.PI * 2;
+    const orbitBase = Math.min(w, h) * centerRadiusRel * (0.8 + rng.float() * 0.35);
+    const orbitWobble = Math.min(w, h) * centerJitterRel * (0.45 + 0.55 * Math.sin(t * (0.05 + rng.float() * 0.08) + phase * 0.6));
+    const orbitR = Math.max(0, orbitBase + orbitWobble);
+    const orbitA = t * (0.16 + rng.float() * 0.12) + phase;
+    const cx = w * 0.5 + Math.cos(orbitA) * orbitR;
+    const cy = h * 0.5 + Math.sin(orbitA * 0.9 + phase * 0.3) * orbitR;
+    const sweep = (Math.sin(t * (0.35 + pressure * 1.3) + phase) + 1) * 0.5;
+    const r = baseR + (maxR - baseR) * (u * 0.65 + sweep * 0.35) * (0.45 + burst * 0.75);
+    const a = clamp01(alpha * 1.36 * (0.2 + (1 - u) * 0.8) * (0.45 + pressure * 0.55));
+    ctx.strokeStyle = String(color).startsWith("#")
+      ? `rgba(140,216,255,${a.toFixed(4)})`
+      : String(color);
+    ctx.lineWidth = ringW * 0.8 * (1 + (1 - u) * 0.95 + burst * 0.3);
+    ctx.beginPath();
+    ctx.arc(cx, cy, r, 0, Math.PI * 2);
+    ctx.stroke();
+    if (i % 2 === 0) {
+      ctx.fillStyle = String(color).startsWith("#")
+        ? `rgba(140,216,255,${(a * 0.2).toFixed(4)})`
+        : String(color);
+      ctx.beginPath();
+      ctx.arc(cx, cy, Math.max(2, r * (0.18 + 0.12 * burst)), 0, Math.PI * 2);
+      ctx.fill();
+    }
+  }
+  ctx.restore();
+}
+
 function drawRosetteSpiral(args: {
   ctx: CanvasRenderingContext2D;
   canvas: HTMLCanvasElement;
@@ -262,10 +729,11 @@ function drawRosetteSpiral(args: {
     high?: number;
     onsetPulse?: number;
   };
+  state?: any;
   nodeSeed: number;
   params?: Record<string, any>;
 }) {
-  const { ctx, canvas, colors, tMs, amp, beat, downbeat, reactive, nodeSeed, params } = args;
+  const { ctx, canvas, colors, tMs, amp, beat, downbeat, reactive, state, nodeSeed, params } = args;
   const w = canvas.width;
   const h = canvas.height;
   const cx = w * 0.5;
@@ -278,7 +746,8 @@ function drawRosetteSpiral(args: {
   const onset = rr.onsetPulse;
   const rng = createRng(nodeSeed);
 
-  const steps = Math.max(80, Math.min(2800, Math.round(Number(params?.steps ?? 820))));
+  const stepsBase = Math.max(80, Math.min(2800, Math.round(Number(params?.steps ?? 820))));
+  const steps = Math.max(80, Math.round(stepsBase * performanceDensityScale(state)));
   const turns = Math.max(0.8, Math.min(52, Number(params?.turns ?? 10.5)));
   const thetaMax = Math.PI * 2 * turns;
   const growth = Math.max(0.03, Number(params?.growth ?? 3.5));
@@ -606,12 +1075,14 @@ function drawBandsBg(args: {
   canvas: HTMLCanvasElement;
   tMs: number;
   nodeSeed: number;
+  state?: any;
   params?: Record<string, any>;
 }) {
-  const { ctx, canvas, tMs, nodeSeed, params } = args;
+  const { ctx, canvas, tMs, nodeSeed, state, params } = args;
   const w = canvas.width;
   const h = canvas.height;
-  const count = Math.max(4, Math.min(32, Math.round(Number(params?.count ?? 12))));
+  const countBase = Math.max(4, Math.min(32, Math.round(Number(params?.count ?? 12))));
+  const count = Math.max(4, Math.round(countBase * performanceDensityScale(state)));
   const alpha = clamp01(Number(params?.opacity ?? 0.11));
   const t = tMs / 1000;
   const rng = createRng(nodeSeed ^ hashStringToSeed("bg.bands"));
@@ -722,7 +1193,7 @@ export function renderGraphScene({
       } else if (type === "bg.vignette") {
         drawVignetteBg({ ctx, canvas, params: resolvedParams });
       } else if (type === "bg.bands") {
-        drawBandsBg({ ctx, canvas, tMs, nodeSeed, params: resolvedParams });
+        drawBandsBg({ ctx, canvas, tMs, nodeSeed, state, params: resolvedParams });
       } else if (
         type === "bg.gradientfield" ||
         type === "bg.radialgradientdrift" ||
@@ -758,6 +1229,54 @@ export function renderGraphScene({
           downbeat,
           params: resolvedParams
         });
+      } else if (type === "field.signalnoiseblend") {
+        drawSignalNoiseBlend({
+          ctx,
+          canvas,
+          tMs,
+          nodeSeed,
+          colors,
+          state,
+          params: resolvedParams
+        });
+      } else if (type === "grid.phaselock") {
+        drawPhaseLockGrid({
+          ctx,
+          canvas,
+          tMs,
+          nodeSeed,
+          state,
+          params: resolvedParams
+        });
+      } else if (type === "glitch.persistentoffset") {
+        drawPersistentOffsetGlitch({
+          ctx,
+          canvas,
+          tMs,
+          nodeSeed,
+          state,
+          params: resolvedParams
+        });
+      } else if (type === "graph.branchgrowth") {
+        drawBranchGrowth({
+          ctx,
+          canvas,
+          tMs,
+          nodeSeed,
+          colors,
+          state,
+          params: resolvedParams
+        });
+      } else if (type === "energy.pressurebloom") {
+        drawPressureBloom({
+          ctx,
+          canvas,
+          tMs,
+          nodeSeed,
+          colors,
+          state,
+          params: resolvedParams
+        });
       } else if (type === "shape.circlepulse") {
         drawCirclePulse({
           ctx,
@@ -768,7 +1287,8 @@ export function renderGraphScene({
           beat,
           downbeat,
           nodeSeed,
-          params: resolvedParams
+          params: resolvedParams,
+          state
         });
       } else if (type === "polyline.orbitribbon") {
         drawOrbitRibbon({
@@ -780,6 +1300,7 @@ export function renderGraphScene({
           beat,
           downbeat,
           reactive: state?.signalBus?.reactive,
+          state,
           nodeSeed,
           params: resolvedParams
         });
@@ -835,6 +1356,7 @@ export function renderGraphScene({
           beat,
           downbeat,
           reactive: state?.signalBus?.reactive,
+          state,
           nodeSeed,
           params: resolvedParams
         });

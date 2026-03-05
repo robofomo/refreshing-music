@@ -86,6 +86,10 @@ type LabBackdropId = "black" | "gradient" | "vignette" | "bands";
 type LabPrimitiveId =
   | "bg.gradientField"
   | "fg.particles"
+  | "field.signalNoiseBlend"
+  | "glitch.persistentOffset"
+  | "graph.branchGrowth"
+  | "energy.pressureBloom"
   | "shape.beatOrb"
   | "overlay.beatTrack"
   | "shape.circlePulse"
@@ -97,6 +101,9 @@ type LabPrimitiveId =
 const LAB_PRIMITIVES: LabPrimitiveId[] = [
   "bg.gradientField",
   "fg.particles",
+  "field.signalNoiseBlend",
+  "glitch.persistentOffset",
+  "energy.pressureBloom",
   "shape.beatOrb",
   "overlay.beatTrack",
   "shape.circlePulse",
@@ -137,6 +144,17 @@ type ViewerSignalBus = {
     count: number;
     fusionModeLabel: string;
     aiDownbeats: number;
+  };
+  perf: {
+    fps: number;
+    targetFps: number;
+    densityScale: number;
+  };
+  theme: {
+    coherence: number;
+    pressure: number;
+    lyricActivity: number;
+    sectionEnergy: number;
   };
   audio: {
     amp: number;
@@ -281,6 +299,9 @@ let playerLastTransitionLabel = "crossfade";
 let determinismProbeStatus = "idle";
 let determinismProbeAtIso = "";
 let determinismProbeRequested = false;
+let lastFrameTsMs = 0;
+let fpsSmoothed = 0;
+let adaptiveDensityScale = 1;
 let isSeeking = false;
 let pendingSeekRatio = 0;
 let wasPlayingBeforeSeek = false;
@@ -383,9 +404,26 @@ function normalizeViewerMode(value: string | null | undefined): ViewerMode {
   return "player";
 }
 
+function normalizeLabPrimitive(value: string | null | undefined): LabPrimitiveId {
+  const raw = String(value || "").trim();
+  const match = LAB_PRIMITIVES.find((x) => x === raw);
+  return match ?? LAB_PRIMITIVES[0];
+}
+
+function syncModeScopedUrlParams() {
+  if (viewerMode === "primitive-lab") {
+    updateUrlParam("labPrimitive", labPrimitive);
+    updateUrlParam("lyrics", null);
+    updateUrlParam("lyricMode", null);
+    return;
+  }
+  updateUrlParam("labPrimitive", null);
+}
+
 function setViewerMode(nextMode: ViewerMode) {
   viewerMode = nextMode;
   updateUrlParam("mode", nextMode === "player" ? null : nextMode);
+  syncModeScopedUrlParams();
   if (modeBtn) modeBtn.textContent = nextMode;
 }
 
@@ -403,6 +441,7 @@ function cycleLabPrimitive(dir: 1 | -1) {
   const i = LAB_PRIMITIVES.indexOf(labPrimitive);
   const next = (i + dir + LAB_PRIMITIVES.length) % LAB_PRIMITIVES.length;
   labPrimitive = LAB_PRIMITIVES[next];
+  if (viewerMode === "primitive-lab") updateUrlParam("labPrimitive", labPrimitive);
 }
 
 function cycleLabBackdropPolicy() {
@@ -445,6 +484,10 @@ function currentLabProfile() {
   const primitiveRanges: Record<LabPrimitiveId, { scale: [number, number]; density: [number, number] }> = {
     "bg.gradientField": { scale: [0.8, 2.2], density: [0.6, 2.2] },
     "fg.particles": { scale: [0.7, 2.0], density: [0.5, 4.0] },
+    "field.signalNoiseBlend": { scale: [0.7, 2.3], density: [0.5, 3.8] },
+    "glitch.persistentOffset": { scale: [0.7, 2.4], density: [0.6, 3.7] },
+    "graph.branchGrowth": { scale: [0.7, 2.3], density: [0.7, 3.8] },
+    "energy.pressureBloom": { scale: [0.7, 2.5], density: [0.6, 3.9] },
     "shape.beatOrb": { scale: [0.7, 2.3], density: [0.7, 2.0] },
     "overlay.beatTrack": { scale: [1.0, 1.0], density: [1.0, 1.0] },
     "shape.circlePulse": { scale: [0.75, 2.1], density: [0.6, 2.0] },
@@ -499,6 +542,10 @@ function labBackdropNode(backdrop: LabBackdropId, profile: { scale: number; dens
   };
 }
 
+function clamp01(v: number) {
+  return Math.max(0, Math.min(1, Number(v) || 0));
+}
+
 function labPrimitiveNode(profile: { scale: number; density: number; variant: number }, backdrop: LabBackdropId) {
   const scale = profile.scale;
   const density = profile.density;
@@ -524,6 +571,61 @@ function labPrimitiveNode(profile: { scale: number; density: number; variant: nu
         speed: 0.2 + scale * 0.28,
         curl: 0.25 + density * 0.2,
         opacity: 0.32 + Math.min(0.5, density * 0.14)
+      }
+    };
+  }
+  if (labPrimitive === "field.signalNoiseBlend") {
+    return {
+      id: "lab-primitive",
+      type: "field.signalNoiseBlend",
+      params: {
+        pointCount: Math.max(100, Math.round(160 * density)),
+        lineCount: Math.max(10, Math.round(26 * density)),
+        noiseOpacity: 0.16 + Math.min(0.4, density * 0.08),
+        lineOpacity: 0.14 + Math.min(0.3, density * 0.06),
+        driftPx: Math.round(10 + scale * 16),
+        zipChance: 0.1 + Math.min(0.32, density * 0.07),
+        zipSpeedPx: Math.round(520 + scale * 280)
+      }
+    };
+  }
+  if (labPrimitive === "glitch.persistentOffset") {
+    return {
+      id: "lab-primitive",
+      type: "glitch.persistentOffset",
+      params: {
+        bandCount: Math.max(8, Math.round(16 * density)),
+        maxShiftPx: Math.round(4 + scale * 9),
+        alpha: 0.13 + Math.min(0.3, density * 0.06),
+        pulseGain: 0.25 + Math.min(0.5, scale * 0.14)
+      }
+    };
+  }
+  if (labPrimitive === "graph.branchGrowth") {
+    const mode = "network";
+    return {
+      id: "lab-primitive",
+      type: "graph.branchGrowth",
+      params: {
+        mode,
+        rootCount: Math.max(1, Math.round(1 + density * 1.2)),
+        depth: Math.max(3, Math.round(3 + density * 1.8)),
+        spreadDeg: Math.round(14 + scale * 15),
+        segmentPx: Math.round(20 + scale * 18),
+        alpha: 0.18 + Math.min(0.4, density * 0.07)
+      }
+    };
+  }
+  if (labPrimitive === "energy.pressureBloom") {
+    return {
+      id: "lab-primitive",
+      type: "energy.pressureBloom",
+      params: {
+        bloomCount: Math.max(3, Math.round(4 + density * 2)),
+        baseRadiusPx: Math.round(34 + scale * 22),
+        maxRadiusPx: Math.round(120 + scale * 120),
+        alpha: 0.14 + Math.min(0.35, density * 0.06),
+        ringWidth: 0.9 + Math.min(2.4, density * 0.4)
       }
     };
   }
@@ -728,6 +830,34 @@ function activeLabSnippet() {
   }
 }`;
   }
+  if (labPrimitive === "graph.branchGrowth") {
+    const mode = "network";
+    return `{
+  "id": "lab-branch-growth",
+  "type": "graph.branchGrowth",
+  "params": {
+    "mode": "${mode}",
+    "rootCount": ${Math.max(1, Math.round(1 + density * 1.2))},
+    "depth": ${Math.max(3, Math.round(3 + density * 1.8))},
+    "spreadDeg": ${Math.round(14 + scale * 15)},
+    "segmentPx": ${Math.round(20 + scale * 18)},
+    "alpha": ${Number((0.18 + Math.min(0.4, density * 0.07)).toFixed(3))}
+  }
+}`;
+  }
+  if (labPrimitive === "energy.pressureBloom") {
+    return `{
+  "id": "lab-pressure-bloom",
+  "type": "energy.pressureBloom",
+  "params": {
+    "bloomCount": ${Math.max(3, Math.round(4 + density * 2))},
+    "baseRadiusPx": ${Math.round(34 + scale * 22)},
+    "maxRadiusPx": ${Math.round(120 + scale * 120)},
+    "alpha": ${Number((0.14 + Math.min(0.35, density * 0.06)).toFixed(3))},
+    "ringWidth": ${Number((0.9 + Math.min(2.4, density * 0.4)).toFixed(3))}
+  }
+}`;
+  }
   if (labPrimitive === "polyline.orbitRibbon") {
     return `{
   "id": "lab-ribbon",
@@ -893,7 +1023,7 @@ async function copyShareUrl() {
 
 function setLyricsEnabled(next: boolean) {
   lyricsEnabled = next;
-  updateUrlParam("lyrics", next ? "1" : "0");
+  if (viewerMode !== "primitive-lab") updateUrlParam("lyrics", next ? "1" : "0");
 }
 
 function setControlsVisible(visible: boolean) {
@@ -2523,6 +2653,22 @@ function buildSignalBus(input: {
   sectionType: string;
   pulse: { beat: number; downbeat: number };
 }): ViewerSignalBus {
+  const sectionEnergy = clamp01(
+    Number(input.reactive.low) * 0.34 +
+    Number(input.reactive.mid) * 0.4 +
+    Number(input.reactive.high) * 0.26
+  );
+  const pressure = clamp01(
+    Number(input.reactive.onsetPulse) * 0.54 +
+    Number(input.reactive.ampFast) * 0.26 +
+    Number(input.reactive.low) * 0.2
+  );
+  const coherence = clamp01(
+    0.55 +
+    Number(input.pulse.downbeat) * 0.22 +
+    Number(input.pulse.beat) * 0.12 -
+    Number(input.reactive.onsetPulse) * 0.18
+  );
   return {
     time: {
       audioMs: input.tAudioMs,
@@ -2554,6 +2700,17 @@ function buildSignalBus(input: {
       count: activeHintCount,
       fusionModeLabel: beatFusionModeLabel,
       aiDownbeats: aiDownbeatMarkers.length
+    },
+    perf: {
+      fps: fpsSmoothed > 0 ? fpsSmoothed : 0,
+      targetFps: 60,
+      densityScale: adaptiveDensityScale
+    },
+    theme: {
+      coherence,
+      pressure,
+      lyricActivity: clamp01(Number(input.reactive.vocalsActive)),
+      sectionEnergy
     },
     audio: {
       amp: input.amp,
@@ -2698,6 +2855,21 @@ function graphTemplateLibrary(baseRecipe: any) {
       ]
     },
     {
+      id: "noise-offset",
+      name: "Noise Offset",
+      layers: [
+        {
+          id: "main",
+          blend: "screen",
+          opacity: 1,
+          nodes: [
+            { id: "noise", type: "field.signalNoiseBlend", params: { pointCount: 180, lineCount: 24, noiseOpacity: 0.22, lineOpacity: 0.18, driftPx: 18, zipChance: 0.2, zipSpeedPx: 740 } },
+            { id: "offset", type: "glitch.persistentOffset", params: { bandCount: 14, maxShiftPx: 9, alpha: 0.18, pulseGain: 0.42 } }
+          ]
+        }
+      ]
+    },
+    {
       id: "ribbon-echo",
       name: "Ribbon Echo",
       layers: [
@@ -2708,6 +2880,22 @@ function graphTemplateLibrary(baseRecipe: any) {
           nodes: [
             { id: "ribbon", type: "polyline.orbitRibbon", params: { points: 84, radiusPx: 182, thicknessPx: 1.5, phaseHz: 0.06 } },
             { id: "word", type: "text.echoWord", params: { fontPx: 30, echoCount: 4, driftPx: 12 } }
+          ]
+        }
+      ]
+    },
+    {
+      id: "pressure-branches",
+      name: "Pressure Branches",
+      layers: [
+        {
+          id: "main",
+          blend: "screen",
+          opacity: 1,
+          nodes: [
+            { id: "pressure", type: "energy.pressureBloom", params: { bloomCount: 7, baseRadiusPx: 38, maxRadiusPx: 250, alpha: 0.27, ringWidth: 2 } },
+            { id: "noise", type: "field.signalNoiseBlend", params: { pointCount: 160, lineCount: 16, noiseOpacity: 0.2, lineOpacity: 0.14, driftPx: 14, zipChance: 0.14, zipSpeedPx: 680 } },
+            { id: "offset", type: "glitch.persistentOffset", params: { bandCount: 12, maxShiftPx: 7, alpha: 0.14, pulseGain: 0.36 } }
           ]
         }
       ]
@@ -2917,6 +3105,9 @@ function randomSceneLayersForSection(sectionId: string, options?: { allowManual?
 
   const fgPool = [
     { id: "particles", type: "fg.particles", params: { count: 90 + Math.floor(paramRng() * 130), sizeRange: [1.2 + paramRng() * 1.1, 2.6 + paramRng() * 2.4], speed: 0.25 + paramRng() * 0.55, curl: 0.35 + paramRng() * 0.85, opacity: 0.48 + paramRng() * 0.35, signalSource: particleSignalSource, splitVocalsRatio: 0.2 + paramRng() * 0.45 } },
+    { id: "signal-noise", type: "field.signalNoiseBlend", params: { pointCount: 120 + Math.floor(paramRng() * 160), lineCount: 10 + Math.floor(paramRng() * 24), noiseOpacity: 0.12 + paramRng() * 0.22, lineOpacity: 0.1 + paramRng() * 0.2, driftPx: 8 + Math.floor(paramRng() * 20), zipChance: 0.08 + paramRng() * 0.25, zipSpeedPx: 520 + Math.floor(paramRng() * 760) } },
+    { id: "persistent-offset", type: "glitch.persistentOffset", params: { bandCount: 8 + Math.floor(paramRng() * 16), maxShiftPx: 3 + Math.floor(paramRng() * 10), alpha: 0.08 + paramRng() * 0.2, pulseGain: 0.2 + paramRng() * 0.45 } },
+    { id: "pressure-bloom", type: "energy.pressureBloom", params: { bloomCount: 5 + Math.floor(paramRng() * 7), baseRadiusPx: 22 + Math.floor(paramRng() * 36), maxRadiusPx: 100 + Math.floor(paramRng() * 180), alpha: 0.17 + paramRng() * 0.28, ringWidth: 1.4 + paramRng() * 2.4 } },
     { id: "constellation", type: "fg.constellationLinks", params: { count: 16 + Math.floor(paramRng() * 30), linkDistPx: 72 + Math.floor(paramRng() * 120), dotRadiusPx: 0.8 + paramRng() * 1.8, lineWidthPx: 0.5 + paramRng() * 1.1 } },
     { id: "shock-rings", type: "fg.shockRings", params: { ringCount: 4 + Math.floor(paramRng() * 8), speedHz: 0.22 + paramRng() * 0.4, spreadPx: 150 + Math.floor(paramRng() * 420), thicknessPx: 0.8 + paramRng() * 1.8 } },
     { id: "pulse", type: "shape.circlePulse", params: { ringCount: 5 + Math.floor(paramRng() * 8), radiusPx: 70 + Math.floor(paramRng() * 70), alpha: 0.14 + paramRng() * 0.2 } },
@@ -2933,6 +3124,36 @@ function randomSceneLayersForSection(sectionId: string, options?: { allowManual?
     fgNodes.push(cloneRecipe(fgPool[idx]));
   }
   if (!fgNodes.length) fgNodes.push(cloneRecipe(fgPool[0]));
+  for (const node of fgNodes) {
+    const t = String(node?.type || "").toLowerCase();
+    node.params = typeof node.params === "object" && node.params ? node.params : {};
+    if (t === "field.signalnoiseblend") {
+      if (sectionType === "chorus") {
+        node.params.lineCount = Math.max(12, Math.round(Number(node.params.lineCount ?? 16) * 0.85));
+        node.params.noiseOpacity = Math.max(0.08, Number(node.params.noiseOpacity ?? 0.18) * 0.8);
+      } else if (sectionType === "bridge") {
+        node.params.lineCount = Math.max(10, Math.round(Number(node.params.lineCount ?? 16) * 0.7));
+        node.params.noiseOpacity = Math.min(0.45, Number(node.params.noiseOpacity ?? 0.18) * 1.25);
+      }
+    } else if (t === "glitch.persistentoffset") {
+      if (sectionType === "chorus") {
+        node.params.alpha = Math.max(0.06, Number(node.params.alpha ?? 0.14) * 0.82);
+      } else if (sectionType === "bridge") {
+        node.params.alpha = Math.min(0.36, Number(node.params.alpha ?? 0.14) * 1.35);
+        node.params.maxShiftPx = Math.min(16, Number(node.params.maxShiftPx ?? 8) * 1.2);
+      }
+    } else if (t === "graph.branchgrowth") {
+      if (sectionType === "chorus") node.params.depth = Math.max(3, Math.round(Number(node.params.depth ?? 4) + 1));
+      else if (sectionType === "outro") node.params.depth = Math.max(3, Math.round(Number(node.params.depth ?? 4) - 1));
+    } else if (t === "energy.pressurebloom") {
+      if (sectionType === "chorus") {
+        node.params.alpha = Math.min(0.42, Number(node.params.alpha ?? 0.16) * 1.2);
+        node.params.bloomCount = Math.max(4, Math.round(Number(node.params.bloomCount ?? 5) + 1));
+      } else if (sectionType === "verse") {
+        node.params.alpha = Math.max(0.08, Number(node.params.alpha ?? 0.16) * 0.9);
+      }
+    }
+  }
   const lyricRoll = layoutRng();
   const lyricNode =
     lyricRoll < 0.28
@@ -3449,6 +3670,22 @@ function resizeCanvas() {
 
 function render() {
   if (!ctx) return;
+  const frameNowMs = performance.now();
+  if (lastFrameTsMs > 0) {
+    const dt = frameNowMs - lastFrameTsMs;
+    if (dt > 0 && dt < 1000) {
+      const fpsInstant = 1000 / dt;
+      fpsSmoothed = fpsSmoothed > 0 ? (fpsSmoothed * 0.9 + fpsInstant * 0.1) : fpsInstant;
+      const targetFps = 60;
+      const wantedScale = fpsSmoothed < targetFps
+        ? Math.max(0.45, Math.min(1, fpsSmoothed / targetFps))
+        : 1;
+      const adaptRate = wantedScale < adaptiveDensityScale ? 0.2 : 0.05;
+      adaptiveDensityScale = adaptiveDensityScale + (wantedScale - adaptiveDensityScale) * adaptRate;
+      adaptiveDensityScale = clamp01(Math.max(0.45, adaptiveDensityScale));
+    }
+  }
+  lastFrameTsMs = frameNowMs;
   if (stemsActive() && !audio.paused) syncStemTiming();
   const tAudioMs = audio.currentTime * 1000;
   const lastAmp = ampHistory.length ? ampHistory[ampHistory.length - 1] : null;
@@ -3477,7 +3714,7 @@ function render() {
   }
   pushAmplitudeSample(tAudioMs, ampNow);
   const amp = amplitudeAt(tRenderMs, ampNow);
-  const sectionClockMs = tAudioMs;
+  const sectionClockMs = tRenderMs;
   const sec = findCurrentSection(sectionClockMs);
   const nextSec = findNextSection(sectionClockMs);
   const sectionId = sec?.id ?? "";
@@ -3634,8 +3871,11 @@ if (!isSeeking && Number.isFinite(audio.duration) && audio.duration > 0) {
 }
 
   const lyricRef = findCurrentLyricLine(tRenderMs);
-  const lyricIndex = typeof frameInfo?.lyricIndex === "number" ? frameInfo.lyricIndex : (typeof lyricRef?.i === "number" ? lyricRef.i : -1);
-  const lyricText = frameInfo?.lyricText
+  const frameLyricIndex = Number(frameInfo?.lyricIndex);
+  const lyricIndex = Number.isFinite(frameLyricIndex) && frameLyricIndex >= 0
+    ? frameLyricIndex
+    : (typeof lyricRef?.i === "number" ? lyricRef.i : -1);
+  const lyricText = (typeof frameInfo?.lyricText === "string" && frameInfo.lyricText.trim().length > 0)
     ? String(frameInfo.lyricText)
     : typeof lyricRef?.i === "number" && lyricRef.i >= 0 && lyricRef.i < lyricsLines.length
       ? lyricsLines[lyricRef.i]
@@ -3667,7 +3907,8 @@ if (!isSeeking && Number.isFinite(audio.duration) && audio.duration > 0) {
     `trackId: ${track?.trackId ?? "-"}`,
     `seed: ${seed}`,
     `mode: ${viewerMode}`,
-    `time: ${fmtMs(tAudioMs)}`,
+    `time: ${fmtMs(tRenderMs)}`,
+    `fps: ${fpsSmoothed > 0 ? fpsSmoothed.toFixed(1) : "-"} density:${adaptiveDensityScale.toFixed(2)}`,
     `offsetMs: ${renderOffsetMs}`,
     `playback: ${playbackMode}`,
     ...(isHintEditMode()
@@ -3719,6 +3960,7 @@ if (!isSeeking && Number.isFinite(audio.duration) && audio.duration > 0) {
       : []),
     `sectionId: ${sectionId || "-"}`,
     `sectionType: ${frameInfo?.sectionType ?? sectionType}`,
+    `theme: C${signalBus.theme.coherence.toFixed(2)} P${signalBus.theme.pressure.toFixed(2)} L${signalBus.theme.lyricActivity.toFixed(2)} E${signalBus.theme.sectionEnergy.toFixed(2)}`,
     `lyricIndex: ${lyricIndex}`,
     `lyric: ${lyricText || "-"}`,
     ``,
@@ -3848,14 +4090,22 @@ async function init() {
   const lyricsParam = url.searchParams.get("lyrics");
   const lyricModeParam = url.searchParams.get("lyricMode");
   const modeParam = url.searchParams.get("mode");
+  const labPrimitiveParam = url.searchParams.get("labPrimitive");
   seed = seedParam ? Number(seedParam) : NaN;
   const storedOffset = loadStoredOffsetMs();
   const initialOffset = offsetParam ? Number(offsetParam) : (storedOffset ?? DEFAULT_RENDER_OFFSET_MS);
   setRenderOffset(initialOffset);
-  setLyricsEnabled(lyricsParam !== "0");
-  lyricMode = lyricModeParam === "fixed" || lyricModeParam === "off" ? lyricModeParam : "center";
-  updateUrlParam("lyricMode", lyricMode);
+  labPrimitive = normalizeLabPrimitive(labPrimitiveParam);
   setViewerMode(normalizeViewerMode(modeParam));
+  lyricsEnabled = lyricsParam !== "0";
+  lyricMode = lyricModeParam === "fixed" || lyricModeParam === "off" ? lyricModeParam : "center";
+  if (viewerMode !== "primitive-lab") {
+    updateUrlParam("lyrics", lyricsEnabled ? "1" : "0");
+    updateUrlParam("lyricMode", lyricMode);
+  } else {
+    updateUrlParam("lyrics", null);
+    updateUrlParam("lyricMode", null);
+  }
 
   const byTrackId = requestedTrackId
     ? indexEntries.findIndex((entry) => trackIdFromEntry(entry) === requestedTrackId)
@@ -4095,7 +4345,7 @@ window.addEventListener("keydown", async (e) => {
   if (e.key.toLowerCase() === "m") {
     e.preventDefault();
     lyricMode = lyricMode === "fixed" ? "center" : lyricMode === "center" ? "off" : "fixed";
-    updateUrlParam("lyricMode", lyricMode);
+    if (viewerMode !== "primitive-lab") updateUrlParam("lyricMode", lyricMode);
     return;
   }
   if (e.key.toLowerCase() === "v" && !e.repeat) {

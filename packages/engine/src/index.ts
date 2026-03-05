@@ -73,6 +73,7 @@ export function createEngine({
   let lastRecipe: any = null;
   let sectionChangeT0Ms = -1;
   let sectionChangeT1Ms = -1;
+  let lastFrameTMs = Number.NaN;
   let activeTransition: TransitionDef | null = null;
   let transitionFromSectionId = "";
   let transitionFromSectionType: SectionType = "other";
@@ -245,6 +246,7 @@ export function createEngine({
 
   function reset(nextSeed: number) {
     seed = nextSeed >>> 0;
+    lastFrameTMs = Number.NaN;
     lastSectionId = "";
     lastSectionType = "other";
     lastRecipe = null;
@@ -271,6 +273,23 @@ export function createEngine({
     const timeState = getTimeState ? getTimeState() : {};
     const audioState = getAudioState ? getAudioState() : {};
     const tMs = state?.tMs ?? timeState?.tMs ?? 0;
+    const tMsNum = Number(tMs);
+    if (Number.isFinite(lastFrameTMs) && Number.isFinite(tMsNum)) {
+      const dt = tMsNum - lastFrameTMs;
+      // Time discontinuities (seek/jump) can leave an old transition state blocking new ones.
+      if (dt < -120 || dt > 5000) {
+        sectionChangeT0Ms = -1;
+        sectionChangeT1Ms = -1;
+        activeTransition = null;
+        transitionFromSectionId = "";
+        transitionFromSectionType = "other";
+        transitionFromRecipe = null;
+        transitionToSectionId = "";
+        transitionToSectionType = "other";
+        transitionToRecipe = null;
+      }
+    }
+    lastFrameTMs = Number.isFinite(tMsNum) ? tMsNum : lastFrameTMs;
     const recipe = state?.recipe ?? {};
     const nextRecipe = state?.nextRecipe ?? recipe;
     const track = state?.track ?? {};
@@ -319,6 +338,20 @@ export function createEngine({
     const nextSectionId = String(state?.nextSectionId ?? "");
     const nextSectionType = (state?.nextSectionType as SectionType) || classifySection(nextSectionId);
     const nextSectionStartMs = Number(state?.nextSectionStartMs);
+    if (
+      activeTransition &&
+      (!Number.isFinite(sectionChangeT0Ms) || sectionChangeT0Ms < 0 || !Number.isFinite(sectionChangeT1Ms))
+    ) {
+      sectionChangeT0Ms = -1;
+      sectionChangeT1Ms = -1;
+      activeTransition = null;
+      transitionFromSectionId = "";
+      transitionFromSectionType = "other";
+      transitionFromRecipe = null;
+      transitionToSectionId = "";
+      transitionToSectionType = "other";
+      transitionToRecipe = null;
+    }
     const transForNext = nextSectionId && nextSectionId !== sectionId
       ? selectTransitionDef(recipe, sectionId, nextSectionId)
       : null;

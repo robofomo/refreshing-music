@@ -145,6 +145,22 @@ function nearestBeatIndex(targetMs, beatsMs) {
   return bestIdx;
 }
 
+function decimateBeatGrid(beatsMs, divisor, anchorMs) {
+  const xs = uniqSortedMs(Array.isArray(beatsMs) ? beatsMs : []);
+  const k = Math.max(1, Math.min(8, Math.round(Number(divisor) || 1)));
+  if (k <= 1 || xs.length <= 2) return xs;
+  let phase = 0;
+  if (Number.isFinite(Number(anchorMs))) {
+    const idx = nearestBeatIndex(Number(anchorMs), xs);
+    if (idx >= 0) phase = ((idx % k) + k) % k;
+  }
+  const out = [];
+  for (let i = 0; i < xs.length; i += 1) {
+    if ((((i - phase) % k) + k) % k === 0) out.push(xs[i]);
+  }
+  return uniqSortedMs(out);
+}
+
 function nearestGridMs(targetMs, baseMs, stepMs) {
   if (!Number.isFinite(stepMs) || stepMs <= 0) return Math.max(0, Math.round(Number(targetMs) || 0));
   const t = Math.max(0, Number(targetMs) || 0);
@@ -924,6 +940,7 @@ export function reduceEffectiveState({
 }) {
   const beatsMs = normalizeMsList(beats?.beatTimesMs);
   const downbeatMs = normalizeMsList(beats?.downbeatTimesMs);
+  const aiBeatDivisor = Math.max(1, Math.min(8, Math.round(Number(trackMeta?.beatReducer?.aiBeatDivisor) || 1)));
   const rawHintEvents = hintOverlaysFromEvents(events);
   const rhythmHintEvents = rawHintEvents.filter((h) =>
     h.type === "hint/downbeat" || h.type === "hint/beat" || h.type === "hint/barBeat"
@@ -1108,6 +1125,18 @@ export function reduceEffectiveState({
     effectiveBeats = effectiveBeats.filter((ms) => ms <= endMarkerMs);
     aiReferenceBeats = aiReferenceBeats.filter((ms) => ms <= endMarkerMs);
   }
+  if (aiBeatDivisor > 1 && !tempoMode && effectiveBeats.length > 0) {
+    const setHint = rawHintEvents.find((h) =>
+      h?.type === "hint/downbeat"
+      || (h?.type === "hint/barBeat" && Number(h?.payload?.beatInBar) === 1)
+    );
+    if (setHint) {
+      const anchorMs = Math.max(0, Math.round(Number(setHint.tSec) * 1000));
+      effectiveBeats = decimateBeatGrid(effectiveBeats, aiBeatDivisor, anchorMs);
+      aiReferenceBeats = decimateBeatGrid(aiReferenceBeats, aiBeatDivisor, anchorMs);
+      beatFusionMode = `${beatFusionMode}+ai-div${aiBeatDivisor}`;
+    }
+  }
   const controlEvents = [];
   for (const h of hintEvents) {
     const rawControlTSec = Number(h?.payload?.rawTSec);
@@ -1270,6 +1299,7 @@ export function reduceEffectiveState({
       downbeatAnchorsCount: activeDownbeatAnchors.length,
       establishedTempoMs: establishedTempoMs || 0,
       subdivisionFactor,
+      aiBeatDivisor,
       lockedTempoBpm: Number.isFinite(Number(lockedTempoBpm)) ? Number(lockedTempoBpm) : 0,
       beatFusionMode,
       endMarkerSec: endMarkerMs > 0 ? endMarkerMs / 1000 : 0,

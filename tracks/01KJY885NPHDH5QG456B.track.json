@@ -1,0 +1,1731 @@
+{
+  "workId": "spectral-groove-compiler",
+  "trackId": "01KJY885NPHDH5QG456B",
+  "recipeRef": {
+    "albumId": "random",
+    "trackOverrideId": "01KJY885NPHDH5QG456B"
+  },
+  "createdAt": "2026-03-05T05:22:00.000Z",
+  "slug": "spectral-groove-compiler",
+  "title": "Spectral Groove Compiler",
+  "audio": {
+    "filename": "mix.mp3",
+    "path": "../assets/spectral-groove-compiler/01KJY885NPHDH5QG456B/mix.mp3",
+    "cidOrTx": "",
+    "mime": "audio/mpeg",
+    "bytes": 4090196
+  },
+  "composer": {
+    "rawText": "[Song Title: Spectral Groove Compiler]\r\n[Style: modern electro, breakbeat, rubbery synth bass, funky rhythm guitar chops, chopped drum breaks, FM synth leads, percussive claps, modular synth bleeps, clean studio recording, expressive male lead]\r\n[Caption: Turning prompts into motion, one groove at a time.]\r\n[Image: A dancing waveform grid where code fragments pulse like neon circuitry.]\r\n[Refresh Title: Random 7]\r\n[Theme: Random]\r\n[Gradients: 7]\r\n[Rank: 3]\r\n[Title Rarity: 0.45]\r\n[Tempo Lock BPM: 122]\r\n[Created: March 5, 2026 at 6:22 PM]\r\n[Seeds: 903, A:10, B:34, C:44, D:52]\r\n[Perspective: we_community]\r\n[Concept: Humans collaborate with Codex to turn ideas into living visuals—code, rhythm, and iteration fused together.]\r\n[Topic: Human–Machine Duet → creative_iteration]\r\n[Genre Bias: modern electro (→ breakbeat)]\r\n[Style Change: Bridge]\r\n[Modulation: lift up a whole step into Final Chorus]\r\n[Hook Prominence: high]\r\n[Deviation: instrumental_break]\r\n[Visual Mood: uplifting]\r\n[Visual Motion: high]\r\n[Visual Density: dense]\r\n[Visual Lyric Presence: auto]\r\n[Visual Color Bias: cool]\r\n[Composer Version: v2.8]\r\n\r\n[Intro]\r\n[angular synth motif repeating in short bursts across stereo field]\r\n[breakbeat fragments gradually assemble into steady groove]\r\n[rhythmic guitar scratches accent offbeats]\r\n[sub bass pulses on dotted rhythm]\r\n\r\n[Verse]\r\n[Visual: scene=hold; motion=medium; density=normal; focus=rhythm]\r\n[melody hops across syncopated intervals]\r\nWe start with a spark of a thought  \r\nDescribe the motion we sought  \r\nVectors dancing on command  \r\nShapes emerge at our demand  \r\n\r\n[Pre-Chorus]\r\n[rising scalar melody that tightens rhythmically]\r\nEvery frame begins to breathe  \r\nLines of code beneath the beat  \r\n\r\n[Chorus]\r\n[Visual: scene=lift; motion=high; density=dense; focus=vocal]\r\n[wide hook melody with rhythmic delay echoes]\r\nCompile the color, spin the light  \r\nGroove the graph across the night  \r\nPrompt and pulse begin to blend  \r\nWatch the waveform twist and bend  \r\n\r\n[Verse]\r\n[melody drops lower with syncopated bass response]\r\nCodex hums behind the screen  \r\nParsing what the prompt might mean  \r\nParticles begin to climb  \r\nOrbiting the bassline time  \r\n\r\n[Bridge]\r\n[Visual: scene=contrast; motion=medium; density=sparse; focus=texture]\r\n[Style Change: pads widen while drums fragment]\r\n[smooth melodic arc spanning longer notes]\r\nEvery rule a rhythm thread  \r\nEvery loop a path we tread  \r\nRandom seeds but steady aim  \r\nFunk and code ignite the frame  \r\n\r\n[Instrumental Break]\r\n[FM synth lead improvises over chopped drum fills]\r\n[guitar tapping harmonics answer the synth phrases]\r\n[bass slides through chromatic walk-up]\r\n[drums glitch momentarily before groove re-enters]\r\n\r\n[Final Chorus]\r\n[Key Change: lift up a whole step into Final Chorus]\r\n[anthemic hook doubled with synth harmony]\r\nCompile the color, spin the light  \r\nGroove the graph across the night  \r\nHuman spark and code combine  \r\nPainting rhythm out of time  \r\n\r\n[Ending]\r\n[refrain_tag]\r\nSpin the light, spin the light",
+    "headerMap": {
+      "Song Title": "Spectral Groove Compiler",
+      "Style": "modern electro, breakbeat, rubbery synth bass, funky rhythm guitar chops, chopped drum breaks, FM synth leads, percussive claps, modular synth bleeps, clean studio recording, expressive male lead",
+      "Caption": "Turning prompts into motion, one groove at a time.",
+      "Image": "A dancing waveform grid where code fragments pulse like neon circuitry.",
+      "Refresh Title": "Random 7",
+      "Theme": "Random",
+      "Gradients": "7",
+      "Rank": "3",
+      "Title Rarity": "0.45",
+      "Tempo Lock BPM": "122",
+      "Created": "March 5, 2026 at 6:22 PM",
+      "Seeds": "903, A:10, B:34, C:44, D:52",
+      "Perspective": "we_community",
+      "Concept": "Humans collaborate with Codex to turn ideas into living visuals—code, rhythm, and iteration fused together.",
+      "Topic": "Human–Machine Duet → creative_iteration",
+      "Genre Bias": "modern electro (→ breakbeat)",
+      "Style Change": "Bridge",
+      "Modulation": "lift up a whole step into Final Chorus",
+      "Hook Prominence": "high",
+      "Deviation": "instrumental_break",
+      "Visual Mood": "uplifting",
+      "Visual Motion": "high",
+      "Visual Density": "dense",
+      "Visual Lyric Presence": "auto",
+      "Visual Color Bias": "cool",
+      "Composer Version": "v2.8"
+    }
+  },
+  "sections": [
+    {
+      "id": "intro-1",
+      "labelRaw": "Intro",
+      "notesRaw": "angular synth motif repeating in short bursts across stereo field\nbreakbeat fragments gradually assemble into steady groove\nrhythmic guitar scratches accent offbeats\nsub bass pulses on dotted rhythm"
+    },
+    {
+      "id": "verse-1",
+      "labelRaw": "Verse",
+      "notesRaw": "Visual: scene=hold; motion=medium; density=normal; focus=rhythm\nmelody hops across syncopated intervals"
+    },
+    {
+      "id": "pre-chorus-1",
+      "labelRaw": "Pre-Chorus",
+      "notesRaw": "rising scalar melody that tightens rhythmically"
+    },
+    {
+      "id": "chorus-1",
+      "labelRaw": "Chorus",
+      "notesRaw": "Visual: scene=lift; motion=high; density=dense; focus=vocal\nwide hook melody with rhythmic delay echoes"
+    },
+    {
+      "id": "verse-2",
+      "labelRaw": "Verse",
+      "notesRaw": "melody drops lower with syncopated bass response"
+    },
+    {
+      "id": "bridge-1",
+      "labelRaw": "Bridge",
+      "notesRaw": "Visual: scene=contrast; motion=medium; density=sparse; focus=texture\nStyle Change: pads widen while drums fragment\nsmooth melodic arc spanning longer notes"
+    },
+    {
+      "id": "instrumental-break-1",
+      "labelRaw": "Instrumental Break",
+      "notesRaw": "FM synth lead improvises over chopped drum fills\nguitar tapping harmonics answer the synth phrases\nbass slides through chromatic walk-up\ndrums glitch momentarily before groove re-enters"
+    },
+    {
+      "id": "final-chorus-1",
+      "labelRaw": "Final Chorus",
+      "notesRaw": "Key Change: lift up a whole step into Final Chorus\nanthemic hook doubled with synth harmony"
+    },
+    {
+      "id": "ending-1",
+      "labelRaw": "Ending",
+      "notesRaw": "refrain_tag"
+    }
+  ],
+  "lyrics": {
+    "rawText": "\nWe start with a spark of a thought  \nDescribe the motion we sought  \nVectors dancing on command  \nShapes emerge at our demand  \n\nEvery frame begins to breathe  \nLines of code beneath the beat  \n\nCompile the color, spin the light  \nGroove the graph across the night  \nPrompt and pulse begin to blend  \nWatch the waveform twist and bend  \n\nCodex hums behind the screen  \nParsing what the prompt might mean  \nParticles begin to climb  \nOrbiting the bassline time  \n\nEvery rule a rhythm thread  \nEvery loop a path we tread  \nRandom seeds but steady aim  \nFunk and code ignite the frame  \n\n\nCompile the color, spin the light  \nGroove the graph across the night  \nHuman spark and code combine  \nPainting rhythm out of time  \n\nSpin the light, spin the light"
+  },
+  "visualHints": {
+    "mood": "uplifting",
+    "motion": "high",
+    "density": "dense",
+    "lyricPresence": "auto",
+    "colorBias": "cool",
+    "sectionFocus": "",
+    "noGo": []
+  },
+  "sourceGroupKey": "loose:spectral-groove-compiler-stems-122bpm",
+  "assetDir": "assets/spectral-groove-compiler/01KJY885NPHDH5QG456B",
+  "createdLocalRaw": "March 5, 2026 at 6:22 PM",
+  "createdTz": "Pacific/Auckland",
+  "timing": {
+    "beatsMs": [
+      534,
+      1045,
+      1544,
+      2032,
+      2531,
+      3019,
+      3506,
+      3994,
+      4481,
+      4981,
+      5480,
+      5968,
+      6455,
+      6943,
+      7430,
+      7930,
+      8429,
+      8916,
+      9404,
+      9892,
+      10391,
+      10890,
+      11378,
+      11865,
+      12365,
+      12864,
+      13351,
+      13839,
+      14327,
+      14826,
+      15314,
+      15801,
+      16300,
+      16788,
+      17276,
+      17763,
+      18251,
+      18750,
+      19238,
+      19725,
+      20225,
+      20712,
+      21200,
+      21687,
+      22175,
+      22686,
+      23174,
+      23661,
+      24149,
+      24636,
+      25124,
+      25623,
+      26122,
+      26610,
+      27098,
+      27597,
+      28096,
+      28584,
+      29071,
+      29559,
+      30047,
+      30546,
+      31045,
+      31533,
+      32020,
+      32508,
+      33007,
+      33506,
+      34006,
+      34505,
+      34992,
+      35480,
+      35968,
+      36455,
+      36955,
+      37454,
+      37941,
+      38429,
+      38917,
+      39404,
+      39892,
+      40380,
+      40867,
+      41366,
+      41866,
+      42353,
+      42841,
+      43328,
+      43828,
+      44327,
+      44815,
+      45302,
+      45790,
+      46289,
+      46788,
+      47276,
+      47763,
+      48251,
+      48739,
+      49238,
+      49726,
+      50225,
+      50712,
+      51212,
+      51711,
+      52198,
+      52686,
+      53174,
+      53661,
+      54149,
+      54637,
+      55124,
+      55612,
+      56111,
+      56610,
+      57098,
+      57585,
+      58085,
+      58584,
+      59072,
+      59559,
+      60058,
+      60558,
+      61045,
+      61533,
+      62020,
+      62508,
+      62996,
+      63495,
+      63994,
+      64482,
+      64969,
+      65457,
+      65945,
+      66444,
+      66943,
+      67431,
+      67918,
+      68418,
+      68905,
+      69404,
+      69892,
+      70380,
+      70867,
+      71367,
+      71866,
+      72353,
+      72841,
+      73340,
+      73839,
+      74327,
+      74815,
+      75314,
+      75802,
+      76301,
+      76788,
+      77276,
+      77764,
+      78251,
+      78739,
+      79226,
+      79726,
+      80225,
+      80713,
+      81200,
+      81688,
+      82187,
+      82686,
+      83174,
+      83661,
+      84161,
+      84648,
+      85148,
+      85635,
+      86123,
+      86610,
+      87098,
+      87586,
+      88085,
+      88584,
+      89072,
+      89559,
+      90047,
+      90535,
+      91034,
+      91533,
+      92021,
+      92520,
+      93019,
+      93507,
+      93994,
+      94494,
+      94993,
+      95480,
+      95968,
+      96456,
+      96943,
+      97443,
+      97942,
+      98429,
+      98917,
+      99405,
+      99904,
+      100403,
+      100891,
+      101378,
+      101866,
+      102354,
+      102841,
+      103329,
+      103816,
+      104304,
+      104803,
+      105302,
+      105802,
+      106301,
+      106789,
+      107276,
+      107764,
+      108251,
+      108762,
+      109250,
+      109738,
+      110225,
+      110713,
+      111200,
+      111700,
+      112199,
+      112686,
+      113174,
+      113662,
+      114149,
+      114649,
+      115136,
+      115635,
+      116123,
+      116611,
+      117098,
+      117586,
+      118085,
+      118584,
+      119072,
+      119560,
+      120047,
+      120535,
+      121034,
+      121533,
+      122021,
+      122508,
+      123008,
+      123495,
+      123983,
+      124482,
+      124981,
+      125481,
+      125968,
+      126456,
+      126943,
+      127431,
+      127919,
+      128418,
+      128906,
+      129405,
+      129892,
+      130380,
+      130879,
+      131378,
+      131866,
+      132354,
+      132841,
+      133341,
+      133840,
+      134327,
+      134815,
+      135303,
+      135790,
+      136290,
+      136789,
+      137276,
+      137764,
+      138252,
+      138751,
+      139250,
+      139738,
+      140225,
+      140713,
+      141201,
+      141688,
+      142176,
+      142675,
+      143174,
+      143662,
+      144161,
+      144660,
+      145148,
+      145636,
+      146135,
+      146634,
+      147122,
+      147609,
+      148097,
+      148584,
+      149072,
+      149560,
+      150047,
+      150535,
+      151034,
+      151533,
+      152033,
+      152532,
+      153020,
+      153507,
+      153995,
+      154482,
+      154982,
+      155481,
+      155968,
+      156456,
+      156944,
+      157431,
+      157931,
+      158430,
+      158917,
+      159405,
+      159893,
+      160380,
+      160879,
+      161367,
+      161866,
+      162354,
+      162842,
+      163329,
+      163828,
+      164328,
+      164815,
+      165303,
+      165790,
+      166278,
+      166777,
+      167277,
+      167764,
+      168252,
+      168739,
+      169227,
+      169726,
+      170225,
+      170713,
+      171201,
+      171688,
+      172188,
+      172687,
+      173174,
+      173662,
+      174150,
+      174637,
+      175137,
+      175636,
+      176123,
+      176611,
+      177099,
+      177586,
+      178074,
+      178573,
+      179072,
+      179560,
+      180048,
+      180558,
+      181046,
+      181534,
+      182021,
+      182509,
+      182996,
+      183496,
+      183995,
+      184483,
+      184970,
+      185458,
+      185945,
+      186445,
+      186932,
+      187431,
+      187931,
+      188430,
+      188918,
+      189428,
+      189904,
+      190380,
+      190868,
+      191367,
+      191866,
+      192354,
+      192842,
+      193329,
+      193817,
+      194316,
+      194815,
+      195303,
+      195791,
+      196278,
+      196766,
+      197277,
+      197753,
+      198252,
+      198740,
+      199227,
+      199726,
+      200226,
+      200737,
+      201247,
+      201770,
+      202292,
+      202815,
+      203349,
+      203871
+    ],
+    "lyricsLines": [
+      {
+        "i": 1,
+        "t0Ms": 34220,
+        "t1Ms": 36964
+      },
+      {
+        "i": 2,
+        "t0Ms": 38186,
+        "t1Ms": 40951
+      },
+      {
+        "i": 3,
+        "t0Ms": 42353,
+        "t1Ms": 45498
+      },
+      {
+        "i": 4,
+        "t0Ms": 46259,
+        "t1Ms": 50025
+      },
+      {
+        "i": 6,
+        "t0Ms": 50405,
+        "t1Ms": 53771
+      },
+      {
+        "i": 7,
+        "t0Ms": 54211,
+        "t1Ms": 58438
+      },
+      {
+        "i": 9,
+        "t0Ms": 58458,
+        "t1Ms": 61763
+      },
+      {
+        "i": 10,
+        "t0Ms": 61979,
+        "t1Ms": 65684
+      },
+      {
+        "i": 11,
+        "t0Ms": 65944,
+        "t1Ms": 68988
+      },
+      {
+        "i": 12,
+        "t0Ms": 69869,
+        "t1Ms": 72893
+      },
+      {
+        "i": 14,
+        "t0Ms": 75336,
+        "t1Ms": 77999
+      },
+      {
+        "i": 15,
+        "t0Ms": 79240,
+        "t1Ms": 81744
+      },
+      {
+        "i": 16,
+        "t0Ms": 83205,
+        "t1Ms": 85869
+      },
+      {
+        "i": 17,
+        "t0Ms": 85889,
+        "t1Ms": 90214
+      },
+      {
+        "i": 19,
+        "t0Ms": 91477,
+        "t1Ms": 94681
+      },
+      {
+        "i": 20,
+        "t0Ms": 95642,
+        "t1Ms": 98505
+      },
+      {
+        "i": 21,
+        "t0Ms": 99406,
+        "t1Ms": 102610
+      },
+      {
+        "i": 22,
+        "t0Ms": 103370,
+        "t1Ms": 118868
+      },
+      {
+        "i": 9,
+        "t0Ms": 121244,
+        "t1Ms": 124070
+      },
+      {
+        "i": 10,
+        "t0Ms": 125373,
+        "t1Ms": 128719
+      },
+      {
+        "i": 28,
+        "t0Ms": 132868,
+        "t1Ms": 136215
+      },
+      {
+        "i": 25,
+        "t0Ms": 170418,
+        "t1Ms": 173262
+      },
+      {
+        "i": 26,
+        "t0Ms": 174143,
+        "t1Ms": 178008
+      },
+      {
+        "i": 27,
+        "t0Ms": 178109,
+        "t1Ms": 181213
+      },
+      {
+        "i": 28,
+        "t0Ms": 182134,
+        "t1Ms": 185278
+      },
+      {
+        "i": 30,
+        "t0Ms": 185338,
+        "t1Ms": 198957
+      }
+    ],
+    "words": [
+      {
+        "t0Ms": 31,
+        "t1Ms": 442,
+        "text": "Ow!",
+        "conf": 0.834
+      },
+      {
+        "t0Ms": 729,
+        "t1Ms": 997,
+        "text": "Ow!",
+        "conf": 0.583
+      },
+      {
+        "i": 1,
+        "t0Ms": 34220,
+        "t1Ms": 34360,
+        "text": "We",
+        "conf": 0.834
+      },
+      {
+        "i": 1,
+        "t0Ms": 34420,
+        "t1Ms": 34921,
+        "text": "start",
+        "conf": 0.789
+      },
+      {
+        "i": 1,
+        "t0Ms": 35021,
+        "t1Ms": 35222,
+        "text": "with",
+        "conf": 0.542
+      },
+      {
+        "i": 1,
+        "t0Ms": 35302,
+        "t1Ms": 35322,
+        "text": "a",
+        "conf": 0.877
+      },
+      {
+        "i": 1,
+        "t0Ms": 35382,
+        "t1Ms": 36043,
+        "text": "spark",
+        "conf": 0.916
+      },
+      {
+        "i": 1,
+        "t0Ms": 36123,
+        "t1Ms": 36223,
+        "text": "of",
+        "conf": 0.952
+      },
+      {
+        "i": 1,
+        "t0Ms": 36263,
+        "t1Ms": 36303,
+        "text": "a",
+        "conf": 0.381
+      },
+      {
+        "i": 1,
+        "t0Ms": 36443,
+        "t1Ms": 36964,
+        "text": "thought",
+        "conf": 0.786
+      },
+      {
+        "i": 2,
+        "t0Ms": 38186,
+        "t1Ms": 38907,
+        "text": "Describe",
+        "conf": 0.905
+      },
+      {
+        "i": 2,
+        "t0Ms": 38967,
+        "t1Ms": 39088,
+        "text": "the",
+        "conf": 0.897
+      },
+      {
+        "i": 2,
+        "t0Ms": 39208,
+        "t1Ms": 39969,
+        "text": "motion",
+        "conf": 0.86
+      },
+      {
+        "i": 2,
+        "t0Ms": 40169,
+        "t1Ms": 40450,
+        "text": "we",
+        "conf": 0.928
+      },
+      {
+        "i": 2,
+        "t0Ms": 40590,
+        "t1Ms": 40951,
+        "text": "sought",
+        "conf": 0.418
+      },
+      {
+        "i": 3,
+        "t0Ms": 42353,
+        "t1Ms": 42914,
+        "text": "Vectors",
+        "conf": 0.934
+      },
+      {
+        "i": 3,
+        "t0Ms": 43094,
+        "t1Ms": 44075,
+        "text": "dancing",
+        "conf": 0.872
+      },
+      {
+        "i": 3,
+        "t0Ms": 44276,
+        "t1Ms": 44476,
+        "text": "on",
+        "conf": 0.908
+      },
+      {
+        "i": 3,
+        "t0Ms": 44616,
+        "t1Ms": 45498,
+        "text": "command",
+        "conf": 0.917
+      },
+      {
+        "i": 4,
+        "t0Ms": 46259,
+        "t1Ms": 46740,
+        "text": "Shapes",
+        "conf": 0.858
+      },
+      {
+        "i": 4,
+        "t0Ms": 46860,
+        "t1Ms": 47841,
+        "text": "emerge",
+        "conf": 0.888
+      },
+      {
+        "i": 4,
+        "t0Ms": 47881,
+        "t1Ms": 47921,
+        "text": "at",
+        "conf": 0.555
+      },
+      {
+        "i": 4,
+        "t0Ms": 48302,
+        "t1Ms": 48462,
+        "text": "our",
+        "conf": 0.931
+      },
+      {
+        "i": 4,
+        "t0Ms": 48542,
+        "t1Ms": 50025,
+        "text": "demand",
+        "conf": 0.871
+      },
+      {
+        "i": 6,
+        "t0Ms": 50405,
+        "t1Ms": 50786,
+        "text": "Every",
+        "conf": 0.827
+      },
+      {
+        "i": 6,
+        "t0Ms": 50966,
+        "t1Ms": 51667,
+        "text": "frame",
+        "conf": 0.833
+      },
+      {
+        "i": 6,
+        "t0Ms": 51787,
+        "t1Ms": 52589,
+        "text": "begins",
+        "conf": 0.942
+      },
+      {
+        "i": 6,
+        "t0Ms": 52709,
+        "t1Ms": 52869,
+        "text": "to",
+        "conf": 0.859
+      },
+      {
+        "i": 6,
+        "t0Ms": 52969,
+        "t1Ms": 53771,
+        "text": "breathe",
+        "conf": 0.525
+      },
+      {
+        "i": 7,
+        "t0Ms": 54211,
+        "t1Ms": 54712,
+        "text": "Lines",
+        "conf": 0.644
+      },
+      {
+        "i": 7,
+        "t0Ms": 54872,
+        "t1Ms": 54912,
+        "text": "of",
+        "conf": 0
+      },
+      {
+        "i": 7,
+        "t0Ms": 54932,
+        "t1Ms": 55613,
+        "text": "code",
+        "conf": 0.609
+      },
+      {
+        "i": 7,
+        "t0Ms": 55674,
+        "t1Ms": 56695,
+        "text": "beneath",
+        "conf": 0.264
+      },
+      {
+        "i": 7,
+        "t0Ms": 56715,
+        "t1Ms": 56855,
+        "text": "the",
+        "conf": 0.413
+      },
+      {
+        "i": 7,
+        "t0Ms": 56915,
+        "t1Ms": 58438,
+        "text": "beat",
+        "conf": 0.231
+      },
+      {
+        "i": 9,
+        "t0Ms": 58458,
+        "t1Ms": 58879,
+        "text": "Compile",
+        "conf": 0.547
+      },
+      {
+        "i": 9,
+        "t0Ms": 58919,
+        "t1Ms": 58979,
+        "text": "the",
+        "conf": 0.825
+      },
+      {
+        "t0Ms": 59019,
+        "t1Ms": 59479,
+        "text": "code",
+        "conf": 0.619
+      },
+      {
+        "t0Ms": 59499,
+        "t1Ms": 59600,
+        "text": "up,",
+        "conf": 0.801
+      },
+      {
+        "i": 9,
+        "t0Ms": 60000,
+        "t1Ms": 60421,
+        "text": "spin",
+        "conf": 0.678
+      },
+      {
+        "i": 9,
+        "t0Ms": 60481,
+        "t1Ms": 60802,
+        "text": "the",
+        "conf": 0.685
+      },
+      {
+        "i": 9,
+        "t0Ms": 60822,
+        "t1Ms": 61763,
+        "text": "light",
+        "conf": 0.595
+      },
+      {
+        "i": 10,
+        "t0Ms": 61979,
+        "t1Ms": 62400,
+        "text": "Groove",
+        "conf": 0.815
+      },
+      {
+        "i": 10,
+        "t0Ms": 62440,
+        "t1Ms": 62600,
+        "text": "the",
+        "conf": 0.594
+      },
+      {
+        "i": 10,
+        "t0Ms": 62760,
+        "t1Ms": 63180,
+        "text": "graph",
+        "conf": 0.641
+      },
+      {
+        "i": 10,
+        "t0Ms": 63801,
+        "t1Ms": 64322,
+        "text": "across",
+        "conf": 0.909
+      },
+      {
+        "i": 10,
+        "t0Ms": 64382,
+        "t1Ms": 64582,
+        "text": "the",
+        "conf": 0.923
+      },
+      {
+        "i": 10,
+        "t0Ms": 65583,
+        "t1Ms": 65684,
+        "text": "night",
+        "conf": 0.272
+      },
+      {
+        "i": 11,
+        "t0Ms": 65944,
+        "t1Ms": 66404,
+        "text": "Prompt",
+        "conf": 0.801
+      },
+      {
+        "i": 11,
+        "t0Ms": 66425,
+        "t1Ms": 66585,
+        "text": "and",
+        "conf": 0.804
+      },
+      {
+        "i": 11,
+        "t0Ms": 66705,
+        "t1Ms": 67065,
+        "text": "pulse",
+        "conf": 0.782
+      },
+      {
+        "i": 11,
+        "t0Ms": 67706,
+        "t1Ms": 68227,
+        "text": "begin",
+        "conf": 0.946
+      },
+      {
+        "i": 11,
+        "t0Ms": 68287,
+        "t1Ms": 68507,
+        "text": "to",
+        "conf": 0.952
+      },
+      {
+        "i": 11,
+        "t0Ms": 68647,
+        "t1Ms": 68988,
+        "text": "blend",
+        "conf": 0.759
+      },
+      {
+        "i": 12,
+        "t0Ms": 69869,
+        "t1Ms": 70229,
+        "text": "Watch",
+        "conf": 0.873
+      },
+      {
+        "i": 12,
+        "t0Ms": 70289,
+        "t1Ms": 70470,
+        "text": "the",
+        "conf": 0.909
+      },
+      {
+        "i": 12,
+        "t0Ms": 70650,
+        "t1Ms": 71491,
+        "text": "waveform",
+        "conf": 0.661
+      },
+      {
+        "i": 12,
+        "t0Ms": 71611,
+        "t1Ms": 72252,
+        "text": "twist",
+        "conf": 0.919
+      },
+      {
+        "i": 12,
+        "t0Ms": 72272,
+        "t1Ms": 72512,
+        "text": "and",
+        "conf": 0.82
+      },
+      {
+        "i": 12,
+        "t0Ms": 72612,
+        "t1Ms": 72893,
+        "text": "bend",
+        "conf": 0.887
+      },
+      {
+        "i": 14,
+        "t0Ms": 75336,
+        "t1Ms": 75816,
+        "text": "Codex",
+        "conf": 0.889
+      },
+      {
+        "i": 14,
+        "t0Ms": 75856,
+        "t1Ms": 76357,
+        "text": "hums",
+        "conf": 0.89
+      },
+      {
+        "i": 14,
+        "t0Ms": 76577,
+        "t1Ms": 77098,
+        "text": "behind",
+        "conf": 0.937
+      },
+      {
+        "i": 14,
+        "t0Ms": 77198,
+        "t1Ms": 77318,
+        "text": "the",
+        "conf": 0.989
+      },
+      {
+        "i": 14,
+        "t0Ms": 77418,
+        "t1Ms": 77999,
+        "text": "screen",
+        "conf": 0.918
+      },
+      {
+        "i": 15,
+        "t0Ms": 79240,
+        "t1Ms": 79681,
+        "text": "Causing",
+        "conf": 0.783
+      },
+      {
+        "i": 15,
+        "t0Ms": 79761,
+        "t1Ms": 80061,
+        "text": "what",
+        "conf": 0.961
+      },
+      {
+        "i": 15,
+        "t0Ms": 80242,
+        "t1Ms": 80362,
+        "text": "the",
+        "conf": 0.922
+      },
+      {
+        "i": 15,
+        "t0Ms": 80482,
+        "t1Ms": 80902,
+        "text": "prompt",
+        "conf": 0.759
+      },
+      {
+        "i": 15,
+        "t0Ms": 80983,
+        "t1Ms": 81383,
+        "text": "might",
+        "conf": 0.865
+      },
+      {
+        "i": 15,
+        "t0Ms": 81463,
+        "t1Ms": 81744,
+        "text": "mean",
+        "conf": 0.642
+      },
+      {
+        "i": 16,
+        "t0Ms": 83205,
+        "t1Ms": 84267,
+        "text": "Particles",
+        "conf": 0.737
+      },
+      {
+        "i": 16,
+        "t0Ms": 84447,
+        "t1Ms": 84947,
+        "text": "begin",
+        "conf": 0.878
+      },
+      {
+        "i": 16,
+        "t0Ms": 85028,
+        "t1Ms": 85188,
+        "text": "to",
+        "conf": 0.981
+      },
+      {
+        "i": 16,
+        "t0Ms": 85388,
+        "t1Ms": 85869,
+        "text": "climb",
+        "conf": 0.941
+      },
+      {
+        "i": 17,
+        "t0Ms": 85889,
+        "t1Ms": 88111,
+        "text": "Orbiting",
+        "conf": 0.878
+      },
+      {
+        "i": 17,
+        "t0Ms": 88151,
+        "t1Ms": 88312,
+        "text": "the",
+        "conf": 0.827
+      },
+      {
+        "i": 17,
+        "t0Ms": 88372,
+        "t1Ms": 89794,
+        "text": "baseline",
+        "conf": 0.682
+      },
+      {
+        "i": 17,
+        "t0Ms": 89814,
+        "t1Ms": 90214,
+        "text": "time",
+        "conf": 0.46
+      },
+      {
+        "i": 19,
+        "t0Ms": 91477,
+        "t1Ms": 92078,
+        "text": "Every",
+        "conf": 0.766
+      },
+      {
+        "i": 19,
+        "t0Ms": 92278,
+        "t1Ms": 94020,
+        "text": "rule,",
+        "conf": 0.48
+      },
+      {
+        "i": 19,
+        "t0Ms": 94040,
+        "t1Ms": 94060,
+        "text": "a",
+        "conf": 0.002
+      },
+      {
+        "i": 19,
+        "t0Ms": 94080,
+        "t1Ms": 94200,
+        "text": "rhythm",
+        "conf": 0
+      },
+      {
+        "i": 19,
+        "t0Ms": 94220,
+        "t1Ms": 94681,
+        "text": "thread.",
+        "conf": 0.572
+      },
+      {
+        "i": 20,
+        "t0Ms": 95642,
+        "t1Ms": 96002,
+        "text": "Every",
+        "conf": 0.871
+      },
+      {
+        "i": 20,
+        "t0Ms": 96202,
+        "t1Ms": 96923,
+        "text": "loop,",
+        "conf": 0.636
+      },
+      {
+        "i": 20,
+        "t0Ms": 97183,
+        "t1Ms": 97203,
+        "text": "a",
+        "conf": 0
+      },
+      {
+        "i": 20,
+        "t0Ms": 97224,
+        "t1Ms": 97664,
+        "text": "path",
+        "conf": 0.859
+      },
+      {
+        "i": 20,
+        "t0Ms": 97724,
+        "t1Ms": 98064,
+        "text": "we",
+        "conf": 0.988
+      },
+      {
+        "i": 20,
+        "t0Ms": 98145,
+        "t1Ms": 98505,
+        "text": "tread.",
+        "conf": 0.636
+      },
+      {
+        "i": 21,
+        "t0Ms": 99406,
+        "t1Ms": 99987,
+        "text": "Random",
+        "conf": 0.956
+      },
+      {
+        "i": 21,
+        "t0Ms": 100147,
+        "t1Ms": 100888,
+        "text": "seeds,",
+        "conf": 0.849
+      },
+      {
+        "i": 21,
+        "t0Ms": 100908,
+        "t1Ms": 101108,
+        "text": "but",
+        "conf": 0.976
+      },
+      {
+        "i": 21,
+        "t0Ms": 101288,
+        "t1Ms": 101829,
+        "text": "steady",
+        "conf": 0.929
+      },
+      {
+        "i": 21,
+        "t0Ms": 101869,
+        "t1Ms": 102610,
+        "text": "aim.",
+        "conf": 0.742
+      },
+      {
+        "i": 22,
+        "t0Ms": 103370,
+        "t1Ms": 103771,
+        "text": "Bunk",
+        "conf": 0.674
+      },
+      {
+        "i": 22,
+        "t0Ms": 103791,
+        "t1Ms": 104011,
+        "text": "and",
+        "conf": 0.747
+      },
+      {
+        "i": 22,
+        "t0Ms": 104091,
+        "t1Ms": 105032,
+        "text": "code",
+        "conf": 0.777
+      },
+      {
+        "i": 22,
+        "t0Ms": 105052,
+        "t1Ms": 105733,
+        "text": "ignite",
+        "conf": 0.741
+      },
+      {
+        "i": 22,
+        "t0Ms": 114023,
+        "t1Ms": 114083,
+        "text": "the",
+        "conf": 0.003
+      },
+      {
+        "i": 22,
+        "t0Ms": 114103,
+        "t1Ms": 118868,
+        "text": "frame.",
+        "conf": 0.39
+      },
+      {
+        "i": 9,
+        "t0Ms": 121244,
+        "t1Ms": 121765,
+        "text": "Compile",
+        "conf": 0.545
+      },
+      {
+        "i": 9,
+        "t0Ms": 121785,
+        "t1Ms": 121885,
+        "text": "the",
+        "conf": 0.653
+      },
+      {
+        "i": 9,
+        "t0Ms": 121925,
+        "t1Ms": 122847,
+        "text": "color,",
+        "conf": 0.689
+      },
+      {
+        "i": 9,
+        "t0Ms": 122867,
+        "t1Ms": 123328,
+        "text": "spin",
+        "conf": 0.933
+      },
+      {
+        "i": 9,
+        "t0Ms": 123388,
+        "t1Ms": 123649,
+        "text": "the",
+        "conf": 0.781
+      },
+      {
+        "i": 9,
+        "t0Ms": 123749,
+        "t1Ms": 124070,
+        "text": "light.",
+        "conf": 0.91
+      },
+      {
+        "t0Ms": 124952,
+        "t1Ms": 125312,
+        "text": "Prove",
+        "conf": 0.711
+      },
+      {
+        "i": 10,
+        "t0Ms": 125373,
+        "t1Ms": 125573,
+        "text": "the",
+        "conf": 0.761
+      },
+      {
+        "i": 10,
+        "t0Ms": 125733,
+        "t1Ms": 126154,
+        "text": "graph,",
+        "conf": 0.723
+      },
+      {
+        "i": 10,
+        "t0Ms": 126936,
+        "t1Ms": 127256,
+        "text": "cross",
+        "conf": 0.872
+      },
+      {
+        "i": 10,
+        "t0Ms": 127337,
+        "t1Ms": 127617,
+        "text": "the",
+        "conf": 0.745
+      },
+      {
+        "i": 10,
+        "t0Ms": 127717,
+        "t1Ms": 128719,
+        "text": "night.",
+        "conf": 0.599
+      },
+      {
+        "t0Ms": 128900,
+        "t1Ms": 129581,
+        "text": "Human",
+        "conf": 0.808
+      },
+      {
+        "t0Ms": 129641,
+        "t1Ms": 129942,
+        "text": "spark,",
+        "conf": 0.728
+      },
+      {
+        "t0Ms": 130704,
+        "t1Ms": 131145,
+        "text": "ankle",
+        "conf": 0.846
+      },
+      {
+        "t0Ms": 131305,
+        "t1Ms": 132086,
+        "text": "combined.",
+        "conf": 0.753
+      },
+      {
+        "i": 28,
+        "t0Ms": 132868,
+        "t1Ms": 133489,
+        "text": "Painting",
+        "conf": 0.727
+      },
+      {
+        "i": 28,
+        "t0Ms": 133650,
+        "t1Ms": 135193,
+        "text": "rhythm",
+        "conf": 0.409
+      },
+      {
+        "i": 28,
+        "t0Ms": 135273,
+        "t1Ms": 135393,
+        "text": "out",
+        "conf": 0.798
+      },
+      {
+        "i": 28,
+        "t0Ms": 135433,
+        "t1Ms": 135494,
+        "text": "of",
+        "conf": 0.838
+      },
+      {
+        "i": 28,
+        "t0Ms": 135574,
+        "t1Ms": 136215,
+        "text": "time.",
+        "conf": 0.912
+      },
+      {
+        "i": 25,
+        "t0Ms": 170418,
+        "t1Ms": 170959,
+        "text": "Compile",
+        "conf": 0.665
+      },
+      {
+        "i": 25,
+        "t0Ms": 170979,
+        "t1Ms": 171059,
+        "text": "the",
+        "conf": 0.856
+      },
+      {
+        "i": 25,
+        "t0Ms": 171099,
+        "t1Ms": 172040,
+        "text": "color,",
+        "conf": 0.747
+      },
+      {
+        "i": 25,
+        "t0Ms": 172060,
+        "t1Ms": 172501,
+        "text": "spin",
+        "conf": 0.872
+      },
+      {
+        "i": 25,
+        "t0Ms": 172561,
+        "t1Ms": 172781,
+        "text": "the",
+        "conf": 0.812
+      },
+      {
+        "i": 25,
+        "t0Ms": 172901,
+        "t1Ms": 173262,
+        "text": "light.",
+        "conf": 0.798
+      },
+      {
+        "i": 26,
+        "t0Ms": 174143,
+        "t1Ms": 174504,
+        "text": "Groove",
+        "conf": 0.486
+      },
+      {
+        "i": 26,
+        "t0Ms": 174544,
+        "t1Ms": 174744,
+        "text": "the",
+        "conf": 0.834
+      },
+      {
+        "i": 26,
+        "t0Ms": 174884,
+        "t1Ms": 175365,
+        "text": "graph,",
+        "conf": 0.706
+      },
+      {
+        "i": 26,
+        "t0Ms": 176106,
+        "t1Ms": 176466,
+        "text": "cross",
+        "conf": 0.939
+      },
+      {
+        "i": 26,
+        "t0Ms": 176506,
+        "t1Ms": 176667,
+        "text": "the",
+        "conf": 0.882
+      },
+      {
+        "i": 26,
+        "t0Ms": 176867,
+        "t1Ms": 178008,
+        "text": "night.",
+        "conf": 0.556
+      },
+      {
+        "i": 27,
+        "t0Ms": 178109,
+        "t1Ms": 178689,
+        "text": "Human",
+        "conf": 0.744
+      },
+      {
+        "i": 27,
+        "t0Ms": 178709,
+        "t1Ms": 179110,
+        "text": "spark",
+        "conf": 0.759
+      },
+      {
+        "i": 27,
+        "t0Ms": 179871,
+        "t1Ms": 179971,
+        "text": "and",
+        "conf": 0.835
+      },
+      {
+        "i": 27,
+        "t0Ms": 180071,
+        "t1Ms": 180352,
+        "text": "code",
+        "conf": 0.652
+      },
+      {
+        "i": 27,
+        "t0Ms": 180472,
+        "t1Ms": 181213,
+        "text": "combine.",
+        "conf": 0.841
+      },
+      {
+        "i": 28,
+        "t0Ms": 182134,
+        "t1Ms": 182695,
+        "text": "Painting",
+        "conf": 0.495
+      },
+      {
+        "i": 28,
+        "t0Ms": 182795,
+        "t1Ms": 183916,
+        "text": "rhythm",
+        "conf": 0.606
+      },
+      {
+        "i": 28,
+        "t0Ms": 183936,
+        "t1Ms": 184437,
+        "text": "out",
+        "conf": 0.696
+      },
+      {
+        "i": 28,
+        "t0Ms": 184537,
+        "t1Ms": 184597,
+        "text": "of",
+        "conf": 0.902
+      },
+      {
+        "i": 28,
+        "t0Ms": 184738,
+        "t1Ms": 185278,
+        "text": "time.",
+        "conf": 0.895
+      },
+      {
+        "i": 30,
+        "t0Ms": 185338,
+        "t1Ms": 190245,
+        "text": "Spin",
+        "conf": 0.956
+      },
+      {
+        "i": 30,
+        "t0Ms": 190285,
+        "t1Ms": 190485,
+        "text": "the",
+        "conf": 0.553
+      },
+      {
+        "i": 30,
+        "t0Ms": 190666,
+        "t1Ms": 190986,
+        "text": "light.",
+        "conf": 0.899
+      },
+      {
+        "i": 30,
+        "t0Ms": 197695,
+        "t1Ms": 198116,
+        "text": "Spin",
+        "conf": 0.947
+      },
+      {
+        "i": 30,
+        "t0Ms": 198156,
+        "t1Ms": 198496,
+        "text": "the",
+        "conf": 0.583
+      },
+      {
+        "i": 30,
+        "t0Ms": 198536,
+        "t1Ms": 198957,
+        "text": "light.",
+        "conf": 0.886
+      }
+    ]
+  },
+  "import": {
+    "firstImportedAt": "2026-03-05T05:41:39.125Z",
+    "lastImportedAt": "2026-03-05T05:41:39.125Z",
+    "inputHashes": {
+      "Spectral Groove Compiler Stems (122BPM).txt": "252829442145f5ffb85650beba0c0647184693f81873041602102b78923ce632",
+      "Spectral Groove Compiler Stems (122BPM).zip": "c7fb6ac9d88f309c41a287320e658ef2cb3a56de4303cf82733daa9cb4ea9916"
+    },
+    "hashSource": "assets/spectral-groove-compiler/01KJY885NPHDH5QG456B/instrumental.wav",
+    "hashSourceSha256": "57a5e6b185affc23dab29898491fd3aae4159a7e7121313e1fdefa9ec4e648eb",
+    "filenameBpm": 122,
+    "sourceGroupKey": "loose:spectral-groove-compiler-stems-122bpm",
+    "archivedTo": "D:/seva/FOMO/Songs/the-refresh/refreshing-music/inbox/_done/2026-03-05/loose/spectral-groove-compiler-stems-122bpm/consumed.json"
+  },
+  "assetPaths": {
+    "mix": "assets/spectral-groove-compiler/01KJY885NPHDH5QG456B/mix.mp3",
+    "mixWav": "",
+    "stemsZip": "assets/spectral-groove-compiler/01KJY885NPHDH5QG456B/stems.zip",
+    "effective": "assets/spectral-groove-compiler/01KJY885NPHDH5QG456B/effective.json",
+    "instrumental": "assets/spectral-groove-compiler/01KJY885NPHDH5QG456B/instrumental.mp3",
+    "instrumentalWav": "assets/spectral-groove-compiler/01KJY885NPHDH5QG456B/instrumental.wav",
+    "vocals": "assets/spectral-groove-compiler/01KJY885NPHDH5QG456B/vocals.mp3",
+    "vocalsWav": "assets/spectral-groove-compiler/01KJY885NPHDH5QG456B/vocals.wav",
+    "composer": "assets/spectral-groove-compiler/01KJY885NPHDH5QG456B/composer.txt"
+  },
+  "hasUserHints": true,
+  "lastHintAt": "2026-03-05T05:53:46.242Z"
+}

@@ -1,0 +1,2141 @@
+{
+  "workId": "rooms-of-unfinished-light",
+  "trackId": "01KJYCKFYAN75K6MNXQV",
+  "recipeRef": {
+    "albumId": "sky",
+    "trackOverrideId": "01KJYCKFYAN75K6MNXQV"
+  },
+  "createdAt": "2026-03-05T06:39:00.000Z",
+  "slug": "rooms-of-unfinished-light",
+  "title": "Rooms of Unfinished Light",
+  "audio": {
+    "filename": "mix.mp3",
+    "path": "../assets/rooms-of-unfinished-light/01KJYCKFYAN75K6MNXQV/mix.mp3",
+    "cidOrTx": "",
+    "mime": "audio/mpeg",
+    "bytes": 5165876
+  },
+  "composer": {
+    "rawText": "[Song Title: Rooms of Unfinished Light]\n[Style: indie art-pop, warm upright piano, brushed drums, bowed bass, muted electric guitar harmonics, soft analog pads, clean studio recording, grounded male lead]\n[Caption: A quiet song about rebuilding trust in your own timing.]\n[Image: Window reflections at dusk, each pane holding a different memory.]\n[Refresh Title: Sunset Dreams]\n[Theme: sky]\n[Gradients: 6]\n[Rank: 8]\n[Title Rarity: 0.75]\n[Created: March 5, 2026 at 7:39 PM]\n[Seeds: 519, A:58, B:46, C:88, D:28]\n[Perspective: i_reflect]\n[Concept: I stop forcing resolution and let clarity arrive in small, honest passes.]\n[Topic: emotional_growth -> acceptance_after_noise]\n[Genre Bias: indie art-pop]\n[Style Change: none]\n[Modulation: none]\n[Hook Prominence: medium]\n[Deviation: refrain_tag]\n[Visual Mood: calm]\n[Visual Motion: low]\n[Visual Density: sparse]\n[Visual Lyric Presence: auto]\n[Visual Color Bias: warm]\n[Composer Version: v2.8]\n\n[Intro]\n[piano opens with uneven, human rubato before drums enter on soft brushes]\n[guitar harmonics bloom in the upper register with long decay]\n\n[Verse]\n[Visual: scene=hold; motion=low; density=sparse; focus=texture]\n[long-breath melody with small downward steps at line endings]\nI kept a map of every wrong turn  \nFolded thin from overuse  \nHeld it up against the evening  \nLike proof I could not choose  \n\n[Pre-Chorus]\n[rising contour that resolves late into a lower held note]\nThen the streetlights came in slowly  \nAnd took the edges off the view  \n\n[Chorus]\n[Visual: scene=lift; motion=medium; density=normal; focus=vocal]\n[hook with gentle leap on first phrase and conversational release]\nIn rooms of unfinished light  \nI learn to name what I can keep  \nNot every ache needs to be right  \nSome truths arrive when I let them sleep  \n\n[Verse]\n[melody repeats with altered cadence and softer final bar]\nI used to chase the perfect timing  \nCount each breath before I spoke  \nNow I leave a little silence  \nFor the words that still have hope  \n\n[Bridge]\n[Visual: scene=contrast; motion=low; density=sparse; focus=vocal]\n[sustained line over sparse harmony with bowed bass swells]\nIf morning finds me half assembled  \nThat will still be more than none  \nI am not the sum of tremors  \nI am also what I've done  \n\n[Final Chorus]\n[Visual: scene=lift; motion=medium; density=normal; focus=vocal]\n[hook restated with wider backing harmonies and softer landing]\nIn rooms of unfinished light  \nI learn to name what I can keep  \nNot every ache needs to be right  \nSome truths arrive when I let them sleep  \n\n[Ending]\n[refrain_tag]\n[drop to solo piano and a final bowed bass note fading to room tone]\n",
+    "headerMap": {
+      "Song Title": "Rooms of Unfinished Light",
+      "Style": "indie art-pop, warm upright piano, brushed drums, bowed bass, muted electric guitar harmonics, soft analog pads, clean studio recording, grounded male lead",
+      "Caption": "A quiet song about rebuilding trust in your own timing.",
+      "Image": "Window reflections at dusk, each pane holding a different memory.",
+      "Refresh Title": "Sunset Dreams",
+      "Theme": "sky",
+      "Gradients": "6",
+      "Rank": "8",
+      "Title Rarity": "0.75",
+      "Created": "March 5, 2026 at 7:39 PM",
+      "Seeds": "519, A:58, B:46, C:88, D:28",
+      "Perspective": "i_reflect",
+      "Concept": "I stop forcing resolution and let clarity arrive in small, honest passes.",
+      "Topic": "emotional_growth -> acceptance_after_noise",
+      "Genre Bias": "indie art-pop",
+      "Style Change": "none",
+      "Modulation": "none",
+      "Hook Prominence": "medium",
+      "Deviation": "refrain_tag",
+      "Visual Mood": "calm",
+      "Visual Motion": "low",
+      "Visual Density": "sparse",
+      "Visual Lyric Presence": "auto",
+      "Visual Color Bias": "warm",
+      "Composer Version": "v2.8"
+    }
+  },
+  "sections": [
+    {
+      "id": "intro-1",
+      "labelRaw": "Intro",
+      "notesRaw": "piano opens with uneven, human rubato before drums enter on soft brushes\nguitar harmonics bloom in the upper register with long decay"
+    },
+    {
+      "id": "verse-1",
+      "labelRaw": "Verse",
+      "notesRaw": "Visual: scene=hold; motion=low; density=sparse; focus=texture\nlong-breath melody with small downward steps at line endings"
+    },
+    {
+      "id": "pre-chorus-1",
+      "labelRaw": "Pre-Chorus",
+      "notesRaw": "rising contour that resolves late into a lower held note"
+    },
+    {
+      "id": "chorus-1",
+      "labelRaw": "Chorus",
+      "notesRaw": "Visual: scene=lift; motion=medium; density=normal; focus=vocal\nhook with gentle leap on first phrase and conversational release"
+    },
+    {
+      "id": "verse-2",
+      "labelRaw": "Verse",
+      "notesRaw": "melody repeats with altered cadence and softer final bar"
+    },
+    {
+      "id": "bridge-1",
+      "labelRaw": "Bridge",
+      "notesRaw": "Visual: scene=contrast; motion=low; density=sparse; focus=vocal\nsustained line over sparse harmony with bowed bass swells"
+    },
+    {
+      "id": "final-chorus-1",
+      "labelRaw": "Final Chorus",
+      "notesRaw": "Visual: scene=lift; motion=medium; density=normal; focus=vocal\nhook restated with wider backing harmonies and softer landing"
+    },
+    {
+      "id": "ending-1",
+      "labelRaw": "Ending",
+      "notesRaw": "refrain_tag\ndrop to solo piano and a final bowed bass note fading to room tone"
+    }
+  ],
+  "lyrics": {
+    "rawText": "\nI kept a map of every wrong turn  \nFolded thin from overuse  \nHeld it up against the evening  \nLike proof I could not choose  \n\nThen the streetlights came in slowly  \nAnd took the edges off the view  \n\nIn rooms of unfinished light  \nI learn to name what I can keep  \nNot every ache needs to be right  \nSome truths arrive when I let them sleep  \n\nI used to chase the perfect timing  \nCount each breath before I spoke  \nNow I leave a little silence  \nFor the words that still have hope  \n\nIf morning finds me half assembled  \nThat will still be more than none  \nI am not the sum of tremors  \nI am also what I've done  \n\nIn rooms of unfinished light  \nI learn to name what I can keep  \nNot every ache needs to be right  \nSome truths arrive when I let them sleep  \n\n"
+  },
+  "visualHints": {
+    "mood": "calm",
+    "motion": "low",
+    "density": "sparse",
+    "lyricPresence": "auto",
+    "colorBias": "warm",
+    "sectionFocus": "",
+    "noGo": []
+  },
+  "beatReducer": {
+    "aiBeatDivisor": 2
+  },
+  "sourceGroupKey": "loose:rooms-of-unfinished-light",
+  "assetDir": "assets/rooms-of-unfinished-light/01KJYCKFYAN75K6MNXQV",
+  "createdLocalRaw": "March 5, 2026 at 7:39 PM",
+  "createdTz": "Pacific/Auckland",
+  "timing": {
+    "beatsMs": [
+      395,
+      801,
+      1207,
+      1614,
+      2043,
+      2438,
+      2821,
+      3216,
+      3599,
+      3982,
+      4365,
+      4737,
+      5120,
+      5503,
+      5886,
+      6269,
+      6641,
+      7012,
+      7384,
+      7767,
+      8150,
+      8522,
+      8905,
+      9276,
+      9660,
+      10043,
+      10426,
+      10809,
+      11180,
+      11552,
+      11947,
+      12330,
+      12713,
+      13096,
+      13479,
+      13851,
+      14234,
+      14629,
+      15012,
+      15395,
+      15766,
+      16149,
+      16521,
+      16893,
+      17264,
+      17647,
+      18030,
+      18402,
+      18785,
+      19168,
+      19540,
+      19923,
+      20294,
+      20677,
+      21049,
+      21432,
+      21815,
+      22198,
+      22581,
+      22965,
+      23359,
+      23742,
+      24126,
+      24497,
+      24869,
+      25252,
+      25635,
+      26006,
+      26378,
+      26749,
+      27121,
+      27504,
+      27899,
+      28282,
+      28665,
+      29048,
+      29431,
+      29826,
+      30209,
+      30592,
+      30964,
+      31335,
+      31707,
+      32090,
+      32473,
+      32856,
+      33228,
+      33611,
+      33994,
+      34377,
+      34760,
+      35143,
+      35515,
+      35886,
+      36270,
+      36653,
+      37024,
+      37407,
+      37790,
+      38162,
+      38534,
+      38917,
+      39288,
+      39671,
+      40054,
+      40438,
+      40821,
+      41204,
+      41587,
+      41970,
+      42353,
+      42725,
+      43108,
+      43491,
+      43874,
+      44246,
+      44617,
+      45000,
+      45372,
+      45755,
+      46138,
+      46521,
+      46904,
+      47287,
+      47659,
+      48042,
+      48425,
+      48808,
+      49191,
+      49575,
+      49946,
+      50318,
+      50689,
+      51072,
+      51444,
+      51827,
+      52210,
+      52593,
+      52976,
+      53359,
+      53743,
+      54114,
+      54486,
+      54857,
+      55240,
+      55623,
+      55995,
+      56378,
+      56761,
+      57133,
+      57516,
+      57887,
+      58270,
+      58654,
+      59037,
+      59420,
+      59803,
+      60175,
+      60558,
+      60929,
+      61312,
+      61684,
+      62067,
+      62450,
+      62833,
+      63205,
+      63588,
+      63959,
+      64342,
+      64726,
+      65109,
+      65480,
+      65863,
+      66247,
+      66630,
+      67001,
+      67384,
+      67767,
+      68151,
+      68522,
+      68905,
+      69288,
+      69671,
+      70043,
+      70438,
+      70809,
+      71192,
+      71564,
+      71935,
+      72319,
+      72702,
+      73085,
+      73468,
+      73839,
+      74223,
+      74606,
+      74989,
+      75360,
+      75743,
+      76127,
+      76510,
+      76881,
+      77253,
+      77636,
+      78019,
+      78402,
+      78785,
+      79157,
+      79528,
+      79900,
+      80283,
+      80666,
+      81038,
+      81421,
+      81804,
+      82175,
+      82559,
+      82942,
+      83325,
+      83708,
+      84079,
+      84463,
+      84846,
+      85217,
+      85600,
+      85972,
+      86355,
+      86738,
+      87110,
+      87493,
+      87876,
+      88247,
+      88631,
+      89014,
+      89397,
+      89780,
+      90151,
+      90535,
+      90918,
+      91301,
+      91684,
+      92056,
+      92439,
+      92822,
+      93193,
+      93576,
+      93960,
+      94331,
+      94714,
+      95086,
+      95469,
+      95852,
+      96235,
+      96618,
+      97001,
+      97373,
+      97756,
+      98128,
+      98511,
+      98894,
+      99265,
+      99648,
+      100032,
+      100403,
+      100786,
+      101169,
+      101552,
+      101936,
+      102307,
+      102690,
+      103073,
+      103445,
+      103828,
+      104211,
+      104594,
+      104966,
+      105349,
+      105720,
+      106104,
+      106487,
+      106870,
+      107241,
+      107624,
+      108008,
+      108379,
+      108762,
+      109145,
+      109517,
+      109900,
+      110283,
+      110666,
+      111049,
+      111421,
+      111804,
+      112187,
+      112559,
+      112942,
+      113313,
+      113697,
+      114080,
+      114463,
+      114834,
+      115217,
+      115601,
+      115984,
+      116355,
+      116738,
+      117121,
+      117505,
+      117876,
+      118259,
+      118631,
+      119014,
+      119397,
+      119780,
+      120152,
+      120535,
+      120918,
+      121301,
+      121673,
+      122056,
+      122439,
+      122822,
+      123193,
+      123565,
+      123948,
+      124331,
+      124714,
+      125098,
+      125469,
+      125852,
+      126235,
+      126607,
+      126990,
+      127373,
+      127756,
+      128139,
+      128511,
+      128894,
+      129277,
+      129649,
+      130032,
+      130415,
+      130786,
+      131170,
+      131553,
+      131936,
+      132319,
+      132690,
+      133074,
+      133457,
+      133828,
+      134211,
+      134583,
+      134966,
+      135349,
+      135721,
+      136104,
+      136487,
+      136858,
+      137242,
+      137625,
+      138008,
+      138391,
+      138762,
+      139146,
+      139529,
+      139912,
+      140283,
+      140666,
+      141050,
+      141433,
+      141804,
+      142187,
+      142571,
+      142942,
+      143325,
+      143708,
+      144091,
+      144463,
+      144834,
+      145218,
+      145601,
+      145972,
+      146367,
+      146738,
+      147122,
+      147493,
+      147876,
+      148259,
+      148643,
+      149014,
+      149397,
+      149780,
+      150163,
+      150535,
+      150918,
+      151301,
+      151673,
+      152056,
+      152439,
+      152811,
+      153194,
+      153577,
+      153960,
+      154331,
+      154715,
+      155098,
+      155481,
+      155852,
+      156235,
+      156607,
+      156990,
+      157362,
+      157745,
+      158128,
+      158511,
+      158883,
+      159266,
+      159649,
+      160020,
+      160403,
+      160787,
+      161170,
+      161553,
+      161924,
+      162307,
+      162691,
+      163062,
+      163445,
+      163817,
+      164200,
+      164583,
+      164966,
+      165349,
+      165732,
+      166104,
+      166487,
+      166870,
+      167242,
+      167625,
+      167996,
+      168380,
+      168763,
+      169146,
+      169517,
+      169900,
+      170284,
+      170667,
+      171038,
+      171421,
+      171804,
+      172176,
+      172559,
+      172942,
+      173314,
+      173697,
+      174068,
+      174452,
+      174835,
+      175206,
+      175589,
+      175972,
+      176344,
+      176704,
+      177075,
+      177447,
+      177830,
+      178213,
+      178596,
+      178979,
+      179351,
+      179734,
+      180129,
+      180524,
+      180918,
+      181313,
+      181696,
+      182079,
+      182451,
+      182834,
+      183217,
+      183589,
+      183972,
+      184355,
+      184738,
+      185121,
+      185504,
+      185887,
+      186270,
+      186654,
+      187037,
+      187420,
+      187791,
+      188163,
+      188534,
+      188906,
+      189289,
+      189661,
+      190044,
+      190427,
+      190810,
+      191193,
+      191565,
+      191959,
+      192342,
+      192726,
+      193109,
+      193492,
+      193863,
+      194247,
+      194630,
+      195013,
+      195384,
+      195767,
+      196151,
+      196534,
+      196905,
+      197288,
+      197671,
+      198066,
+      198449,
+      198832,
+      199204,
+      199576,
+      199947,
+      200319,
+      200690,
+      201073,
+      201445,
+      201828,
+      202199,
+      202582,
+      202966,
+      203349,
+      203720,
+      204092,
+      204475,
+      204858,
+      205230,
+      205613,
+      205996,
+      206379,
+      206762,
+      207145,
+      207528,
+      207911,
+      208295,
+      208666,
+      209038,
+      209421,
+      209804,
+      210187,
+      210559,
+      210942,
+      211325,
+      211696,
+      212079,
+      212463,
+      212834,
+      213217,
+      213600,
+      213983,
+      214355,
+      214727,
+      215110,
+      215493,
+      215876,
+      216259,
+      216631,
+      217014,
+      217397,
+      217768,
+      218151,
+      218535,
+      218906,
+      219289,
+      219672,
+      220056,
+      220439,
+      220810,
+      221193,
+      221576,
+      221948,
+      222331,
+      222714,
+      223097,
+      223469,
+      223852,
+      224223,
+      224607,
+      224990,
+      225373,
+      225744,
+      226128,
+      226511,
+      226882,
+      227265,
+      227648,
+      228032,
+      228403,
+      228786,
+      229169,
+      229541,
+      229924,
+      230307,
+      230690,
+      231062,
+      231445,
+      231828,
+      232200,
+      232583,
+      232966,
+      233337,
+      233720,
+      234104,
+      234487,
+      234858,
+      235241,
+      235624,
+      235996,
+      236379,
+      236762,
+      237134,
+      237517,
+      237900,
+      238283,
+      238655,
+      239026,
+      239409,
+      239792,
+      240164,
+      240547,
+      240930,
+      241313,
+      241685,
+      242068,
+      242451,
+      242823,
+      243206,
+      243577,
+      243960,
+      244344,
+      244727,
+      245098,
+      245481,
+      245864,
+      246236,
+      246619,
+      247002,
+      247385,
+      247769,
+      248140,
+      248523,
+      248906,
+      249278,
+      249649,
+      250032,
+      250416,
+      250799,
+      251170,
+      251553,
+      251937,
+      252320,
+      252703,
+      253074,
+      253457,
+      253829,
+      254212,
+      254584,
+      254967,
+      255350,
+      255745,
+      256139,
+      256534,
+      256940,
+      257347,
+      257741
+    ],
+    "lyricsLines": [
+      {
+        "i": 1,
+        "t0Ms": 15893,
+        "t1Ms": 19158
+      },
+      {
+        "i": 2,
+        "t0Ms": 22142,
+        "t1Ms": 24666
+      },
+      {
+        "i": 3,
+        "t0Ms": 28252,
+        "t1Ms": 31156
+      },
+      {
+        "i": 4,
+        "t0Ms": 31196,
+        "t1Ms": 36685
+      },
+      {
+        "i": 6,
+        "t0Ms": 40450,
+        "t1Ms": 43555
+      },
+      {
+        "i": 7,
+        "t0Ms": 46302,
+        "t1Ms": 49245
+      },
+      {
+        "i": 9,
+        "t0Ms": 51548,
+        "t1Ms": 54812
+      },
+      {
+        "i": 10,
+        "t0Ms": 58496,
+        "t1Ms": 61659
+      },
+      {
+        "i": 11,
+        "t0Ms": 64362,
+        "t1Ms": 69288
+      },
+      {
+        "i": 12,
+        "t0Ms": 70429,
+        "t1Ms": 73913
+      },
+      {
+        "i": 14,
+        "t0Ms": 76610,
+        "t1Ms": 79633
+      },
+      {
+        "i": 15,
+        "t0Ms": 82936,
+        "t1Ms": 85879
+      },
+      {
+        "i": 16,
+        "t0Ms": 89042,
+        "t1Ms": 92085
+      },
+      {
+        "i": 17,
+        "t0Ms": 93727,
+        "t1Ms": 97310
+      },
+      {
+        "i": 19,
+        "t0Ms": 100974,
+        "t1Ms": 105098
+      },
+      {
+        "i": 20,
+        "t0Ms": 107390,
+        "t1Ms": 110274
+      },
+      {
+        "i": 21,
+        "t0Ms": 113598,
+        "t1Ms": 115921
+      },
+      {
+        "i": 22,
+        "t0Ms": 119746,
+        "t1Ms": 122409
+      },
+      {
+        "i": 24,
+        "t0Ms": 125914,
+        "t1Ms": 127716
+      },
+      {
+        "i": 25,
+        "t0Ms": 131421,
+        "t1Ms": 189259
+      },
+      {
+        "i": 11,
+        "t0Ms": 137174,
+        "t1Ms": 139777
+      },
+      {
+        "i": 12,
+        "t0Ms": 143281,
+        "t1Ms": 161764
+      },
+      {
+        "i": 26,
+        "t0Ms": 192223,
+        "t1Ms": 196850
+      },
+      {
+        "i": 27,
+        "t0Ms": 198052,
+        "t1Ms": 201758
+      }
+    ],
+    "words": [
+      {
+        "i": 1,
+        "t0Ms": 15893,
+        "t1Ms": 16073,
+        "text": "I",
+        "conf": 0.808
+      },
+      {
+        "i": 1,
+        "t0Ms": 16093,
+        "t1Ms": 16414,
+        "text": "kept",
+        "conf": 0.971
+      },
+      {
+        "i": 1,
+        "t0Ms": 16514,
+        "t1Ms": 16574,
+        "text": "a",
+        "conf": 0.58
+      },
+      {
+        "i": 1,
+        "t0Ms": 16734,
+        "t1Ms": 17135,
+        "text": "map",
+        "conf": 0.875
+      },
+      {
+        "i": 1,
+        "t0Ms": 17235,
+        "t1Ms": 17315,
+        "text": "of",
+        "conf": 0.864
+      },
+      {
+        "i": 1,
+        "t0Ms": 17435,
+        "t1Ms": 17636,
+        "text": "every",
+        "conf": 0.896
+      },
+      {
+        "i": 1,
+        "t0Ms": 17716,
+        "t1Ms": 18477,
+        "text": "wrong",
+        "conf": 0.603
+      },
+      {
+        "i": 1,
+        "t0Ms": 18777,
+        "t1Ms": 19158,
+        "text": "turn",
+        "conf": 0.978
+      },
+      {
+        "i": 2,
+        "t0Ms": 22142,
+        "t1Ms": 22663,
+        "text": "Folded",
+        "conf": 0.866
+      },
+      {
+        "i": 2,
+        "t0Ms": 22763,
+        "t1Ms": 23184,
+        "text": "thin",
+        "conf": 0.937
+      },
+      {
+        "i": 2,
+        "t0Ms": 23545,
+        "t1Ms": 23765,
+        "text": "from",
+        "conf": 0.884
+      },
+      {
+        "i": 2,
+        "t0Ms": 23965,
+        "t1Ms": 24666,
+        "text": "overuse",
+        "conf": 0.897
+      },
+      {
+        "i": 3,
+        "t0Ms": 28252,
+        "t1Ms": 28572,
+        "text": "Held",
+        "conf": 0.905
+      },
+      {
+        "i": 3,
+        "t0Ms": 28712,
+        "t1Ms": 28833,
+        "text": "it",
+        "conf": 0.914
+      },
+      {
+        "i": 3,
+        "t0Ms": 29173,
+        "t1Ms": 29373,
+        "text": "up",
+        "conf": 0.897
+      },
+      {
+        "i": 3,
+        "t0Ms": 29534,
+        "t1Ms": 30075,
+        "text": "against",
+        "conf": 0.813
+      },
+      {
+        "i": 3,
+        "t0Ms": 30155,
+        "t1Ms": 30355,
+        "text": "the",
+        "conf": 0.792
+      },
+      {
+        "i": 3,
+        "t0Ms": 30695,
+        "t1Ms": 31156,
+        "text": "evening",
+        "conf": 0.779
+      },
+      {
+        "i": 4,
+        "t0Ms": 31196,
+        "t1Ms": 33319,
+        "text": "Like",
+        "conf": 0.523
+      },
+      {
+        "i": 4,
+        "t0Ms": 33440,
+        "t1Ms": 33940,
+        "text": "proof",
+        "conf": 0.823
+      },
+      {
+        "i": 4,
+        "t0Ms": 34942,
+        "t1Ms": 35022,
+        "text": "I",
+        "conf": 0.881
+      },
+      {
+        "i": 4,
+        "t0Ms": 35142,
+        "t1Ms": 35423,
+        "text": "could",
+        "conf": 0.873
+      },
+      {
+        "i": 4,
+        "t0Ms": 35523,
+        "t1Ms": 35984,
+        "text": "not",
+        "conf": 0.942
+      },
+      {
+        "i": 4,
+        "t0Ms": 36244,
+        "t1Ms": 36685,
+        "text": "choose",
+        "conf": 0.821
+      },
+      {
+        "i": 6,
+        "t0Ms": 40450,
+        "t1Ms": 40671,
+        "text": "Then",
+        "conf": 0.97
+      },
+      {
+        "i": 6,
+        "t0Ms": 40751,
+        "t1Ms": 40871,
+        "text": "the",
+        "conf": 0.947
+      },
+      {
+        "t0Ms": 40951,
+        "t1Ms": 41332,
+        "text": "street",
+        "conf": 0.853
+      },
+      {
+        "i": 6,
+        "t0Ms": 41392,
+        "t1Ms": 41712,
+        "text": "lights",
+        "conf": 0.701
+      },
+      {
+        "i": 6,
+        "t0Ms": 41792,
+        "t1Ms": 42353,
+        "text": "came",
+        "conf": 0.894
+      },
+      {
+        "i": 6,
+        "t0Ms": 42453,
+        "t1Ms": 42574,
+        "text": "in",
+        "conf": 0.911
+      },
+      {
+        "i": 6,
+        "t0Ms": 42654,
+        "t1Ms": 43555,
+        "text": "slow",
+        "conf": 0.884
+      },
+      {
+        "i": 7,
+        "t0Ms": 46302,
+        "t1Ms": 46482,
+        "text": "And",
+        "conf": 0.728
+      },
+      {
+        "i": 7,
+        "t0Ms": 46542,
+        "t1Ms": 46783,
+        "text": "took",
+        "conf": 0.892
+      },
+      {
+        "i": 7,
+        "t0Ms": 46843,
+        "t1Ms": 47003,
+        "text": "the",
+        "conf": 0.767
+      },
+      {
+        "i": 7,
+        "t0Ms": 47303,
+        "t1Ms": 48064,
+        "text": "edges",
+        "conf": 0.873
+      },
+      {
+        "i": 7,
+        "t0Ms": 48304,
+        "t1Ms": 48504,
+        "text": "off",
+        "conf": 0.742
+      },
+      {
+        "i": 7,
+        "t0Ms": 48705,
+        "t1Ms": 48885,
+        "text": "the",
+        "conf": 0.883
+      },
+      {
+        "i": 7,
+        "t0Ms": 48965,
+        "t1Ms": 49245,
+        "text": "view",
+        "conf": 0.838
+      },
+      {
+        "i": 9,
+        "t0Ms": 51548,
+        "t1Ms": 51708,
+        "text": "In",
+        "conf": 0.894
+      },
+      {
+        "t0Ms": 51848,
+        "t1Ms": 53690,
+        "text": "ruins",
+        "conf": 0.471
+      },
+      {
+        "i": 9,
+        "t0Ms": 53850,
+        "t1Ms": 53951,
+        "text": "of",
+        "conf": 0.788
+      },
+      {
+        "i": 9,
+        "t0Ms": 54111,
+        "t1Ms": 54812,
+        "text": "unfinished",
+        "conf": 0.861
+      },
+      {
+        "t0Ms": 54892,
+        "t1Ms": 55232,
+        "text": "life",
+        "conf": 0.936
+      },
+      {
+        "i": 10,
+        "t0Ms": 58496,
+        "t1Ms": 58636,
+        "text": "I",
+        "conf": 0.787
+      },
+      {
+        "i": 10,
+        "t0Ms": 58656,
+        "t1Ms": 59116,
+        "text": "learned",
+        "conf": 0.425
+      },
+      {
+        "i": 10,
+        "t0Ms": 59136,
+        "t1Ms": 59176,
+        "text": "to",
+        "conf": 0.275
+      },
+      {
+        "i": 10,
+        "t0Ms": 59257,
+        "t1Ms": 59777,
+        "text": "name",
+        "conf": 0.591
+      },
+      {
+        "i": 10,
+        "t0Ms": 59837,
+        "t1Ms": 60037,
+        "text": "what",
+        "conf": 0.92
+      },
+      {
+        "i": 10,
+        "t0Ms": 60198,
+        "t1Ms": 60298,
+        "text": "I",
+        "conf": 0.963
+      },
+      {
+        "i": 10,
+        "t0Ms": 60378,
+        "t1Ms": 61179,
+        "text": "can't",
+        "conf": 0.562
+      },
+      {
+        "i": 10,
+        "t0Ms": 61319,
+        "t1Ms": 61659,
+        "text": "keep",
+        "conf": 0.983
+      },
+      {
+        "i": 11,
+        "t0Ms": 64362,
+        "t1Ms": 65003,
+        "text": "Not",
+        "conf": 0.879
+      },
+      {
+        "i": 11,
+        "t0Ms": 65023,
+        "t1Ms": 65484,
+        "text": "every",
+        "conf": 0.381
+      },
+      {
+        "i": 11,
+        "t0Ms": 65504,
+        "t1Ms": 65824,
+        "text": "ache",
+        "conf": 0.408
+      },
+      {
+        "i": 11,
+        "t0Ms": 65904,
+        "t1Ms": 66184,
+        "text": "needs",
+        "conf": 0.881
+      },
+      {
+        "i": 11,
+        "t0Ms": 66244,
+        "t1Ms": 66425,
+        "text": "to",
+        "conf": 0.968
+      },
+      {
+        "i": 11,
+        "t0Ms": 66485,
+        "t1Ms": 66925,
+        "text": "be",
+        "conf": 0.923
+      },
+      {
+        "i": 11,
+        "t0Ms": 67045,
+        "t1Ms": 69288,
+        "text": "right",
+        "conf": 0.32
+      },
+      {
+        "i": 12,
+        "t0Ms": 70429,
+        "t1Ms": 70749,
+        "text": "Some",
+        "conf": 0.967
+      },
+      {
+        "i": 12,
+        "t0Ms": 70830,
+        "t1Ms": 71230,
+        "text": "truths",
+        "conf": 0.778
+      },
+      {
+        "i": 12,
+        "t0Ms": 71330,
+        "t1Ms": 71851,
+        "text": "arrive",
+        "conf": 0.828
+      },
+      {
+        "i": 12,
+        "t0Ms": 71931,
+        "t1Ms": 72051,
+        "text": "when",
+        "conf": 0.545
+      },
+      {
+        "i": 12,
+        "t0Ms": 72231,
+        "t1Ms": 72351,
+        "text": "I",
+        "conf": 0.92
+      },
+      {
+        "i": 12,
+        "t0Ms": 72411,
+        "t1Ms": 72692,
+        "text": "let",
+        "conf": 0.989
+      },
+      {
+        "i": 12,
+        "t0Ms": 72792,
+        "t1Ms": 73172,
+        "text": "them",
+        "conf": 0.89
+      },
+      {
+        "i": 12,
+        "t0Ms": 73232,
+        "t1Ms": 73913,
+        "text": "sleep",
+        "conf": 0.85
+      },
+      {
+        "i": 14,
+        "t0Ms": 76610,
+        "t1Ms": 76930,
+        "text": "I",
+        "conf": 0.786
+      },
+      {
+        "i": 14,
+        "t0Ms": 76950,
+        "t1Ms": 77151,
+        "text": "used",
+        "conf": 0.861
+      },
+      {
+        "i": 14,
+        "t0Ms": 77191,
+        "t1Ms": 77291,
+        "text": "to",
+        "conf": 0.979
+      },
+      {
+        "i": 14,
+        "t0Ms": 77391,
+        "t1Ms": 77811,
+        "text": "chase",
+        "conf": 0.925
+      },
+      {
+        "i": 14,
+        "t0Ms": 77871,
+        "t1Ms": 77971,
+        "text": "the",
+        "conf": 0.968
+      },
+      {
+        "i": 14,
+        "t0Ms": 78051,
+        "t1Ms": 78572,
+        "text": "perfect",
+        "conf": 0.973
+      },
+      {
+        "i": 14,
+        "t0Ms": 78652,
+        "t1Ms": 79633,
+        "text": "timing",
+        "conf": 0.659
+      },
+      {
+        "i": 15,
+        "t0Ms": 82936,
+        "t1Ms": 83237,
+        "text": "Count",
+        "conf": 0.918
+      },
+      {
+        "i": 15,
+        "t0Ms": 83277,
+        "t1Ms": 83457,
+        "text": "each",
+        "conf": 0.874
+      },
+      {
+        "i": 15,
+        "t0Ms": 83557,
+        "t1Ms": 84017,
+        "text": "breath",
+        "conf": 0.851
+      },
+      {
+        "i": 15,
+        "t0Ms": 84157,
+        "t1Ms": 84658,
+        "text": "before",
+        "conf": 0.688
+      },
+      {
+        "i": 15,
+        "t0Ms": 84958,
+        "t1Ms": 85218,
+        "text": "I",
+        "conf": 0.913
+      },
+      {
+        "i": 15,
+        "t0Ms": 85279,
+        "t1Ms": 85879,
+        "text": "spoke",
+        "conf": 0.777
+      },
+      {
+        "i": 16,
+        "t0Ms": 89042,
+        "t1Ms": 89262,
+        "text": "Now",
+        "conf": 0.973
+      },
+      {
+        "i": 16,
+        "t0Ms": 89403,
+        "t1Ms": 89583,
+        "text": "I",
+        "conf": 0.881
+      },
+      {
+        "i": 16,
+        "t0Ms": 89623,
+        "t1Ms": 90203,
+        "text": "leave",
+        "conf": 0.876
+      },
+      {
+        "i": 16,
+        "t0Ms": 90263,
+        "t1Ms": 90323,
+        "text": "a",
+        "conf": 0.856
+      },
+      {
+        "i": 16,
+        "t0Ms": 90384,
+        "t1Ms": 90724,
+        "text": "little",
+        "conf": 0.849
+      },
+      {
+        "i": 16,
+        "t0Ms": 90884,
+        "t1Ms": 92085,
+        "text": "silence",
+        "conf": 0.399
+      },
+      {
+        "i": 17,
+        "t0Ms": 93727,
+        "t1Ms": 93947,
+        "text": "For",
+        "conf": 0.95
+      },
+      {
+        "i": 17,
+        "t0Ms": 94007,
+        "t1Ms": 94107,
+        "text": "the",
+        "conf": 0.987
+      },
+      {
+        "i": 17,
+        "t0Ms": 94147,
+        "t1Ms": 95368,
+        "text": "words",
+        "conf": 0.69
+      },
+      {
+        "i": 17,
+        "t0Ms": 95469,
+        "t1Ms": 95729,
+        "text": "that",
+        "conf": 0.912
+      },
+      {
+        "i": 17,
+        "t0Ms": 95809,
+        "t1Ms": 96209,
+        "text": "still",
+        "conf": 0.847
+      },
+      {
+        "i": 17,
+        "t0Ms": 96309,
+        "t1Ms": 96810,
+        "text": "have",
+        "conf": 0.646
+      },
+      {
+        "i": 17,
+        "t0Ms": 97050,
+        "t1Ms": 97310,
+        "text": "hope",
+        "conf": 0.587
+      },
+      {
+        "i": 19,
+        "t0Ms": 100974,
+        "t1Ms": 101134,
+        "text": "If",
+        "conf": 0.962
+      },
+      {
+        "i": 19,
+        "t0Ms": 101234,
+        "t1Ms": 101775,
+        "text": "morning",
+        "conf": 0.895
+      },
+      {
+        "i": 19,
+        "t0Ms": 101915,
+        "t1Ms": 102515,
+        "text": "finds",
+        "conf": 0.729
+      },
+      {
+        "i": 19,
+        "t0Ms": 102596,
+        "t1Ms": 102736,
+        "text": "me",
+        "conf": 0.95
+      },
+      {
+        "i": 19,
+        "t0Ms": 102816,
+        "t1Ms": 105098,
+        "text": "half-assemble",
+        "conf": 0.816
+      },
+      {
+        "i": 20,
+        "t0Ms": 107390,
+        "t1Ms": 107650,
+        "text": "That",
+        "conf": 0.324
+      },
+      {
+        "i": 20,
+        "t0Ms": 107670,
+        "t1Ms": 107831,
+        "text": "will",
+        "conf": 0.668
+      },
+      {
+        "i": 20,
+        "t0Ms": 107891,
+        "t1Ms": 108331,
+        "text": "still",
+        "conf": 0.81
+      },
+      {
+        "i": 20,
+        "t0Ms": 108391,
+        "t1Ms": 108511,
+        "text": "be",
+        "conf": 0.927
+      },
+      {
+        "i": 20,
+        "t0Ms": 108612,
+        "t1Ms": 108912,
+        "text": "more",
+        "conf": 0.912
+      },
+      {
+        "i": 20,
+        "t0Ms": 109012,
+        "t1Ms": 109813,
+        "text": "than",
+        "conf": 0.807
+      },
+      {
+        "i": 20,
+        "t0Ms": 109933,
+        "t1Ms": 110274,
+        "text": "none",
+        "conf": 0.611
+      },
+      {
+        "i": 21,
+        "t0Ms": 113598,
+        "t1Ms": 113678,
+        "text": "I",
+        "conf": 0.924
+      },
+      {
+        "i": 21,
+        "t0Ms": 113758,
+        "t1Ms": 113878,
+        "text": "am",
+        "conf": 0.952
+      },
+      {
+        "i": 21,
+        "t0Ms": 113938,
+        "t1Ms": 114299,
+        "text": "not",
+        "conf": 0.711
+      },
+      {
+        "i": 21,
+        "t0Ms": 114319,
+        "t1Ms": 114379,
+        "text": "the",
+        "conf": 0.304
+      },
+      {
+        "i": 21,
+        "t0Ms": 114679,
+        "t1Ms": 114980,
+        "text": "sum",
+        "conf": 0.947
+      },
+      {
+        "i": 21,
+        "t0Ms": 115040,
+        "t1Ms": 115120,
+        "text": "of",
+        "conf": 0.992
+      },
+      {
+        "i": 21,
+        "t0Ms": 115260,
+        "t1Ms": 115921,
+        "text": "tremors",
+        "conf": 0.902
+      },
+      {
+        "i": 22,
+        "t0Ms": 119746,
+        "t1Ms": 119826,
+        "text": "I",
+        "conf": 0.938
+      },
+      {
+        "i": 22,
+        "t0Ms": 119906,
+        "t1Ms": 120006,
+        "text": "am",
+        "conf": 0.98
+      },
+      {
+        "i": 22,
+        "t0Ms": 120186,
+        "t1Ms": 120967,
+        "text": "also",
+        "conf": 0.925
+      },
+      {
+        "i": 22,
+        "t0Ms": 121087,
+        "t1Ms": 121348,
+        "text": "what",
+        "conf": 0.65
+      },
+      {
+        "i": 22,
+        "t0Ms": 121888,
+        "t1Ms": 122049,
+        "text": "I've",
+        "conf": 0.343
+      },
+      {
+        "i": 22,
+        "t0Ms": 122069,
+        "t1Ms": 122409,
+        "text": "done",
+        "conf": 0.896
+      },
+      {
+        "i": 24,
+        "t0Ms": 125914,
+        "t1Ms": 125954,
+        "text": "In",
+        "conf": 0.001
+      },
+      {
+        "i": 24,
+        "t0Ms": 125974,
+        "t1Ms": 126615,
+        "text": "rooms",
+        "conf": 0.9
+      },
+      {
+        "i": 24,
+        "t0Ms": 126775,
+        "t1Ms": 126855,
+        "text": "of",
+        "conf": 0.966
+      },
+      {
+        "i": 24,
+        "t0Ms": 127015,
+        "t1Ms": 127716,
+        "text": "unfinished",
+        "conf": 0.808
+      },
+      {
+        "t0Ms": 128036,
+        "t1Ms": 128257,
+        "text": "life",
+        "conf": 0.451
+      },
+      {
+        "i": 25,
+        "t0Ms": 131421,
+        "t1Ms": 131561,
+        "text": "I",
+        "conf": 0.727
+      },
+      {
+        "i": 25,
+        "t0Ms": 131581,
+        "t1Ms": 131981,
+        "text": "learned",
+        "conf": 0.546
+      },
+      {
+        "i": 25,
+        "t0Ms": 132081,
+        "t1Ms": 132122,
+        "text": "to",
+        "conf": 0.277
+      },
+      {
+        "i": 25,
+        "t0Ms": 132162,
+        "t1Ms": 132702,
+        "text": "name",
+        "conf": 0.796
+      },
+      {
+        "i": 25,
+        "t0Ms": 132742,
+        "t1Ms": 132963,
+        "text": "what",
+        "conf": 0.766
+      },
+      {
+        "i": 25,
+        "t0Ms": 133123,
+        "t1Ms": 133243,
+        "text": "I",
+        "conf": 0.82
+      },
+      {
+        "i": 25,
+        "t0Ms": 133303,
+        "t1Ms": 134104,
+        "text": "can",
+        "conf": 0.891
+      },
+      {
+        "t0Ms": 134224,
+        "t1Ms": 134865,
+        "text": "keep",
+        "conf": 0.676
+      },
+      {
+        "i": 11,
+        "t0Ms": 137174,
+        "t1Ms": 137675,
+        "text": "Not",
+        "conf": 0.828
+      },
+      {
+        "i": 11,
+        "t0Ms": 137895,
+        "t1Ms": 138195,
+        "text": "every",
+        "conf": 0.829
+      },
+      {
+        "i": 11,
+        "t0Ms": 138355,
+        "t1Ms": 138596,
+        "text": "ache",
+        "conf": 0.305
+      },
+      {
+        "i": 11,
+        "t0Ms": 138756,
+        "t1Ms": 139056,
+        "text": "needs",
+        "conf": 0.763
+      },
+      {
+        "i": 11,
+        "t0Ms": 139156,
+        "t1Ms": 139317,
+        "text": "to",
+        "conf": 0.955
+      },
+      {
+        "i": 11,
+        "t0Ms": 139377,
+        "t1Ms": 139777,
+        "text": "be",
+        "conf": 0.95
+      },
+      {
+        "t0Ms": 141940,
+        "t1Ms": 142020,
+        "text": "mine",
+        "conf": 0.159
+      },
+      {
+        "i": 12,
+        "t0Ms": 143281,
+        "t1Ms": 143662,
+        "text": "Some",
+        "conf": 0.891
+      },
+      {
+        "i": 12,
+        "t0Ms": 143722,
+        "t1Ms": 145064,
+        "text": "truths",
+        "conf": 0.473
+      },
+      {
+        "i": 12,
+        "t0Ms": 145084,
+        "t1Ms": 145224,
+        "text": "arrive",
+        "conf": 0.124
+      },
+      {
+        "i": 12,
+        "t0Ms": 145244,
+        "t1Ms": 145324,
+        "text": "when",
+        "conf": 0.001
+      },
+      {
+        "i": 12,
+        "t0Ms": 145344,
+        "t1Ms": 145364,
+        "text": "I",
+        "conf": 0.001
+      },
+      {
+        "i": 12,
+        "t0Ms": 145384,
+        "t1Ms": 145564,
+        "text": "let",
+        "conf": 0.673
+      },
+      {
+        "i": 12,
+        "t0Ms": 145644,
+        "t1Ms": 146305,
+        "text": "them",
+        "conf": 0.728
+      },
+      {
+        "i": 12,
+        "t0Ms": 146325,
+        "t1Ms": 161764,
+        "text": "sleep",
+        "conf": 0.853
+      },
+      {
+        "t0Ms": 173354,
+        "t1Ms": 181987,
+        "text": "I",
+        "conf": 0.946
+      },
+      {
+        "t0Ms": 182007,
+        "t1Ms": 182388,
+        "text": "learned",
+        "conf": 0.429
+      },
+      {
+        "t0Ms": 182668,
+        "t1Ms": 182809,
+        "text": "a",
+        "conf": 0.781
+      },
+      {
+        "t0Ms": 186635,
+        "t1Ms": 187396,
+        "text": "name",
+        "conf": 0.832
+      },
+      {
+        "t0Ms": 187436,
+        "t1Ms": 187676,
+        "text": "what",
+        "conf": 0.802
+      },
+      {
+        "t0Ms": 187836,
+        "t1Ms": 187957,
+        "text": "I",
+        "conf": 0.838
+      },
+      {
+        "t0Ms": 188017,
+        "t1Ms": 188898,
+        "text": "can't",
+        "conf": 0.185
+      },
+      {
+        "i": 25,
+        "t0Ms": 188918,
+        "t1Ms": 189259,
+        "text": "keep",
+        "conf": 0.626
+      },
+      {
+        "i": 26,
+        "t0Ms": 192223,
+        "t1Ms": 192383,
+        "text": "Not",
+        "conf": 0.652
+      },
+      {
+        "i": 26,
+        "t0Ms": 192604,
+        "t1Ms": 192884,
+        "text": "every",
+        "conf": 0.923
+      },
+      {
+        "i": 26,
+        "t0Ms": 193085,
+        "t1Ms": 193365,
+        "text": "ache",
+        "conf": 0.664
+      },
+      {
+        "i": 26,
+        "t0Ms": 193485,
+        "t1Ms": 193786,
+        "text": "needs",
+        "conf": 0.84
+      },
+      {
+        "i": 26,
+        "t0Ms": 193866,
+        "t1Ms": 194026,
+        "text": "to",
+        "conf": 0.982
+      },
+      {
+        "i": 26,
+        "t0Ms": 194086,
+        "t1Ms": 194567,
+        "text": "be",
+        "conf": 0.917
+      },
+      {
+        "i": 26,
+        "t0Ms": 194627,
+        "t1Ms": 196850,
+        "text": "right",
+        "conf": 0.376
+      },
+      {
+        "i": 27,
+        "t0Ms": 198052,
+        "t1Ms": 198433,
+        "text": "Some",
+        "conf": 0.546
+      },
+      {
+        "i": 27,
+        "t0Ms": 198453,
+        "t1Ms": 198833,
+        "text": "truths",
+        "conf": 0.359
+      },
+      {
+        "i": 27,
+        "t0Ms": 199314,
+        "t1Ms": 199655,
+        "text": "arrive",
+        "conf": 0.507
+      },
+      {
+        "i": 27,
+        "t0Ms": 199855,
+        "t1Ms": 199935,
+        "text": "when",
+        "conf": 0.075
+      },
+      {
+        "i": 27,
+        "t0Ms": 199955,
+        "t1Ms": 199975,
+        "text": "I",
+        "conf": 0.001
+      },
+      {
+        "i": 27,
+        "t0Ms": 199995,
+        "t1Ms": 200296,
+        "text": "let",
+        "conf": 0.625
+      },
+      {
+        "i": 27,
+        "t0Ms": 200316,
+        "t1Ms": 200817,
+        "text": "them",
+        "conf": 0.46
+      },
+      {
+        "i": 27,
+        "t0Ms": 201418,
+        "t1Ms": 201758,
+        "text": "sleep",
+        "conf": 0.851
+      },
+      {
+        "t0Ms": 211846,
+        "t1Ms": 228408,
+        "text": "Om",
+        "conf": 0.95
+      },
+      {
+        "t0Ms": 237040,
+        "t1Ms": 237080,
+        "text": "Om",
+        "conf": 0.002
+      },
+      {
+        "t0Ms": 237100,
+        "t1Ms": 237140,
+        "text": "Om",
+        "conf": 0.227
+      },
+      {
+        "t0Ms": 237160,
+        "t1Ms": 237200,
+        "text": "Om",
+        "conf": 0.297
+      },
+      {
+        "t0Ms": 237240,
+        "t1Ms": 237280,
+        "text": "Om",
+        "conf": 0.5
+      },
+      {
+        "t0Ms": 242423,
+        "t1Ms": 243778,
+        "text": "Hmm.",
+        "conf": 0.412
+      }
+    ]
+  },
+  "import": {
+    "firstImportedAt": "2026-03-05T06:57:44.393Z",
+    "lastImportedAt": "2026-03-05T06:57:44.393Z",
+    "inputHashes": {
+      "Rooms of Unfinished Light Stems.zip": "605d7d3f7e77ff377f5d54d3643d2421449d070a43f26948a71828b6030c4639",
+      "rooms-of-unfinished-light.txt": "7d0801e3153b062c7ebf825eb1c729671e1c4b3a830f3a2451dca6093af39174"
+    },
+    "hashSource": "assets/rooms-of-unfinished-light/01KJYCKFYAN75K6MNXQV/instrumental.wav",
+    "hashSourceSha256": "8e26c6acedfb42fe9f1b39c208759a284b1fe61e8c82f7053dd5f5c7467b5c7f",
+    "filenameBpm": null,
+    "sourceGroupKey": "loose:rooms-of-unfinished-light",
+    "archivedTo": "D:/seva/FOMO/Songs/the-refresh/refreshing-music/inbox/_done/2026-03-05/loose/rooms-of-unfinished-light/consumed.json"
+  },
+  "assetPaths": {
+    "mix": "assets/rooms-of-unfinished-light/01KJYCKFYAN75K6MNXQV/mix.mp3",
+    "mixWav": "",
+    "stemsZip": "assets/rooms-of-unfinished-light/01KJYCKFYAN75K6MNXQV/stems.zip",
+    "effective": "assets/rooms-of-unfinished-light/01KJYCKFYAN75K6MNXQV/effective.json",
+    "instrumental": "assets/rooms-of-unfinished-light/01KJYCKFYAN75K6MNXQV/instrumental.mp3",
+    "instrumentalWav": "assets/rooms-of-unfinished-light/01KJYCKFYAN75K6MNXQV/instrumental.wav",
+    "vocals": "assets/rooms-of-unfinished-light/01KJYCKFYAN75K6MNXQV/vocals.mp3",
+    "vocalsWav": "assets/rooms-of-unfinished-light/01KJYCKFYAN75K6MNXQV/vocals.wav",
+    "composer": "assets/rooms-of-unfinished-light/01KJYCKFYAN75K6MNXQV/composer.txt"
+  },
+  "hasUserHints": true,
+  "lastHintAt": "2026-03-05T07:23:12.211Z",
+  "releaseRecipePath": "/recipes/01KJYCKFYAN75K6MNXQV.json"
+}

@@ -1,0 +1,1550 @@
+{
+  "workId": "seventeen-sparks",
+  "trackId": "01KJYKY71YG9M82G6TCP",
+  "recipeRef": {
+    "albumId": "random",
+    "trackOverrideId": "01KJYKY71YG9M82G6TCP"
+  },
+  "createdAt": "2026-02-17T08:44:00.000Z",
+  "slug": "seventeen-sparks",
+  "title": "Seventeen Sparks",
+  "audio": {
+    "filename": "mix.mp3",
+    "path": "../assets/seventeen-sparks/01KJYKY71YG9M82G6TCP/mix.mp3",
+    "cidOrTx": "",
+    "mime": "audio/mpeg",
+    "bytes": 5599796
+  },
+  "composer": {
+    "rawText": "[Song Title: Seventeen Sparks]\r\n[Style: modern jazz fusion, clean studio recording, complex groove, extended chords, expressive male vocal]\r\n[Caption: A fresh shuffle of seventeen hidden cards. New variables breathe into the same old frame.]\r\n[Image: A tabletop scattered with numbered tiles. Warm studio lights reflecting off polished brass.]\r\n[Refresh Title: Random 3]\r\n[Theme: random]\r\n[Gradients: 3]\r\n[Rank: 17]\r\n[Title Rarity: 1.58]\r\n[Seeds: 90641, A:58, B:12, C:77, D:34, E:19, F:83, G:25, H:60, I:47, J:91, K:06, L:72, M:38, N:14, O:55, P:80]\r\n[Perspective: we_community]\r\n[Concept: Seventeen new seeds scattered into a tight harmonic pocket — surprise within constraint.]\r\n[Topic: Complexity & Emergence → surprise_within_constraints]\r\n[Genre Bias: jazz_fusion_modern]\r\n[Style Change: Bridge → stripped rhythmic breakdown]\r\n[Modulation: up minor third at Final Chorus]\r\n[Hook Prominence: medium]\r\n[Deviation: counter-melody braid in second chorus]\r\n[Created: February 17, 2026 at 9:44 PM]\r\n[Composer Version: v2.6]\r\n\r\n[Intro]\r\n[Instrumental; syncopated Rhodes riff in 5/4; brushed snare; bass entering on beat four; subtle horn swell]\r\n[Micro-variation hi-hat accents shifting each bar]\r\n\r\n[Verse]\r\n[Conversational but rhythmically tight; bass walking with chromatic turns]\r\nSeventeen sparks in a quiet room  \r\nTiny flares in measured bloom  \r\nShuffle the deck, let the table decide  \r\nWhich hidden colors step outside  \r\n\r\n[Verse]\r\n[Add muted trumpet fills; guitar comping with extended voicings]\r\nEach small seed in a different key  \r\nLeaning toward possibility  \r\nNot every path is meant to stay  \r\nSome fade soft, some find their way  \r\n\r\n[Chorus]\r\n[Open groove; layered backing vocals; brighter chord extensions; long-tone release on last line]\r\nLet them rise, let them blend  \r\nWatch the broken edges mend  \r\nFrom scattered codes we comprehend  \r\nNew seeds turning round again  \r\n\r\n[Bridge]\r\n[Style change; drums drop to rim clicks in 7/8; bass pedal tone; sparse piano stabs]\r\nCount the pulse that shifts beneath  \r\nFeel the pattern show its teeth  \r\nSilence holds the in-between  \r\nWhere the wild becomes serene  \r\n\r\n[Final Chorus]\r\n[Modulate up minor third; fuller horns; counter-melody braid above vocal]\r\nLet them rise, let them blend  \r\nWatch the broken edges mend  \r\nFrom scattered codes we comprehend  \r\nNew seeds turning round again  \r\n\r\n[Ending]\r\n[Instruments gradually drop out; solo Rhodes echoing motif]\r\nRound again  \r\n",
+    "headerMap": {
+      "Song Title": "Seventeen Sparks",
+      "Style": "modern jazz fusion, clean studio recording, complex groove, extended chords, expressive male vocal",
+      "Caption": "A fresh shuffle of seventeen hidden cards. New variables breathe into the same old frame.",
+      "Image": "A tabletop scattered with numbered tiles. Warm studio lights reflecting off polished brass.",
+      "Refresh Title": "Random 3",
+      "Theme": "random",
+      "Gradients": "3",
+      "Rank": "17",
+      "Title Rarity": "1.58",
+      "Seeds": "90641, A:58, B:12, C:77, D:34, E:19, F:83, G:25, H:60, I:47, J:91, K:06, L:72, M:38, N:14, O:55, P:80",
+      "Perspective": "we_community",
+      "Concept": "Seventeen new seeds scattered into a tight harmonic pocket — surprise within constraint.",
+      "Topic": "Complexity & Emergence → surprise_within_constraints",
+      "Genre Bias": "jazz_fusion_modern",
+      "Style Change": "Bridge → stripped rhythmic breakdown",
+      "Modulation": "up minor third at Final Chorus",
+      "Hook Prominence": "medium",
+      "Deviation": "counter-melody braid in second chorus",
+      "Created": "February 17, 2026 at 9:44 PM",
+      "Composer Version": "v2.6"
+    }
+  },
+  "sections": [
+    {
+      "id": "intro-1",
+      "labelRaw": "Intro",
+      "notesRaw": "Instrumental; syncopated Rhodes riff in 5/4; brushed snare; bass entering on beat four; subtle horn swell\nMicro-variation hi-hat accents shifting each bar"
+    },
+    {
+      "id": "verse-1",
+      "labelRaw": "Verse",
+      "notesRaw": "Conversational but rhythmically tight; bass walking with chromatic turns"
+    },
+    {
+      "id": "verse-2",
+      "labelRaw": "Verse",
+      "notesRaw": "Add muted trumpet fills; guitar comping with extended voicings"
+    },
+    {
+      "id": "chorus-1",
+      "labelRaw": "Chorus",
+      "notesRaw": "Open groove; layered backing vocals; brighter chord extensions; long-tone release on last line"
+    },
+    {
+      "id": "bridge-1",
+      "labelRaw": "Bridge",
+      "notesRaw": "Style change; drums drop to rim clicks in 7/8; bass pedal tone; sparse piano stabs"
+    },
+    {
+      "id": "final-chorus-1",
+      "labelRaw": "Final Chorus",
+      "notesRaw": "Modulate up minor third; fuller horns; counter-melody braid above vocal"
+    },
+    {
+      "id": "ending-1",
+      "labelRaw": "Ending",
+      "notesRaw": "Instruments gradually drop out; solo Rhodes echoing motif"
+    }
+  ],
+  "lyrics": {
+    "rawText": "\nSeventeen sparks in a quiet room  \nTiny flares in measured bloom  \nShuffle the deck, let the table decide  \nWhich hidden colors step outside  \n\nEach small seed in a different key  \nLeaning toward possibility  \nNot every path is meant to stay  \nSome fade soft, some find their way  \n\nLet them rise, let them blend  \nWatch the broken edges mend  \nFrom scattered codes we comprehend  \nNew seeds turning round again  \n\nCount the pulse that shifts beneath  \nFeel the pattern show its teeth  \nSilence holds the in-between  \nWhere the wild becomes serene  \n\nLet them rise, let them blend  \nWatch the broken edges mend  \nFrom scattered codes we comprehend  \nNew seeds turning round again  \n\nRound again  \n"
+  },
+  "sourceGroupKey": "loose:seventeen-sparks",
+  "assetDir": "assets/seventeen-sparks/01KJYKY71YG9M82G6TCP",
+  "createdLocalRaw": "February 17, 2026 at 9:44 PM",
+  "createdTz": "Pacific/Auckland",
+  "timing": {
+    "beatsMs": [
+      488,
+      952,
+      1463,
+      1985,
+      2508,
+      3030,
+      3541,
+      4052,
+      4563,
+      5062,
+      5573,
+      6107,
+      6641,
+      7163,
+      7686,
+      8208,
+      8719,
+      9230,
+      9752,
+      10252,
+      10762,
+      11285,
+      11807,
+      12318,
+      12841,
+      13363,
+      13874,
+      14385,
+      14896,
+      15430,
+      15952,
+      16475,
+      16985,
+      17496,
+      18007,
+      18518,
+      19040,
+      19574,
+      20097,
+      20596,
+      21119,
+      21641,
+      22175,
+      22732,
+      23278,
+      23812,
+      24346,
+      24869,
+      25368,
+      25879,
+      26401,
+      26924,
+      27446,
+      27957,
+      28479,
+      28990,
+      29513,
+      30035,
+      30557,
+      31068,
+      31579,
+      32090,
+      32612,
+      33123,
+      33634,
+      34133,
+      34609,
+      35109,
+      35608,
+      36107,
+      36629,
+      37140,
+      37651,
+      38185,
+      38708,
+      39230,
+      39741,
+      40252,
+      40763,
+      41297,
+      41831,
+      42400,
+      42934,
+      43445,
+      43967,
+      44501,
+      45023,
+      45546,
+      46068,
+      46579,
+      47102,
+      47601,
+      48135,
+      48646,
+      49168,
+      49679,
+      50202,
+      50712,
+      51235,
+      51746,
+      52268,
+      52779,
+      53301,
+      53812,
+      54346,
+      54857,
+      55368,
+      55890,
+      56424,
+      56935,
+      57446,
+      57957,
+      58479,
+      59002,
+      59513,
+      60035,
+      60546,
+      61068,
+      61591,
+      62102,
+      62624,
+      63135,
+      63646,
+      64157,
+      64679,
+      65202,
+      65712,
+      66223,
+      66746,
+      67268,
+      67791,
+      68301,
+      68812,
+      69335,
+      69857,
+      70368,
+      70891,
+      71401,
+      71912,
+      72435,
+      72957,
+      73480,
+      73990,
+      74513,
+      75035,
+      75546,
+      76069,
+      76579,
+      77090,
+      77613,
+      78135,
+      78646,
+      79157,
+      79679,
+      80202,
+      80713,
+      81223,
+      81746,
+      82268,
+      82779,
+      83302,
+      83824,
+      84346,
+      84857,
+      85368,
+      85891,
+      86401,
+      86924,
+      87435,
+      87957,
+      88480,
+      88990,
+      89513,
+      90024,
+      90535,
+      91057,
+      91568,
+      92079,
+      92601,
+      93124,
+      93634,
+      94169,
+      94691,
+      95190,
+      95713,
+      96235,
+      96758,
+      97268,
+      97779,
+      98302,
+      98813,
+      99323,
+      99846,
+      100368,
+      100891,
+      101390,
+      101924,
+      102435,
+      102957,
+      103468,
+      103991,
+      104501,
+      105012,
+      105535,
+      106057,
+      106580,
+      107090,
+      107613,
+      108135,
+      108658,
+      109169,
+      109691,
+      110214,
+      110713,
+      111235,
+      111758,
+      112280,
+      112803,
+      113313,
+      113824,
+      114335,
+      114858,
+      115368,
+      115891,
+      116413,
+      116936,
+      117447,
+      117969,
+      118480,
+      119002,
+      119525,
+      120036,
+      120546,
+      121069,
+      121591,
+      122102,
+      122613,
+      123135,
+      123658,
+      124169,
+      124680,
+      125202,
+      125724,
+      126235,
+      126746,
+      127269,
+      127791,
+      128302,
+      128813,
+      129335,
+      129858,
+      130368,
+      130879,
+      131402,
+      131924,
+      132435,
+      132957,
+      133468,
+      133991,
+      134502,
+      135024,
+      135546,
+      136069,
+      136580,
+      137091,
+      137613,
+      138136,
+      138646,
+      139157,
+      139680,
+      140202,
+      140725,
+      141235,
+      141758,
+      142280,
+      142791,
+      143302,
+      143824,
+      144347,
+      144858,
+      145357,
+      145879,
+      146402,
+      146924,
+      147447,
+      147969,
+      148492,
+      149002,
+      149525,
+      150036,
+      150547,
+      151069,
+      151580,
+      152102,
+      152625,
+      153147,
+      153658,
+      154169,
+      154680,
+      155202,
+      155713,
+      156235,
+      156746,
+      157269,
+      157791,
+      158314,
+      158836,
+      159347,
+      159858,
+      160369,
+      160879,
+      161402,
+      161913,
+      162435,
+      162958,
+      163480,
+      163991,
+      164513,
+      165036,
+      165547,
+      166057,
+      166580,
+      167102,
+      167613,
+      168136,
+      168658,
+      169169,
+      169691,
+      170202,
+      170725,
+      171236,
+      171746,
+      172257,
+      172780,
+      173302,
+      173825,
+      174335,
+      174858,
+      175369,
+      175891,
+      176402,
+      176924,
+      177435,
+      177958,
+      178469,
+      178991,
+      179513,
+      180036,
+      180558,
+      181069,
+      181592,
+      182102,
+      182613,
+      183136,
+      183658,
+      184169,
+      184680,
+      185191,
+      185702,
+      186212,
+      186735,
+      187257,
+      187768,
+      188291,
+      188813,
+      189324,
+      189835,
+      190357,
+      190880,
+      191390,
+      191890,
+      192412,
+      192923,
+      193445,
+      193979,
+      194502,
+      195024,
+      195535,
+      196058,
+      196569,
+      197079,
+      197602,
+      198124,
+      198635,
+      199146,
+      199668,
+      200191,
+      200702,
+      201224,
+      201735,
+      202257,
+      202768,
+      203291,
+      203813,
+      204324,
+      204846,
+      205357,
+      205880,
+      206391,
+      206913,
+      207424,
+      207946,
+      208457,
+      208980,
+      209490,
+      210013,
+      210535,
+      211058,
+      211569,
+      212091,
+      212602,
+      213124,
+      213635,
+      214158,
+      214668,
+      215191,
+      215702,
+      216224,
+      216735,
+      217258,
+      217768,
+      218291,
+      218802,
+      219324,
+      219835,
+      220357,
+      220868,
+      221391,
+      221901,
+      222412,
+      222900,
+      223341,
+      223782,
+      224223,
+      224641,
+      225059,
+      225477,
+      226011,
+      226557,
+      227068,
+      227590,
+      228101,
+      228624,
+      229135,
+      229657,
+      230179,
+      230702,
+      231213,
+      231724,
+      232246,
+      232757,
+      233279,
+      233790,
+      234313,
+      234823,
+      235346,
+      235857,
+      236379,
+      236902,
+      237412,
+      237923,
+      238446,
+      238957,
+      239479,
+      240001,
+      240524,
+      241035,
+      241546,
+      242068,
+      242590,
+      243113,
+      243624,
+      244135,
+      244657,
+      245179,
+      245690,
+      246213,
+      246724,
+      247246,
+      247757,
+      248279,
+      248790,
+      249313,
+      249823,
+      250346,
+      250857,
+      251368,
+      251890,
+      252401,
+      252923,
+      253434,
+      253945,
+      254467,
+      254990,
+      255501,
+      256023,
+      256534,
+      257056,
+      257579,
+      258090,
+      258612,
+      259123,
+      259646,
+      260156,
+      260667,
+      261190,
+      261701,
+      262211,
+      262734,
+      263256,
+      263767,
+      264290,
+      264800,
+      265323,
+      265834,
+      266356,
+      266867,
+      267389,
+      267900,
+      268423,
+      268934,
+      269444,
+      269967,
+      270478,
+      271000,
+      271523,
+      272045,
+      272556,
+      273067,
+      273589,
+      274100,
+      274611,
+      275145,
+      275667,
+      276178,
+      276689,
+      277211,
+      277722,
+      278245,
+      278779,
+      279301
+    ],
+    "lyricsLines": [
+      {
+        "i": 1,
+        "t0Ms": 43282,
+        "t1Ms": 45466
+      },
+      {
+        "i": 2,
+        "t0Ms": 45486,
+        "t1Ms": 49894
+      },
+      {
+        "i": 3,
+        "t0Ms": 49934,
+        "t1Ms": 54081
+      },
+      {
+        "i": 4,
+        "t0Ms": 54121,
+        "t1Ms": 58288
+      },
+      {
+        "i": 6,
+        "t0Ms": 59911,
+        "t1Ms": 61875
+      },
+      {
+        "i": 7,
+        "t0Ms": 63938,
+        "t1Ms": 67264
+      },
+      {
+        "i": 8,
+        "t0Ms": 67936,
+        "t1Ms": 70579
+      },
+      {
+        "i": 9,
+        "t0Ms": 71120,
+        "t1Ms": 74224
+      },
+      {
+        "i": 11,
+        "t0Ms": 74244,
+        "t1Ms": 78510
+      },
+      {
+        "i": 12,
+        "t0Ms": 79431,
+        "t1Ms": 82455
+      },
+      {
+        "i": 13,
+        "t0Ms": 82495,
+        "t1Ms": 86961
+      },
+      {
+        "i": 14,
+        "t0Ms": 87001,
+        "t1Ms": 90906
+      },
+      {
+        "i": 16,
+        "t0Ms": 193132,
+        "t1Ms": 196518
+      },
+      {
+        "i": 17,
+        "t0Ms": 197299,
+        "t1Ms": 200404
+      },
+      {
+        "i": 18,
+        "t0Ms": 201466,
+        "t1Ms": 204772
+      },
+      {
+        "i": 19,
+        "t0Ms": 205573,
+        "t1Ms": 208658
+      },
+      {
+        "i": 21,
+        "t0Ms": 209760,
+        "t1Ms": 212865
+      },
+      {
+        "i": 22,
+        "t0Ms": 213907,
+        "t1Ms": 217553
+      },
+      {
+        "i": 23,
+        "t0Ms": 217921,
+        "t1Ms": 221430
+      },
+      {
+        "i": 24,
+        "t0Ms": 222653,
+        "t1Ms": 227164
+      },
+      {
+        "i": 26,
+        "t0Ms": 227184,
+        "t1Ms": 235525
+      }
+    ],
+    "words": [
+      {
+        "i": 1,
+        "t0Ms": 43282,
+        "t1Ms": 43883,
+        "text": "Seventeen",
+        "conf": 0.846
+      },
+      {
+        "i": 1,
+        "t0Ms": 43923,
+        "t1Ms": 44304,
+        "text": "sparks",
+        "conf": 0.935
+      },
+      {
+        "i": 1,
+        "t0Ms": 44344,
+        "t1Ms": 44404,
+        "text": "in",
+        "conf": 0.89
+      },
+      {
+        "i": 1,
+        "t0Ms": 44464,
+        "t1Ms": 44484,
+        "text": "a",
+        "conf": 0.974
+      },
+      {
+        "i": 1,
+        "t0Ms": 44564,
+        "t1Ms": 45085,
+        "text": "quiet",
+        "conf": 0.905
+      },
+      {
+        "i": 1,
+        "t0Ms": 45145,
+        "t1Ms": 45466,
+        "text": "room",
+        "conf": 0.968
+      },
+      {
+        "i": 2,
+        "t0Ms": 45486,
+        "t1Ms": 45566,
+        "text": "Tiny",
+        "conf": 0.25
+      },
+      {
+        "i": 2,
+        "t0Ms": 47610,
+        "t1Ms": 48391,
+        "text": "flares",
+        "conf": 0.768
+      },
+      {
+        "i": 2,
+        "t0Ms": 48491,
+        "t1Ms": 48611,
+        "text": "in",
+        "conf": 0.885
+      },
+      {
+        "i": 2,
+        "t0Ms": 48712,
+        "t1Ms": 49353,
+        "text": "measured",
+        "conf": 0.921
+      },
+      {
+        "i": 2,
+        "t0Ms": 49413,
+        "t1Ms": 49894,
+        "text": "bloom",
+        "conf": 0.859
+      },
+      {
+        "i": 3,
+        "t0Ms": 49934,
+        "t1Ms": 51997,
+        "text": "Shuffle",
+        "conf": 0.625
+      },
+      {
+        "i": 3,
+        "t0Ms": 52037,
+        "t1Ms": 52097,
+        "text": "the",
+        "conf": 0.972
+      },
+      {
+        "i": 3,
+        "t0Ms": 52158,
+        "t1Ms": 52418,
+        "text": "deck,",
+        "conf": 0.906
+      },
+      {
+        "i": 3,
+        "t0Ms": 52458,
+        "t1Ms": 52638,
+        "text": "let",
+        "conf": 0.926
+      },
+      {
+        "i": 3,
+        "t0Ms": 52678,
+        "t1Ms": 52759,
+        "text": "the",
+        "conf": 0.95
+      },
+      {
+        "i": 3,
+        "t0Ms": 52799,
+        "t1Ms": 53039,
+        "text": "table",
+        "conf": 0.817
+      },
+      {
+        "i": 3,
+        "t0Ms": 53079,
+        "t1Ms": 54081,
+        "text": "decide",
+        "conf": 0.737
+      },
+      {
+        "i": 4,
+        "t0Ms": 54121,
+        "t1Ms": 54802,
+        "text": "Which",
+        "conf": 0.465
+      },
+      {
+        "i": 4,
+        "t0Ms": 54862,
+        "t1Ms": 55283,
+        "text": "hidden",
+        "conf": 0.835
+      },
+      {
+        "i": 4,
+        "t0Ms": 55403,
+        "t1Ms": 56205,
+        "text": "colors",
+        "conf": 0.831
+      },
+      {
+        "i": 4,
+        "t0Ms": 56345,
+        "t1Ms": 56685,
+        "text": "step",
+        "conf": 0.93
+      },
+      {
+        "i": 4,
+        "t0Ms": 56966,
+        "t1Ms": 58288,
+        "text": "outside",
+        "conf": 0.758
+      },
+      {
+        "i": 6,
+        "t0Ms": 59911,
+        "t1Ms": 60132,
+        "text": "Each",
+        "conf": 0.845
+      },
+      {
+        "i": 6,
+        "t0Ms": 60172,
+        "t1Ms": 60492,
+        "text": "small",
+        "conf": 0.951
+      },
+      {
+        "i": 6,
+        "t0Ms": 60552,
+        "t1Ms": 60853,
+        "text": "seed",
+        "conf": 0.826
+      },
+      {
+        "i": 6,
+        "t0Ms": 60893,
+        "t1Ms": 60953,
+        "text": "in",
+        "conf": 0.92
+      },
+      {
+        "i": 6,
+        "t0Ms": 61013,
+        "t1Ms": 61033,
+        "text": "a",
+        "conf": 0.569
+      },
+      {
+        "i": 6,
+        "t0Ms": 61093,
+        "t1Ms": 61454,
+        "text": "different",
+        "conf": 0.927
+      },
+      {
+        "i": 6,
+        "t0Ms": 61494,
+        "t1Ms": 61875,
+        "text": "key",
+        "conf": 0.923
+      },
+      {
+        "i": 7,
+        "t0Ms": 63938,
+        "t1Ms": 64599,
+        "text": "Leaning",
+        "conf": 0.767
+      },
+      {
+        "i": 7,
+        "t0Ms": 64680,
+        "t1Ms": 65020,
+        "text": "toward",
+        "conf": 0.9
+      },
+      {
+        "i": 7,
+        "t0Ms": 65080,
+        "t1Ms": 67264,
+        "text": "possibility",
+        "conf": 0.832
+      },
+      {
+        "i": 8,
+        "t0Ms": 67936,
+        "t1Ms": 68296,
+        "text": "Not",
+        "conf": 0.893
+      },
+      {
+        "i": 8,
+        "t0Ms": 68377,
+        "t1Ms": 68597,
+        "text": "every",
+        "conf": 0.893
+      },
+      {
+        "i": 8,
+        "t0Ms": 68677,
+        "t1Ms": 69057,
+        "text": "path",
+        "conf": 0.957
+      },
+      {
+        "i": 8,
+        "t0Ms": 69158,
+        "t1Ms": 69238,
+        "text": "is",
+        "conf": 0.451
+      },
+      {
+        "i": 8,
+        "t0Ms": 69318,
+        "t1Ms": 69538,
+        "text": "meant",
+        "conf": 0.825
+      },
+      {
+        "i": 8,
+        "t0Ms": 69578,
+        "t1Ms": 69678,
+        "text": "to",
+        "conf": 0.982
+      },
+      {
+        "i": 8,
+        "t0Ms": 69758,
+        "t1Ms": 70579,
+        "text": "stay",
+        "conf": 0.834
+      },
+      {
+        "i": 9,
+        "t0Ms": 71120,
+        "t1Ms": 71421,
+        "text": "Some",
+        "conf": 0.922
+      },
+      {
+        "i": 9,
+        "t0Ms": 71521,
+        "t1Ms": 71841,
+        "text": "fade",
+        "conf": 0.882
+      },
+      {
+        "i": 9,
+        "t0Ms": 71921,
+        "t1Ms": 72602,
+        "text": "soft,",
+        "conf": 0.774
+      },
+      {
+        "i": 9,
+        "t0Ms": 72662,
+        "t1Ms": 72882,
+        "text": "some",
+        "conf": 0.864
+      },
+      {
+        "i": 9,
+        "t0Ms": 72963,
+        "t1Ms": 73303,
+        "text": "find",
+        "conf": 0.749
+      },
+      {
+        "i": 9,
+        "t0Ms": 73363,
+        "t1Ms": 73663,
+        "text": "their",
+        "conf": 0.856
+      },
+      {
+        "i": 9,
+        "t0Ms": 73744,
+        "t1Ms": 74224,
+        "text": "way",
+        "conf": 0.926
+      },
+      {
+        "i": 11,
+        "t0Ms": 74244,
+        "t1Ms": 74304,
+        "text": "Let",
+        "conf": 0.332
+      },
+      {
+        "i": 11,
+        "t0Ms": 75466,
+        "t1Ms": 75746,
+        "text": "them",
+        "conf": 0.798
+      },
+      {
+        "i": 11,
+        "t0Ms": 75846,
+        "t1Ms": 76547,
+        "text": "rise,",
+        "conf": 0.601
+      },
+      {
+        "i": 11,
+        "t0Ms": 77108,
+        "t1Ms": 77428,
+        "text": "let",
+        "conf": 0.934
+      },
+      {
+        "i": 11,
+        "t0Ms": 77488,
+        "t1Ms": 77829,
+        "text": "them",
+        "conf": 0.778
+      },
+      {
+        "i": 11,
+        "t0Ms": 77869,
+        "t1Ms": 78510,
+        "text": "blend",
+        "conf": 0.841
+      },
+      {
+        "i": 12,
+        "t0Ms": 79431,
+        "t1Ms": 79671,
+        "text": "Watch",
+        "conf": 0.513
+      },
+      {
+        "i": 12,
+        "t0Ms": 79731,
+        "t1Ms": 79872,
+        "text": "the",
+        "conf": 0.965
+      },
+      {
+        "i": 12,
+        "t0Ms": 79952,
+        "t1Ms": 80993,
+        "text": "broken",
+        "conf": 0.911
+      },
+      {
+        "i": 12,
+        "t0Ms": 81313,
+        "t1Ms": 81954,
+        "text": "edges",
+        "conf": 0.853
+      },
+      {
+        "i": 12,
+        "t0Ms": 82014,
+        "t1Ms": 82455,
+        "text": "mend",
+        "conf": 0.812
+      },
+      {
+        "i": 13,
+        "t0Ms": 82495,
+        "t1Ms": 83717,
+        "text": "From",
+        "conf": 0.785
+      },
+      {
+        "i": 13,
+        "t0Ms": 83757,
+        "t1Ms": 84177,
+        "text": "scattered",
+        "conf": 0.9
+      },
+      {
+        "i": 13,
+        "t0Ms": 84237,
+        "t1Ms": 85078,
+        "text": "codes",
+        "conf": 0.664
+      },
+      {
+        "i": 13,
+        "t0Ms": 85118,
+        "t1Ms": 85279,
+        "text": "we",
+        "conf": 0.878
+      },
+      {
+        "i": 13,
+        "t0Ms": 85379,
+        "t1Ms": 86961,
+        "text": "comprehend",
+        "conf": 0.9
+      },
+      {
+        "i": 14,
+        "t0Ms": 87001,
+        "t1Ms": 88042,
+        "text": "New",
+        "conf": 0.885
+      },
+      {
+        "i": 14,
+        "t0Ms": 88202,
+        "t1Ms": 88943,
+        "text": "seeds",
+        "conf": 0.891
+      },
+      {
+        "i": 14,
+        "t0Ms": 89004,
+        "t1Ms": 89444,
+        "text": "turning",
+        "conf": 0.889
+      },
+      {
+        "i": 14,
+        "t0Ms": 89544,
+        "t1Ms": 90045,
+        "text": "round",
+        "conf": 0.772
+      },
+      {
+        "i": 14,
+        "t0Ms": 90165,
+        "t1Ms": 90906,
+        "text": "again",
+        "conf": 0.911
+      },
+      {
+        "i": 16,
+        "t0Ms": 193132,
+        "t1Ms": 193453,
+        "text": "Count",
+        "conf": 0.853
+      },
+      {
+        "i": 16,
+        "t0Ms": 193493,
+        "t1Ms": 193633,
+        "text": "the",
+        "conf": 0.8
+      },
+      {
+        "i": 16,
+        "t0Ms": 193713,
+        "t1Ms": 194454,
+        "text": "pulse",
+        "conf": 0.853
+      },
+      {
+        "i": 16,
+        "t0Ms": 194534,
+        "t1Ms": 194875,
+        "text": "that",
+        "conf": 0.892
+      },
+      {
+        "i": 16,
+        "t0Ms": 194995,
+        "t1Ms": 195516,
+        "text": "shifts",
+        "conf": 0.542
+      },
+      {
+        "i": 16,
+        "t0Ms": 195536,
+        "t1Ms": 196518,
+        "text": "beneath",
+        "conf": 0.618
+      },
+      {
+        "i": 17,
+        "t0Ms": 197299,
+        "t1Ms": 197620,
+        "text": "Feel",
+        "conf": 0.778
+      },
+      {
+        "i": 17,
+        "t0Ms": 197660,
+        "t1Ms": 197780,
+        "text": "the",
+        "conf": 0.988
+      },
+      {
+        "i": 17,
+        "t0Ms": 197840,
+        "t1Ms": 198741,
+        "text": "patterns",
+        "conf": 0.708
+      },
+      {
+        "i": 17,
+        "t0Ms": 198862,
+        "t1Ms": 199403,
+        "text": "show",
+        "conf": 0.834
+      },
+      {
+        "i": 17,
+        "t0Ms": 199643,
+        "t1Ms": 199783,
+        "text": "its",
+        "conf": 0.774
+      },
+      {
+        "i": 17,
+        "t0Ms": 199903,
+        "t1Ms": 200404,
+        "text": "teeth",
+        "conf": 0.716
+      },
+      {
+        "i": 18,
+        "t0Ms": 201466,
+        "t1Ms": 201987,
+        "text": "Silence",
+        "conf": 0.881
+      },
+      {
+        "i": 18,
+        "t0Ms": 202628,
+        "t1Ms": 202969,
+        "text": "holds",
+        "conf": 0.453
+      },
+      {
+        "i": 18,
+        "t0Ms": 203029,
+        "t1Ms": 203269,
+        "text": "the",
+        "conf": 0.762
+      },
+      {
+        "i": 18,
+        "t0Ms": 203509,
+        "t1Ms": 204772,
+        "text": "in-between",
+        "conf": 0.885
+      },
+      {
+        "i": 19,
+        "t0Ms": 205573,
+        "t1Ms": 205893,
+        "text": "Where",
+        "conf": 0.806
+      },
+      {
+        "i": 19,
+        "t0Ms": 205934,
+        "t1Ms": 206074,
+        "text": "the",
+        "conf": 0.762
+      },
+      {
+        "i": 19,
+        "t0Ms": 206134,
+        "t1Ms": 207115,
+        "text": "wild",
+        "conf": 0.866
+      },
+      {
+        "i": 19,
+        "t0Ms": 207196,
+        "t1Ms": 207977,
+        "text": "becomes",
+        "conf": 0.933
+      },
+      {
+        "i": 19,
+        "t0Ms": 208057,
+        "t1Ms": 208658,
+        "text": "serene",
+        "conf": 0.742
+      },
+      {
+        "i": 21,
+        "t0Ms": 209760,
+        "t1Ms": 209960,
+        "text": "Let",
+        "conf": 0.901
+      },
+      {
+        "i": 21,
+        "t0Ms": 210040,
+        "t1Ms": 210201,
+        "text": "them",
+        "conf": 0.805
+      },
+      {
+        "i": 21,
+        "t0Ms": 210281,
+        "t1Ms": 211523,
+        "text": "rise,",
+        "conf": 0.844
+      },
+      {
+        "i": 21,
+        "t0Ms": 211583,
+        "t1Ms": 211843,
+        "text": "let",
+        "conf": 0.984
+      },
+      {
+        "i": 21,
+        "t0Ms": 211964,
+        "t1Ms": 212304,
+        "text": "them",
+        "conf": 0.914
+      },
+      {
+        "i": 21,
+        "t0Ms": 212364,
+        "t1Ms": 212865,
+        "text": "blend",
+        "conf": 0.904
+      },
+      {
+        "i": 22,
+        "t0Ms": 213907,
+        "t1Ms": 214147,
+        "text": "Watch",
+        "conf": 0.596
+      },
+      {
+        "i": 22,
+        "t0Ms": 214187,
+        "t1Ms": 214328,
+        "text": "the",
+        "conf": 0.736
+      },
+      {
+        "i": 22,
+        "t0Ms": 214408,
+        "t1Ms": 215490,
+        "text": "broken",
+        "conf": 0.905
+      },
+      {
+        "i": 22,
+        "t0Ms": 215770,
+        "t1Ms": 216451,
+        "text": "edges",
+        "conf": 0.765
+      },
+      {
+        "i": 22,
+        "t0Ms": 216511,
+        "t1Ms": 217553,
+        "text": "mend",
+        "conf": 0.942
+      },
+      {
+        "i": 23,
+        "t0Ms": 217921,
+        "t1Ms": 218182,
+        "text": "From",
+        "conf": 0.826
+      },
+      {
+        "i": 23,
+        "t0Ms": 218222,
+        "t1Ms": 218643,
+        "text": "scattered",
+        "conf": 0.87
+      },
+      {
+        "i": 23,
+        "t0Ms": 218683,
+        "t1Ms": 219525,
+        "text": "codes",
+        "conf": 0.684
+      },
+      {
+        "i": 23,
+        "t0Ms": 219585,
+        "t1Ms": 219746,
+        "text": "we",
+        "conf": 0.988
+      },
+      {
+        "i": 23,
+        "t0Ms": 219826,
+        "t1Ms": 221430,
+        "text": "comprehend.",
+        "conf": 0.742
+      },
+      {
+        "t0Ms": 222152,
+        "t1Ms": 222512,
+        "text": "No",
+        "conf": 0.889
+      },
+      {
+        "i": 24,
+        "t0Ms": 222653,
+        "t1Ms": 223375,
+        "text": "seeds",
+        "conf": 0.927
+      },
+      {
+        "i": 24,
+        "t0Ms": 223455,
+        "t1Ms": 223896,
+        "text": "turning",
+        "conf": 0.745
+      },
+      {
+        "i": 24,
+        "t0Ms": 223996,
+        "t1Ms": 226763,
+        "text": "round",
+        "conf": 0.507
+      },
+      {
+        "i": 24,
+        "t0Ms": 226783,
+        "t1Ms": 227164,
+        "text": "again.",
+        "conf": 0.955
+      },
+      {
+        "i": 26,
+        "t0Ms": 227184,
+        "t1Ms": 227284,
+        "text": "Round",
+        "conf": 0.206
+      },
+      {
+        "i": 26,
+        "t0Ms": 234723,
+        "t1Ms": 235525,
+        "text": "again.",
+        "conf": 0.812
+      }
+    ]
+  },
+  "import": {
+    "firstImportedAt": "2026-03-05T09:05:55.772Z",
+    "lastImportedAt": "2026-03-05T09:05:55.772Z",
+    "inputHashes": {
+      "Seventeen Sparks Stems.txt": "146d76dcad28bf2c80191bf9ad1a1cc35344c5e70bfc2a6830752355c839690d",
+      "Seventeen Sparks Stems.zip": "c421fa38e226d34c70b715d9dfa2596b0d1164b39dc6bc6d74ee4839ca79d270"
+    },
+    "hashSource": "assets/seventeen-sparks/01KJYKY71YG9M82G6TCP/instrumental.wav",
+    "hashSourceSha256": "0b801bc40042e096635a827a324a469ae585befadc2ea53693f9e15a29795fc0",
+    "filenameBpm": null,
+    "sourceGroupKey": "loose:seventeen-sparks",
+    "archivedTo": "D:/seva/FOMO/Songs/the-refresh/refreshing-music/inbox/_done/2026-03-05/loose/seventeen-sparks/consumed.json"
+  },
+  "assetPaths": {
+    "mix": "assets/seventeen-sparks/01KJYKY71YG9M82G6TCP/mix.mp3",
+    "mixWav": "",
+    "stemsZip": "assets/seventeen-sparks/01KJYKY71YG9M82G6TCP/stems.zip",
+    "effective": "assets/seventeen-sparks/01KJYKY71YG9M82G6TCP/effective.json",
+    "instrumental": "assets/seventeen-sparks/01KJYKY71YG9M82G6TCP/instrumental.mp3",
+    "instrumentalWav": "assets/seventeen-sparks/01KJYKY71YG9M82G6TCP/instrumental.wav",
+    "vocals": "assets/seventeen-sparks/01KJYKY71YG9M82G6TCP/vocals.mp3",
+    "vocalsWav": "assets/seventeen-sparks/01KJYKY71YG9M82G6TCP/vocals.wav",
+    "composer": "assets/seventeen-sparks/01KJYKY71YG9M82G6TCP/composer.txt"
+  },
+  "hasUserHints": true,
+  "lastHintAt": "2026-03-05T09:18:05.995Z"
+}

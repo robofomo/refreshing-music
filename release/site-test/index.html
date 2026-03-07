@@ -1,0 +1,37 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Dev Viewer</title>
+    <link rel="icon" href="/favicon.svg" type="image/svg+xml" />
+    <script type="module" crossorigin src="/assets/index-CjDHZ5t0.js"></script>
+    <link rel="stylesheet" crossorigin href="/assets/index-BJjn7rrd.css">
+  </head>
+  <body>
+    <div id="app">
+      <canvas id="stage"></canvas>
+      <div id="hud" class="panel"></div>
+      <div id="controls" class="panel">
+        <div id="controlsMain">
+          <div class="controls-row controls-row-main">
+            <button id="prevBtn" title="Previous">|&lt;</button>
+            <button id="playBtn" title="Play/Pause">&#9654;</button>
+            <button id="nextBtn" title="Next">&gt;|</button>
+            <button id="seedBtn" title="New Seed">&#8634;</button>
+            <button id="hudBtn" title="Toggle HUD">?</button>
+          </div>
+          <div class="controls-row controls-row-offset">
+            <button id="offsetDecBtn" title="Offset -10ms">[</button>
+            <button id="offsetCycleBtn" title="Cycle Offset Preset">-240Ms (o)</button>
+            <button id="offsetIncBtn" title="Offset +10ms">]</button>
+            <button id="shareBtn" title="Copy Share Link">&#10548;</button>
+          </div>
+        </div>
+        <input id="seek" type="range" min="0" max="1000" value="0" />
+        <div id="mixer"></div>
+      </div>
+    </div>
+    <audio id="audio" preload="metadata" crossorigin="anonymous"></audio>
+  </body>
+</html>

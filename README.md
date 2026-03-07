@@ -156,7 +156,37 @@ Use these when Essentia/WhisperX are installed in WSL (for example in conda env 
 
 Notes:
 - Default conda env is `refresh-ai` (override via `-CondaEnv <name>` in PowerShell or `CONDA_ENV_NAME=<name>` in WSL).
-- Use `-SkipConda` (PowerShell) or `SKIP_CONDA=1` (WSL) if Python deps are already in PATH without conda activation.
+  - Use `-SkipConda` (PowerShell) or `SKIP_CONDA=1` (WSL) if Python deps are already in PATH without conda activation.
+
+## Static Release Packaging (Vercel + ARweave)
+Use one static package output that works for both:
+- Vercel static hosting
+- Arweave upload (same folder contents)
+
+Command:
+- `npm run build:package`
+  - Runs `build:release`
+  - Copies app build output
+  - Copies selected tracks and required assets
+  - Pre-resolves per-track recipes into static files
+  - Writes output to `release/site`
+
+Options:
+- `npm run build:package -- --trackId <id1,id2,...>`
+  - Include only specific tracks
+- `npm run build:package -- --outDir <dir>`
+  - Change output folder
+
+Output layout:
+- `release/site/index.html`
+- `release/site/assets/...`
+- `release/site/tracks/index.json`
+- `release/site/tracks/<trackId>.track.json`
+- `release/site/recipes/<trackId>.json`
+
+Notes:
+- Release mode is read-only (authoring event writes are disabled).
+- Viewer in release mode loads static per-track recipe files instead of `/recipes/resolve`.
 
 Optional filters:
 - `npm run stems -- --trackId <trackId>`

@@ -15,6 +15,7 @@
     "repair:lyrics": "node tools/repair-lyrics-timing.mjs",
     "reduce:effective": "node tools/reduce-effective-all.mjs",
     "build:release": "node tools/reduce-effective-all.mjs && npm --workspace apps/dev-viewer run build:release",
+    "build:package": "node tools/build-release-package.mjs",
     "dev": "npm --workspace apps/dev-viewer run dev",
     "recipes:validate": "node --input-type=module --eval \"import('./packages/recipes/resolveRecipe.mjs').then(m=>m.resolveRecipe({ albumId:'example-theme' })).then(r=>console.log(r.recipeId))\"",
     "audio:normalize-cbr": "node tools/normalize-mp3-cbr.mjs --root assets --kbps 160",

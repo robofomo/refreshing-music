@@ -16,6 +16,8 @@ type GraphLayer = {
   nodes?: GraphNode[];
 };
 
+const spectrumBarsState = new Map<number, { lastTMs: number; levels: number[]; normLo: number; normHi: number }>();
+
 function clamp01(v: number) {
   return Math.max(0, Math.min(1, v));
 }
@@ -50,6 +52,59 @@ function resolveReactiveSource(
     onsetPulse: clamp01(Number(chosen?.onsetPulse ?? master?.onsetPulse ?? 0)),
     ampFast: clamp01(Number(chosen?.ampFast ?? master?.ampFast ?? 0))
   };
+}
+
+function resolveReactiveSeries(
+  reactive: any,
+  sourceRaw: any
+): {
+  low: number;
+  mid: number;
+  high: number;
+  onsetPulse: number;
+  ampFast: number;
+  wave: number[];
+  freq: number[];
+  sourceId: "master" | "backing" | "vocals";
+} {
+  const src = String(sourceRaw ?? "auto").toLowerCase();
+  const master = reactive?.sources?.master ?? reactive ?? {};
+  const backing = reactive?.sources?.backing ?? master;
+  const vocals = reactive?.sources?.vocals ?? master;
+  const vocalsActive = Number(reactive?.vocalsActive ?? 0);
+  const hasVocalsSeries = Array.isArray(vocals?.wave) && vocals.wave.length > 0;
+  let sourceId: "master" | "backing" | "vocals" = "master";
+  if (src === "backing") sourceId = "backing";
+  else if (src === "vocals") sourceId = hasVocalsSeries ? "vocals" : "backing";
+  else if (src === "master") sourceId = "master";
+  else sourceId = vocalsActive > 0.3 ? "vocals" : "backing";
+  const chosen = sourceId === "vocals" ? vocals : sourceId === "backing" ? backing : master;
+  return {
+    low: clamp01(Number(chosen?.low ?? master?.low ?? 0)),
+    mid: clamp01(Number(chosen?.mid ?? master?.mid ?? 0)),
+    high: clamp01(Number(chosen?.high ?? master?.high ?? 0)),
+    onsetPulse: clamp01(Number(chosen?.onsetPulse ?? master?.onsetPulse ?? 0)),
+    ampFast: clamp01(Number(chosen?.ampFast ?? master?.ampFast ?? 0)),
+    wave: Array.isArray(chosen?.wave) ? chosen.wave : [],
+    freq: Array.isArray(chosen?.freq) ? chosen.freq : [],
+    sourceId
+  };
+}
+
+function colorToRgba(color: string, alpha: number, fallback = [138, 199, 255] as [number, number, number]) {
+  const c = String(color || "").trim();
+  if (c.startsWith("rgb(") || c.startsWith("rgba(")) {
+    return c.replace(")", `, ${clamp01(alpha)})`).replace("rgb(", "rgba(");
+  }
+  if (c.startsWith("#")) {
+    const s = c.replace("#", "");
+    const n = Number.parseInt((s.length >= 6 ? s.slice(0, 6) : s.padEnd(6, "0")), 16);
+    const cr = (n >> 16) & 255;
+    const cg = (n >> 8) & 255;
+    const cb = n & 255;
+    return `rgba(${cr},${cg},${cb},${clamp01(alpha)})`;
+  }
+  return `rgba(${fallback[0]},${fallback[1]},${fallback[2]},${clamp01(alpha)})`;
 }
 
 function resolveThemeState(state: any) {
@@ -276,6 +331,357 @@ function drawBeatTrackOverlay(args: {
   ctx.moveTo(playheadX, y0 - 2);
   ctx.lineTo(playheadX, y1 + 2);
   ctx.stroke();
+  ctx.restore();
+}
+
+function drawWaveStrip(args: {
+  ctx: CanvasRenderingContext2D;
+  canvas: HTMLCanvasElement;
+  tMs: number;
+  nodeSeed: number;
+  colors: string[];
+  state?: any;
+  params?: Record<string, any>;
+}) {
+  const { ctx, canvas, tMs, nodeSeed, colors, state, params } = args;
+  const w = canvas.width;
+  const h = canvas.height;
+  const rrAuto = resolveReactiveSeries(state?.signalBus?.reactive, params?.signalSource ?? "auto");
+  const hasVocals = rrAuto.sourceId === "vocals" || (Array.isArray(state?.signalBus?.reactive?.sources?.vocals?.wave) && state?.signalBus?.reactive?.sources?.vocals?.wave?.length > 0 && Number(state?.signalBus?.reactive?.vocalsActive ?? 0) > 0.04);
+  const stripModeRaw = String(params?.stripMode ?? "auto").toLowerCase();
+  const stripMode = stripModeRaw === "dual" || stripModeRaw === "single" ? stripModeRaw : "auto";
+  const shouldDual = stripMode === "dual" || (stripMode === "auto" && hasVocals && ((nodeSeed >>> 3) % 100) < 45);
+  const marginPx = Math.max(8, Math.min(w * 0.2, Number(params?.marginPx ?? 28)));
+  const usableW = Math.max(32, w - marginPx * 2);
+  const maxAmpPx = Math.max(12, Math.min(h * 0.46, Number(params?.heightPx ?? Math.min(h * 0.18, 128)))) * 2;
+  const smooth = clamp01(Number(params?.smooth ?? 0.1));
+  const bandSmoothing = clamp01(Number(params?.bandSmoothing ?? 0.1));
+  const lineCopies = Math.max(1, Math.min(10, Math.round(Number(params?.lineCopies ?? 4))));
+  const lineWidth = Math.max(0.6, Math.min(4, Number(params?.lineWidth ?? 1.6)));
+  const alphaMulBase = Math.max(0.1, Math.min(2, Number(params?.alphaMul ?? 0.35)));
+  const mirrored = params?.mirrored !== false;
+  const zoom = Math.max(0.6, Math.min(2.6, Number(params?.zoom ?? 1.2)));
+  const t = tMs / 1000;
+  const rng = createRng(nodeSeed ^ hashStringToSeed("viz.waveStrip"));
+  const baseColor = pickFrom(colors, nodeSeed, "#8AC7FF");
+  const blend = String(params?.blend ?? "screen");
+  const centerY = Math.max(0.1, Math.min(0.9, Number(params?.centerY ?? 0.25)));
+  const yPadDual = Number(params?.dualGapPx ?? Math.max(22, Math.min(96, h * 0.12))) * 2;
+
+  const drawOne = (sourceRaw: "master" | "backing" | "vocals", cy: number, alphaMul: number) => {
+    const rr = resolveReactiveSeries(state?.signalBus?.reactive, sourceRaw);
+    const wave = rr.wave;
+    const ampGain = 0.75 + rr.ampFast * 0.8 + rr.onsetPulse * 0.18;
+    const yAmp = maxAmpPx * ampGain;
+    const sourceTag = rr.sourceId === "vocals" ? 17 : rr.sourceId === "backing" ? 9 : 3;
+    for (let pass = 0; pass < lineCopies; pass += 1) {
+      const uPass = pass / Math.max(1, lineCopies - 1);
+      const passAlpha = clamp01((0.18 + (1 - uPass) * 0.48) * alphaMul * alphaMulBase);
+      const passW = lineWidth * (1 + (1 - uPass) * 0.7);
+      const phaseShift = (t * (0.18 + 0.07 * uPass) + sourceTag * 0.043 + rng.float() * 0.2) * Math.PI * 2;
+      ctx.strokeStyle = colorToRgba(baseColor, passAlpha);
+      ctx.lineWidth = passW;
+      ctx.beginPath();
+      const samples = Math.max(96, Math.min(480, Math.round(Number(params?.samples ?? 220) * performanceDensityScale(state))));
+      for (let i = 0; i < samples; i += 1) {
+        const u = i / Math.max(1, samples - 1);
+        const x = marginPx + u * usableW;
+        let yN = 0;
+        if (wave.length > 4) {
+          const span = Math.max(0.08, Math.min(1, 1 / zoom));
+          const start = (1 - span) * 0.5;
+          const pos = start + u * span;
+          const idxF = pos * Math.max(1, wave.length - 1);
+          const idx0 = Math.max(0, Math.min(wave.length - 1, Math.floor(idxF)));
+          const idx1 = Math.max(0, Math.min(wave.length - 1, idx0 + 1));
+          const uf = idxF - idx0;
+          const a = Number(wave[idx0] ?? 0);
+          const b = Number(wave[idx1] ?? a);
+          yN = a + (b - a) * uf;
+        } else {
+          yN = Math.sin(u * Math.PI * 6 + phaseShift) * (0.35 + rr.mid * 0.45);
+        }
+        const yPrimary = cy + yN * yAmp;
+        const yAlt = cy - yN * yAmp;
+        if (i === 0) ctx.moveTo(x, yPrimary);
+        else ctx.lineTo(x, yPrimary);
+        if (mirrored) {
+          if (i === 0) ctx.moveTo(x, yAlt);
+          else ctx.lineTo(x, yAlt);
+        }
+      }
+      ctx.stroke();
+    }
+  };
+
+  ctx.save();
+  ctx.globalCompositeOperation = blend as GlobalCompositeOperation;
+  if (shouldDual) {
+    drawOne("backing", h * centerY - yPadDual * 0.5, 0.82);
+    drawOne("vocals", h * centerY + yPadDual * 0.5, 0.82);
+  } else {
+    const sourceRoll = nodeSeed % 3;
+    const sourceAuto = sourceRoll === 0 ? "master" : sourceRoll === 1 ? "backing" : "vocals";
+    const source = String(params?.signalSource ?? "auto").toLowerCase() === "auto"
+      ? sourceAuto
+      : (String(params?.signalSource).toLowerCase() as "master" | "backing" | "vocals");
+    drawOne(source, h * centerY, 1);
+  }
+  ctx.restore();
+}
+
+function drawSpectrumBars(args: {
+  ctx: CanvasRenderingContext2D;
+  canvas: HTMLCanvasElement;
+  tMs: number;
+  nodeSeed: number;
+  colors: string[];
+  state?: any;
+  params?: Record<string, any>;
+}) {
+  const { ctx, canvas, tMs, nodeSeed, colors, state, params } = args;
+  const w = canvas.width;
+  const h = canvas.height;
+  const rr = resolveReactiveSeries(state?.signalBus?.reactive, params?.signalSource ?? "auto");
+  const freq = rr.freq;
+  const bars = Math.max(8, Math.min(96, Math.round(Number(params?.barCount ?? 36) * performanceDensityScale(state))));
+  const marginPx = Math.max(8, Math.min(w * 0.22, Number(params?.marginPx ?? 24)));
+  const usableW = Math.max(36, w - marginPx * 2);
+  const bottomPad = Math.max(8, Math.min(96, Number(params?.bottomPadPx ?? 14)));
+  const topRel = Math.max(0.22, Math.min(0.86, Number(params?.topRel ?? 0.41)));
+  const maxH = Math.max(24, h * topRel - bottomPad);
+  const gapPx = Math.max(2, Math.min(14, Number(params?.gapPx ?? 4)));
+  const smooth = clamp01(Number(params?.smooth ?? 0.45));
+  const bandSmoothing = clamp01(Number(params?.bandSmoothing ?? 0.1));
+  const slotW = usableW / bars;
+  const barW = Math.max(1, slotW - gapPx);
+  const floorY = h - bottomPad;
+  const baseColorA = pickFrom(colors, nodeSeed + 3, "#58D7FF");
+  const alpha = clamp01(Number(params?.alpha ?? 0.44));
+  const edgeTaper = clamp01(Number(params?.edgeTaper ?? 0.16));
+  const responseSpan = Math.max(0.2, Math.min(1, Number(params?.responseSpan ?? 0.75)));
+  const pixelSize = Math.max(2, Math.round(Number(params?.pixelSize ?? barW)));
+  const rows = Math.max(4, Math.floor(maxH / pixelSize));
+  const decayPerSec = Math.max(0.05, Math.min(2.2, Number(params?.falloffPerSec ?? 0.42)));
+  const attackPerSec = Math.max(1, Math.min(40, Number(params?.attackPerSec ?? 18)));
+  const minBin = Math.max(1, Math.floor(Number(params?.minBin ?? 2)));
+  const spectralTilt = Math.max(-1.5, Math.min(1.5, Number(params?.spectralTilt ?? 0.2)));
+  const meterGain = Math.max(0.2, Math.min(6, Number(params?.meterGain ?? 1.0)));
+  const meterFloor = Math.max(0, Math.min(0.5, Number(params?.meterFloor ?? 0)));
+  const meterCeil = Math.max(0.2, Math.min(1, Number(params?.meterCeil ?? 0.88)));
+  const gradientStops = [
+    [50, 170, 255],   // cool blue
+    [68, 230, 220],   // cyan-green
+    [150, 240, 120],  // warm-green
+    [255, 210, 70],   // yellow
+    [255, 140, 35],   // orange
+    [255, 245, 215]   // bright warm top
+  ] as Array<[number, number, number]>;
+  const gradColor = (u: number) => {
+    const x = Math.max(0, Math.min(1, u)) * (gradientStops.length - 1);
+    const i0 = Math.floor(x);
+    const i1 = Math.min(gradientStops.length - 1, i0 + 1);
+    const f = x - i0;
+    const c0 = gradientStops[i0];
+    const c1 = gradientStops[i1];
+    const r = Math.round(c0[0] + (c1[0] - c0[0]) * f);
+    const g = Math.round(c0[1] + (c1[1] - c0[1]) * f);
+    const b = Math.round(c0[2] + (c1[2] - c0[2]) * f);
+    return [r, g, b] as [number, number, number];
+  };
+
+  ctx.save();
+  ctx.globalCompositeOperation = "screen";
+  let levelState = spectrumBarsState.get(nodeSeed);
+  if (!levelState || levelState.levels.length !== bars) {
+    levelState = { lastTMs: tMs, levels: Array.from({ length: bars }, () => 0), normLo: 0.01, normHi: 0.12 };
+    spectrumBarsState.set(nodeSeed, levelState);
+  }
+  let dtSec = (tMs - levelState.lastTMs) / 1000;
+  if (!Number.isFinite(dtSec) || dtSec < 0 || dtSec > 1.5) {
+    dtSec = 0;
+    levelState.levels.fill(0);
+  }
+  levelState.lastTMs = tMs;
+
+  const bandEnergy = new Array<number>(bars).fill(0);
+  if (freq.length > 4) {
+    const maxBin = Math.max(minBin + 1, Math.floor((freq.length - 1) * responseSpan));
+    const ratio = Math.max(1.0001, maxBin / minBin);
+    for (let i = 0; i < bars; i += 1) {
+      const loF = minBin * Math.pow(ratio, i / bars);
+      const hiF = minBin * Math.pow(ratio, (i + 1) / bars);
+      const b0 = Math.max(0, Math.min(freq.length - 1, Math.floor(loF)));
+      const b1 = Math.max(b0 + 1, Math.min(freq.length, Math.ceil(hiF)));
+      let sumSq = 0;
+      for (let b = b0; b < b1; b += 1) {
+        const v = Number(freq[b] ?? 0);
+        sumSq += v * v;
+      }
+      let rms = Math.sqrt(sumSq / Math.max(1, b1 - b0));
+      const centerBin = (b0 + b1 - 1) * 0.5;
+      const centerNorm = Math.max(0.0001, centerBin / Math.max(1, maxBin));
+      rms *= Math.pow(centerNorm, spectralTilt);
+      bandEnergy[i] = clamp01(rms);
+    }
+    if (bandSmoothing > 0) {
+      const smoothed = bandEnergy.slice();
+      for (let i = 0; i < bars; i += 1) {
+        const l = bandEnergy[Math.max(0, i - 1)];
+        const c = bandEnergy[i];
+        const r = bandEnergy[Math.min(bars - 1, i + 1)];
+        const blur = l * 0.2 + c * 0.6 + r * 0.2;
+        smoothed[i] = c * (1 - bandSmoothing) + blur * bandSmoothing;
+      }
+      for (let i = 0; i < bars; i += 1) bandEnergy[i] = smoothed[i];
+    }
+  }
+
+  const rawEnergy = new Array<number>(bars).fill(0);
+  for (let i = 0; i < bars; i += 1) {
+    const u = i / Math.max(1, bars - 1);
+    let e = 0;
+    if (freq.length > 4) {
+      e = bandEnergy[i];
+    } else {
+      e = (rr.low * (1 - u) + rr.mid * 0.55 + rr.high * u) / 2;
+    }
+    if (edgeTaper > 0) {
+      const tEdge = Math.sin(Math.PI * u);
+      const keep = 1 - edgeTaper + edgeTaper * Math.max(0, tEdge);
+      e *= keep;
+    }
+    rawEnergy[i] = clamp01(Math.max(0, e));
+  }
+  const sorted = rawEnergy.slice().sort((a, b) => a - b);
+  const qAt = (q: number) => sorted[Math.max(0, Math.min(sorted.length - 1, Math.floor(q * (sorted.length - 1))))] ?? 0;
+  const targetLo = qAt(0.12);
+  const targetHi = Math.max(targetLo + 0.03, qAt(0.92));
+  const loFollowPerSec = Math.max(0.2, Math.min(15, Number(params?.normLoFollowPerSec ?? 2.2)));
+  const hiRisePerSec = Math.max(0.2, Math.min(20, Number(params?.normHiRisePerSec ?? 10)));
+  const hiFallPerSec = Math.max(0.05, Math.min(8, Number(params?.normHiFallPerSec ?? 1.2)));
+  const loLerp = 1 - Math.exp(-loFollowPerSec * dtSec);
+  levelState.normLo = levelState.normLo + (targetLo - levelState.normLo) * loLerp;
+  const hiRate = targetHi > levelState.normHi ? hiRisePerSec : hiFallPerSec;
+  const hiLerp = 1 - Math.exp(-hiRate * dtSec);
+  levelState.normHi = levelState.normHi + (targetHi - levelState.normHi) * hiLerp;
+  levelState.normHi = Math.max(levelState.normLo + 0.02, levelState.normHi);
+
+  const normalizedLevels: number[] = new Array(bars).fill(0);
+  for (let i = 0; i < bars; i += 1) {
+    const u = i / Math.max(1, bars - 1);
+    const x = marginPx + i * slotW + (slotW - barW) * 0.5;
+    const eNorm = clamp01((rawEnergy[i] - levelState.normLo) / Math.max(0.02, levelState.normHi - levelState.normLo));
+    normalizedLevels[i] = eNorm;
+    const prev = levelState.levels[i] ?? 0;
+    const rise = eNorm > prev ? (1 - Math.exp(-attackPerSec * dtSec)) : 0;
+    const attacked = eNorm > prev ? (prev + (eNorm - prev) * rise) : prev;
+    const held = eNorm >= prev ? attacked : eNorm;
+    levelState.levels[i] = held;
+    const eVis = clamp01(((held * meterGain - meterFloor) / Math.max(0.0001, 1 - meterFloor)) * meterCeil);
+    for (let row = 0; row < rows; row += 1) {
+      const yNorm = rows <= 1 ? 1 : row / Math.max(1, rows - 1);
+      const y = floorY - (row + 1) * pixelSize;
+      if (y + pixelSize < floorY - maxH) continue;
+      const soft = 0.04 + 0.05 * (1 - yNorm);
+      const on = eVis >= (yNorm - soft);
+      if (!on) continue;
+      const warm = yNorm;
+      const [gr, gg, gb] = gradColor(warm);
+      const pAlpha = alpha * (0.42 + warm * 0.58);
+      ctx.fillStyle = `rgba(${gr},${gg},${gb},${clamp01(pAlpha)})`;
+      ctx.fillRect(x, y, barW, pixelSize - 1);
+    }
+  }
+  if (state?.signalBus?.reactive) {
+    const out = (state.signalBus.reactive.normalizedBands ||= {});
+    out[rr.sourceId] = {
+      levels: normalizedLevels.slice(),
+      tMs,
+      bars
+    };
+  }
+  // subtle base glow keeps low levels readable
+  ctx.fillStyle = colorToRgba(baseColorA, alpha * 0.18, [100, 185, 255]);
+  ctx.fillRect(marginPx, floorY + 1, usableW, 2);
+  ctx.restore();
+}
+
+function drawResponsiveRings(args: {
+  ctx: CanvasRenderingContext2D;
+  canvas: HTMLCanvasElement;
+  tMs: number;
+  nodeSeed: number;
+  colors: string[];
+  state?: any;
+  params?: Record<string, any>;
+}) {
+  const { ctx, canvas, tMs, nodeSeed, colors, state, params } = args;
+  const w = canvas.width;
+  const h = canvas.height;
+  const cx = w * 0.5;
+  const cy = h * 0.5;
+  const rr = resolveReactiveSeries(state?.signalBus?.reactive, params?.signalSource ?? "auto");
+  const beat = clamp01(Number(state?.signalBus?.beat?.pulse ?? 0));
+  const downbeat = clamp01(Number(state?.signalBus?.beat?.downbeatPulse ?? 0));
+  const freq = rr.freq;
+  const perfScale = performanceDensityScale(state);
+  const areaScale = Math.max(0.62, Math.min(1.2, Math.sqrt((w * h) / (1280 * 720))));
+  const rings = Math.max(2, Math.min(20, Math.round(Number(params?.ringCount ?? 7) * perfScale * areaScale)));
+  const points = Math.max(40, Math.min(320, Math.round(Number(params?.points ?? 136) * perfScale * areaScale)));
+  const baseR = Math.max(16, Math.min(Math.min(w, h) * 0.46, Number(params?.baseRadiusPx ?? Math.min(w, h) * 0.11)));
+  const gapR = Math.max(8, Math.min(Math.min(w, h) * 0.25, Number(params?.gapPx ?? 30)));
+  const alpha = clamp01(Number(params?.alpha ?? 0.46));
+  const lineWidth = Math.max(0.6, Math.min(4, Number(params?.lineWidth ?? 1.2)));
+  const warp = Math.max(0.05, Math.min(2.4, Number(params?.warp ?? 0.88)));
+  const t = tMs / 1000;
+  const rotHz = Math.max(-0.5, Math.min(0.5, Number(params?.rotateHz ?? 0.03)));
+  const lowFirst = ((nodeSeed >>> 2) & 1) === 0;
+  const sharedLevels = Array.isArray(state?.signalBus?.reactive?.normalizedBands?.[rr.sourceId]?.levels)
+    ? state.signalBus.reactive.normalizedBands[rr.sourceId].levels
+    : null;
+
+  ctx.save();
+  ctx.globalCompositeOperation = String(params?.blend ?? "screen") as GlobalCompositeOperation;
+  for (let ri = 0; ri < rings; ri += 1) {
+    const uRing = ri / Math.max(1, rings - 1);
+    const ringR = baseR + ri * gapR * (1 + downbeat * 0.12);
+    const ringColor = pickFrom(colors, nodeSeed + ri * 7, "#90D8FF");
+    const ringAlpha = clamp01(alpha * (0.35 + (1 - uRing) * 0.75));
+    const phase = (nodeSeed % 47) * 0.11 + ri * 0.28 + t * Math.PI * 2 * rotHz;
+    const bandU = lowFirst ? uRing : (1 - uRing);
+    let band = 0;
+    if (sharedLevels && sharedLevels.length > 0) {
+      const bi = Math.max(0, Math.min(sharedLevels.length - 1, Math.round(bandU * (sharedLevels.length - 1))));
+      band = clamp01(Number(sharedLevels[bi] ?? 0));
+    } else {
+      const bandIdx = Math.max(0, Math.min(Math.max(0, freq.length - 1), Math.round(bandU * Math.max(0, freq.length - 1))));
+      band = clamp01(Number(freq[bandIdx] ?? (rr.low * (1 - bandU) + rr.high * bandU)));
+    }
+    const lobesBase = 3 + ((nodeSeed + ri * 13) % 7);
+    const lobes = Math.max(2, lobesBase + Math.round((band - 0.5) * 3));
+    const subLobes = Math.max(2, lobes + 2 + (ri % 3));
+    const ampMain = (5 + ringR * 0.18 * warp) * (0.22 + band * 1.15);
+    const ampSub = ampMain * (0.22 + 0.25 * band);
+    const ringSpin = t * (0.35 + band * 0.65) + ri * 0.17;
+    ctx.strokeStyle = colorToRgba(ringColor, ringAlpha);
+    ctx.lineWidth = lineWidth * (1 + (1 - uRing) * 0.4 + beat * 0.25);
+    ctx.beginPath();
+    for (let i = 0; i <= points; i += 1) {
+      const u = i / Math.max(1, points);
+      const a = u * Math.PI * 2 + phase;
+      const mod =
+        Math.sin(a * lobes + ringSpin) * ampMain +
+        Math.sin(a * subLobes - ringSpin * 1.2 + phase * 0.7) * ampSub +
+        rr.onsetPulse * (2 + 5 * (1 - uRing));
+      const r = Math.max(4, ringR + mod);
+      const x = cx + Math.cos(a) * r;
+      const y = cy + Math.sin(a) * r;
+      if (i === 0) ctx.moveTo(x, y);
+      else ctx.lineTo(x, y);
+    }
+    ctx.stroke();
+  }
   ctx.restore();
 }
 
@@ -1343,6 +1749,36 @@ export function renderGraphScene({
         drawBeatTrackOverlay({
           ctx,
           canvas,
+          state,
+          params: resolvedParams
+        });
+      } else if (type === "viz.wavestrip") {
+        drawWaveStrip({
+          ctx,
+          canvas,
+          tMs,
+          nodeSeed,
+          colors,
+          state,
+          params: resolvedParams
+        });
+      } else if (type === "viz.spectrumbars") {
+        drawSpectrumBars({
+          ctx,
+          canvas,
+          tMs,
+          nodeSeed,
+          colors,
+          state,
+          params: resolvedParams
+        });
+      } else if (type === "viz.responsiverings") {
+        drawResponsiveRings({
+          ctx,
+          canvas,
+          tMs,
+          nodeSeed,
+          colors,
           state,
           params: resolvedParams
         });

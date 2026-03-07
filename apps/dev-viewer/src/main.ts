@@ -67,6 +67,7 @@ type Track = {
     downbeatTimesMs?: number[];
   };
   recipeRef?: { albumId?: string; trackOverrideId?: string };
+  releaseRecipePath?: string;
   visualHints?: {
     mood?: "calm" | "tense" | "uplifting" | "dark";
     motion?: "low" | "medium" | "high";
@@ -92,6 +93,9 @@ type LabPrimitiveId =
   | "energy.pressureBloom"
   | "shape.beatOrb"
   | "overlay.beatTrack"
+  | "viz.waveStrip"
+  | "viz.spectrumBars"
+  | "viz.responsiveRings"
   | "shape.circlePulse"
   | "polyline.orbitRibbon"
   | "curve.rosetteSpiral"
@@ -106,6 +110,9 @@ const LAB_PRIMITIVES: LabPrimitiveId[] = [
   "energy.pressureBloom",
   "shape.beatOrb",
   "overlay.beatTrack",
+  "viz.waveStrip",
+  "viz.spectrumBars",
+  "viz.responsiveRings",
   "shape.circlePulse",
   "polyline.orbitRibbon",
   "curve.rosetteSpiral",
@@ -178,6 +185,8 @@ type ViewerSignalBus = {
         high: number;
         onsetScore: number;
         onsetPulse: number;
+        wave?: number[];
+        freq?: number[];
       };
       backing: {
         ampFast: number;
@@ -187,6 +196,8 @@ type ViewerSignalBus = {
         high: number;
         onsetScore: number;
         onsetPulse: number;
+        wave?: number[];
+        freq?: number[];
       };
       vocals: {
         ampFast: number;
@@ -196,6 +207,8 @@ type ViewerSignalBus = {
         high: number;
         onsetScore: number;
         onsetPulse: number;
+        wave?: number[];
+        freq?: number[];
       };
     };
   };
@@ -338,12 +351,31 @@ type ReactiveState = {
   lastOnsetMs: number;
   prevSpectrum: number[];
 };
+type ReactiveSeriesSnapshot = {
+  ampFast: number;
+  ampSlow: number;
+  low: number;
+  mid: number;
+  high: number;
+  onsetScore: number;
+  onsetPulse: number;
+  wave: number[];
+  freq: number[];
+};
+type ReactiveSnapshot = {
+  tMs: number;
+  vocalsActive: number;
+  master: ReactiveSeriesSnapshot;
+  backing: ReactiveSeriesSnapshot;
+  vocals: ReactiveSeriesSnapshot;
+};
 function makeReactiveState(): ReactiveState {
   return { ampFast: 0, ampSlow: 0, onsetScore: 0, onsetPulse: 0, lastOnsetMs: -1e9, prevSpectrum: [] };
 }
 let reactiveMaster = makeReactiveState();
 let reactiveBacking = makeReactiveState();
 let reactiveVocals = makeReactiveState();
+const reactiveHistory: ReactiveSnapshot[] = [];
 const DEBUG_AUDIO = false;
 let lastDebugLogTs = 0;
 let lowAmpSinceMs = 0;
@@ -490,6 +522,9 @@ function currentLabProfile() {
     "energy.pressureBloom": { scale: [0.7, 2.5], density: [0.6, 3.9] },
     "shape.beatOrb": { scale: [0.7, 2.3], density: [0.7, 2.0] },
     "overlay.beatTrack": { scale: [1.0, 1.0], density: [1.0, 1.0] },
+    "viz.waveStrip": { scale: [0.7, 2.0], density: [0.7, 3.2] },
+    "viz.spectrumBars": { scale: [0.7, 2.0], density: [0.6, 3.6] },
+    "viz.responsiveRings": { scale: [0.7, 2.2], density: [0.7, 3.6] },
     "shape.circlePulse": { scale: [0.75, 2.1], density: [0.6, 2.0] },
     "polyline.orbitRibbon": { scale: [0.7, 2.4], density: [0.4, 3.9] },
     "curve.rosetteSpiral": { scale: [0.7, 2.5], density: [0.45, 4.2] },
@@ -642,6 +677,62 @@ function labPrimitiveNode(profile: { scale: number; density: number; variant: nu
   if (labPrimitive === "overlay.beatTrack") {
     return { id: "lab-primitive", type: "overlay.beatTrack", params: {} };
   }
+  if (labPrimitive === "viz.waveStrip") {
+    return {
+      id: "lab-primitive",
+      type: "viz.waveStrip",
+      params: {
+        stripMode: profile.variant % 4 === 0 ? "dual" : "auto",
+        signalSource: "auto",
+        heightPx: Math.round(42 + scale * 42),
+        lineCopies: Math.max(2, Math.round(2 + density * 1.3)),
+        lineWidth: Number((1 + density * 0.28).toFixed(2)),
+        alphaMul: Number((0.26 + ((profile.variant % 100) / 100) * 0.25).toFixed(2)),
+        centerY: Number((0.21 + ((profile.variant % 100) / 100) * 0.08).toFixed(3)),
+        dualGapPx: Math.round(24 + scale * 18),
+        mirrored: true,
+        smooth: Number((0.42 + Math.min(0.42, density * 0.1)).toFixed(2)),
+        zoom: Number((0.9 + Math.min(1.3, scale * 0.38)).toFixed(2))
+      }
+    };
+  }
+  if (labPrimitive === "viz.spectrumBars") {
+    return {
+      id: "lab-primitive",
+      type: "viz.spectrumBars",
+      params: {
+        signalSource: "auto",
+        barCount: Math.max(12, Math.round(18 + density * 10)),
+        marginPx: Math.round(20 + scale * 10),
+        topRel: Number((0.34 + Math.min(0.2, scale * 0.06)).toFixed(3)),
+        bottomPadPx: Math.round(10 + scale * 7),
+        gapPx: Math.max(2, Math.round(3 + density * 0.7)),
+        alpha: Number((0.34 + Math.min(0.12, density * 0.03)).toFixed(2)),
+        smooth: Number((0.06 + Math.min(0.16, density * 0.03)).toFixed(2)),
+        bandSmoothing: Number((0.04 + Math.min(0.12, density * 0.02)).toFixed(2)),
+        spectralTilt: 0.2,
+        edgeTaper: Number((0.12 + Math.min(0.18, density * 0.04)).toFixed(2)),
+        responseSpan: 0.75
+      }
+    };
+  }
+  if (labPrimitive === "viz.responsiveRings") {
+    return {
+      id: "lab-primitive",
+      type: "viz.responsiveRings",
+      params: {
+        signalSource: "auto",
+        ringCount: Math.max(3, Math.round(4 + density * 1.8)),
+        points: Math.max(72, Math.round(88 + density * 30)),
+        baseRadiusPx: Math.round(42 + scale * 38),
+        gapPx: Math.round(16 + scale * 12),
+        alpha: Number((0.32 + Math.min(0.28, density * 0.06)).toFixed(2)),
+        lineWidth: Number((0.9 + Math.min(1.2, density * 0.2)).toFixed(2)),
+        warp: Number((0.55 + Math.min(1.1, scale * 0.32)).toFixed(2)),
+        rotateHz: Number(((profile.variant % 2 === 0 ? 1 : -1) * (0.02 + Math.min(0.06, scale * 0.015))).toFixed(3))
+      }
+    };
+  }
   if (labPrimitive === "shape.circlePulse") {
     return {
       id: "lab-primitive",
@@ -793,6 +884,62 @@ function activeLabSnippet() {
   "id": "lab-beat-track",
   "type": "overlay.beatTrack",
   "params": { "uses": "effective beat/downbeat markers + playhead" }
+}`;
+  }
+  if (labPrimitive === "viz.waveStrip") {
+    return `{
+  "id": "lab-wave-strip",
+  "type": "viz.waveStrip",
+  "params": {
+    "stripMode": "auto",
+    "signalSource": "auto",
+    "heightPx": ${Math.round(42 + scale * 42)},
+    "lineCopies": ${Math.max(2, Math.round(2 + density * 1.3))},
+    "lineWidth": ${Number((1 + density * 0.28).toFixed(2))},
+    "alphaMul": ${Number((0.26 + ((profile.variant % 100) / 100) * 0.25).toFixed(2))},
+    "centerY": ${Number((0.21 + ((profile.variant % 100) / 100) * 0.08).toFixed(3))},
+    "dualGapPx": ${Math.round(24 + scale * 18)},
+    "mirrored": true,
+    "smooth": ${Number((0.42 + Math.min(0.42, density * 0.1)).toFixed(2))},
+    "zoom": ${Number((0.9 + Math.min(1.3, scale * 0.38)).toFixed(2))}
+  }
+}`;
+  }
+  if (labPrimitive === "viz.spectrumBars") {
+    return `{
+  "id": "lab-spectrum-bars",
+  "type": "viz.spectrumBars",
+  "params": {
+    "signalSource": "auto",
+    "barCount": ${Math.max(12, Math.round(18 + density * 10))},
+    "marginPx": ${Math.round(20 + scale * 10)},
+    "topRel": ${Number((0.34 + Math.min(0.2, scale * 0.06)).toFixed(3))},
+    "bottomPadPx": ${Math.round(10 + scale * 7)},
+    "gapPx": ${Math.max(2, Math.round(3 + density * 0.7))},
+    "alpha": ${Number((0.34 + Math.min(0.12, density * 0.03)).toFixed(2))},
+    "smooth": ${Number((0.06 + Math.min(0.16, density * 0.03)).toFixed(2))},
+    "bandSmoothing": ${Number((0.04 + Math.min(0.12, density * 0.02)).toFixed(2))},
+    "spectralTilt": 0.2,
+    "edgeTaper": ${Number((0.12 + Math.min(0.18, density * 0.04)).toFixed(2))},
+    "responseSpan": 0.75
+  }
+}`;
+  }
+  if (labPrimitive === "viz.responsiveRings") {
+    return `{
+  "id": "lab-responsive-rings",
+  "type": "viz.responsiveRings",
+  "params": {
+    "signalSource": "auto",
+    "ringCount": ${Math.max(3, Math.round(4 + density * 1.8))},
+    "points": ${Math.max(72, Math.round(88 + density * 30))},
+    "baseRadiusPx": ${Math.round(42 + scale * 38)},
+    "gapPx": ${Math.round(16 + scale * 12)},
+    "alpha": ${Number((0.32 + Math.min(0.28, density * 0.06)).toFixed(2))},
+    "lineWidth": ${Number((0.9 + Math.min(1.2, density * 0.2)).toFixed(2))},
+    "warp": ${Number((0.55 + Math.min(1.1, scale * 0.32)).toFixed(2))},
+    "rotateHz": ${Number(((profile.variant % 2 === 0 ? 1 : -1) * (0.02 + Math.min(0.06, scale * 0.015))).toFixed(3))}
+  }
 }`;
   }
   if (labPrimitive === "text.karaoke") {
@@ -1848,6 +1995,7 @@ function isAtTrackEnd() {
 
 function resetAmpHistory(reason: string) {
   ampHistory.length = 0;
+  reactiveHistory.length = 0;
   lowAmpSinceMs = 0;
   reactiveMaster = makeReactiveState();
   reactiveBacking = makeReactiveState();
@@ -1964,6 +2112,79 @@ function pushAmplitudeSample(tAudioMs: number, amp: number) {
   while (ampHistory.length > 2 && ampHistory[0].tMs < cutoff) ampHistory.shift();
 }
 
+function cloneReactiveSeries(src: any): ReactiveSeriesSnapshot {
+  return {
+    ampFast: Number(src?.ampFast ?? 0),
+    ampSlow: Number(src?.ampSlow ?? 0),
+    low: Number(src?.low ?? 0),
+    mid: Number(src?.mid ?? 0),
+    high: Number(src?.high ?? 0),
+    onsetScore: Number(src?.onsetScore ?? 0),
+    onsetPulse: Number(src?.onsetPulse ?? 0),
+    wave: Array.isArray(src?.wave) ? src.wave.map((x: any) => Number(x) || 0) : [],
+    freq: Array.isArray(src?.freq) ? src.freq.map((x: any) => Number(x) || 0) : []
+  };
+}
+
+function pushReactiveSample(tAudioMs: number, reactiveNow: any) {
+  reactiveHistory.push({
+    tMs: Number(tAudioMs) || 0,
+    vocalsActive: Number(reactiveNow?.vocalsActive ?? 0),
+    master: cloneReactiveSeries(reactiveNow?.master),
+    backing: cloneReactiveSeries(reactiveNow?.backing),
+    vocals: cloneReactiveSeries(reactiveNow?.vocals)
+  });
+  const cutoff = tAudioMs - 5000;
+  while (reactiveHistory.length > 2 && reactiveHistory[0].tMs < cutoff) reactiveHistory.shift();
+}
+
+function lerp(a: number, b: number, u: number) {
+  return a + (b - a) * u;
+}
+
+function blendSeries(a: ReactiveSeriesSnapshot, b: ReactiveSeriesSnapshot, u: number): ReactiveSeriesSnapshot {
+  const waveLen = Math.min(a.wave.length, b.wave.length);
+  const freqLen = Math.min(a.freq.length, b.freq.length);
+  const wave = waveLen > 0
+    ? Array.from({ length: waveLen }, (_, i) => lerp(Number(a.wave[i] ?? 0), Number(b.wave[i] ?? 0), u))
+    : (u < 0.5 ? a.wave : b.wave).slice();
+  const freq = freqLen > 0
+    ? Array.from({ length: freqLen }, (_, i) => lerp(Number(a.freq[i] ?? 0), Number(b.freq[i] ?? 0), u))
+    : (u < 0.5 ? a.freq : b.freq).slice();
+  return {
+    ampFast: lerp(a.ampFast, b.ampFast, u),
+    ampSlow: lerp(a.ampSlow, b.ampSlow, u),
+    low: lerp(a.low, b.low, u),
+    mid: lerp(a.mid, b.mid, u),
+    high: lerp(a.high, b.high, u),
+    onsetScore: lerp(a.onsetScore, b.onsetScore, u),
+    onsetPulse: lerp(a.onsetPulse, b.onsetPulse, u),
+    wave,
+    freq
+  };
+}
+
+function reactiveAt(tMs: number, fallback: any) {
+  if (!reactiveHistory.length) return fallback;
+  if (tMs <= reactiveHistory[0].tMs) return reactiveHistory[0];
+  for (let i = 1; i < reactiveHistory.length; i += 1) {
+    const a = reactiveHistory[i - 1];
+    const b = reactiveHistory[i];
+    if (tMs <= b.tMs) {
+      const span = Math.max(1, b.tMs - a.tMs);
+      const u = Math.max(0, Math.min(1, (tMs - a.tMs) / span));
+      return {
+        tMs,
+        vocalsActive: lerp(Number(a.vocalsActive ?? 0), Number(b.vocalsActive ?? 0), u),
+        master: blendSeries(a.master, b.master, u),
+        backing: blendSeries(a.backing, b.backing, u),
+        vocals: blendSeries(a.vocals, b.vocals, u)
+      };
+    }
+  }
+  return reactiveHistory[reactiveHistory.length - 1];
+}
+
 function amplitudeAt(tMs: number, fallbackAmp: number) {
   if (!ampHistory.length) return fallbackAmp;
   if (tMs <= ampHistory[0].tMs) return ampHistory[0].amp;
@@ -2030,6 +2251,40 @@ function meanBand(data: Uint8Array<ArrayBuffer>, from: number, to: number) {
   return sum / Math.max(1, hi - lo);
 }
 
+function downsampleSeries(
+  data: Uint8Array<ArrayBuffer>,
+  outCount: number,
+  mapFn: (v: number) => number
+) {
+  const n = Math.max(8, Math.min(512, Math.floor(outCount || 0)));
+  const out: number[] = new Array(n);
+  for (let i = 0; i < n; i += 1) {
+    const u0 = i / n;
+    const u1 = (i + 1) / n;
+    const lo = Math.max(0, Math.floor(u0 * data.length));
+    const hi = Math.max(lo + 1, Math.min(data.length, Math.floor(u1 * data.length)));
+    let sum = 0;
+    for (let j = lo; j < hi; j += 1) sum += mapFn(data[j]);
+    out[i] = sum / Math.max(1, hi - lo);
+  }
+  return out;
+}
+
+function downsampleWaveSeries(data: Uint8Array<ArrayBuffer>, outCount: number) {
+  const n = Math.max(16, Math.min(512, Math.floor(outCount || 0)));
+  const out: number[] = new Array(n);
+  for (let i = 0; i < n; i += 1) {
+    const u = (i + 0.5) / n;
+    const idx = Math.max(0, Math.min(data.length - 1, Math.floor(u * (data.length - 1))));
+    out[i] = (Number(data[idx]) - 128) / 128;
+  }
+  // Light spatial smoothing avoids zipper noise without collapsing high-frequency content.
+  for (let i = 1; i < n - 1; i += 1) {
+    out[i] = out[i - 1] * 0.22 + out[i] * 0.56 + out[i + 1] * 0.22;
+  }
+  return out;
+}
+
 function sampleReactiveFromAnalyser(
   analyserNode: AnalyserNode | null,
   timeData: Uint8Array<ArrayBuffer> | null,
@@ -2046,7 +2301,9 @@ function sampleReactiveFromAnalyser(
       mid: 0,
       high: 0,
       onsetScore: state.onsetScore,
-      onsetPulse: state.onsetPulse
+      onsetPulse: state.onsetPulse,
+      wave: [] as number[],
+      freq: [] as number[]
     };
   }
 
@@ -2101,7 +2358,9 @@ function sampleReactiveFromAnalyser(
     mid,
     high,
     onsetScore: state.onsetScore,
-    onsetPulse: state.onsetPulse
+    onsetPulse: state.onsetPulse,
+    wave: downsampleWaveSeries(timeData, 192),
+    freq: downsampleSeries(freqData, 96, (v) => v / 255)
   };
 }
 
@@ -2137,7 +2396,7 @@ function sampleReactiveAudio(tAudioMs: number) {
   return {
     master,
     backing: stemsActive() ? backing : master,
-    vocals: stemsActive() ? vocalsRaw : { ...master, ampFast: 0, ampSlow: 0, low: 0, mid: 0, high: 0, onsetScore: 0, onsetPulse: 0, ampRms: 0 },
+    vocals: stemsActive() ? vocalsRaw : { ...master, ampFast: 0, ampSlow: 0, low: 0, mid: 0, high: 0, onsetScore: 0, onsetPulse: 0, ampRms: 0, wave: [], freq: [] },
     vocalsActive
   };
 }
@@ -2628,6 +2887,8 @@ function buildSignalBus(input: {
         high: number;
         onsetScore: number;
         onsetPulse: number;
+        wave?: number[];
+        freq?: number[];
       };
       backing: {
         ampFast: number;
@@ -2637,6 +2898,8 @@ function buildSignalBus(input: {
         high: number;
         onsetScore: number;
         onsetPulse: number;
+        wave?: number[];
+        freq?: number[];
       };
       vocals: {
         ampFast: number;
@@ -2646,6 +2909,8 @@ function buildSignalBus(input: {
         high: number;
         onsetScore: number;
         onsetPulse: number;
+        wave?: number[];
+        freq?: number[];
       };
     };
   };
@@ -2885,6 +3150,36 @@ function graphTemplateLibrary(baseRecipe: any) {
       ]
     },
     {
+      id: "classic-wave-bars",
+      name: "Classic Wave + Bars",
+      layers: [
+        {
+          id: "main",
+          blend: "screen",
+          opacity: 1,
+          nodes: [
+            { id: "wave", type: "viz.waveStrip", params: { stripMode: "auto", signalSource: "auto", heightPx: 72, lineCopies: 4, lineWidth: 1.6, alphaMul: 0.32, centerY: 0.25, mirrored: true, smooth: 0.56, zoom: 1.08 } },
+            { id: "bars", type: "viz.spectrumBars", params: { signalSource: "auto", barCount: 34, marginPx: 28, topRel: 0.41, bottomPadPx: 12, gapPx: 5, alpha: 0.42, smooth: 0.1, bandSmoothing: 0.08, spectralTilt: 0.2, edgeTaper: 0.16, responseSpan: 0.75 } }
+          ]
+        }
+      ]
+    },
+    {
+      id: "classic-rings-bars",
+      name: "Classic Rings + Bars",
+      layers: [
+        {
+          id: "main",
+          blend: "screen",
+          opacity: 1,
+          nodes: [
+            { id: "rings", type: "viz.responsiveRings", params: { signalSource: "auto", ringCount: 6, points: 124, baseRadiusPx: 56, gapPx: 28, alpha: 0.44, lineWidth: 1.2, warp: 0.86, rotateHz: 0.03 } },
+            { id: "bars", type: "viz.spectrumBars", params: { signalSource: "auto", barCount: 32, marginPx: 26, topRel: 0.41, bottomPadPx: 12, gapPx: 5, alpha: 0.4, smooth: 0.1, bandSmoothing: 0.08, spectralTilt: 0.2, edgeTaper: 0.16, responseSpan: 0.75 } }
+          ]
+        }
+      ]
+    },
+    {
       id: "pressure-branches",
       name: "Pressure Branches",
       layers: [
@@ -3107,6 +3402,9 @@ function randomSceneLayersForSection(sectionId: string, options?: { allowManual?
     { id: "particles", type: "fg.particles", params: { count: 90 + Math.floor(paramRng() * 130), sizeRange: [1.2 + paramRng() * 1.1, 2.6 + paramRng() * 2.4], speed: 0.25 + paramRng() * 0.55, curl: 0.35 + paramRng() * 0.85, opacity: 0.48 + paramRng() * 0.35, signalSource: particleSignalSource, splitVocalsRatio: 0.2 + paramRng() * 0.45 } },
     { id: "signal-noise", type: "field.signalNoiseBlend", params: { pointCount: 120 + Math.floor(paramRng() * 160), lineCount: 10 + Math.floor(paramRng() * 24), noiseOpacity: 0.12 + paramRng() * 0.22, lineOpacity: 0.1 + paramRng() * 0.2, driftPx: 8 + Math.floor(paramRng() * 20), zipChance: 0.08 + paramRng() * 0.25, zipSpeedPx: 520 + Math.floor(paramRng() * 760) } },
     { id: "persistent-offset", type: "glitch.persistentOffset", params: { bandCount: 8 + Math.floor(paramRng() * 16), maxShiftPx: 3 + Math.floor(paramRng() * 10), alpha: 0.08 + paramRng() * 0.2, pulseGain: 0.2 + paramRng() * 0.45 } },
+    { id: "wave-strip", type: "viz.waveStrip", params: { stripMode: ["auto", "single", "dual"][Math.floor(paramRng() * 3)], signalSource: "auto", heightPx: 46 + Math.floor(paramRng() * 58), lineCopies: 2 + Math.floor(paramRng() * 4), lineWidth: 0.9 + paramRng() * 1.4, alphaMul: 0.25 + paramRng() * 0.24, centerY: 0.21 + paramRng() * 0.08, dualGapPx: 20 + Math.floor(paramRng() * 38), mirrored: true, smooth: 0.3 + paramRng() * 0.45, zoom: 0.8 + paramRng() * 0.85 } },
+    { id: "spectrum-bars", type: "viz.spectrumBars", params: { signalSource: "auto", barCount: 16 + Math.floor(paramRng() * 30), marginPx: 14 + Math.floor(paramRng() * 26), topRel: 0.3 + paramRng() * 0.24, bottomPadPx: 8 + Math.floor(paramRng() * 18), gapPx: 2 + Math.floor(paramRng() * 4), alpha: 0.3 + paramRng() * 0.18, smooth: 0.04 + paramRng() * 0.18, bandSmoothing: 0.03 + paramRng() * 0.14, spectralTilt: 0.08 + paramRng() * 0.24, edgeTaper: 0.08 + paramRng() * 0.16, responseSpan: 0.75 } },
+    { id: "responsive-rings", type: "viz.responsiveRings", params: { signalSource: "auto", ringCount: 4 + Math.floor(paramRng() * 7), points: 84 + Math.floor(paramRng() * 90), baseRadiusPx: 32 + Math.floor(paramRng() * 56), gapPx: 14 + Math.floor(paramRng() * 24), alpha: 0.26 + paramRng() * 0.26, lineWidth: 0.75 + paramRng() * 1.15, warp: 0.45 + paramRng() * 1.2, rotateHz: (paramRng() < 0.5 ? -1 : 1) * (0.01 + paramRng() * 0.08) } },
     { id: "pressure-bloom", type: "energy.pressureBloom", params: { bloomCount: 5 + Math.floor(paramRng() * 7), baseRadiusPx: 22 + Math.floor(paramRng() * 36), maxRadiusPx: 100 + Math.floor(paramRng() * 180), alpha: 0.17 + paramRng() * 0.28, ringWidth: 1.4 + paramRng() * 2.4 } },
     { id: "constellation", type: "fg.constellationLinks", params: { count: 16 + Math.floor(paramRng() * 30), linkDistPx: 72 + Math.floor(paramRng() * 120), dotRadiusPx: 0.8 + paramRng() * 1.8, lineWidthPx: 0.5 + paramRng() * 1.1 } },
     { id: "shock-rings", type: "fg.shockRings", params: { ringCount: 4 + Math.floor(paramRng() * 8), speedHz: 0.22 + paramRng() * 0.4, spreadPx: 150 + Math.floor(paramRng() * 420), thicknessPx: 0.8 + paramRng() * 1.8 } },
@@ -3713,6 +4011,8 @@ function render() {
     lowAmpSinceMs = 0;
   }
   pushAmplitudeSample(tAudioMs, ampNow);
+  pushReactiveSample(tAudioMs, reactiveNow);
+  const reactiveAligned = reactiveAt(tRenderMs, reactiveNow);
   const amp = amplitudeAt(tRenderMs, ampNow);
   const sectionClockMs = tRenderMs;
   const sec = findCurrentSection(sectionClockMs);
@@ -3785,41 +4085,47 @@ function render() {
     durationSec,
     amp,
     reactive: {
-      ampFast: reactiveNow.master.ampFast,
-      ampSlow: reactiveNow.master.ampSlow,
-      low: reactiveNow.master.low,
-      mid: reactiveNow.master.mid,
-      high: reactiveNow.master.high,
-      onsetScore: reactiveNow.master.onsetScore,
-      onsetPulse: reactiveNow.master.onsetPulse,
-      vocalsActive: reactiveNow.vocalsActive,
+      ampFast: reactiveAligned.master.ampFast,
+      ampSlow: reactiveAligned.master.ampSlow,
+      low: reactiveAligned.master.low,
+      mid: reactiveAligned.master.mid,
+      high: reactiveAligned.master.high,
+      onsetScore: reactiveAligned.master.onsetScore,
+      onsetPulse: reactiveAligned.master.onsetPulse,
+      vocalsActive: reactiveAligned.vocalsActive,
       sources: {
         master: {
-          ampFast: reactiveNow.master.ampFast,
-          ampSlow: reactiveNow.master.ampSlow,
-          low: reactiveNow.master.low,
-          mid: reactiveNow.master.mid,
-          high: reactiveNow.master.high,
-          onsetScore: reactiveNow.master.onsetScore,
-          onsetPulse: reactiveNow.master.onsetPulse
+          ampFast: reactiveAligned.master.ampFast,
+          ampSlow: reactiveAligned.master.ampSlow,
+          low: reactiveAligned.master.low,
+          mid: reactiveAligned.master.mid,
+          high: reactiveAligned.master.high,
+          onsetScore: reactiveAligned.master.onsetScore,
+          onsetPulse: reactiveAligned.master.onsetPulse,
+          wave: reactiveAligned.master.wave,
+          freq: reactiveAligned.master.freq
         },
         backing: {
-          ampFast: reactiveNow.backing.ampFast,
-          ampSlow: reactiveNow.backing.ampSlow,
-          low: reactiveNow.backing.low,
-          mid: reactiveNow.backing.mid,
-          high: reactiveNow.backing.high,
-          onsetScore: reactiveNow.backing.onsetScore,
-          onsetPulse: reactiveNow.backing.onsetPulse
+          ampFast: reactiveAligned.backing.ampFast,
+          ampSlow: reactiveAligned.backing.ampSlow,
+          low: reactiveAligned.backing.low,
+          mid: reactiveAligned.backing.mid,
+          high: reactiveAligned.backing.high,
+          onsetScore: reactiveAligned.backing.onsetScore,
+          onsetPulse: reactiveAligned.backing.onsetPulse,
+          wave: reactiveAligned.backing.wave,
+          freq: reactiveAligned.backing.freq
         },
         vocals: {
-          ampFast: reactiveNow.vocals.ampFast,
-          ampSlow: reactiveNow.vocals.ampSlow,
-          low: reactiveNow.vocals.low,
-          mid: reactiveNow.vocals.mid,
-          high: reactiveNow.vocals.high,
-          onsetScore: reactiveNow.vocals.onsetScore,
-          onsetPulse: reactiveNow.vocals.onsetPulse
+          ampFast: reactiveAligned.vocals.ampFast,
+          ampSlow: reactiveAligned.vocals.ampSlow,
+          low: reactiveAligned.vocals.low,
+          mid: reactiveAligned.vocals.mid,
+          high: reactiveAligned.vocals.high,
+          onsetScore: reactiveAligned.vocals.onsetScore,
+          onsetPulse: reactiveAligned.vocals.onsetPulse,
+          wave: reactiveAligned.vocals.wave,
+          freq: reactiveAligned.vocals.freq
         }
       }
     },
@@ -4029,15 +4335,23 @@ async function loadTrack(nextIndex: number) {
   logAudioState("track-loaded", { trackId });
   lyricsLines = String(track.lyrics?.rawText ?? "").split("\n");
   try {
-    const albumId = track.recipeRef?.albumId ?? "example-theme";
-    const override = track.recipeRef?.trackOverrideId ?? "";
-    const recipeUrl = new URL(`/recipes/resolve?albumId=${encodeURIComponent(albumId)}&trackOverrideId=${encodeURIComponent(override)}`, location.origin);
-    let recipeResp = await fetch(recipeUrl.toString());
-    if (!recipeResp.ok) {
-      const fallbackUrl = new URL(`/recipes/resolve?albumId=example-theme&trackOverrideId=${encodeURIComponent(override)}`, location.origin);
-      recipeResp = await fetch(fallbackUrl.toString());
+    let resolved: any = null;
+    if (__RELEASE_MODE__) {
+      const releaseRecipePath = String(track.releaseRecipePath || `/recipes/${encodeURIComponent(track.trackId || "")}.json`);
+      const relResp = await fetch(new URL(releaseRecipePath, location.origin).toString());
+      if (relResp.ok) resolved = await relResp.json();
     }
-    const resolved = recipeResp.ok ? await recipeResp.json() : { layers: [{ module: "bg.gradientField", params: { gradientStops: 3 } }] };
+    if (!resolved) {
+      const albumId = track.recipeRef?.albumId ?? "example-theme";
+      const override = track.recipeRef?.trackOverrideId ?? "";
+      const recipeUrl = new URL(`/recipes/resolve?albumId=${encodeURIComponent(albumId)}&trackOverrideId=${encodeURIComponent(override)}`, location.origin);
+      let recipeResp = await fetch(recipeUrl.toString());
+      if (!recipeResp.ok) {
+        const fallbackUrl = new URL(`/recipes/resolve?albumId=example-theme&trackOverrideId=${encodeURIComponent(override)}`, location.origin);
+        recipeResp = await fetch(fallbackUrl.toString());
+      }
+      resolved = recipeResp.ok ? await recipeResp.json() : { layers: [{ module: "bg.gradientField", params: { gradientStops: 3 } }] };
+    }
     currentRecipe = applyVisualHintsToRecipe(resolved, track);
   } catch {
     currentRecipe = applyVisualHintsToRecipe({ layers: [{ module: "bg.gradientField", params: { gradientStops: 3 } }] }, track);

@@ -1,0 +1,1483 @@
+{
+  "workId": "loop-with-a-smile",
+  "trackId": "K318rgYw7KIKP1",
+  "recipeRef": {
+    "albumId": "community-picked",
+    "trackOverrideId": "K318rgYw7KIKP1"
+  },
+  "createdAt": "2026-01-27T23:16:00.000Z",
+  "slug": "loop-with-a-smile",
+  "title": "Loop with a Smile",
+  "audio": {
+    "filename": "mix.mp3",
+    "path": "../assets/loop-with-a-smile/K318rgYw7KIKP1/mix.mp3",
+    "cidOrTx": "",
+    "mime": "audio/mpeg",
+    "bytes": 3360455
+  },
+  "composer": {
+    "rawText": "[Song Title: Loop with a Smile]\r\n[Style: funk, nu-disco, clean studio recording, expressive male vocal]\r\n[Caption: A playful system that remembers us.]\r\n[Image: Neon grids, laughing avatars, looping lights.]\r\n[Refresh Title: The Joker]\r\n[Theme: Community Picked]\r\n[Gradients: 8]\r\n[Rank: 2]\r\n[Title Rarity: 0.30]\r\n[Seeds: 417, A:52, B:32, C:70, D:6]\r\n[Perspective: we_community]\r\n[Concept: Shared jokes become protocol; community as rhythm.]\r\n[Topic: Memory & Community → shared_jokes]\r\n[Genre Bias: funk / nu-disco]\r\n[Style Change: none]\r\n[Modulation: none]\r\n[Hook Prominence: high]\r\n[Deviation: none]\r\n[Created: January 28, 2026 at 12:16 PM]\r\n[Composer Version: v2.1]\r\n\r\n[Intro]\r\n[conversational contour]\r\n[clipped guitar stabs sync with a rubbery bass line]\r\n[soft claps set a playful grid]\r\n[warm synth pads swell briefly]\r\n\r\n[Verse]\r\n[asymmetric phrasing]\r\nWe roll the dice, the screen lights up\r\nA hundred tries, we still show up\r\nSame old joke, but told anew\r\nThe punchline lands because it’s you\r\n\r\n[Verse]\r\n[motif rotation]\r\nFrom late-night chats to morning code\r\nWe pass the spark, we share the load\r\nIt loops around, it never ends\r\nA glitch that turns us into friends\r\n\r\n[Chorus]\r\n[call-and-answer hook]\r\nHit refresh, don’t fade it out\r\nLaugh it back, that’s what we’re about\r\nSame routine, but feels brand new\r\nWhen the system runs on me and you\r\n\r\n[Verse]\r\n[register swap]\r\nArchive days we almost lost\r\nSmall mistakes at zero cost\r\nEvery echo finds its place\r\nIn the rhythm that we chase\r\n\r\n[Bridge]\r\n[long-tone release]\r\nStrip it down, just hands and feet\r\nHeartbeat, claps, the human beat\r\nLet it breathe, then pull it tight\r\nCue the groove and bring the light\r\n\r\n[Final Chorus]\r\n[call-and-answer hook]\r\nHit refresh, don’t fade it out\r\nLaugh it back, that’s what we’re about\r\nSame routine, but feels brand new\r\nWhen the system runs on me and you\r\n\r\n[Ending]\r\n[gentle sequence]\r\nHit refresh\r\nRun it again\r\n",
+    "headerMap": {
+      "Song Title": "Loop with a Smile",
+      "Style": "funk, nu-disco, clean studio recording, expressive male vocal",
+      "Caption": "A playful system that remembers us.",
+      "Image": "Neon grids, laughing avatars, looping lights.",
+      "Refresh Title": "The Joker",
+      "Theme": "Community Picked",
+      "Gradients": "8",
+      "Rank": "2",
+      "Title Rarity": "0.30",
+      "Seeds": "417, A:52, B:32, C:70, D:6",
+      "Perspective": "we_community",
+      "Concept": "Shared jokes become protocol; community as rhythm.",
+      "Topic": "Memory & Community → shared_jokes",
+      "Genre Bias": "funk / nu-disco",
+      "Style Change": "none",
+      "Modulation": "none",
+      "Hook Prominence": "high",
+      "Deviation": "none",
+      "Created": "January 28, 2026 at 12:16 PM",
+      "Composer Version": "v2.1"
+    }
+  },
+  "sections": [
+    {
+      "id": "intro-1",
+      "labelRaw": "Intro",
+      "notesRaw": "conversational contour\nclipped guitar stabs sync with a rubbery bass line\nsoft claps set a playful grid\nwarm synth pads swell briefly"
+    },
+    {
+      "id": "verse-1",
+      "labelRaw": "Verse",
+      "notesRaw": "asymmetric phrasing"
+    },
+    {
+      "id": "verse-2",
+      "labelRaw": "Verse",
+      "notesRaw": "motif rotation"
+    },
+    {
+      "id": "chorus-1",
+      "labelRaw": "Chorus",
+      "notesRaw": "call-and-answer hook"
+    },
+    {
+      "id": "verse-3",
+      "labelRaw": "Verse",
+      "notesRaw": "register swap"
+    },
+    {
+      "id": "bridge-1",
+      "labelRaw": "Bridge",
+      "notesRaw": "long-tone release"
+    },
+    {
+      "id": "final-chorus-1",
+      "labelRaw": "Final Chorus",
+      "notesRaw": "call-and-answer hook"
+    },
+    {
+      "id": "ending-1",
+      "labelRaw": "Ending",
+      "notesRaw": "gentle sequence"
+    }
+  ],
+  "lyrics": {
+    "rawText": "\nWe roll the dice, the screen lights up\nA hundred tries, we still show up\nSame old joke, but told anew\nThe punchline lands because it’s you\n\nFrom late-night chats to morning code\nWe pass the spark, we share the load\nIt loops around, it never ends\nA glitch that turns us into friends\n\nHit refresh, don’t fade it out\nLaugh it back, that’s what we’re about\nSame routine, but feels brand new\nWhen the system runs on me and you\n\nArchive days we almost lost\nSmall mistakes at zero cost\nEvery echo finds its place\nIn the rhythm that we chase\n\nStrip it down, just hands and feet\nHeartbeat, claps, the human beat\nLet it breathe, then pull it tight\nCue the groove and bring the light\n\nHit refresh, don’t fade it out\nLaugh it back, that’s what we’re about\nSame routine, but feels brand new\nWhen the system runs on me and you\n\nHit refresh\nRun it again\n"
+  },
+  "sourceGroupKey": "loop-with-a-smile",
+  "assetDir": "assets/loop-with-a-smile/K318rgYw7KIKP1",
+  "createdLocalRaw": "January 28, 2026 at 12:16 PM",
+  "createdTz": "Pacific/Auckland",
+  "timing": {
+    "beatsMs": [
+      522,
+      1057,
+      1591,
+      2136,
+      2694,
+      3239,
+      3796,
+      4377,
+      4899,
+      5422,
+      5944,
+      6467,
+      6989,
+      7512,
+      8022,
+      8533,
+      9044,
+      9555,
+      10077,
+      10600,
+      11122,
+      11645,
+      12156,
+      12678,
+      13189,
+      13700,
+      14222,
+      14745,
+      15256,
+      15790,
+      16300,
+      16811,
+      17322,
+      17845,
+      18367,
+      18901,
+      19412,
+      19923,
+      20434,
+      20956,
+      21478,
+      21989,
+      22512,
+      23034,
+      23545,
+      24056,
+      24567,
+      25101,
+      25612,
+      26122,
+      26645,
+      27167,
+      27678,
+      28201,
+      28723,
+      29234,
+      29745,
+      30267,
+      30790,
+      31300,
+      31823,
+      32345,
+      32856,
+      33367,
+      33890,
+      34412,
+      34923,
+      35434,
+      35944,
+      36467,
+      36989,
+      37512,
+      38034,
+      38545,
+      39056,
+      39578,
+      40101,
+      40612,
+      41134,
+      41657,
+      42167,
+      42678,
+      43212,
+      43723,
+      44234,
+      44756,
+      45279,
+      45790,
+      46301,
+      46823,
+      47345,
+      47856,
+      48379,
+      48901,
+      49412,
+      49923,
+      50434,
+      50956,
+      51479,
+      52001,
+      52524,
+      53034,
+      53545,
+      54056,
+      54579,
+      55101,
+      55612,
+      56123,
+      56645,
+      57168,
+      57678,
+      58201,
+      58723,
+      59234,
+      59745,
+      60267,
+      60790,
+      61301,
+      61823,
+      62346,
+      62856,
+      63367,
+      63878,
+      64401,
+      64923,
+      65445,
+      65968,
+      66479,
+      66990,
+      67512,
+      68034,
+      68545,
+      69056,
+      69579,
+      70101,
+      70612,
+      71134,
+      71657,
+      72168,
+      72678,
+      73201,
+      73723,
+      74234,
+      74757,
+      75267,
+      75790,
+      76312,
+      76835,
+      77346,
+      77857,
+      78367,
+      78890,
+      79412,
+      79923,
+      80446,
+      80968,
+      81479,
+      82001,
+      82524,
+      83035,
+      83545,
+      84068,
+      84590,
+      85101,
+      85612,
+      86134,
+      86657,
+      87168,
+      87679,
+      88201,
+      88723,
+      89234,
+      89757,
+      90279,
+      90790,
+      91312,
+      91835,
+      92346,
+      92857,
+      93379,
+      93901,
+      94412,
+      94935,
+      95446,
+      95968,
+      96479,
+      96990,
+      97512,
+      98035,
+      98545,
+      99068,
+      99590,
+      100101,
+      100612,
+      101135,
+      101657,
+      102168,
+      102690,
+      103213,
+      103724,
+      104234,
+      104757,
+      105279,
+      105790,
+      106301,
+      106823,
+      107346,
+      107857,
+      108379,
+      108902,
+      109412,
+      109935,
+      110457,
+      110968,
+      111491,
+      112013,
+      112524,
+      113035,
+      113546,
+      114068,
+      114590,
+      115101,
+      115624,
+      116146,
+      116657,
+      117168,
+      117690,
+      118213,
+      118724,
+      119234,
+      119757,
+      120279,
+      120790,
+      121301,
+      121823,
+      122346,
+      122857,
+      123379,
+      123902,
+      124413,
+      124923,
+      125434,
+      125957,
+      126479,
+      127002,
+      127524,
+      128035,
+      128557,
+      129080,
+      129591,
+      130101,
+      130624,
+      131146,
+      131657,
+      132180,
+      132702,
+      133213,
+      133724,
+      134246,
+      134769,
+      135279,
+      135790,
+      136313,
+      136835,
+      137346,
+      137857,
+      138379,
+      138902,
+      139413,
+      139935,
+      140458,
+      140968,
+      141479,
+      142002,
+      142524,
+      143035,
+      143557,
+      144080
+    ],
+    "lyricsLines": [
+      {
+        "i": 1,
+        "t0Ms": 19252,
+        "t1Ms": 21157
+      },
+      {
+        "i": 2,
+        "t0Ms": 21418,
+        "t1Ms": 23183
+      },
+      {
+        "i": 3,
+        "t0Ms": 23544,
+        "t1Ms": 25349
+      },
+      {
+        "i": 4,
+        "t0Ms": 25510,
+        "t1Ms": 27415
+      },
+      {
+        "i": 6,
+        "t0Ms": 27576,
+        "t1Ms": 29541
+      },
+      {
+        "i": 7,
+        "t0Ms": 29642,
+        "t1Ms": 31687
+      },
+      {
+        "i": 8,
+        "t0Ms": 31788,
+        "t1Ms": 33693
+      },
+      {
+        "i": 11,
+        "t0Ms": 33369,
+        "t1Ms": 35280
+      },
+      {
+        "i": 9,
+        "t0Ms": 33773,
+        "t1Ms": 34174
+      },
+      {
+        "i": 12,
+        "t0Ms": 34215,
+        "t1Ms": 34455
+      },
+      {
+        "i": 13,
+        "t0Ms": 42258,
+        "t1Ms": 44169
+      },
+      {
+        "i": 14,
+        "t0Ms": 51176,
+        "t1Ms": 53724
+      },
+      {
+        "i": 16,
+        "t0Ms": 60730,
+        "t1Ms": 62752
+      },
+      {
+        "i": 17,
+        "t0Ms": 62852,
+        "t1Ms": 64855
+      },
+      {
+        "i": 18,
+        "t0Ms": 65075,
+        "t1Ms": 66917
+      },
+      {
+        "i": 19,
+        "t0Ms": 67097,
+        "t1Ms": 68899
+      },
+      {
+        "i": 21,
+        "t0Ms": 68979,
+        "t1Ms": 70801
+      },
+      {
+        "i": 22,
+        "t0Ms": 71522,
+        "t1Ms": 72924
+      },
+      {
+        "i": 23,
+        "t0Ms": 73224,
+        "t1Ms": 74906
+      },
+      {
+        "i": 24,
+        "t0Ms": 75287,
+        "t1Ms": 77489
+      },
+      {
+        "i": 26,
+        "t0Ms": 77629,
+        "t1Ms": 80152
+      },
+      {
+        "i": 27,
+        "t0Ms": 80993,
+        "t1Ms": 84477
+      },
+      {
+        "i": 28,
+        "t0Ms": 114022,
+        "t1Ms": 114262
+      },
+      {
+        "i": 29,
+        "t0Ms": 118210,
+        "t1Ms": 118450
+      },
+      {
+        "i": 31,
+        "t0Ms": 119252,
+        "t1Ms": 122337
+      },
+      {
+        "i": 32,
+        "t0Ms": 122357,
+        "t1Ms": 122958
+      }
+    ],
+    "words": [
+      {
+        "t0Ms": 31,
+        "t1Ms": 516,
+        "text": "Everybody,",
+        "conf": 0.837
+      },
+      {
+        "t0Ms": 1101,
+        "t1Ms": 1566,
+        "text": "everybody,",
+        "conf": 0.86
+      },
+      {
+        "t0Ms": 2131,
+        "t1Ms": 2595,
+        "text": "everybody,",
+        "conf": 0.48
+      },
+      {
+        "t0Ms": 2615,
+        "t1Ms": 2716,
+        "text": "lend",
+        "conf": 0.25
+      },
+      {
+        "t0Ms": 2737,
+        "t1Ms": 2757,
+        "text": "a",
+        "conf": 0.089
+      },
+      {
+        "t0Ms": 2777,
+        "t1Ms": 2858,
+        "text": "hand",
+        "conf": 0.1
+      },
+      {
+        "t0Ms": 2898,
+        "t1Ms": 2979,
+        "text": "if",
+        "conf": 0.71
+      },
+      {
+        "t0Ms": 2999,
+        "t1Ms": 3100,
+        "text": "you",
+        "conf": 0.787
+      },
+      {
+        "t0Ms": 3140,
+        "t1Ms": 3645,
+        "text": "wanna",
+        "conf": 0.741
+      },
+      {
+        "i": 1,
+        "t0Ms": 19252,
+        "t1Ms": 19372,
+        "text": "We",
+        "conf": 0.62
+      },
+      {
+        "i": 1,
+        "t0Ms": 19433,
+        "t1Ms": 19653,
+        "text": "roll",
+        "conf": 0.516
+      },
+      {
+        "i": 1,
+        "t0Ms": 19673,
+        "t1Ms": 19773,
+        "text": "the",
+        "conf": 0.739
+      },
+      {
+        "i": 1,
+        "t0Ms": 19814,
+        "t1Ms": 20155,
+        "text": "dice,",
+        "conf": 0.765
+      },
+      {
+        "i": 1,
+        "t0Ms": 20195,
+        "t1Ms": 20315,
+        "text": "the",
+        "conf": 0.68
+      },
+      {
+        "i": 1,
+        "t0Ms": 20355,
+        "t1Ms": 20696,
+        "text": "screen",
+        "conf": 0.839
+      },
+      {
+        "i": 1,
+        "t0Ms": 20736,
+        "t1Ms": 20977,
+        "text": "lights",
+        "conf": 0.948
+      },
+      {
+        "i": 1,
+        "t0Ms": 21097,
+        "t1Ms": 21157,
+        "text": "up",
+        "conf": 0.902
+      },
+      {
+        "i": 2,
+        "t0Ms": 21418,
+        "t1Ms": 21478,
+        "text": "A",
+        "conf": 0.841
+      },
+      {
+        "i": 2,
+        "t0Ms": 21518,
+        "t1Ms": 21779,
+        "text": "hundred",
+        "conf": 0.812
+      },
+      {
+        "i": 2,
+        "t0Ms": 21859,
+        "t1Ms": 22281,
+        "text": "tries,",
+        "conf": 0.77
+      },
+      {
+        "i": 2,
+        "t0Ms": 22301,
+        "t1Ms": 22401,
+        "text": "we",
+        "conf": 0.973
+      },
+      {
+        "i": 2,
+        "t0Ms": 22441,
+        "t1Ms": 22702,
+        "text": "still",
+        "conf": 0.818
+      },
+      {
+        "i": 2,
+        "t0Ms": 22762,
+        "t1Ms": 23083,
+        "text": "show",
+        "conf": 0.924
+      },
+      {
+        "i": 2,
+        "t0Ms": 23123,
+        "t1Ms": 23183,
+        "text": "up",
+        "conf": 0.626
+      },
+      {
+        "i": 3,
+        "t0Ms": 23544,
+        "t1Ms": 23725,
+        "text": "Same",
+        "conf": 0.447
+      },
+      {
+        "i": 3,
+        "t0Ms": 23805,
+        "t1Ms": 23905,
+        "text": "old",
+        "conf": 0.622
+      },
+      {
+        "i": 3,
+        "t0Ms": 23945,
+        "t1Ms": 24206,
+        "text": "joke,",
+        "conf": 0.814
+      },
+      {
+        "i": 3,
+        "t0Ms": 24347,
+        "t1Ms": 24507,
+        "text": "but",
+        "conf": 0.706
+      },
+      {
+        "i": 3,
+        "t0Ms": 24607,
+        "t1Ms": 24928,
+        "text": "told",
+        "conf": 0.653
+      },
+      {
+        "i": 3,
+        "t0Ms": 24948,
+        "t1Ms": 25349,
+        "text": "anew",
+        "conf": 0.678
+      },
+      {
+        "i": 4,
+        "t0Ms": 25510,
+        "t1Ms": 25590,
+        "text": "The",
+        "conf": 0.719
+      },
+      {
+        "i": 4,
+        "t0Ms": 25650,
+        "t1Ms": 26132,
+        "text": "punchline",
+        "conf": 0.858
+      },
+      {
+        "i": 4,
+        "t0Ms": 26152,
+        "t1Ms": 26392,
+        "text": "lands",
+        "conf": 0.878
+      },
+      {
+        "i": 4,
+        "t0Ms": 26432,
+        "t1Ms": 26934,
+        "text": "because",
+        "conf": 0.882
+      },
+      {
+        "i": 4,
+        "t0Ms": 26994,
+        "t1Ms": 27114,
+        "text": "it's",
+        "conf": 0.662
+      },
+      {
+        "i": 4,
+        "t0Ms": 27154,
+        "t1Ms": 27415,
+        "text": "you",
+        "conf": 0.936
+      },
+      {
+        "i": 6,
+        "t0Ms": 27576,
+        "t1Ms": 27696,
+        "text": "From",
+        "conf": 0.925
+      },
+      {
+        "i": 6,
+        "t0Ms": 27756,
+        "t1Ms": 27877,
+        "text": "late",
+        "conf": 0.524
+      },
+      {
+        "i": 6,
+        "t0Ms": 27897,
+        "t1Ms": 28077,
+        "text": "night",
+        "conf": 0.804
+      },
+      {
+        "i": 6,
+        "t0Ms": 28097,
+        "t1Ms": 28418,
+        "text": "chats",
+        "conf": 0.781
+      },
+      {
+        "i": 6,
+        "t0Ms": 28478,
+        "t1Ms": 28599,
+        "text": "to",
+        "conf": 0.922
+      },
+      {
+        "i": 6,
+        "t0Ms": 28739,
+        "t1Ms": 29140,
+        "text": "morning",
+        "conf": 0.913
+      },
+      {
+        "i": 6,
+        "t0Ms": 29240,
+        "t1Ms": 29541,
+        "text": "cold",
+        "conf": 0.631
+      },
+      {
+        "i": 7,
+        "t0Ms": 29642,
+        "t1Ms": 29762,
+        "text": "We",
+        "conf": 0.986
+      },
+      {
+        "i": 7,
+        "t0Ms": 29802,
+        "t1Ms": 30003,
+        "text": "pass",
+        "conf": 0.913
+      },
+      {
+        "i": 7,
+        "t0Ms": 30023,
+        "t1Ms": 30103,
+        "text": "the",
+        "conf": 0.367
+      },
+      {
+        "i": 7,
+        "t0Ms": 30123,
+        "t1Ms": 30484,
+        "text": "spark,",
+        "conf": 0.917
+      },
+      {
+        "i": 7,
+        "t0Ms": 30584,
+        "t1Ms": 30705,
+        "text": "we",
+        "conf": 0.978
+      },
+      {
+        "i": 7,
+        "t0Ms": 30765,
+        "t1Ms": 31066,
+        "text": "share",
+        "conf": 0.806
+      },
+      {
+        "i": 7,
+        "t0Ms": 31106,
+        "t1Ms": 31246,
+        "text": "the",
+        "conf": 0.864
+      },
+      {
+        "i": 7,
+        "t0Ms": 31326,
+        "t1Ms": 31687,
+        "text": "load",
+        "conf": 0.662
+      },
+      {
+        "i": 8,
+        "t0Ms": 31788,
+        "t1Ms": 31848,
+        "text": "It",
+        "conf": 0.938
+      },
+      {
+        "i": 8,
+        "t0Ms": 31888,
+        "t1Ms": 32109,
+        "text": "loops",
+        "conf": 0.787
+      },
+      {
+        "i": 8,
+        "t0Ms": 32209,
+        "t1Ms": 32610,
+        "text": "around,",
+        "conf": 0.879
+      },
+      {
+        "i": 8,
+        "t0Ms": 32710,
+        "t1Ms": 32811,
+        "text": "it",
+        "conf": 0.71
+      },
+      {
+        "i": 8,
+        "t0Ms": 32931,
+        "t1Ms": 33232,
+        "text": "never",
+        "conf": 0.921
+      },
+      {
+        "i": 8,
+        "t0Ms": 33452,
+        "t1Ms": 33693,
+        "text": "ends,",
+        "conf": 0.976
+      },
+      {
+        "i": 9,
+        "t0Ms": 33773,
+        "t1Ms": 33834,
+        "text": "a",
+        "conf": 0.788
+      },
+      {
+        "i": 9,
+        "t0Ms": 33914,
+        "t1Ms": 34174,
+        "text": "glitch",
+        "conf": 0.863
+      },
+      {
+        "i": 12,
+        "t0Ms": 34215,
+        "t1Ms": 34375,
+        "text": "that's",
+        "conf": 0.378
+      },
+      {
+        "i": 16,
+        "t0Ms": 60730,
+        "t1Ms": 61171,
+        "text": "Archive",
+        "conf": 0.395
+      },
+      {
+        "i": 16,
+        "t0Ms": 61211,
+        "t1Ms": 61551,
+        "text": "days",
+        "conf": 0.836
+      },
+      {
+        "i": 16,
+        "t0Ms": 61591,
+        "t1Ms": 61731,
+        "text": "we",
+        "conf": 0.991
+      },
+      {
+        "i": 16,
+        "t0Ms": 61951,
+        "t1Ms": 62292,
+        "text": "almost",
+        "conf": 0.878
+      },
+      {
+        "i": 16,
+        "t0Ms": 62372,
+        "t1Ms": 62752,
+        "text": "lost",
+        "conf": 0.948
+      },
+      {
+        "i": 17,
+        "t0Ms": 62852,
+        "t1Ms": 63073,
+        "text": "Small",
+        "conf": 0.857
+      },
+      {
+        "i": 17,
+        "t0Ms": 63093,
+        "t1Ms": 63533,
+        "text": "mistakes",
+        "conf": 0.838
+      },
+      {
+        "i": 17,
+        "t0Ms": 63713,
+        "t1Ms": 63854,
+        "text": "at",
+        "conf": 0.584
+      },
+      {
+        "i": 17,
+        "t0Ms": 63894,
+        "t1Ms": 64374,
+        "text": "zero",
+        "conf": 0.795
+      },
+      {
+        "i": 17,
+        "t0Ms": 64414,
+        "t1Ms": 64855,
+        "text": "cost",
+        "conf": 0.867
+      },
+      {
+        "i": 18,
+        "t0Ms": 65075,
+        "t1Ms": 65415,
+        "text": "Every",
+        "conf": 0.865
+      },
+      {
+        "i": 18,
+        "t0Ms": 65555,
+        "t1Ms": 65876,
+        "text": "echo",
+        "conf": 0.61
+      },
+      {
+        "i": 18,
+        "t0Ms": 65976,
+        "t1Ms": 66236,
+        "text": "finds",
+        "conf": 0.863
+      },
+      {
+        "i": 18,
+        "t0Ms": 66316,
+        "t1Ms": 66396,
+        "text": "its",
+        "conf": 0.406
+      },
+      {
+        "i": 18,
+        "t0Ms": 66457,
+        "t1Ms": 66917,
+        "text": "place",
+        "conf": 0.904
+      },
+      {
+        "i": 19,
+        "t0Ms": 67097,
+        "t1Ms": 67257,
+        "text": "In",
+        "conf": 0.789
+      },
+      {
+        "i": 19,
+        "t0Ms": 67297,
+        "t1Ms": 67438,
+        "text": "the",
+        "conf": 0.757
+      },
+      {
+        "i": 19,
+        "t0Ms": 67538,
+        "t1Ms": 67958,
+        "text": "rhythm",
+        "conf": 0.632
+      },
+      {
+        "i": 19,
+        "t0Ms": 68058,
+        "t1Ms": 68219,
+        "text": "that",
+        "conf": 0.901
+      },
+      {
+        "i": 19,
+        "t0Ms": 68279,
+        "t1Ms": 68439,
+        "text": "we",
+        "conf": 0.874
+      },
+      {
+        "i": 19,
+        "t0Ms": 68519,
+        "t1Ms": 68899,
+        "text": "chase",
+        "conf": 0.844
+      },
+      {
+        "i": 21,
+        "t0Ms": 68979,
+        "t1Ms": 69260,
+        "text": "Strip",
+        "conf": 0.935
+      },
+      {
+        "i": 21,
+        "t0Ms": 69320,
+        "t1Ms": 69380,
+        "text": "it",
+        "conf": 0.852
+      },
+      {
+        "i": 21,
+        "t0Ms": 69480,
+        "t1Ms": 69780,
+        "text": "down,",
+        "conf": 0.97
+      },
+      {
+        "i": 21,
+        "t0Ms": 69840,
+        "t1Ms": 70001,
+        "text": "just",
+        "conf": 0.732
+      },
+      {
+        "i": 21,
+        "t0Ms": 70121,
+        "t1Ms": 70361,
+        "text": "hands",
+        "conf": 0.819
+      },
+      {
+        "i": 21,
+        "t0Ms": 70441,
+        "t1Ms": 70521,
+        "text": "and",
+        "conf": 0.877
+      },
+      {
+        "i": 21,
+        "t0Ms": 70601,
+        "t1Ms": 70801,
+        "text": "feet",
+        "conf": 0.974
+      },
+      {
+        "t0Ms": 71182,
+        "t1Ms": 71462,
+        "text": "Hobby",
+        "conf": 0.667
+      },
+      {
+        "i": 22,
+        "t0Ms": 71522,
+        "t1Ms": 71863,
+        "text": "claps",
+        "conf": 0.8
+      },
+      {
+        "i": 22,
+        "t0Ms": 71883,
+        "t1Ms": 72043,
+        "text": "the",
+        "conf": 0.834
+      },
+      {
+        "i": 22,
+        "t0Ms": 72143,
+        "t1Ms": 72624,
+        "text": "human",
+        "conf": 0.901
+      },
+      {
+        "i": 22,
+        "t0Ms": 72684,
+        "t1Ms": 72924,
+        "text": "beat",
+        "conf": 0.604
+      },
+      {
+        "i": 23,
+        "t0Ms": 73224,
+        "t1Ms": 73364,
+        "text": "Let",
+        "conf": 0.937
+      },
+      {
+        "i": 23,
+        "t0Ms": 73424,
+        "t1Ms": 73505,
+        "text": "it",
+        "conf": 0.666
+      },
+      {
+        "i": 23,
+        "t0Ms": 73605,
+        "t1Ms": 73985,
+        "text": "breathe",
+        "conf": 0.687
+      },
+      {
+        "t0Ms": 74065,
+        "t1Ms": 74165,
+        "text": "and",
+        "conf": 0.779
+      },
+      {
+        "i": 23,
+        "t0Ms": 74225,
+        "t1Ms": 74426,
+        "text": "pull",
+        "conf": 0.896
+      },
+      {
+        "i": 23,
+        "t0Ms": 74486,
+        "t1Ms": 74606,
+        "text": "it",
+        "conf": 0.841
+      },
+      {
+        "i": 23,
+        "t0Ms": 74766,
+        "t1Ms": 74906,
+        "text": "tight",
+        "conf": 0.46
+      },
+      {
+        "i": 24,
+        "t0Ms": 75287,
+        "t1Ms": 75547,
+        "text": "Cue",
+        "conf": 0.802
+      },
+      {
+        "i": 24,
+        "t0Ms": 75567,
+        "t1Ms": 75627,
+        "text": "the",
+        "conf": 0.488
+      },
+      {
+        "i": 24,
+        "t0Ms": 75687,
+        "t1Ms": 76148,
+        "text": "groove",
+        "conf": 0.574
+      },
+      {
+        "i": 24,
+        "t0Ms": 76168,
+        "t1Ms": 76248,
+        "text": "and",
+        "conf": 0.84
+      },
+      {
+        "i": 24,
+        "t0Ms": 76328,
+        "t1Ms": 76568,
+        "text": "bring",
+        "conf": 0.942
+      },
+      {
+        "i": 24,
+        "t0Ms": 76608,
+        "t1Ms": 76708,
+        "text": "the",
+        "conf": 0.961
+      },
+      {
+        "i": 24,
+        "t0Ms": 76828,
+        "t1Ms": 77489,
+        "text": "light",
+        "conf": 0.356
+      },
+      {
+        "t0Ms": 77509,
+        "t1Ms": 77549,
+        "text": "It",
+        "conf": 0.28
+      },
+      {
+        "i": 26,
+        "t0Ms": 77629,
+        "t1Ms": 78670,
+        "text": "refreshed,",
+        "conf": 0.592
+      },
+      {
+        "i": 26,
+        "t0Ms": 78690,
+        "t1Ms": 78851,
+        "text": "don't",
+        "conf": 0.395
+      },
+      {
+        "i": 26,
+        "t0Ms": 78931,
+        "t1Ms": 79391,
+        "text": "fade",
+        "conf": 0.576
+      },
+      {
+        "i": 26,
+        "t0Ms": 79411,
+        "t1Ms": 79491,
+        "text": "it",
+        "conf": 0.643
+      },
+      {
+        "i": 26,
+        "t0Ms": 79591,
+        "t1Ms": 80152,
+        "text": "out",
+        "conf": 0.785
+      },
+      {
+        "i": 27,
+        "t0Ms": 80993,
+        "t1Ms": 81914,
+        "text": "Laugh",
+        "conf": 0.354
+      },
+      {
+        "i": 27,
+        "t0Ms": 81934,
+        "t1Ms": 81974,
+        "text": "it",
+        "conf": 0.366
+      },
+      {
+        "i": 27,
+        "t0Ms": 82114,
+        "t1Ms": 82575,
+        "text": "back,",
+        "conf": 0.645
+      },
+      {
+        "i": 27,
+        "t0Ms": 82595,
+        "t1Ms": 82755,
+        "text": "that's",
+        "conf": 0.484
+      },
+      {
+        "i": 27,
+        "t0Ms": 82815,
+        "t1Ms": 83035,
+        "text": "what",
+        "conf": 0.51
+      },
+      {
+        "i": 27,
+        "t0Ms": 83095,
+        "t1Ms": 83776,
+        "text": "we're",
+        "conf": 0.428
+      },
+      {
+        "i": 27,
+        "t0Ms": 83836,
+        "t1Ms": 84477,
+        "text": "about",
+        "conf": 0.827
+      },
+      {
+        "i": 28,
+        "t0Ms": 114022,
+        "t1Ms": 114222,
+        "text": "Run",
+        "conf": 0.804
+      },
+      {
+        "t0Ms": 114262,
+        "t1Ms": 114323,
+        "text": "it",
+        "conf": 0.584
+      },
+      {
+        "t0Ms": 114403,
+        "t1Ms": 114663,
+        "text": "again",
+        "conf": 0.982
+      },
+      {
+        "t0Ms": 116186,
+        "t1Ms": 116326,
+        "text": "Hit",
+        "conf": 0.543
+      },
+      {
+        "t0Ms": 116386,
+        "t1Ms": 118190,
+        "text": "refresh,",
+        "conf": 0.791
+      },
+      {
+        "i": 29,
+        "t0Ms": 118210,
+        "t1Ms": 118370,
+        "text": "run",
+        "conf": 0.894
+      },
+      {
+        "t0Ms": 118410,
+        "t1Ms": 118470,
+        "text": "it",
+        "conf": 0.766
+      },
+      {
+        "t0Ms": 118530,
+        "t1Ms": 118791,
+        "text": "again",
+        "conf": 0.903
+      },
+      {
+        "i": 31,
+        "t0Ms": 119252,
+        "t1Ms": 120514,
+        "text": "Hit",
+        "conf": 0.858
+      },
+      {
+        "i": 31,
+        "t0Ms": 120614,
+        "t1Ms": 122337,
+        "text": "refresh,",
+        "conf": 0.644
+      },
+      {
+        "i": 32,
+        "t0Ms": 122357,
+        "t1Ms": 122497,
+        "text": "run",
+        "conf": 0.843
+      },
+      {
+        "i": 32,
+        "t0Ms": 122558,
+        "t1Ms": 122618,
+        "text": "it",
+        "conf": 0.732
+      },
+      {
+        "i": 32,
+        "t0Ms": 122678,
+        "t1Ms": 122958,
+        "text": "again",
+        "conf": 0.966
+      },
+      {
+        "t0Ms": 124481,
+        "t1Ms": 124621,
+        "text": "Hit",
+        "conf": 0.708
+      },
+      {
+        "t0Ms": 124762,
+        "t1Ms": 125443,
+        "text": "refresh",
+        "conf": 0.747
+      },
+      {
+        "t0Ms": 126304,
+        "t1Ms": 126745,
+        "text": "Everybody",
+        "conf": 0.859
+      },
+      {
+        "t0Ms": 126765,
+        "t1Ms": 127026,
+        "text": "lemme",
+        "conf": 0.41
+      },
+      {
+        "t0Ms": 127046,
+        "t1Ms": 127106,
+        "text": "hug",
+        "conf": 0.203
+      },
+      {
+        "t0Ms": 127146,
+        "t1Ms": 127246,
+        "text": "your",
+        "conf": 0.673
+      },
+      {
+        "t0Ms": 127286,
+        "t1Ms": 127727,
+        "text": "buddy",
+        "conf": 0.494
+      },
+      {
+        "t0Ms": 143705,
+        "t1Ms": 144250,
+        "text": "you",
+        "conf": 0.581
+      }
+    ]
+  },
+  "assetPaths": {
+    "mix": "assets/loop-with-a-smile/K318rgYw7KIKP1/mix.mp3",
+    "mixWav": "",
+    "stemsZip": "",
+    "effective": "assets/loop-with-a-smile/K318rgYw7KIKP1/effective.json",
+    "instrumental": "",
+    "instrumentalWav": "",
+    "vocals": "",
+    "vocalsWav": "",
+    "composer": "assets/loop-with-a-smile/K318rgYw7KIKP1/composer.txt"
+  },
+  "hasUserHints": true,
+  "lastHintAt": "2026-03-03T08:04:16.713Z",
+  "releaseRecipePath": "/recipes/K318rgYw7KIKP1.json"
+}

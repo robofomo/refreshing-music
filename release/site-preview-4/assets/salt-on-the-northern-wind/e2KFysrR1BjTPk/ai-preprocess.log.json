@@ -1,0 +1,16 @@
+{
+  "updatedAt": "2026-03-02T07:55:58.847Z",
+  "beats": {
+    "status": "ok",
+    "audioPath": "/mnt/d/seva/FOMO/Songs/the-refresh/refreshing-music/assets/salt-on-the-northern-wind/e2KFysrR1BjTPk/mix.mp3"
+  },
+  "whisperx": {
+    "status": "error",
+    "error": "Invalid JSON from whisperx_words.py: Unexpected non-whitespace character after JSON at position 4 (line 1 column 5)",
+    "audioPath": "/mnt/d/seva/fomo/songs/the-refresh/refreshing-music/assets/salt-on-the-northern-wind/e2KFysrR1BjTPk/mix.mp3"
+  },
+  "stems": {
+    "status": "skipped",
+    "reason": "No stems.zip found"
+  }
+}

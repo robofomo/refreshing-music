@@ -1,0 +1,882 @@
+{
+  "words": [
+    {
+      "t0Ms": 31,
+      "t1Ms": 516,
+      "text": "Everybody,",
+      "conf": 0.837
+    },
+    {
+      "t0Ms": 1101,
+      "t1Ms": 1566,
+      "text": "everybody,",
+      "conf": 0.86
+    },
+    {
+      "t0Ms": 2131,
+      "t1Ms": 2595,
+      "text": "everybody,",
+      "conf": 0.48
+    },
+    {
+      "t0Ms": 2615,
+      "t1Ms": 2716,
+      "text": "lend",
+      "conf": 0.25
+    },
+    {
+      "t0Ms": 2737,
+      "t1Ms": 2757,
+      "text": "a",
+      "conf": 0.089
+    },
+    {
+      "t0Ms": 2777,
+      "t1Ms": 2858,
+      "text": "hand",
+      "conf": 0.1
+    },
+    {
+      "t0Ms": 2898,
+      "t1Ms": 2979,
+      "text": "if",
+      "conf": 0.71
+    },
+    {
+      "t0Ms": 2999,
+      "t1Ms": 3100,
+      "text": "you",
+      "conf": 0.787
+    },
+    {
+      "t0Ms": 3140,
+      "t1Ms": 3645,
+      "text": "wanna",
+      "conf": 0.741
+    },
+    {
+      "t0Ms": 19252,
+      "t1Ms": 19372,
+      "text": "We",
+      "conf": 0.62
+    },
+    {
+      "t0Ms": 19433,
+      "t1Ms": 19653,
+      "text": "roll",
+      "conf": 0.516
+    },
+    {
+      "t0Ms": 19673,
+      "t1Ms": 19773,
+      "text": "the",
+      "conf": 0.739
+    },
+    {
+      "t0Ms": 19814,
+      "t1Ms": 20155,
+      "text": "dice,",
+      "conf": 0.765
+    },
+    {
+      "t0Ms": 20195,
+      "t1Ms": 20315,
+      "text": "the",
+      "conf": 0.68
+    },
+    {
+      "t0Ms": 20355,
+      "t1Ms": 20696,
+      "text": "screen",
+      "conf": 0.839
+    },
+    {
+      "t0Ms": 20736,
+      "t1Ms": 20977,
+      "text": "lights",
+      "conf": 0.948
+    },
+    {
+      "t0Ms": 21097,
+      "t1Ms": 21157,
+      "text": "up",
+      "conf": 0.902
+    },
+    {
+      "t0Ms": 21418,
+      "t1Ms": 21478,
+      "text": "A",
+      "conf": 0.841
+    },
+    {
+      "t0Ms": 21518,
+      "t1Ms": 21779,
+      "text": "hundred",
+      "conf": 0.812
+    },
+    {
+      "t0Ms": 21859,
+      "t1Ms": 22281,
+      "text": "tries,",
+      "conf": 0.77
+    },
+    {
+      "t0Ms": 22301,
+      "t1Ms": 22401,
+      "text": "we",
+      "conf": 0.973
+    },
+    {
+      "t0Ms": 22441,
+      "t1Ms": 22702,
+      "text": "still",
+      "conf": 0.818
+    },
+    {
+      "t0Ms": 22762,
+      "t1Ms": 23083,
+      "text": "show",
+      "conf": 0.924
+    },
+    {
+      "t0Ms": 23123,
+      "t1Ms": 23183,
+      "text": "up",
+      "conf": 0.626
+    },
+    {
+      "t0Ms": 23544,
+      "t1Ms": 23725,
+      "text": "Same",
+      "conf": 0.447
+    },
+    {
+      "t0Ms": 23805,
+      "t1Ms": 23905,
+      "text": "old",
+      "conf": 0.622
+    },
+    {
+      "t0Ms": 23945,
+      "t1Ms": 24206,
+      "text": "joke,",
+      "conf": 0.814
+    },
+    {
+      "t0Ms": 24347,
+      "t1Ms": 24507,
+      "text": "but",
+      "conf": 0.706
+    },
+    {
+      "t0Ms": 24607,
+      "t1Ms": 24928,
+      "text": "told",
+      "conf": 0.653
+    },
+    {
+      "t0Ms": 24948,
+      "t1Ms": 25349,
+      "text": "anew",
+      "conf": 0.678
+    },
+    {
+      "t0Ms": 25510,
+      "t1Ms": 25590,
+      "text": "The",
+      "conf": 0.719
+    },
+    {
+      "t0Ms": 25650,
+      "t1Ms": 26132,
+      "text": "punchline",
+      "conf": 0.858
+    },
+    {
+      "t0Ms": 26152,
+      "t1Ms": 26392,
+      "text": "lands",
+      "conf": 0.878
+    },
+    {
+      "t0Ms": 26432,
+      "t1Ms": 26934,
+      "text": "because",
+      "conf": 0.882
+    },
+    {
+      "t0Ms": 26994,
+      "t1Ms": 27114,
+      "text": "it's",
+      "conf": 0.662
+    },
+    {
+      "t0Ms": 27154,
+      "t1Ms": 27415,
+      "text": "you",
+      "conf": 0.936
+    },
+    {
+      "t0Ms": 27576,
+      "t1Ms": 27696,
+      "text": "From",
+      "conf": 0.925
+    },
+    {
+      "t0Ms": 27756,
+      "t1Ms": 27877,
+      "text": "late",
+      "conf": 0.524
+    },
+    {
+      "t0Ms": 27897,
+      "t1Ms": 28077,
+      "text": "night",
+      "conf": 0.804
+    },
+    {
+      "t0Ms": 28097,
+      "t1Ms": 28418,
+      "text": "chats",
+      "conf": 0.781
+    },
+    {
+      "t0Ms": 28478,
+      "t1Ms": 28599,
+      "text": "to",
+      "conf": 0.922
+    },
+    {
+      "t0Ms": 28739,
+      "t1Ms": 29140,
+      "text": "morning",
+      "conf": 0.913
+    },
+    {
+      "t0Ms": 29240,
+      "t1Ms": 29541,
+      "text": "cold",
+      "conf": 0.631
+    },
+    {
+      "t0Ms": 29642,
+      "t1Ms": 29762,
+      "text": "We",
+      "conf": 0.986
+    },
+    {
+      "t0Ms": 29802,
+      "t1Ms": 30003,
+      "text": "pass",
+      "conf": 0.913
+    },
+    {
+      "t0Ms": 30023,
+      "t1Ms": 30103,
+      "text": "the",
+      "conf": 0.367
+    },
+    {
+      "t0Ms": 30123,
+      "t1Ms": 30484,
+      "text": "spark,",
+      "conf": 0.917
+    },
+    {
+      "t0Ms": 30584,
+      "t1Ms": 30705,
+      "text": "we",
+      "conf": 0.978
+    },
+    {
+      "t0Ms": 30765,
+      "t1Ms": 31066,
+      "text": "share",
+      "conf": 0.806
+    },
+    {
+      "t0Ms": 31106,
+      "t1Ms": 31246,
+      "text": "the",
+      "conf": 0.864
+    },
+    {
+      "t0Ms": 31326,
+      "t1Ms": 31687,
+      "text": "load",
+      "conf": 0.662
+    },
+    {
+      "t0Ms": 31788,
+      "t1Ms": 31848,
+      "text": "It",
+      "conf": 0.938
+    },
+    {
+      "t0Ms": 31888,
+      "t1Ms": 32109,
+      "text": "loops",
+      "conf": 0.787
+    },
+    {
+      "t0Ms": 32209,
+      "t1Ms": 32610,
+      "text": "around,",
+      "conf": 0.879
+    },
+    {
+      "t0Ms": 32710,
+      "t1Ms": 32811,
+      "text": "it",
+      "conf": 0.71
+    },
+    {
+      "t0Ms": 32931,
+      "t1Ms": 33232,
+      "text": "never",
+      "conf": 0.921
+    },
+    {
+      "t0Ms": 33452,
+      "t1Ms": 33693,
+      "text": "ends,",
+      "conf": 0.976
+    },
+    {
+      "t0Ms": 33773,
+      "t1Ms": 33834,
+      "text": "a",
+      "conf": 0.788
+    },
+    {
+      "t0Ms": 33914,
+      "t1Ms": 34174,
+      "text": "glitch",
+      "conf": 0.863
+    },
+    {
+      "t0Ms": 34215,
+      "t1Ms": 34375,
+      "text": "that's",
+      "conf": 0.378
+    },
+    {
+      "t0Ms": 60730,
+      "t1Ms": 61171,
+      "text": "Archive",
+      "conf": 0.395
+    },
+    {
+      "t0Ms": 61211,
+      "t1Ms": 61551,
+      "text": "days",
+      "conf": 0.836
+    },
+    {
+      "t0Ms": 61591,
+      "t1Ms": 61731,
+      "text": "we",
+      "conf": 0.991
+    },
+    {
+      "t0Ms": 61951,
+      "t1Ms": 62292,
+      "text": "almost",
+      "conf": 0.878
+    },
+    {
+      "t0Ms": 62372,
+      "t1Ms": 62752,
+      "text": "lost",
+      "conf": 0.948
+    },
+    {
+      "t0Ms": 62852,
+      "t1Ms": 63073,
+      "text": "Small",
+      "conf": 0.857
+    },
+    {
+      "t0Ms": 63093,
+      "t1Ms": 63533,
+      "text": "mistakes",
+      "conf": 0.838
+    },
+    {
+      "t0Ms": 63713,
+      "t1Ms": 63854,
+      "text": "at",
+      "conf": 0.584
+    },
+    {
+      "t0Ms": 63894,
+      "t1Ms": 64374,
+      "text": "zero",
+      "conf": 0.795
+    },
+    {
+      "t0Ms": 64414,
+      "t1Ms": 64855,
+      "text": "cost",
+      "conf": 0.867
+    },
+    {
+      "t0Ms": 65075,
+      "t1Ms": 65415,
+      "text": "Every",
+      "conf": 0.865
+    },
+    {
+      "t0Ms": 65555,
+      "t1Ms": 65876,
+      "text": "echo",
+      "conf": 0.61
+    },
+    {
+      "t0Ms": 65976,
+      "t1Ms": 66236,
+      "text": "finds",
+      "conf": 0.863
+    },
+    {
+      "t0Ms": 66316,
+      "t1Ms": 66396,
+      "text": "its",
+      "conf": 0.406
+    },
+    {
+      "t0Ms": 66457,
+      "t1Ms": 66917,
+      "text": "place",
+      "conf": 0.904
+    },
+    {
+      "t0Ms": 67097,
+      "t1Ms": 67257,
+      "text": "In",
+      "conf": 0.789
+    },
+    {
+      "t0Ms": 67297,
+      "t1Ms": 67438,
+      "text": "the",
+      "conf": 0.757
+    },
+    {
+      "t0Ms": 67538,
+      "t1Ms": 67958,
+      "text": "rhythm",
+      "conf": 0.632
+    },
+    {
+      "t0Ms": 68058,
+      "t1Ms": 68219,
+      "text": "that",
+      "conf": 0.901
+    },
+    {
+      "t0Ms": 68279,
+      "t1Ms": 68439,
+      "text": "we",
+      "conf": 0.874
+    },
+    {
+      "t0Ms": 68519,
+      "t1Ms": 68899,
+      "text": "chase",
+      "conf": 0.844
+    },
+    {
+      "t0Ms": 68979,
+      "t1Ms": 69260,
+      "text": "Strip",
+      "conf": 0.935
+    },
+    {
+      "t0Ms": 69320,
+      "t1Ms": 69380,
+      "text": "it",
+      "conf": 0.852
+    },
+    {
+      "t0Ms": 69480,
+      "t1Ms": 69780,
+      "text": "down,",
+      "conf": 0.97
+    },
+    {
+      "t0Ms": 69840,
+      "t1Ms": 70001,
+      "text": "just",
+      "conf": 0.732
+    },
+    {
+      "t0Ms": 70121,
+      "t1Ms": 70361,
+      "text": "hands",
+      "conf": 0.819
+    },
+    {
+      "t0Ms": 70441,
+      "t1Ms": 70521,
+      "text": "and",
+      "conf": 0.877
+    },
+    {
+      "t0Ms": 70601,
+      "t1Ms": 70801,
+      "text": "feet",
+      "conf": 0.974
+    },
+    {
+      "t0Ms": 71182,
+      "t1Ms": 71462,
+      "text": "Hobby",
+      "conf": 0.667
+    },
+    {
+      "t0Ms": 71522,
+      "t1Ms": 71863,
+      "text": "claps",
+      "conf": 0.8
+    },
+    {
+      "t0Ms": 71883,
+      "t1Ms": 72043,
+      "text": "the",
+      "conf": 0.834
+    },
+    {
+      "t0Ms": 72143,
+      "t1Ms": 72624,
+      "text": "human",
+      "conf": 0.901
+    },
+    {
+      "t0Ms": 72684,
+      "t1Ms": 72924,
+      "text": "beat",
+      "conf": 0.604
+    },
+    {
+      "t0Ms": 73224,
+      "t1Ms": 73364,
+      "text": "Let",
+      "conf": 0.937
+    },
+    {
+      "t0Ms": 73424,
+      "t1Ms": 73505,
+      "text": "it",
+      "conf": 0.666
+    },
+    {
+      "t0Ms": 73605,
+      "t1Ms": 73985,
+      "text": "breathe",
+      "conf": 0.687
+    },
+    {
+      "t0Ms": 74065,
+      "t1Ms": 74165,
+      "text": "and",
+      "conf": 0.779
+    },
+    {
+      "t0Ms": 74225,
+      "t1Ms": 74426,
+      "text": "pull",
+      "conf": 0.896
+    },
+    {
+      "t0Ms": 74486,
+      "t1Ms": 74606,
+      "text": "it",
+      "conf": 0.841
+    },
+    {
+      "t0Ms": 74766,
+      "t1Ms": 74906,
+      "text": "tight",
+      "conf": 0.46
+    },
+    {
+      "t0Ms": 75287,
+      "t1Ms": 75547,
+      "text": "Cue",
+      "conf": 0.802
+    },
+    {
+      "t0Ms": 75567,
+      "t1Ms": 75627,
+      "text": "the",
+      "conf": 0.488
+    },
+    {
+      "t0Ms": 75687,
+      "t1Ms": 76148,
+      "text": "groove",
+      "conf": 0.574
+    },
+    {
+      "t0Ms": 76168,
+      "t1Ms": 76248,
+      "text": "and",
+      "conf": 0.84
+    },
+    {
+      "t0Ms": 76328,
+      "t1Ms": 76568,
+      "text": "bring",
+      "conf": 0.942
+    },
+    {
+      "t0Ms": 76608,
+      "t1Ms": 76708,
+      "text": "the",
+      "conf": 0.961
+    },
+    {
+      "t0Ms": 76828,
+      "t1Ms": 77489,
+      "text": "light",
+      "conf": 0.356
+    },
+    {
+      "t0Ms": 77509,
+      "t1Ms": 77549,
+      "text": "It",
+      "conf": 0.28
+    },
+    {
+      "t0Ms": 77629,
+      "t1Ms": 78670,
+      "text": "refreshed,",
+      "conf": 0.592
+    },
+    {
+      "t0Ms": 78690,
+      "t1Ms": 78851,
+      "text": "don't",
+      "conf": 0.395
+    },
+    {
+      "t0Ms": 78931,
+      "t1Ms": 79391,
+      "text": "fade",
+      "conf": 0.576
+    },
+    {
+      "t0Ms": 79411,
+      "t1Ms": 79491,
+      "text": "it",
+      "conf": 0.643
+    },
+    {
+      "t0Ms": 79591,
+      "t1Ms": 80152,
+      "text": "out",
+      "conf": 0.785
+    },
+    {
+      "t0Ms": 80993,
+      "t1Ms": 81914,
+      "text": "Laugh",
+      "conf": 0.354
+    },
+    {
+      "t0Ms": 81934,
+      "t1Ms": 81974,
+      "text": "it",
+      "conf": 0.366
+    },
+    {
+      "t0Ms": 82114,
+      "t1Ms": 82575,
+      "text": "back,",
+      "conf": 0.645
+    },
+    {
+      "t0Ms": 82595,
+      "t1Ms": 82755,
+      "text": "that's",
+      "conf": 0.484
+    },
+    {
+      "t0Ms": 82815,
+      "t1Ms": 83035,
+      "text": "what",
+      "conf": 0.51
+    },
+    {
+      "t0Ms": 83095,
+      "t1Ms": 83776,
+      "text": "we're",
+      "conf": 0.428
+    },
+    {
+      "t0Ms": 83836,
+      "t1Ms": 84477,
+      "text": "about",
+      "conf": 0.827
+    },
+    {
+      "t0Ms": 114022,
+      "t1Ms": 114222,
+      "text": "Run",
+      "conf": 0.804
+    },
+    {
+      "t0Ms": 114262,
+      "t1Ms": 114323,
+      "text": "it",
+      "conf": 0.584
+    },
+    {
+      "t0Ms": 114403,
+      "t1Ms": 114663,
+      "text": "again",
+      "conf": 0.982
+    },
+    {
+      "t0Ms": 116186,
+      "t1Ms": 116326,
+      "text": "Hit",
+      "conf": 0.543
+    },
+    {
+      "t0Ms": 116386,
+      "t1Ms": 118190,
+      "text": "refresh,",
+      "conf": 0.791
+    },
+    {
+      "t0Ms": 118210,
+      "t1Ms": 118370,
+      "text": "run",
+      "conf": 0.894
+    },
+    {
+      "t0Ms": 118410,
+      "t1Ms": 118470,
+      "text": "it",
+      "conf": 0.766
+    },
+    {
+      "t0Ms": 118530,
+      "t1Ms": 118791,
+      "text": "again",
+      "conf": 0.903
+    },
+    {
+      "t0Ms": 119252,
+      "t1Ms": 120514,
+      "text": "Hit",
+      "conf": 0.858
+    },
+    {
+      "t0Ms": 120614,
+      "t1Ms": 122337,
+      "text": "refresh,",
+      "conf": 0.644
+    },
+    {
+      "t0Ms": 122357,
+      "t1Ms": 122497,
+      "text": "run",
+      "conf": 0.843
+    },
+    {
+      "t0Ms": 122558,
+      "t1Ms": 122618,
+      "text": "it",
+      "conf": 0.732
+    },
+    {
+      "t0Ms": 122678,
+      "t1Ms": 122958,
+      "text": "again",
+      "conf": 0.966
+    },
+    {
+      "t0Ms": 124481,
+      "t1Ms": 124621,
+      "text": "Hit",
+      "conf": 0.708
+    },
+    {
+      "t0Ms": 124762,
+      "t1Ms": 125443,
+      "text": "refresh",
+      "conf": 0.747
+    },
+    {
+      "t0Ms": 126304,
+      "t1Ms": 126745,
+      "text": "Everybody",
+      "conf": 0.859
+    },
+    {
+      "t0Ms": 126765,
+      "t1Ms": 127026,
+      "text": "lemme",
+      "conf": 0.41
+    },
+    {
+      "t0Ms": 127046,
+      "t1Ms": 127106,
+      "text": "hug",
+      "conf": 0.203
+    },
+    {
+      "t0Ms": 127146,
+      "t1Ms": 127246,
+      "text": "your",
+      "conf": 0.673
+    },
+    {
+      "t0Ms": 127286,
+      "t1Ms": 127727,
+      "text": "buddy",
+      "conf": 0.494
+    },
+    {
+      "t0Ms": 143705,
+      "t1Ms": 144250,
+      "text": "you",
+      "conf": 0.581
+    }
+  ],
+  "segments": [
+    {
+      "t0Ms": 31,
+      "t1Ms": 3645,
+      "text": "Everybody, everybody, everybody, lend a hand if you wanna"
+    },
+    {
+      "t0Ms": 19252,
+      "t1Ms": 34375,
+      "text": "We roll the dice, the screen lights up A hundred tries, we still show up Same old joke, but told anew The punchline lands because it's you From late night chats to morning cold We pass the spark, we share the load It loops around, it never ends, a glitch that's"
+    },
+    {
+      "t0Ms": 60730,
+      "t1Ms": 84477,
+      "text": "Archive days we almost lost Small mistakes at zero cost Every echo finds its place In the rhythm that we chase Strip it down, just hands and feet Hobby claps the human beat Let it breathe and pull it tight Cue the groove and bring the light It refreshed, don't fade it out Laugh it back, that's what we're about"
+    },
+    {
+      "t0Ms": 114022,
+      "t1Ms": 127727,
+      "text": "Run it again Hit refresh, run it again Hit refresh, run it again Hit refresh Everybody lemme hug your buddy"
+    },
+    {
+      "t0Ms": 143705,
+      "t1Ms": 144250,
+      "text": "you"
+    }
+  ],
+  "meta": {
+    "language": "en",
+    "model": "small",
+    "device": "cpu"
+  }
+}

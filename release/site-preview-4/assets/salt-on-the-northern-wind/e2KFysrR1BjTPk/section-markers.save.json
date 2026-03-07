@@ -1,0 +1,95 @@
+{
+  "schemaVersion": 1,
+  "exportedAt": "2026-03-02T07:51:15.330Z",
+  "trackId": "e2KFysrR1BjTPk",
+  "workId": "salt-on-the-northern-wind",
+  "title": "Salt on the Northern Wind",
+  "assetDir": "assets/salt-on-the-northern-wind/e2KFysrR1BjTPk",
+  "applyPolicy": {
+    "eventType": "hint/sectionMarker",
+    "clearExistingSectionMarkersFirst": true,
+    "snapMode": "nearestDownbeat"
+  },
+  "markers": [
+    {
+      "order": 1,
+      "source": "default",
+      "rawMs": 14930,
+      "rawSec": 14.93,
+      "snappedToCurrentDownbeatMs": 14930,
+      "snappedToCurrentDownbeatSec": 14.93
+    },
+    {
+      "order": 2,
+      "source": "hint",
+      "rawMs": 33704,
+      "rawSec": 33.704,
+      "snappedToCurrentDownbeatMs": 33704,
+      "snappedToCurrentDownbeatSec": 33.704
+    },
+    {
+      "order": 3,
+      "source": "default",
+      "rawMs": 45000,
+      "rawSec": 45,
+      "snappedToCurrentDownbeatMs": 45000,
+      "snappedToCurrentDownbeatSec": 45
+    },
+    {
+      "order": 4,
+      "source": "hint",
+      "rawMs": 65689,
+      "rawSec": 65.689,
+      "snappedToCurrentDownbeatMs": 65689,
+      "snappedToCurrentDownbeatSec": 65.689
+    },
+    {
+      "order": 5,
+      "source": "default",
+      "rawMs": 90151,
+      "rawSec": 90.151,
+      "snappedToCurrentDownbeatMs": 90151,
+      "snappedToCurrentDownbeatSec": 90.151
+    },
+    {
+      "order": 6,
+      "source": "default",
+      "rawMs": 129904,
+      "rawSec": 129.904,
+      "snappedToCurrentDownbeatMs": 129904,
+      "snappedToCurrentDownbeatSec": 129.904
+    },
+    {
+      "order": 7,
+      "source": "default",
+      "rawMs": 146843,
+      "rawSec": 146.843,
+      "snappedToCurrentDownbeatMs": 146843,
+      "snappedToCurrentDownbeatSec": 146.843
+    },
+    {
+      "order": 8,
+      "source": "hint",
+      "rawMs": 194223,
+      "rawSec": 194.223,
+      "snappedToCurrentDownbeatMs": 194223,
+      "snappedToCurrentDownbeatSec": 194.223
+    },
+    {
+      "order": 9,
+      "source": "hint",
+      "rawMs": 211162,
+      "rawSec": 211.162,
+      "snappedToCurrentDownbeatMs": 211162,
+      "snappedToCurrentDownbeatSec": 211.162
+    },
+    {
+      "order": 10,
+      "source": "default",
+      "rawMs": 218720,
+      "rawSec": 218.72,
+      "snappedToCurrentDownbeatMs": 218720,
+      "snappedToCurrentDownbeatSec": 218.72
+    }
+  ]
+}

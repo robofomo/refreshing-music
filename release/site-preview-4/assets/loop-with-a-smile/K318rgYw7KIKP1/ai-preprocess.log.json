@@ -1,0 +1,18 @@
+{
+  "updatedAt": "2026-03-02T07:55:28.617Z",
+  "beats": {
+    "status": "ok",
+    "audioPath": "/mnt/d/seva/FOMO/Songs/the-refresh/refreshing-music/assets/loop-with-a-smile/K318rgYw7KIKP1/mix.mp3"
+  },
+  "whisperx": {
+    "status": "ok",
+    "audioPath": "/mnt/d/seva/fomo/songs/the-refresh/refreshing-music/assets/loop-with-a-smile/K318rgYw7KIKP1/mix.mp3",
+    "language": "en",
+    "device": "cpu",
+    "model": "small"
+  },
+  "stems": {
+    "status": "skipped",
+    "reason": "No stems.zip found"
+  }
+}

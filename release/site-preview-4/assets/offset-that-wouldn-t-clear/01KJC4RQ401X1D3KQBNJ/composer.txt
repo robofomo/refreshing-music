@@ -1,0 +1,85 @@
+[Song Title: Offset That Wouldn’t Clear]
+[Style: math rock, electronic hybrid, glitch-forward, clean studio recording, interlocking clean guitars, odd-meter live drums, tight bass, modular synth glitches, bitcrush artifacts, sparse expressive male vocal, intentional errors, misfires, dropouts]
+[Caption: The mistake repeats until it becomes the rule.]
+[Image: A waveform with one recurring spike slightly out of place.]
+[Refresh Title: Random 5]
+[Theme: Random]
+[Gradients: 5]
+[Rank: 22]
+[Title Rarity: 1.12]
+[Seeds: intentionally unstable]
+[Perspective: system_voice]
+[Concept: A process encounters an error it cannot fully resolve—and keeps going anyway.]
+[Topic: System & Process → error_persistence]
+[Genre Bias: math_rock → electro_modern]
+[Style Change: none]
+[Modulation: none]
+[Hook Prominence: low]
+[Deviation: error-driven composition]
+[Created: January 30, 2026 at 2:50 PM]
+[Composer Version: v2.3]
+
+[Intro]
+[Guitars enter clean in 4, drums enter late in 7.]
+[A synth click fires one beat early—this is unintentional, but repeats.]
+[NOTE (unsung clue): the system logs the error but does not halt.]
+
+[Section A]
+[Drums lock into 13/8; guitars phrase confidently in 12.]
+[Bass follows the drums, not the guitars.]
+[A short digital glitch appears at the end of every second bar.]
+I lined it up, I checked it twice  
+Still something slipped between  
+The numbers said it should be fine  
+But that’s not what I’m seeing
+
+[Section A’]
+[Same as Section A, but the glitch occurs every bar now.]
+[Guitars drop one note consistently in the same place.]
+[Synth briefly mutes for exactly one beat, every loop.]
+It wasn’t wrong enough to fail  
+It wasn’t right enough to pass  
+So it stayed inside the system  
+Like a question I can’t ask
+
+[Section B]
+[Sudden shift to 9/8 without transition.]
+[Drums and bass align; guitars lag by half a beat.]
+[A buffer crackle appears whenever vocals stop.]
+I tried to roll it back again  
+But every copy kept the scar  
+The fix just taught the fault  
+Exactly where the limits are
+
+[Interference]
+[All instruments drop except a looping glitch fragment.]
+[The fragment is five beats long against implied four.]
+[NOTE (unsung clue): this fragment is the original error, isolated.]
+
+[Section C]
+[Full band returns, but everything feels slightly misaligned.]
+[Drums accent the wrong beat on purpose.]
+[Guitars mirror the error fragment as a motif.]
+It doesn’t crash, it doesn’t end  
+It just repeats another way  
+Like something learned the wrong lesson  
+And refuses to unlearn the day
+
+[Break]
+[Hard cut—silence for less than a full bar.]
+[Restart is one tick late.]
+[NOTE (unsung clue): timing reference has drifted.]
+
+[Final Section]
+[All parts layer densely; glitches now feel intentional.]
+[The original error becomes the rhythmic anchor.]
+[Nothing resolves, but everything stabilizes.]
+I stopped trying to correct it  
+Let the fault define the frame  
+If it runs, it runs imperfect  
+But it runs the same
+
+[Ending]
+[Instruments drop out randomly, not by section order.]
+[Final sound is the glitch fragment, clean and centered.]
+[NOTE (unsung clue): the bug has been promoted to feature.]

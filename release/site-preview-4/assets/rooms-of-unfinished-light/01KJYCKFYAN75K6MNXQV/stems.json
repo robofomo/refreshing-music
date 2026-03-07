@@ -1,0 +1,33 @@
+{
+  "extractedAt": "2026-03-05T06:58:16.716Z",
+  "zipPath": "stems.zip",
+  "extractedFiles": [
+    "0 Lead Vocals.wav",
+    "1 Instrumental.wav"
+  ],
+  "pickedVocals": "0 Lead Vocals.wav",
+  "pickedInstrumental": "1 Instrumental.wav",
+  "playbackMp3": {
+    "status": "ok",
+    "files": []
+  },
+  "overwrite": false,
+  "normalized": {
+    "status": "ok",
+    "backend": "ffmpeg",
+    "files": [
+      "instrumental.mp3",
+      "vocals.mp3"
+    ]
+  },
+  "copied": {
+    "vocals": {
+      "copied": false,
+      "reason": "exists"
+    },
+    "instrumental": {
+      "copied": false,
+      "reason": "exists"
+    }
+  }
+}

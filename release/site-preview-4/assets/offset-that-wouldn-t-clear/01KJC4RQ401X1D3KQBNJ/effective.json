@@ -1,0 +1,3061 @@
+{
+  "schemaVersion": 1,
+  "generatedAt": "2026-03-07T02:38:36.328Z",
+  "trackId": "01KJC4RQ401X1D3KQBNJ",
+  "workId": "offset-that-wouldn-t-clear",
+  "derived": {
+    "beatsMs": [
+      406,
+      813,
+      1219,
+      1625,
+      2043,
+      2461,
+      2879,
+      3286,
+      3692,
+      4098,
+      4505,
+      4923,
+      5329,
+      5735,
+      6153,
+      6560,
+      6966,
+      7372,
+      7779,
+      8197,
+      8603,
+      9009,
+      9416,
+      9822,
+      10240,
+      10646,
+      11053,
+      11471,
+      11877,
+      12283,
+      12690,
+      13096,
+      13502,
+      13909,
+      14315,
+      14721,
+      15279,
+      15824,
+      16370,
+      16916,
+      17461,
+      18007,
+      18553,
+      19098,
+      19644,
+      20190,
+      20735,
+      21281,
+      21827,
+      22372,
+      22918,
+      23464,
+      24009,
+      24555,
+      25101,
+      25646,
+      26192,
+      26738,
+      27283,
+      27829,
+      28375,
+      28920,
+      29466,
+      30012,
+      30557,
+      31103,
+      31649,
+      32194,
+      32740,
+      33286,
+      33831,
+      34366,
+      34911,
+      35457,
+      36003,
+      36548,
+      37094,
+      37640,
+      38185,
+      38731,
+      39277,
+      39822,
+      40368,
+      40914,
+      41459,
+      42005,
+      42551,
+      43096,
+      43642,
+      44188,
+      44733,
+      45279,
+      45825,
+      46370,
+      46916,
+      47462,
+      48007,
+      48553,
+      49099,
+      49644,
+      50190,
+      50736,
+      51281,
+      51815,
+      52361,
+      52918,
+      53476,
+      54010,
+      54555,
+      55101,
+      55647,
+      56192,
+      56738,
+      57284,
+      57829,
+      58375,
+      58909,
+      59455,
+      60000,
+      60546,
+      61092,
+      61637,
+      62183,
+      62729,
+      63274,
+      63820,
+      64366,
+      64911,
+      65457,
+      66003,
+      66548,
+      67094,
+      67640,
+      68185,
+      68731,
+      69277,
+      69822,
+      70368,
+      70902,
+      71448,
+      72005,
+      72551,
+      73096,
+      73642,
+      74188,
+      74733,
+      75279,
+      75825,
+      76370,
+      76916,
+      77462,
+      78007,
+      78553,
+      79099,
+      79644,
+      80190,
+      80736,
+      81281,
+      81827,
+      82373,
+      82918,
+      83464,
+      84010,
+      84555,
+      85101,
+      85647,
+      86192,
+      86738,
+      87284,
+      87829,
+      88375,
+      88921,
+      89455,
+      90001,
+      90558,
+      91103,
+      91649,
+      92195,
+      92740,
+      93275,
+      93820,
+      94366,
+      94912,
+      95457,
+      96003,
+      96549,
+      97094,
+      97640,
+      98186,
+      98731,
+      99277,
+      99823,
+      100368,
+      100914,
+      101460,
+      102005,
+      102551,
+      103097,
+      103642,
+      104188,
+      104734,
+      105279,
+      105837,
+      106382,
+      106928,
+      107462,
+      108019,
+      108553,
+      109111,
+      109645,
+      110190,
+      110736,
+      111282,
+      111827,
+      112373,
+      112919,
+      113464,
+      114010,
+      114556,
+      115101,
+      115647,
+      116193,
+      116727,
+      117272,
+      117818,
+      118364,
+      118909,
+      119467,
+      120012,
+      120558,
+      121092,
+      121638,
+      122183,
+      122729,
+      123275,
+      123820,
+      124366,
+      124923,
+      125457,
+      126003,
+      126549,
+      127094,
+      127640,
+      128186,
+      128731,
+      129277,
+      129823,
+      130368,
+      130914,
+      131460,
+      132005,
+      132551,
+      133097,
+      133642,
+      134188,
+      134722,
+      135279,
+      135814,
+      136371,
+      136916,
+      137462,
+      138008,
+      138553,
+      139099,
+      139645,
+      140190,
+      140736,
+      141282,
+      141827,
+      142362,
+      142907,
+      143453,
+      143999,
+      144544,
+      145090,
+      145636,
+      146181,
+      146727,
+      147273,
+      147818,
+      148364,
+      148910,
+      149455,
+      150001,
+      150547,
+      151092,
+      151638,
+      152184,
+      152729,
+      153275,
+      153809,
+      154366,
+      154912,
+      155458,
+      156003,
+      156549,
+      157095,
+      157640,
+      158186,
+      158732,
+      159300
+    ],
+    "downbeatTimesMs": [],
+    "wordsCount": 127
+  },
+  "hints": {
+    "eventsCount": 51,
+    "lastHintAt": "2026-03-02T06:25:12.267Z",
+    "downbeatAnchorsCount": 6,
+    "establishedTempoMs": 545.4545454545455,
+    "subdivisionFactor": 1,
+    "aiBeatDivisor": 1,
+    "lockedTempoBpm": 110,
+    "beatFusionMode": "tempo-override-windowed",
+    "endMarkerSec": 0,
+    "sectionBoundaryResolver": {
+      "method": "markers+lyrics-label",
+      "adjusted": 8,
+      "avgSnapMs": 428,
+      "splitCount": 14,
+      "combinedCount": 6
+    },
+    "fusionWindowsSec": [
+      {
+        "t0Sec": 0,
+        "t1Sec": 69.907
+      },
+      {
+        "t0Sec": 68.816,
+        "t1Sec": 159.3
+      }
+    ],
+    "beatsSec": [
+      71.987,
+      0.64,
+      1.16,
+      1.712,
+      2.251,
+      2.818,
+      3.34,
+      3.931,
+      4.411,
+      5.072,
+      5.59,
+      6.111,
+      6.637,
+      7.176,
+      7.68,
+      8.277,
+      8.849,
+      69.907,
+      70.414,
+      70.955,
+      71.513,
+      72.654
+    ],
+    "downbeatsSec": [
+      2.251,
+      4.411,
+      6.637,
+      8.819,
+      69.907,
+      72.634
+    ],
+    "barBeats": [
+      {
+        "tSec": 0.64,
+        "beatInBar": 2
+      },
+      {
+        "tSec": 1.16,
+        "beatInBar": 3
+      },
+      {
+        "tSec": 1.712,
+        "beatInBar": 4
+      },
+      {
+        "tSec": 2.251,
+        "beatInBar": 1
+      },
+      {
+        "tSec": 2.818,
+        "beatInBar": 2
+      },
+      {
+        "tSec": 3.34,
+        "beatInBar": 3
+      },
+      {
+        "tSec": 3.931,
+        "beatInBar": 4
+      },
+      {
+        "tSec": 4.411,
+        "beatInBar": 1
+      },
+      {
+        "tSec": 5.072,
+        "beatInBar": 2
+      },
+      {
+        "tSec": 5.59,
+        "beatInBar": 3
+      },
+      {
+        "tSec": 6.111,
+        "beatInBar": 4
+      },
+      {
+        "tSec": 6.637,
+        "beatInBar": 1
+      },
+      {
+        "tSec": 7.176,
+        "beatInBar": 2
+      },
+      {
+        "tSec": 7.68,
+        "beatInBar": 3
+      },
+      {
+        "tSec": 8.277,
+        "beatInBar": 4
+      },
+      {
+        "tSec": 8.849,
+        "beatInBar": 1
+      },
+      {
+        "tSec": 69.907,
+        "beatInBar": 1
+      },
+      {
+        "tSec": 70.414,
+        "beatInBar": 2
+      },
+      {
+        "tSec": 70.955,
+        "beatInBar": 3
+      },
+      {
+        "tSec": 71.513,
+        "beatInBar": 4
+      },
+      {
+        "tSec": 72.654,
+        "beatInBar": 1
+      }
+    ]
+  },
+  "effective": {
+    "beatsMs": [
+      615,
+      1160,
+      1706,
+      2251,
+      2796,
+      3342,
+      3887,
+      4411,
+      4956,
+      5502,
+      6047,
+      6593,
+      6637,
+      7182,
+      7728,
+      8273,
+      8819,
+      9364,
+      9910,
+      10455,
+      11001,
+      11546,
+      12092,
+      12637,
+      13182,
+      13728,
+      14273,
+      14819,
+      15364,
+      15910,
+      16455,
+      17001,
+      17546,
+      18092,
+      18637,
+      19182,
+      19728,
+      20273,
+      20819,
+      21364,
+      21910,
+      22455,
+      23001,
+      23546,
+      24092,
+      24637,
+      25182,
+      25728,
+      26273,
+      26819,
+      27364,
+      27910,
+      28455,
+      29001,
+      29546,
+      30092,
+      30637,
+      31182,
+      31728,
+      32273,
+      32819,
+      33364,
+      33910,
+      34455,
+      35001,
+      35546,
+      36092,
+      36637,
+      37182,
+      37728,
+      38273,
+      38819,
+      39364,
+      39910,
+      40455,
+      41001,
+      41546,
+      42092,
+      42637,
+      43182,
+      43728,
+      44273,
+      44819,
+      45364,
+      45910,
+      46455,
+      47001,
+      47546,
+      48092,
+      48637,
+      49182,
+      49728,
+      50273,
+      50819,
+      51364,
+      51910,
+      52455,
+      53001,
+      53546,
+      54092,
+      54637,
+      55182,
+      55728,
+      56273,
+      56819,
+      57364,
+      57910,
+      58455,
+      59001,
+      59546,
+      60092,
+      60637,
+      61182,
+      61728,
+      62273,
+      62819,
+      63364,
+      63910,
+      64455,
+      65001,
+      65546,
+      66092,
+      66637,
+      67182,
+      67728,
+      68273,
+      68819,
+      69364,
+      69907,
+      70452,
+      70998,
+      71543,
+      72089,
+      72634,
+      73180,
+      73725,
+      74271,
+      74816,
+      75362,
+      75907,
+      76452,
+      76998,
+      77543,
+      78089,
+      78634,
+      79180,
+      79725,
+      80271,
+      80816,
+      81362,
+      81907,
+      82452,
+      82998,
+      83543,
+      84089,
+      84634,
+      85180,
+      85725,
+      86271,
+      86816,
+      87362,
+      87907,
+      88452,
+      88998,
+      89543,
+      90089,
+      90634,
+      91180,
+      91725,
+      92271,
+      92816,
+      93362,
+      93907,
+      94452,
+      94998,
+      95543,
+      96089,
+      96634,
+      97180,
+      97725,
+      98271,
+      98816,
+      99362,
+      99907,
+      100452,
+      100998,
+      101543,
+      102089,
+      102634,
+      103180,
+      103725,
+      104271,
+      104816,
+      105362,
+      105907,
+      106452,
+      106998,
+      107543,
+      108089,
+      108634,
+      109180,
+      109725,
+      110271,
+      110816,
+      111362,
+      111907,
+      112452,
+      112998,
+      113543,
+      114089,
+      114634,
+      115180,
+      115725,
+      116271,
+      116816,
+      117362,
+      117907,
+      118452,
+      118998,
+      119543,
+      120089,
+      120634,
+      121180,
+      121725,
+      122271,
+      122816,
+      123362,
+      123907,
+      124452,
+      124998,
+      125543,
+      126089,
+      126634,
+      127180,
+      127725,
+      128271,
+      128816,
+      129362,
+      129907,
+      130452,
+      130998,
+      131543,
+      132089,
+      132634,
+      133180,
+      133725,
+      134271,
+      134816,
+      135362,
+      135907,
+      136452,
+      136998,
+      137543,
+      138089,
+      138634,
+      139180,
+      139725,
+      140271,
+      140816,
+      141362,
+      141907,
+      142452,
+      142998,
+      143543,
+      144089,
+      144634,
+      145180,
+      145725,
+      146271,
+      146816,
+      147362,
+      147907,
+      148452,
+      148998,
+      149543,
+      150089,
+      150634,
+      151180,
+      151725,
+      152271,
+      152816,
+      153362,
+      153907,
+      154452,
+      154998,
+      155543,
+      156089,
+      156634,
+      157180,
+      157725,
+      158271,
+      158816
+    ],
+    "downbeatTimesMs": [
+      2251,
+      4411,
+      6593,
+      6637,
+      8819,
+      11001,
+      13182,
+      15364,
+      17546,
+      19728,
+      21910,
+      24092,
+      26273,
+      28455,
+      30637,
+      32819,
+      35001,
+      37182,
+      39364,
+      41546,
+      43728,
+      45910,
+      48092,
+      50273,
+      52455,
+      54637,
+      56819,
+      59001,
+      61182,
+      63364,
+      65546,
+      67728,
+      69907,
+      72634,
+      74816,
+      76998,
+      79180,
+      81362,
+      83543,
+      85725,
+      87907,
+      90089,
+      92271,
+      94452,
+      96634,
+      98816,
+      100998,
+      103180,
+      105362,
+      107543,
+      109725,
+      111907,
+      114089,
+      116271,
+      118452,
+      120634,
+      122816,
+      124998,
+      127180,
+      129362,
+      131543,
+      133725,
+      135907,
+      138089,
+      140271,
+      142452,
+      144634,
+      146816,
+      148998,
+      151180,
+      153362,
+      155543,
+      157725
+    ],
+    "beatMarkers": [
+      {
+        "tMs": 615,
+        "source": "hint"
+      },
+      {
+        "tMs": 1160,
+        "source": "hint"
+      },
+      {
+        "tMs": 1706,
+        "source": "hint"
+      },
+      {
+        "tMs": 2251,
+        "source": "hint"
+      },
+      {
+        "tMs": 2796,
+        "source": "hint"
+      },
+      {
+        "tMs": 3342,
+        "source": "hint"
+      },
+      {
+        "tMs": 3887,
+        "source": "hint"
+      },
+      {
+        "tMs": 4411,
+        "source": "hint"
+      },
+      {
+        "tMs": 4956,
+        "source": "hint"
+      },
+      {
+        "tMs": 5502,
+        "source": "hint"
+      },
+      {
+        "tMs": 6047,
+        "source": "hint"
+      },
+      {
+        "tMs": 6593,
+        "source": "inferred"
+      },
+      {
+        "tMs": 6637,
+        "source": "hint"
+      },
+      {
+        "tMs": 7182,
+        "source": "hint"
+      },
+      {
+        "tMs": 7728,
+        "source": "hint"
+      },
+      {
+        "tMs": 8273,
+        "source": "hint"
+      },
+      {
+        "tMs": 8819,
+        "source": "hint"
+      },
+      {
+        "tMs": 9364,
+        "source": "inferred"
+      },
+      {
+        "tMs": 9910,
+        "source": "inferred"
+      },
+      {
+        "tMs": 10455,
+        "source": "inferred"
+      },
+      {
+        "tMs": 11001,
+        "source": "inferred"
+      },
+      {
+        "tMs": 11546,
+        "source": "inferred"
+      },
+      {
+        "tMs": 12092,
+        "source": "inferred"
+      },
+      {
+        "tMs": 12637,
+        "source": "inferred"
+      },
+      {
+        "tMs": 13182,
+        "source": "inferred"
+      },
+      {
+        "tMs": 13728,
+        "source": "inferred"
+      },
+      {
+        "tMs": 14273,
+        "source": "inferred"
+      },
+      {
+        "tMs": 14819,
+        "source": "inferred"
+      },
+      {
+        "tMs": 15364,
+        "source": "inferred"
+      },
+      {
+        "tMs": 15910,
+        "source": "inferred"
+      },
+      {
+        "tMs": 16455,
+        "source": "inferred"
+      },
+      {
+        "tMs": 17001,
+        "source": "inferred"
+      },
+      {
+        "tMs": 17546,
+        "source": "inferred"
+      },
+      {
+        "tMs": 18092,
+        "source": "inferred"
+      },
+      {
+        "tMs": 18637,
+        "source": "inferred"
+      },
+      {
+        "tMs": 19182,
+        "source": "inferred"
+      },
+      {
+        "tMs": 19728,
+        "source": "inferred"
+      },
+      {
+        "tMs": 20273,
+        "source": "inferred"
+      },
+      {
+        "tMs": 20819,
+        "source": "inferred"
+      },
+      {
+        "tMs": 21364,
+        "source": "inferred"
+      },
+      {
+        "tMs": 21910,
+        "source": "inferred"
+      },
+      {
+        "tMs": 22455,
+        "source": "inferred"
+      },
+      {
+        "tMs": 23001,
+        "source": "inferred"
+      },
+      {
+        "tMs": 23546,
+        "source": "inferred"
+      },
+      {
+        "tMs": 24092,
+        "source": "inferred"
+      },
+      {
+        "tMs": 24637,
+        "source": "inferred"
+      },
+      {
+        "tMs": 25182,
+        "source": "inferred"
+      },
+      {
+        "tMs": 25728,
+        "source": "inferred"
+      },
+      {
+        "tMs": 26273,
+        "source": "inferred"
+      },
+      {
+        "tMs": 26819,
+        "source": "inferred"
+      },
+      {
+        "tMs": 27364,
+        "source": "inferred"
+      },
+      {
+        "tMs": 27910,
+        "source": "inferred"
+      },
+      {
+        "tMs": 28455,
+        "source": "inferred"
+      },
+      {
+        "tMs": 29001,
+        "source": "inferred"
+      },
+      {
+        "tMs": 29546,
+        "source": "inferred"
+      },
+      {
+        "tMs": 30092,
+        "source": "inferred"
+      },
+      {
+        "tMs": 30637,
+        "source": "inferred"
+      },
+      {
+        "tMs": 31182,
+        "source": "inferred"
+      },
+      {
+        "tMs": 31728,
+        "source": "inferred"
+      },
+      {
+        "tMs": 32273,
+        "source": "inferred"
+      },
+      {
+        "tMs": 32819,
+        "source": "inferred"
+      },
+      {
+        "tMs": 33364,
+        "source": "inferred"
+      },
+      {
+        "tMs": 33910,
+        "source": "inferred"
+      },
+      {
+        "tMs": 34455,
+        "source": "inferred"
+      },
+      {
+        "tMs": 35001,
+        "source": "inferred"
+      },
+      {
+        "tMs": 35546,
+        "source": "inferred"
+      },
+      {
+        "tMs": 36092,
+        "source": "inferred"
+      },
+      {
+        "tMs": 36637,
+        "source": "inferred"
+      },
+      {
+        "tMs": 37182,
+        "source": "inferred"
+      },
+      {
+        "tMs": 37728,
+        "source": "inferred"
+      },
+      {
+        "tMs": 38273,
+        "source": "inferred"
+      },
+      {
+        "tMs": 38819,
+        "source": "inferred"
+      },
+      {
+        "tMs": 39364,
+        "source": "inferred"
+      },
+      {
+        "tMs": 39910,
+        "source": "inferred"
+      },
+      {
+        "tMs": 40455,
+        "source": "inferred"
+      },
+      {
+        "tMs": 41001,
+        "source": "inferred"
+      },
+      {
+        "tMs": 41546,
+        "source": "inferred"
+      },
+      {
+        "tMs": 42092,
+        "source": "inferred"
+      },
+      {
+        "tMs": 42637,
+        "source": "inferred"
+      },
+      {
+        "tMs": 43182,
+        "source": "inferred"
+      },
+      {
+        "tMs": 43728,
+        "source": "inferred"
+      },
+      {
+        "tMs": 44273,
+        "source": "inferred"
+      },
+      {
+        "tMs": 44819,
+        "source": "inferred"
+      },
+      {
+        "tMs": 45364,
+        "source": "inferred"
+      },
+      {
+        "tMs": 45910,
+        "source": "inferred"
+      },
+      {
+        "tMs": 46455,
+        "source": "inferred"
+      },
+      {
+        "tMs": 47001,
+        "source": "inferred"
+      },
+      {
+        "tMs": 47546,
+        "source": "inferred"
+      },
+      {
+        "tMs": 48092,
+        "source": "inferred"
+      },
+      {
+        "tMs": 48637,
+        "source": "inferred"
+      },
+      {
+        "tMs": 49182,
+        "source": "inferred"
+      },
+      {
+        "tMs": 49728,
+        "source": "inferred"
+      },
+      {
+        "tMs": 50273,
+        "source": "inferred"
+      },
+      {
+        "tMs": 50819,
+        "source": "inferred"
+      },
+      {
+        "tMs": 51364,
+        "source": "inferred"
+      },
+      {
+        "tMs": 51910,
+        "source": "inferred"
+      },
+      {
+        "tMs": 52455,
+        "source": "inferred"
+      },
+      {
+        "tMs": 53001,
+        "source": "inferred"
+      },
+      {
+        "tMs": 53546,
+        "source": "inferred"
+      },
+      {
+        "tMs": 54092,
+        "source": "inferred"
+      },
+      {
+        "tMs": 54637,
+        "source": "inferred"
+      },
+      {
+        "tMs": 55182,
+        "source": "inferred"
+      },
+      {
+        "tMs": 55728,
+        "source": "inferred"
+      },
+      {
+        "tMs": 56273,
+        "source": "inferred"
+      },
+      {
+        "tMs": 56819,
+        "source": "inferred"
+      },
+      {
+        "tMs": 57364,
+        "source": "inferred"
+      },
+      {
+        "tMs": 57910,
+        "source": "inferred"
+      },
+      {
+        "tMs": 58455,
+        "source": "inferred"
+      },
+      {
+        "tMs": 59001,
+        "source": "inferred"
+      },
+      {
+        "tMs": 59546,
+        "source": "inferred"
+      },
+      {
+        "tMs": 60092,
+        "source": "inferred"
+      },
+      {
+        "tMs": 60637,
+        "source": "inferred"
+      },
+      {
+        "tMs": 61182,
+        "source": "inferred"
+      },
+      {
+        "tMs": 61728,
+        "source": "inferred"
+      },
+      {
+        "tMs": 62273,
+        "source": "inferred"
+      },
+      {
+        "tMs": 62819,
+        "source": "inferred"
+      },
+      {
+        "tMs": 63364,
+        "source": "inferred"
+      },
+      {
+        "tMs": 63910,
+        "source": "inferred"
+      },
+      {
+        "tMs": 64455,
+        "source": "inferred"
+      },
+      {
+        "tMs": 65001,
+        "source": "inferred"
+      },
+      {
+        "tMs": 65546,
+        "source": "inferred"
+      },
+      {
+        "tMs": 66092,
+        "source": "inferred"
+      },
+      {
+        "tMs": 66637,
+        "source": "inferred"
+      },
+      {
+        "tMs": 67182,
+        "source": "inferred"
+      },
+      {
+        "tMs": 67728,
+        "source": "inferred"
+      },
+      {
+        "tMs": 68273,
+        "source": "inferred"
+      },
+      {
+        "tMs": 68819,
+        "source": "inferred"
+      },
+      {
+        "tMs": 69364,
+        "source": "inferred"
+      },
+      {
+        "tMs": 69907,
+        "source": "hint"
+      },
+      {
+        "tMs": 70452,
+        "source": "hint"
+      },
+      {
+        "tMs": 70998,
+        "source": "hint"
+      },
+      {
+        "tMs": 71543,
+        "source": "hint"
+      },
+      {
+        "tMs": 72089,
+        "source": "hint"
+      },
+      {
+        "tMs": 72634,
+        "source": "hint"
+      },
+      {
+        "tMs": 73180,
+        "source": "inferred"
+      },
+      {
+        "tMs": 73725,
+        "source": "inferred"
+      },
+      {
+        "tMs": 74271,
+        "source": "inferred"
+      },
+      {
+        "tMs": 74816,
+        "source": "inferred"
+      },
+      {
+        "tMs": 75362,
+        "source": "inferred"
+      },
+      {
+        "tMs": 75907,
+        "source": "inferred"
+      },
+      {
+        "tMs": 76452,
+        "source": "inferred"
+      },
+      {
+        "tMs": 76998,
+        "source": "inferred"
+      },
+      {
+        "tMs": 77543,
+        "source": "inferred"
+      },
+      {
+        "tMs": 78089,
+        "source": "inferred"
+      },
+      {
+        "tMs": 78634,
+        "source": "inferred"
+      },
+      {
+        "tMs": 79180,
+        "source": "inferred"
+      },
+      {
+        "tMs": 79725,
+        "source": "inferred"
+      },
+      {
+        "tMs": 80271,
+        "source": "inferred"
+      },
+      {
+        "tMs": 80816,
+        "source": "inferred"
+      },
+      {
+        "tMs": 81362,
+        "source": "inferred"
+      },
+      {
+        "tMs": 81907,
+        "source": "inferred"
+      },
+      {
+        "tMs": 82452,
+        "source": "inferred"
+      },
+      {
+        "tMs": 82998,
+        "source": "inferred"
+      },
+      {
+        "tMs": 83543,
+        "source": "inferred"
+      },
+      {
+        "tMs": 84089,
+        "source": "inferred"
+      },
+      {
+        "tMs": 84634,
+        "source": "inferred"
+      },
+      {
+        "tMs": 85180,
+        "source": "inferred"
+      },
+      {
+        "tMs": 85725,
+        "source": "inferred"
+      },
+      {
+        "tMs": 86271,
+        "source": "inferred"
+      },
+      {
+        "tMs": 86816,
+        "source": "inferred"
+      },
+      {
+        "tMs": 87362,
+        "source": "inferred"
+      },
+      {
+        "tMs": 87907,
+        "source": "inferred"
+      },
+      {
+        "tMs": 88452,
+        "source": "inferred"
+      },
+      {
+        "tMs": 88998,
+        "source": "inferred"
+      },
+      {
+        "tMs": 89543,
+        "source": "inferred"
+      },
+      {
+        "tMs": 90089,
+        "source": "inferred"
+      },
+      {
+        "tMs": 90634,
+        "source": "inferred"
+      },
+      {
+        "tMs": 91180,
+        "source": "inferred"
+      },
+      {
+        "tMs": 91725,
+        "source": "inferred"
+      },
+      {
+        "tMs": 92271,
+        "source": "inferred"
+      },
+      {
+        "tMs": 92816,
+        "source": "inferred"
+      },
+      {
+        "tMs": 93362,
+        "source": "inferred"
+      },
+      {
+        "tMs": 93907,
+        "source": "inferred"
+      },
+      {
+        "tMs": 94452,
+        "source": "inferred"
+      },
+      {
+        "tMs": 94998,
+        "source": "inferred"
+      },
+      {
+        "tMs": 95543,
+        "source": "inferred"
+      },
+      {
+        "tMs": 96089,
+        "source": "inferred"
+      },
+      {
+        "tMs": 96634,
+        "source": "inferred"
+      },
+      {
+        "tMs": 97180,
+        "source": "inferred"
+      },
+      {
+        "tMs": 97725,
+        "source": "inferred"
+      },
+      {
+        "tMs": 98271,
+        "source": "inferred"
+      },
+      {
+        "tMs": 98816,
+        "source": "inferred"
+      },
+      {
+        "tMs": 99362,
+        "source": "inferred"
+      },
+      {
+        "tMs": 99907,
+        "source": "inferred"
+      },
+      {
+        "tMs": 100452,
+        "source": "inferred"
+      },
+      {
+        "tMs": 100998,
+        "source": "inferred"
+      },
+      {
+        "tMs": 101543,
+        "source": "inferred"
+      },
+      {
+        "tMs": 102089,
+        "source": "inferred"
+      },
+      {
+        "tMs": 102634,
+        "source": "inferred"
+      },
+      {
+        "tMs": 103180,
+        "source": "inferred"
+      },
+      {
+        "tMs": 103725,
+        "source": "inferred"
+      },
+      {
+        "tMs": 104271,
+        "source": "inferred"
+      },
+      {
+        "tMs": 104816,
+        "source": "inferred"
+      },
+      {
+        "tMs": 105362,
+        "source": "inferred"
+      },
+      {
+        "tMs": 105907,
+        "source": "inferred"
+      },
+      {
+        "tMs": 106452,
+        "source": "inferred"
+      },
+      {
+        "tMs": 106998,
+        "source": "inferred"
+      },
+      {
+        "tMs": 107543,
+        "source": "inferred"
+      },
+      {
+        "tMs": 108089,
+        "source": "inferred"
+      },
+      {
+        "tMs": 108634,
+        "source": "inferred"
+      },
+      {
+        "tMs": 109180,
+        "source": "inferred"
+      },
+      {
+        "tMs": 109725,
+        "source": "inferred"
+      },
+      {
+        "tMs": 110271,
+        "source": "inferred"
+      },
+      {
+        "tMs": 110816,
+        "source": "inferred"
+      },
+      {
+        "tMs": 111362,
+        "source": "inferred"
+      },
+      {
+        "tMs": 111907,
+        "source": "inferred"
+      },
+      {
+        "tMs": 112452,
+        "source": "inferred"
+      },
+      {
+        "tMs": 112998,
+        "source": "inferred"
+      },
+      {
+        "tMs": 113543,
+        "source": "inferred"
+      },
+      {
+        "tMs": 114089,
+        "source": "inferred"
+      },
+      {
+        "tMs": 114634,
+        "source": "inferred"
+      },
+      {
+        "tMs": 115180,
+        "source": "inferred"
+      },
+      {
+        "tMs": 115725,
+        "source": "inferred"
+      },
+      {
+        "tMs": 116271,
+        "source": "inferred"
+      },
+      {
+        "tMs": 116816,
+        "source": "inferred"
+      },
+      {
+        "tMs": 117362,
+        "source": "inferred"
+      },
+      {
+        "tMs": 117907,
+        "source": "inferred"
+      },
+      {
+        "tMs": 118452,
+        "source": "inferred"
+      },
+      {
+        "tMs": 118998,
+        "source": "inferred"
+      },
+      {
+        "tMs": 119543,
+        "source": "inferred"
+      },
+      {
+        "tMs": 120089,
+        "source": "inferred"
+      },
+      {
+        "tMs": 120634,
+        "source": "inferred"
+      },
+      {
+        "tMs": 121180,
+        "source": "inferred"
+      },
+      {
+        "tMs": 121725,
+        "source": "inferred"
+      },
+      {
+        "tMs": 122271,
+        "source": "inferred"
+      },
+      {
+        "tMs": 122816,
+        "source": "inferred"
+      },
+      {
+        "tMs": 123362,
+        "source": "inferred"
+      },
+      {
+        "tMs": 123907,
+        "source": "inferred"
+      },
+      {
+        "tMs": 124452,
+        "source": "inferred"
+      },
+      {
+        "tMs": 124998,
+        "source": "inferred"
+      },
+      {
+        "tMs": 125543,
+        "source": "inferred"
+      },
+      {
+        "tMs": 126089,
+        "source": "inferred"
+      },
+      {
+        "tMs": 126634,
+        "source": "inferred"
+      },
+      {
+        "tMs": 127180,
+        "source": "inferred"
+      },
+      {
+        "tMs": 127725,
+        "source": "inferred"
+      },
+      {
+        "tMs": 128271,
+        "source": "inferred"
+      },
+      {
+        "tMs": 128816,
+        "source": "inferred"
+      },
+      {
+        "tMs": 129362,
+        "source": "inferred"
+      },
+      {
+        "tMs": 129907,
+        "source": "inferred"
+      },
+      {
+        "tMs": 130452,
+        "source": "inferred"
+      },
+      {
+        "tMs": 130998,
+        "source": "inferred"
+      },
+      {
+        "tMs": 131543,
+        "source": "inferred"
+      },
+      {
+        "tMs": 132089,
+        "source": "inferred"
+      },
+      {
+        "tMs": 132634,
+        "source": "inferred"
+      },
+      {
+        "tMs": 133180,
+        "source": "inferred"
+      },
+      {
+        "tMs": 133725,
+        "source": "inferred"
+      },
+      {
+        "tMs": 134271,
+        "source": "inferred"
+      },
+      {
+        "tMs": 134816,
+        "source": "inferred"
+      },
+      {
+        "tMs": 135362,
+        "source": "inferred"
+      },
+      {
+        "tMs": 135907,
+        "source": "inferred"
+      },
+      {
+        "tMs": 136452,
+        "source": "inferred"
+      },
+      {
+        "tMs": 136998,
+        "source": "inferred"
+      },
+      {
+        "tMs": 137543,
+        "source": "inferred"
+      },
+      {
+        "tMs": 138089,
+        "source": "inferred"
+      },
+      {
+        "tMs": 138634,
+        "source": "inferred"
+      },
+      {
+        "tMs": 139180,
+        "source": "inferred"
+      },
+      {
+        "tMs": 139725,
+        "source": "inferred"
+      },
+      {
+        "tMs": 140271,
+        "source": "inferred"
+      },
+      {
+        "tMs": 140816,
+        "source": "inferred"
+      },
+      {
+        "tMs": 141362,
+        "source": "inferred"
+      },
+      {
+        "tMs": 141907,
+        "source": "inferred"
+      },
+      {
+        "tMs": 142452,
+        "source": "inferred"
+      },
+      {
+        "tMs": 142998,
+        "source": "inferred"
+      },
+      {
+        "tMs": 143543,
+        "source": "inferred"
+      },
+      {
+        "tMs": 144089,
+        "source": "inferred"
+      },
+      {
+        "tMs": 144634,
+        "source": "inferred"
+      },
+      {
+        "tMs": 145180,
+        "source": "inferred"
+      },
+      {
+        "tMs": 145725,
+        "source": "inferred"
+      },
+      {
+        "tMs": 146271,
+        "source": "inferred"
+      },
+      {
+        "tMs": 146816,
+        "source": "inferred"
+      },
+      {
+        "tMs": 147362,
+        "source": "inferred"
+      },
+      {
+        "tMs": 147907,
+        "source": "inferred"
+      },
+      {
+        "tMs": 148452,
+        "source": "inferred"
+      },
+      {
+        "tMs": 148998,
+        "source": "inferred"
+      },
+      {
+        "tMs": 149543,
+        "source": "inferred"
+      },
+      {
+        "tMs": 150089,
+        "source": "inferred"
+      },
+      {
+        "tMs": 150634,
+        "source": "inferred"
+      },
+      {
+        "tMs": 151180,
+        "source": "inferred"
+      },
+      {
+        "tMs": 151725,
+        "source": "inferred"
+      },
+      {
+        "tMs": 152271,
+        "source": "inferred"
+      },
+      {
+        "tMs": 152816,
+        "source": "inferred"
+      },
+      {
+        "tMs": 153362,
+        "source": "inferred"
+      },
+      {
+        "tMs": 153907,
+        "source": "inferred"
+      },
+      {
+        "tMs": 154452,
+        "source": "inferred"
+      },
+      {
+        "tMs": 154998,
+        "source": "inferred"
+      },
+      {
+        "tMs": 155543,
+        "source": "inferred"
+      },
+      {
+        "tMs": 156089,
+        "source": "inferred"
+      },
+      {
+        "tMs": 156634,
+        "source": "inferred"
+      },
+      {
+        "tMs": 157180,
+        "source": "inferred"
+      },
+      {
+        "tMs": 157725,
+        "source": "inferred"
+      },
+      {
+        "tMs": 158271,
+        "source": "inferred"
+      },
+      {
+        "tMs": 158816,
+        "source": "inferred"
+      }
+    ],
+    "downbeatMarkers": [
+      {
+        "tMs": 2251,
+        "source": "hint"
+      },
+      {
+        "tMs": 4411,
+        "source": "hint"
+      },
+      {
+        "tMs": 6593,
+        "source": "inferred"
+      },
+      {
+        "tMs": 6637,
+        "source": "hint"
+      },
+      {
+        "tMs": 8819,
+        "source": "hint"
+      },
+      {
+        "tMs": 11001,
+        "source": "inferred"
+      },
+      {
+        "tMs": 13182,
+        "source": "corrected"
+      },
+      {
+        "tMs": 15364,
+        "source": "corrected"
+      },
+      {
+        "tMs": 17546,
+        "source": "corrected"
+      },
+      {
+        "tMs": 19728,
+        "source": "corrected"
+      },
+      {
+        "tMs": 21910,
+        "source": "corrected"
+      },
+      {
+        "tMs": 24092,
+        "source": "corrected"
+      },
+      {
+        "tMs": 26273,
+        "source": "corrected"
+      },
+      {
+        "tMs": 28455,
+        "source": "corrected"
+      },
+      {
+        "tMs": 30637,
+        "source": "corrected"
+      },
+      {
+        "tMs": 32819,
+        "source": "corrected"
+      },
+      {
+        "tMs": 35001,
+        "source": "corrected"
+      },
+      {
+        "tMs": 37182,
+        "source": "corrected"
+      },
+      {
+        "tMs": 39364,
+        "source": "corrected"
+      },
+      {
+        "tMs": 41546,
+        "source": "corrected"
+      },
+      {
+        "tMs": 43728,
+        "source": "corrected"
+      },
+      {
+        "tMs": 45910,
+        "source": "corrected"
+      },
+      {
+        "tMs": 48092,
+        "source": "corrected"
+      },
+      {
+        "tMs": 50273,
+        "source": "corrected"
+      },
+      {
+        "tMs": 52455,
+        "source": "corrected"
+      },
+      {
+        "tMs": 54637,
+        "source": "corrected"
+      },
+      {
+        "tMs": 56819,
+        "source": "corrected"
+      },
+      {
+        "tMs": 59001,
+        "source": "corrected"
+      },
+      {
+        "tMs": 61182,
+        "source": "corrected"
+      },
+      {
+        "tMs": 63364,
+        "source": "corrected"
+      },
+      {
+        "tMs": 65546,
+        "source": "corrected"
+      },
+      {
+        "tMs": 67728,
+        "source": "corrected"
+      },
+      {
+        "tMs": 69907,
+        "source": "hint"
+      },
+      {
+        "tMs": 72634,
+        "source": "hint"
+      },
+      {
+        "tMs": 74816,
+        "source": "corrected"
+      },
+      {
+        "tMs": 76998,
+        "source": "corrected"
+      },
+      {
+        "tMs": 79180,
+        "source": "corrected"
+      },
+      {
+        "tMs": 81362,
+        "source": "corrected"
+      },
+      {
+        "tMs": 83543,
+        "source": "corrected"
+      },
+      {
+        "tMs": 85725,
+        "source": "corrected"
+      },
+      {
+        "tMs": 87907,
+        "source": "corrected"
+      },
+      {
+        "tMs": 90089,
+        "source": "corrected"
+      },
+      {
+        "tMs": 92271,
+        "source": "corrected"
+      },
+      {
+        "tMs": 94452,
+        "source": "corrected"
+      },
+      {
+        "tMs": 96634,
+        "source": "corrected"
+      },
+      {
+        "tMs": 98816,
+        "source": "corrected"
+      },
+      {
+        "tMs": 100998,
+        "source": "corrected"
+      },
+      {
+        "tMs": 103180,
+        "source": "corrected"
+      },
+      {
+        "tMs": 105362,
+        "source": "corrected"
+      },
+      {
+        "tMs": 107543,
+        "source": "corrected"
+      },
+      {
+        "tMs": 109725,
+        "source": "corrected"
+      },
+      {
+        "tMs": 111907,
+        "source": "corrected"
+      },
+      {
+        "tMs": 114089,
+        "source": "corrected"
+      },
+      {
+        "tMs": 116271,
+        "source": "corrected"
+      },
+      {
+        "tMs": 118452,
+        "source": "corrected"
+      },
+      {
+        "tMs": 120634,
+        "source": "corrected"
+      },
+      {
+        "tMs": 122816,
+        "source": "corrected"
+      },
+      {
+        "tMs": 124998,
+        "source": "corrected"
+      },
+      {
+        "tMs": 127180,
+        "source": "corrected"
+      },
+      {
+        "tMs": 129362,
+        "source": "corrected"
+      },
+      {
+        "tMs": 131543,
+        "source": "corrected"
+      },
+      {
+        "tMs": 133725,
+        "source": "corrected"
+      },
+      {
+        "tMs": 135907,
+        "source": "corrected"
+      },
+      {
+        "tMs": 138089,
+        "source": "corrected"
+      },
+      {
+        "tMs": 140271,
+        "source": "corrected"
+      },
+      {
+        "tMs": 142452,
+        "source": "corrected"
+      },
+      {
+        "tMs": 144634,
+        "source": "corrected"
+      },
+      {
+        "tMs": 146816,
+        "source": "corrected"
+      },
+      {
+        "tMs": 148998,
+        "source": "corrected"
+      },
+      {
+        "tMs": 151180,
+        "source": "corrected"
+      },
+      {
+        "tMs": 153362,
+        "source": "corrected"
+      },
+      {
+        "tMs": 155543,
+        "source": "corrected"
+      },
+      {
+        "tMs": 157725,
+        "source": "corrected"
+      }
+    ],
+    "aiDownbeatMarkers": [],
+    "sectionMarkers": [
+      {
+        "tMs": 8819,
+        "source": "hint"
+      },
+      {
+        "tMs": 13182,
+        "source": "hint"
+      },
+      {
+        "tMs": 17546,
+        "source": "hint"
+      },
+      {
+        "tMs": 26273,
+        "source": "hint"
+      },
+      {
+        "tMs": 35001,
+        "source": "hint"
+      },
+      {
+        "tMs": 43728,
+        "source": "default"
+      },
+      {
+        "tMs": 52455,
+        "source": "hint"
+      },
+      {
+        "tMs": 61182,
+        "source": "hint"
+      },
+      {
+        "tMs": 69907,
+        "source": "hint"
+      },
+      {
+        "tMs": 72634,
+        "source": "hint"
+      },
+      {
+        "tMs": 90089,
+        "source": "hint"
+      },
+      {
+        "tMs": 98816,
+        "source": "hint"
+      },
+      {
+        "tMs": 107543,
+        "source": "hint"
+      },
+      {
+        "tMs": 116271,
+        "source": "hint"
+      },
+      {
+        "tMs": 124998,
+        "source": "hint"
+      },
+      {
+        "tMs": 133725,
+        "source": "hint"
+      },
+      {
+        "tMs": 142452,
+        "source": "hint"
+      },
+      {
+        "tMs": 151180,
+        "source": "hint"
+      }
+    ],
+    "lyricSuppressMarkers": [],
+    "lyricSuppressWindows": [],
+    "sections": [
+      {
+        "id": "intro-1-a",
+        "baseId": "intro-1",
+        "labelRaw": "Intro",
+        "t0Ms": 0,
+        "t1Ms": 8819,
+        "source": "marker"
+      },
+      {
+        "id": "intro-1-b",
+        "baseId": "intro-1",
+        "labelRaw": "Intro",
+        "t0Ms": 8819,
+        "t1Ms": 13182,
+        "source": "marker"
+      },
+      {
+        "id": "intro-1-c",
+        "baseId": "intro-1",
+        "labelRaw": "Intro",
+        "t0Ms": 13182,
+        "t1Ms": 17546,
+        "source": "marker"
+      },
+      {
+        "id": "section-a-1",
+        "baseId": "section-a-1",
+        "labelRaw": "Section A",
+        "t0Ms": 17546,
+        "t1Ms": 26273,
+        "source": "marker",
+        "combinedFrom": [
+          "intro-1",
+          "section-a-1"
+        ]
+      },
+      {
+        "id": "section-a-2",
+        "baseId": "section-a-2",
+        "labelRaw": "Section A’",
+        "t0Ms": 26273,
+        "t1Ms": 35001,
+        "source": "marker",
+        "combinedFrom": [
+          "section-a-1",
+          "section-a-2",
+          "section-b-1"
+        ]
+      },
+      {
+        "id": "section-b-1",
+        "baseId": "section-b-1",
+        "labelRaw": "Section B",
+        "t0Ms": 35001,
+        "t1Ms": 43728,
+        "source": "marker"
+      },
+      {
+        "id": "interference-1",
+        "baseId": "interference-1",
+        "labelRaw": "Interference",
+        "t0Ms": 43728,
+        "t1Ms": 52455,
+        "source": "marker",
+        "combinedFrom": [
+          "interference-1",
+          "section-c-1"
+        ]
+      },
+      {
+        "id": "section-c-1-a",
+        "baseId": "section-c-1",
+        "labelRaw": "Section C",
+        "t0Ms": 52455,
+        "t1Ms": 61182,
+        "source": "marker"
+      },
+      {
+        "id": "section-c-1-b",
+        "baseId": "section-c-1",
+        "labelRaw": "Section C",
+        "t0Ms": 61182,
+        "t1Ms": 69907,
+        "source": "marker"
+      },
+      {
+        "id": "section-c-1-c",
+        "baseId": "section-c-1",
+        "labelRaw": "Section C",
+        "t0Ms": 69907,
+        "t1Ms": 72634,
+        "source": "marker"
+      },
+      {
+        "id": "section-c-1-d",
+        "baseId": "section-c-1",
+        "labelRaw": "Section C",
+        "t0Ms": 72634,
+        "t1Ms": 90089,
+        "source": "marker"
+      },
+      {
+        "id": "break-1-a",
+        "baseId": "break-1",
+        "labelRaw": "Break",
+        "t0Ms": 90089,
+        "t1Ms": 98816,
+        "source": "marker",
+        "combinedFrom": [
+          "section-c-1",
+          "break-1"
+        ]
+      },
+      {
+        "id": "break-1-b",
+        "baseId": "break-1",
+        "labelRaw": "Break",
+        "t0Ms": 98816,
+        "t1Ms": 107543,
+        "source": "marker",
+        "combinedFrom": [
+          "break-1",
+          "final-section-1"
+        ]
+      },
+      {
+        "id": "final-section-1",
+        "baseId": "final-section-1",
+        "labelRaw": "Final Section",
+        "t0Ms": 107543,
+        "t1Ms": 116271,
+        "source": "marker",
+        "combinedFrom": [
+          "final-section-1",
+          "ending-1"
+        ]
+      },
+      {
+        "id": "ending-1-a",
+        "baseId": "ending-1",
+        "labelRaw": "Ending",
+        "t0Ms": 116271,
+        "t1Ms": 124998,
+        "source": "marker"
+      },
+      {
+        "id": "ending-1-b",
+        "baseId": "ending-1",
+        "labelRaw": "Ending",
+        "t0Ms": 124998,
+        "t1Ms": 133725,
+        "source": "marker"
+      },
+      {
+        "id": "ending-1-c",
+        "baseId": "ending-1",
+        "labelRaw": "Ending",
+        "t0Ms": 133725,
+        "t1Ms": 142452,
+        "source": "marker"
+      },
+      {
+        "id": "ending-1-d",
+        "baseId": "ending-1",
+        "labelRaw": "Ending",
+        "t0Ms": 142452,
+        "t1Ms": 151180,
+        "source": "marker"
+      },
+      {
+        "id": "ending-1-e",
+        "baseId": "ending-1",
+        "labelRaw": "Ending",
+        "t0Ms": 151180,
+        "t1Ms": 163180,
+        "source": "marker"
+      }
+    ]
+  },
+  "overlays": [
+    {
+      "type": "hint/barBeat",
+      "tSec": 6.629333,
+      "payload": {
+        "beatInBar": 1,
+        "groupId": "a399ac02-e85e-4157-bf52-2a1f650e8ee2"
+      },
+      "at": "2026-03-01T01:31:16.562Z",
+      "actor": "user"
+    },
+    {
+      "type": "hint/barBeat",
+      "tSec": 7.176341,
+      "payload": {
+        "beatInBar": 2,
+        "groupId": "a399ac02-e85e-4157-bf52-2a1f650e8ee2"
+      },
+      "at": "2026-03-01T01:31:16.569Z",
+      "actor": "user"
+    },
+    {
+      "type": "hint/barBeat",
+      "tSec": 7.68,
+      "payload": {
+        "beatInBar": 3,
+        "groupId": "a399ac02-e85e-4157-bf52-2a1f650e8ee2"
+      },
+      "at": "2026-03-01T01:31:16.575Z",
+      "actor": "user"
+    },
+    {
+      "type": "hint/barBeat",
+      "tSec": 8.277333,
+      "payload": {
+        "beatInBar": 4,
+        "groupId": "a399ac02-e85e-4157-bf52-2a1f650e8ee2"
+      },
+      "at": "2026-03-01T01:31:16.581Z",
+      "actor": "user"
+    },
+    {
+      "type": "hint/barBeat",
+      "tSec": 8.849395,
+      "payload": {
+        "beatInBar": 1,
+        "groupId": "a399ac02-e85e-4157-bf52-2a1f650e8ee2"
+      },
+      "at": "2026-03-01T01:31:16.588Z",
+      "actor": "user"
+    },
+    {
+      "type": "hint/barBeat",
+      "tSec": 69.90703900000001,
+      "payload": {
+        "beatInBar": 1,
+        "groupId": "9ab2b659-29a3-4f1a-8d22-77a261b4a302"
+      },
+      "at": "2026-03-01T01:32:51.963Z",
+      "actor": "user"
+    },
+    {
+      "type": "hint/barBeat",
+      "tSec": 70.413706,
+      "payload": {
+        "beatInBar": 2,
+        "groupId": "9ab2b659-29a3-4f1a-8d22-77a261b4a302"
+      },
+      "at": "2026-03-01T01:32:51.969Z",
+      "actor": "user"
+    },
+    {
+      "type": "hint/barBeat",
+      "tSec": 70.95461200000001,
+      "payload": {
+        "beatInBar": 3,
+        "groupId": "9ab2b659-29a3-4f1a-8d22-77a261b4a302"
+      },
+      "at": "2026-03-01T01:32:51.974Z",
+      "actor": "user"
+    },
+    {
+      "type": "hint/barBeat",
+      "tSec": 71.51344900000001,
+      "payload": {
+        "beatInBar": 4,
+        "groupId": "9ab2b659-29a3-4f1a-8d22-77a261b4a302"
+      },
+      "at": "2026-03-01T01:32:51.979Z",
+      "actor": "user"
+    },
+    {
+      "type": "hint/barBeat",
+      "tSec": 72.65424200000001,
+      "payload": {
+        "beatInBar": 1,
+        "groupId": "d3048529-a733-4230-bf81-0827e31e0ec9"
+      },
+      "at": "2026-03-01T01:32:53.101Z",
+      "actor": "user"
+    },
+    {
+      "type": "hint/beat",
+      "tSec": 71.986742,
+      "payload": {
+        "groupId": "214bde0e-ae1c-4fbe-ae57-a3a4484df64c"
+      },
+      "at": "2026-03-01T01:33:17.624Z",
+      "actor": "user"
+    },
+    {
+      "type": "hint/barBeat",
+      "tSec": 0.64,
+      "payload": {
+        "beatInBar": 2,
+        "groupId": "349a9606-c29c-4e61-a9f5-3a6e3245fb50"
+      },
+      "at": "2026-03-01T06:37:36.881Z",
+      "actor": "user"
+    },
+    {
+      "type": "hint/barBeat",
+      "tSec": 1.16,
+      "payload": {
+        "beatInBar": 3,
+        "groupId": "349a9606-c29c-4e61-a9f5-3a6e3245fb50"
+      },
+      "at": "2026-03-01T06:37:36.888Z",
+      "actor": "user"
+    },
+    {
+      "type": "hint/barBeat",
+      "tSec": 1.712,
+      "payload": {
+        "beatInBar": 4,
+        "groupId": "349a9606-c29c-4e61-a9f5-3a6e3245fb50"
+      },
+      "at": "2026-03-01T06:37:36.893Z",
+      "actor": "user"
+    },
+    {
+      "type": "hint/barBeat",
+      "tSec": 2.250667,
+      "payload": {
+        "beatInBar": 1,
+        "groupId": "349a9606-c29c-4e61-a9f5-3a6e3245fb50"
+      },
+      "at": "2026-03-01T06:37:36.898Z",
+      "actor": "user"
+    },
+    {
+      "type": "hint/barBeat",
+      "tSec": 2.8178330000000003,
+      "payload": {
+        "beatInBar": 2,
+        "groupId": "349a9606-c29c-4e61-a9f5-3a6e3245fb50"
+      },
+      "at": "2026-03-01T06:37:36.903Z",
+      "actor": "user"
+    },
+    {
+      "type": "hint/barBeat",
+      "tSec": 3.3396990000000004,
+      "payload": {
+        "beatInBar": 3,
+        "groupId": "349a9606-c29c-4e61-a9f5-3a6e3245fb50"
+      },
+      "at": "2026-03-01T06:37:36.907Z",
+      "actor": "user"
+    },
+    {
+      "type": "hint/barBeat",
+      "tSec": 3.9306669999999997,
+      "payload": {
+        "beatInBar": 4,
+        "groupId": "349a9606-c29c-4e61-a9f5-3a6e3245fb50"
+      },
+      "at": "2026-03-01T06:37:36.913Z",
+      "actor": "user"
+    },
+    {
+      "type": "hint/barBeat",
+      "tSec": 4.53182,
+      "payload": {
+        "beatInBar": 1,
+        "groupId": "349a9606-c29c-4e61-a9f5-3a6e3245fb50"
+      },
+      "at": "2026-03-01T06:37:36.917Z",
+      "actor": "user"
+    },
+    {
+      "type": "hint/barBeat",
+      "tSec": 5.072,
+      "payload": {
+        "beatInBar": 2,
+        "groupId": "349a9606-c29c-4e61-a9f5-3a6e3245fb50"
+      },
+      "at": "2026-03-01T06:37:36.921Z",
+      "actor": "user"
+    },
+    {
+      "type": "hint/barBeat",
+      "tSec": 5.589747,
+      "payload": {
+        "beatInBar": 3,
+        "groupId": "349a9606-c29c-4e61-a9f5-3a6e3245fb50"
+      },
+      "at": "2026-03-01T06:37:36.928Z",
+      "actor": "user"
+    },
+    {
+      "type": "hint/barBeat",
+      "tSec": 6.110846,
+      "payload": {
+        "beatInBar": 4,
+        "groupId": "349a9606-c29c-4e61-a9f5-3a6e3245fb50"
+      },
+      "at": "2026-03-01T06:37:36.933Z",
+      "actor": "user"
+    },
+    {
+      "type": "hint/barBeat",
+      "tSec": 4.410667,
+      "payload": {
+        "beatInBar": 1,
+        "groupId": "04741f98-62b3-40a8-b107-6f415b852980"
+      },
+      "at": "2026-03-01T06:37:58.981Z",
+      "actor": "user"
+    },
+    {
+      "type": "hint/barBeat",
+      "tSec": 6.637333,
+      "payload": {
+        "beatInBar": 1,
+        "groupId": "b1673090-8ad4-4a8f-8d43-94ab57dabac5"
+      },
+      "at": "2026-03-01T06:38:10.806Z",
+      "actor": "user"
+    },
+    {
+      "type": "hint/sectionMarker",
+      "tSec": 8.70876,
+      "payload": {
+        "action": "set",
+        "groupId": "39f165ee-2b81-4745-aba9-060aadc0b00b"
+      },
+      "at": "2026-03-02T06:22:16.197Z",
+      "actor": "user"
+    },
+    {
+      "type": "hint/sectionMarker",
+      "tSec": 13.023312,
+      "payload": {
+        "action": "set",
+        "groupId": "2fa349ef-e02f-4017-a942-237ff23aefeb"
+      },
+      "at": "2026-03-02T06:22:20.516Z",
+      "actor": "user"
+    },
+    {
+      "type": "hint/sectionMarker",
+      "tSec": 17.484645,
+      "payload": {
+        "action": "set",
+        "groupId": "29e7483c-0d30-4357-98d2-41e5f49f8ab6"
+      },
+      "at": "2026-03-02T06:22:24.966Z",
+      "actor": "user"
+    },
+    {
+      "type": "hint/sectionMarker",
+      "tSec": 21.823312,
+      "payload": {
+        "action": "clear",
+        "groupId": "f73c0372-f172-4deb-ab3b-0301724a590b"
+      },
+      "at": "2026-03-02T06:22:29.313Z",
+      "actor": "user"
+    },
+    {
+      "type": "hint/sectionMarker",
+      "tSec": 26.201979,
+      "payload": {
+        "action": "set",
+        "groupId": "0fad3cba-03f3-4c90-8a59-f503c91ba17f"
+      },
+      "at": "2026-03-02T06:22:33.688Z",
+      "actor": "user"
+    },
+    {
+      "type": "hint/sectionMarker",
+      "tSec": 28.381164000000002,
+      "payload": {
+        "action": "clear",
+        "groupId": "e25b7f7e-7657-490f-8aa7-1f8b757fdf1e"
+      },
+      "at": "2026-03-02T06:22:35.863Z",
+      "actor": "user"
+    },
+    {
+      "type": "hint/sectionMarker",
+      "tSec": 32.730815,
+      "payload": {
+        "action": "clear",
+        "groupId": "788e60c6-db88-4d6c-a44e-2e8e759c301b"
+      },
+      "at": "2026-03-02T06:22:40.215Z",
+      "actor": "user"
+    },
+    {
+      "type": "hint/sectionMarker",
+      "tSec": 34.921032,
+      "payload": {
+        "action": "set",
+        "groupId": "5520a7ef-9093-4321-9ab0-cd777b642982"
+      },
+      "at": "2026-03-02T06:22:42.407Z",
+      "actor": "user"
+    },
+    {
+      "type": "hint/sectionMarker",
+      "tSec": 50.252645,
+      "payload": {
+        "action": "clear",
+        "groupId": "09cf6441-7cb4-4f14-8ce0-99c36be3541b"
+      },
+      "at": "2026-03-02T06:22:57.742Z",
+      "actor": "user"
+    },
+    {
+      "type": "hint/sectionMarker",
+      "tSec": 52.420645,
+      "payload": {
+        "action": "set",
+        "groupId": "f7fa7ed2-3a98-4ad5-a04e-6280a2729b5c"
+      },
+      "at": "2026-03-02T06:22:59.912Z",
+      "actor": "user"
+    },
+    {
+      "type": "hint/sectionMarker",
+      "tSec": 59.129961,
+      "payload": {
+        "action": "set",
+        "groupId": "c739e212-2c56-40ee-accd-9629cd4d9d50"
+      },
+      "at": "2026-03-02T06:23:16.507Z",
+      "actor": "user"
+    },
+    {
+      "type": "hint/sectionMarker",
+      "tSec": 61.25814,
+      "payload": {
+        "action": "set",
+        "groupId": "9694892e-1ceb-4038-9d60-e91f53ffd50c"
+      },
+      "at": "2026-03-02T06:23:18.639Z",
+      "actor": "user"
+    },
+    {
+      "type": "hint/sectionMarker",
+      "tSec": 58.817181,
+      "payload": {
+        "action": "set",
+        "groupId": "f4a05d5b-6dc4-4bf1-a182-707de22a5c22"
+      },
+      "at": "2026-03-02T06:23:30.514Z",
+      "actor": "user"
+    },
+    {
+      "type": "hint/sectionMarker",
+      "tSec": 58.951283,
+      "payload": {
+        "action": "clear",
+        "groupId": "c3b6dc0f-ae91-4a36-9999-d3c496e7cd88"
+      },
+      "at": "2026-03-02T06:23:40.067Z",
+      "actor": "user"
+    },
+    {
+      "type": "hint/sectionMarker",
+      "tSec": 69.860617,
+      "payload": {
+        "action": "set",
+        "groupId": "3f7d2cd2-1090-472d-ada0-8ebb95de58af"
+      },
+      "at": "2026-03-02T06:23:50.982Z",
+      "actor": "user"
+    },
+    {
+      "type": "hint/sectionMarker",
+      "tSec": 72.60195,
+      "payload": {
+        "action": "set",
+        "groupId": "5ea143c2-cd79-42f5-9a45-8bf43e20a88c"
+      },
+      "at": "2026-03-02T06:23:53.724Z",
+      "actor": "user"
+    },
+    {
+      "type": "hint/sectionMarker",
+      "tSec": 90.031283,
+      "payload": {
+        "action": "set",
+        "groupId": "e70dd783-5717-4240-8efc-ecbd7e13b287"
+      },
+      "at": "2026-03-02T06:24:11.152Z",
+      "actor": "user"
+    },
+    {
+      "type": "hint/sectionMarker",
+      "tSec": 94.391283,
+      "payload": {
+        "action": "clear",
+        "groupId": "b416aff0-0557-486a-b7bc-be0772d6ec5c"
+      },
+      "at": "2026-03-02T06:24:15.516Z",
+      "actor": "user"
+    },
+    {
+      "type": "hint/sectionMarker",
+      "tSec": 98.799283,
+      "payload": {
+        "action": "set",
+        "groupId": "474f6905-9cc8-479c-9675-2cf78ecb2cb4"
+      },
+      "at": "2026-03-02T06:24:19.921Z",
+      "actor": "user"
+    },
+    {
+      "type": "hint/sectionMarker",
+      "tSec": 103.148617,
+      "payload": {
+        "action": "clear",
+        "groupId": "efbf3396-2d7e-4d1c-a5c0-dfd15a3be435"
+      },
+      "at": "2026-03-02T06:24:24.268Z",
+      "actor": "user"
+    },
+    {
+      "type": "hint/sectionMarker",
+      "tSec": 107.52888800000001,
+      "payload": {
+        "action": "set",
+        "groupId": "2cc95e36-bd3b-4f5e-a3b5-d46c92485ac1"
+      },
+      "at": "2026-03-02T06:24:28.649Z",
+      "actor": "user"
+    },
+    {
+      "type": "hint/sectionMarker",
+      "tSec": 111.85185100000001,
+      "payload": {
+        "action": "clear",
+        "groupId": "08279c86-501e-4985-9ef2-7a6ecadbc836"
+      },
+      "at": "2026-03-02T06:24:32.967Z",
+      "actor": "user"
+    },
+    {
+      "type": "hint/sectionMarker",
+      "tSec": 116.26061700000001,
+      "payload": {
+        "action": "set",
+        "groupId": "348d13ea-7bde-463c-9e3b-5d237521c8ec"
+      },
+      "at": "2026-03-02T06:24:37.383Z",
+      "actor": "user"
+    },
+    {
+      "type": "hint/sectionMarker",
+      "tSec": 124.98061700000001,
+      "payload": {
+        "action": "set",
+        "groupId": "13eac597-6939-475f-8da0-ed8aeddea372"
+      },
+      "at": "2026-03-02T06:24:46.098Z",
+      "actor": "user"
+    },
+    {
+      "type": "hint/sectionMarker",
+      "tSec": 133.73789499999998,
+      "payload": {
+        "action": "set",
+        "groupId": "7b4d8fa5-9e37-4d39-80a2-ee2f5d83f4d0"
+      },
+      "at": "2026-03-02T06:24:54.860Z",
+      "actor": "user"
+    },
+    {
+      "type": "hint/sectionMarker",
+      "tSec": 142.399283,
+      "payload": {
+        "action": "set",
+        "groupId": "9ed9e31d-e178-4eba-8875-744d18b148dd"
+      },
+      "at": "2026-03-02T06:25:03.519Z",
+      "actor": "user"
+    },
+    {
+      "type": "hint/sectionMarker",
+      "tSec": 151.15085499999998,
+      "payload": {
+        "action": "set",
+        "groupId": "fbd2cee0-25e9-43b6-b3c1-fbe8dc3aa4d1"
+      },
+      "at": "2026-03-02T06:25:12.267Z",
+      "actor": "user"
+    }
+  ]
+}

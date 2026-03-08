@@ -1787,6 +1787,43 @@ async function resolvePlaybackAssets(nextTrack: Track, baseTrackUrl: string) {
   return { hasStems, hasTrueMix, mixPath, backingPath: backingPath || mixPath, vocalsPath };
 }
 
+function applyTrackPlaybackAssets(
+  assets: Awaited<ReturnType<typeof resolvePlaybackAssets>>,
+  baseTrackUrl: string
+) {
+  const hasStems = assets.hasStems;
+  playbackMode = "mix";
+  stemSignalsEnabled = hasStems;
+  mixControlLabel = assets.hasTrueMix ? "Mix" : "Backing";
+  renderMixerControls();
+  const audioPlayPath = assets.hasTrueMix ? assets.mixPath : (assets.backingPath || assets.mixPath);
+  const audioUrl = resolveTrackAssetUrl(audioPlayPath, baseTrackUrl);
+  const wasPlaying = !audio.paused;
+  audio.pause();
+  audioBacking.pause();
+  audioVocals.pause();
+  resetStemSyncState();
+  audio.src = audioUrl;
+  audio.load();
+  if (hasStems && assets.backingPath) {
+    audioBacking.src = resolveTrackAssetUrl(assets.backingPath, baseTrackUrl);
+    audioBacking.load();
+  } else {
+    audioBacking.removeAttribute("src");
+    audioBacking.load();
+  }
+  if (hasStems && assets.vocalsPath) {
+    audioVocals.src = resolveTrackAssetUrl(assets.vocalsPath, baseTrackUrl);
+    audioVocals.load();
+  } else {
+    audioVocals.removeAttribute("src");
+    audioVocals.load();
+  }
+  ensureAudioGraph();
+  applyMixerGains();
+  return { wasPlaying };
+}
+
 function normalizeMsList(value: unknown) {
   if (!Array.isArray(value)) return [];
   return value
@@ -4426,36 +4463,10 @@ async function loadTrack(nextIndex: number) {
   }
 
   const assets = await resolvePlaybackAssets(track, trackUrl);
-  const hasStems = assets.hasStems || isStemsTrack(track);
-  playbackMode = "mix";
-  stemSignalsEnabled = hasStems;
-  mixControlLabel = assets.hasTrueMix ? "Mix" : "Backing";
-  renderMixerControls();
-  const audioPlayPath = assets.hasTrueMix ? assets.mixPath : (assets.backingPath || assets.mixPath);
-  const audioUrl = resolveTrackAssetUrl(audioPlayPath, trackUrl);
-  const wasPlaying = !audio.paused;
-  audio.pause();
-  audioBacking.pause();
-  audioVocals.pause();
-  resetStemSyncState();
-  audio.src = audioUrl;
-  audio.load();
-  if (hasStems && assets.backingPath) {
-    audioBacking.src = resolveTrackAssetUrl(assets.backingPath, trackUrl);
-    audioBacking.load();
-  } else {
-    audioBacking.removeAttribute("src");
-    audioBacking.load();
-  }
-  if (hasStems && assets.vocalsPath) {
-    audioVocals.src = resolveTrackAssetUrl(assets.vocalsPath, trackUrl);
-    audioVocals.load();
-  } else {
-    audioVocals.removeAttribute("src");
-    audioVocals.load();
-  }
-  ensureAudioGraph();
-  applyMixerGains();
+  const { wasPlaying } = applyTrackPlaybackAssets({
+    ...assets,
+    hasStems: assets.hasStems || isStemsTrack(track)
+  }, trackUrl);
 
   if (!Number.isInteger(seed)) {
     buildScene(hashStringToSeed(track.trackId || trackId));

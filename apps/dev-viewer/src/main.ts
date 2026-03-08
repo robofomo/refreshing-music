@@ -2646,6 +2646,15 @@ async function resolveTrackRecipe(nextTrack: Track) {
   return applyVisualHintsToRecipe(resolved, nextTrack);
 }
 
+function applyTrackSeed(trackId: string) {
+  if (!Number.isInteger(seed)) {
+    buildScene(hashStringToSeed(trackId));
+    updateUrlParam("seed", String(seed));
+    return;
+  }
+  buildScene(seed);
+}
+
 function sortedTimedSections() {
   const sections = Array.isArray(track?.timing?.sections) ? track.timing.sections : [];
   return sections
@@ -4476,12 +4485,7 @@ async function loadTrack(nextIndex: number) {
     hasStems: assets.hasStems || isStemsTrack(track)
   }, trackUrl);
 
-  if (!Number.isInteger(seed)) {
-    buildScene(hashStringToSeed(track.trackId || trackId));
-    updateUrlParam("seed", String(seed));
-  } else {
-    buildScene(seed);
-  }
+  applyTrackSeed(track.trackId || trackId);
 
   if (wasPlaying) {
     await playSynced();

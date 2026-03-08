@@ -4690,6 +4690,31 @@ function handlePrimitiveLabKeydown(e: KeyboardEvent) {
   return false;
 }
 
+function handleOffsetKeydown(e: KeyboardEvent) {
+  const key = e.key.toLowerCase();
+  if (key === "o" && !e.repeat) {
+    e.preventDefault();
+    cycleOffsetPreset();
+    return true;
+  }
+  if (e.code === "BracketLeft") {
+    nudgeRenderOffset(-10);
+    e.preventDefault();
+    return true;
+  }
+  if (e.code === "BracketRight") {
+    nudgeRenderOffset(10);
+    e.preventDefault();
+    return true;
+  }
+  if (e.code === "Backslash") {
+    resetRenderOffset();
+    e.preventDefault();
+    return true;
+  }
+  return false;
+}
+
 playBtn.addEventListener("click", async () => {
   await togglePlayPause();
 });
@@ -4840,25 +4865,7 @@ window.addEventListener("keydown", async (e) => {
     e.preventDefault();
     return;
   }
-  if (key === "o" && !e.repeat) {
-    e.preventDefault();
-    cycleOffsetPreset();
-    return;
-  }
-  if (e.code === "BracketLeft") {
-    nudgeRenderOffset(-10);
-    e.preventDefault();
-    return;
-  }
-  if (e.code === "BracketRight") {
-    nudgeRenderOffset(10);
-    e.preventDefault();
-    return;
-  }
-  if (e.code === "Backslash") {
-    resetRenderOffset();
-    e.preventDefault();
-  }
+  if (handleOffsetKeydown(e)) return;
 });
 
 window.addEventListener("mousemove", showControlsTemporarily);

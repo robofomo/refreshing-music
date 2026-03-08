@@ -2519,6 +2519,61 @@ function updateGraphAutoVariantState(sectionId: string, tRenderMs: number) {
   lastAutoDownbeatCount = -1;
 }
 
+function hudHintModeLines(signalBus: any, lyricsSuppressedNow: boolean): string[] {
+  if (!isHintEditMode()) return [];
+  return [
+    `hints: ${activeHintCount}`,
+    `fusion: ${signalBus.hints.fusionModeLabel} (now: ${signalBus.beat.fusionMode})`,
+    `beats: ${signalBus.beat.beatCount}`,
+    `downbeats: ${signalBus.beat.downbeatCount}`,
+    `sections: ${sectionMarkers.length}`,
+    `end: ${endMarkerMs > 0 ? fmtMs(endMarkerMs) : "-"}`,
+    `lyricsSuppressedNow: ${lyricsSuppressedNow ? "yes" : "no"}`,
+    `aiDownbeats: ${signalBus.hints.aiDownbeats}`,
+    `reactive: L${signalBus.reactive.low.toFixed(2)} M${signalBus.reactive.mid.toFixed(2)} H${signalBus.reactive.high.toFixed(2)} O${signalBus.reactive.onsetPulse.toFixed(2)} VA${signalBus.reactive.vocalsActive.toFixed(2)}`,
+    `lyricSuppressMarkers: ${lyricSuppressMarkers.length}`,
+    `lyricSuppressWindows: ${lyricSuppressWindows.length}`
+  ];
+}
+
+function hudLabModeLines(labProfileRounded: any): string[] {
+  if (viewerMode !== "primitive-lab") return [];
+  return [
+    `labPrimitive: ${labPrimitive}`,
+    `labBackdropPolicy: ${labBackdropPolicy}`,
+    `labBackdrop: ${currentLabBackdropId()}`,
+    `labSeed: ${labSeedForPrimitive()}`,
+    `labProfile: ${stableStringify(labProfileRounded)}`
+  ];
+}
+
+function hudGraphModeLines(
+  modeRecipe: any,
+  graphSel: any,
+  playerSceneChoice: any,
+  playerVariantIndex: number,
+  nextSectionId: string,
+  nextSectionInMs: number
+): string[] {
+  if (!isGraphCapableMode()) return [];
+  const lines: string[] = [
+    `graphLayers: ${Array.isArray(modeRecipe?.graph?.layers) ? modeRecipe.graph.layers.length : 0}`
+  ];
+  if (viewerMode === "player") {
+    lines.push(`playerSource: ${playerSceneChoice?.source ?? "-"}`);
+    lines.push(`playerVariant: ${playerVariantIndex}`);
+    lines.push(`playerTransition: ${playerLastTransitionLabel}`);
+    lines.push(`nextSection: ${nextSectionId || "-"} in ${Number.isFinite(nextSectionInMs) ? `${nextSectionInMs}ms` : "-"}`);
+  }
+  lines.push(`graphRecipe: ${graphSel?.template?.id ?? "-"} (#${graphSel ? graphSel.selectedIndex + 1 : "-"}/${graphSel?.templates?.length ?? "-"})`);
+  lines.push(`graphVariant: ${graphSel?.variant ?? 0}`);
+  if (viewerMode !== "player") {
+    lines.push(`graphManual: ${graphSel?.isManual ? "on" : "off"} auto=${graphAutoRefresh ? "on" : "off"}`);
+  }
+  lines.push(`graphMode: ${viewerMode}`);
+  return lines;
+}
+
 function sortedTimedSections() {
   const sections = Array.isArray(track?.timing?.sections) ? track.timing.sections : [];
   return sections
@@ -4299,53 +4354,9 @@ if (!isSeeking && Number.isFinite(audio.duration) && audio.duration > 0) {
     `fps: ${fpsSmoothed > 0 ? fpsSmoothed.toFixed(1) : "-"} density:${adaptiveDensityScale.toFixed(2)}`,
     `offsetMs: ${renderOffsetMs}`,
     `playback: ${playbackMode}`,
-    ...(isHintEditMode()
-      ? [
-          `hints: ${activeHintCount}`,
-          `fusion: ${signalBus.hints.fusionModeLabel} (now: ${signalBus.beat.fusionMode})`,
-          `beats: ${signalBus.beat.beatCount}`,
-          `downbeats: ${signalBus.beat.downbeatCount}`,
-          `sections: ${sectionMarkers.length}`,
-          `end: ${endMarkerMs > 0 ? fmtMs(endMarkerMs) : "-"}`,
-          `lyricsSuppressedNow: ${lyricsSuppressedNow ? "yes" : "no"}`,
-          `aiDownbeats: ${signalBus.hints.aiDownbeats}`,
-          `reactive: L${signalBus.reactive.low.toFixed(2)} M${signalBus.reactive.mid.toFixed(2)} H${signalBus.reactive.high.toFixed(2)} O${signalBus.reactive.onsetPulse.toFixed(2)} VA${signalBus.reactive.vocalsActive.toFixed(2)}`
-        ]
-      : []),
-    ...(isHintEditMode()
-      ? [
-          `lyricSuppressMarkers: ${lyricSuppressMarkers.length}`,
-          `lyricSuppressWindows: ${lyricSuppressWindows.length}`
-        ]
-      : []),
-    ...(viewerMode === "primitive-lab"
-      ? [
-          `labPrimitive: ${labPrimitive}`,
-          `labBackdropPolicy: ${labBackdropPolicy}`,
-          `labBackdrop: ${currentLabBackdropId()}`,
-          `labSeed: ${labSeedForPrimitive()}`,
-          `labProfile: ${stableStringify(labProfileRounded)}`
-        ]
-      : []),
-    ...(isGraphCapableMode()
-      ? [
-          `graphLayers: ${Array.isArray(modeRecipe?.graph?.layers) ? modeRecipe.graph.layers.length : 0}`,
-          ...(viewerMode === "player"
-            ? [
-                `playerSource: ${playerSceneChoice?.source ?? "-"}`,
-                `playerVariant: ${playerVariantIndex}`,
-                `playerTransition: ${playerLastTransitionLabel}`,
-                `nextSection: ${nextSectionId || "-"} in ${Number.isFinite(nextSectionInMs) ? `${nextSectionInMs}ms` : "-"}`
-              ]
-            : []),
-          `graphRecipe: ${graphSel?.template?.id ?? "-"} (#${graphSel ? graphSel.selectedIndex + 1 : "-"}/${graphSel?.templates?.length ?? "-"})`,
-          `graphVariant: ${graphSel?.variant ?? 0}`,
-          ...(viewerMode === "player"
-            ? []
-            : [`graphManual: ${graphSel?.isManual ? "on" : "off"} auto=${graphAutoRefresh ? "on" : "off"}`]),
-          `graphMode: ${viewerMode}`
-        ]
-      : []),
+    ...hudHintModeLines(signalBus, lyricsSuppressedNow),
+    ...hudLabModeLines(labProfileRounded),
+    ...hudGraphModeLines(modeRecipe, graphSel, playerSceneChoice, playerVariantIndex, nextSectionId, nextSectionInMs),
     `sectionId: ${sectionId || "-"}`,
     `sectionType: ${frameInfo?.sectionType ?? sectionType}`,
     `theme: C${signalBus.theme.coherence.toFixed(2)} P${signalBus.theme.pressure.toFixed(2)} L${signalBus.theme.lyricActivity.toFixed(2)} E${signalBus.theme.sectionEnergy.toFixed(2)}`,

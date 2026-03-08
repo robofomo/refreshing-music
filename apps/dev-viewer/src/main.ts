@@ -2621,6 +2621,31 @@ function resetTrackLoadModeState() {
   playerLastTransitionLabel = "crossfade";
 }
 
+function defaultFallbackRecipe() {
+  return { layers: [{ module: "bg.gradientField", params: { gradientStops: 3 } }] };
+}
+
+async function resolveTrackRecipe(nextTrack: Track) {
+  let resolved: any = null;
+  if (__RELEASE_MODE__) {
+    const releaseRecipePath = String(nextTrack.releaseRecipePath || `/recipes/${encodeURIComponent(nextTrack.trackId || "")}.json`);
+    const relResp = await fetch(new URL(releaseRecipePath, location.origin).toString());
+    if (relResp.ok) resolved = await relResp.json();
+  }
+  if (!resolved) {
+    const albumId = nextTrack.recipeRef?.albumId ?? "example-theme";
+    const override = nextTrack.recipeRef?.trackOverrideId ?? "";
+    const recipeUrl = new URL(`/recipes/resolve?albumId=${encodeURIComponent(albumId)}&trackOverrideId=${encodeURIComponent(override)}`, location.origin);
+    let recipeResp = await fetch(recipeUrl.toString());
+    if (!recipeResp.ok) {
+      const fallbackUrl = new URL(`/recipes/resolve?albumId=example-theme&trackOverrideId=${encodeURIComponent(override)}`, location.origin);
+      recipeResp = await fetch(fallbackUrl.toString());
+    }
+    resolved = recipeResp.ok ? await recipeResp.json() : defaultFallbackRecipe();
+  }
+  return applyVisualHintsToRecipe(resolved, nextTrack);
+}
+
 function sortedTimedSections() {
   const sections = Array.isArray(track?.timing?.sections) ? track.timing.sections : [];
   return sections
@@ -4440,26 +4465,9 @@ async function loadTrack(nextIndex: number) {
   logAudioState("track-loaded", { trackId });
   lyricsLines = String(track.lyrics?.rawText ?? "").split("\n");
   try {
-    let resolved: any = null;
-    if (__RELEASE_MODE__) {
-      const releaseRecipePath = String(track.releaseRecipePath || `/recipes/${encodeURIComponent(track.trackId || "")}.json`);
-      const relResp = await fetch(new URL(releaseRecipePath, location.origin).toString());
-      if (relResp.ok) resolved = await relResp.json();
-    }
-    if (!resolved) {
-      const albumId = track.recipeRef?.albumId ?? "example-theme";
-      const override = track.recipeRef?.trackOverrideId ?? "";
-      const recipeUrl = new URL(`/recipes/resolve?albumId=${encodeURIComponent(albumId)}&trackOverrideId=${encodeURIComponent(override)}`, location.origin);
-      let recipeResp = await fetch(recipeUrl.toString());
-      if (!recipeResp.ok) {
-        const fallbackUrl = new URL(`/recipes/resolve?albumId=example-theme&trackOverrideId=${encodeURIComponent(override)}`, location.origin);
-        recipeResp = await fetch(fallbackUrl.toString());
-      }
-      resolved = recipeResp.ok ? await recipeResp.json() : { layers: [{ module: "bg.gradientField", params: { gradientStops: 3 } }] };
-    }
-    currentRecipe = applyVisualHintsToRecipe(resolved, track);
+    currentRecipe = await resolveTrackRecipe(track);
   } catch {
-    currentRecipe = applyVisualHintsToRecipe({ layers: [{ module: "bg.gradientField", params: { gradientStops: 3 } }] }, track);
+    currentRecipe = applyVisualHintsToRecipe(defaultFallbackRecipe(), track);
   }
 
   const assets = await resolvePlaybackAssets(track, trackUrl);

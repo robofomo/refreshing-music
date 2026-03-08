@@ -5,15 +5,15 @@
     "albumId": "community-picked",
     "trackOverrideId": "01KHYRXRJESTY903ZCJ3"
   },
-  "createdAt": "2026-02-22T07:38:57.695Z",
+  "createdAt": "2026-03-08T02:19:27.071Z",
   "slug": "lanterns-on-the-refresh-line",
-  "title": "Lanterns On The Refresh Line",
+  "title": "Lanterns on the Refresh Line",
   "audio": {
-    "filename": "instrumental.mp3",
-    "path": "../assets/lanterns-on-the-refresh-line/01KHYRXRJESTY903ZCJ3/instrumental.mp3",
+    "filename": "mix.mp3",
+    "path": "../assets/lanterns-on-the-refresh-line/01KHYRXRJESTY903ZCJ3/mix.mp3",
     "cidOrTx": "",
     "mime": "audio/mpeg",
-    "bytes": 4665716
+    "bytes": 3888116
   },
   "composer": {
     "rawText": "[SongTitle: Lanterns on the Refresh Line]\r\n[Style: downtempo, rap, hip-hop, clean studio recording, expressive conversational male vocal, key-change]\r\n[Caption: Low-tempo bars for the builders, jokers, and friends who refresh together.]\r\n[Image: Cozy neon lounge, soft grid glow, community chat bubbles, gentle motion trails, hopeful midnight palette.]\r\n[Refresh Title: The Joker]\r\n[Theme: Community Picked]\r\n[Gradients: 8]\r\n[Rank: 2]\r\n[TitleRarityPct: 0.30]\r\n[Seeds: 428, A:85, B:9, C:69, D:27]\r\n[Composer Version: v2.0]\r\n\r\n[Plan]\r\n[Perspective: first-person plural, community voice]\r\n[Concept: we refresh, we return, we keep it kind]\r\n[Topic: Programmatic Art & Play → bingo nights, shared pulls, new variations]\r\n[GenreBias: downtempo rap]\r\n[StyleChange: none]\r\n[Modulation: lift up a whole step into Final Chorus]\r\n[HookProminence: medium]\r\n[Deviation: Stripped Chorus Once]\r\n\r\n[Intro]\r\n[conversational contour]\r\n[808s breathe; soft keys shimmer; tape-warm drums settle in]\r\nWe tap refresh and share the sign,\r\nWe hold the thread and keep it kind.\r\n\r\n[Verse]\r\n[asymmetric phrasing]\r\nWe chase the frame, then name the glow,\r\nA quiet pull the night can show.\r\nWe mark the squares, we call the win,\r\nA bright new set we’re standing in.\r\n\r\n[Pre-Chorus]\r\n[long-tone release]\r\nThe room stays calm, the signal clear,\r\nWe lean in close and lose the fear.\r\n\r\n[Chorus]\r\n[call-and-answer hook]\r\nWe press refresh, we press refresh,\r\nA rising light, a steady breath.\r\nWe press refresh, we press refresh,\r\nWe build it bright, we build it fresh.\r\n\r\n[Verse]\r\n[motif rotation]\r\nA screenshot saved, a laugh that lands,\r\nA wave of pings from distant lands.\r\nNo chasing noise, no empty race,\r\nJust honest craft in shared space.\r\n\r\n[Chorus]\r\n[register swap]\r\n[Stripped Chorus: drop drums to hats + bass; keep hook clear]\r\nWe press refresh, we press refresh,\r\nA rising light, a steady breath.\r\nWe press refresh, we press refresh,\r\nWe build it bright, we build it fresh.\r\n\r\n[Bridge]\r\n[stepwise triad stairs]\r\n[Half-time pocket; airy pads widen; crowd-chant textures low]\r\nWe trade our time for tools that last,\r\nWe plant the flag, we learn it fast.\r\nA gentle joke, a guiding hand,\r\nWe keep the rhythm, line by line.\r\n\r\n[Final Chorus]\r\n[call-and-answer hook]\r\n[Key Change: lift up a whole step into Final Chorus]\r\n[Full groove returns; cinematic strings lift; brighter synth top-line]\r\nWe press refresh, we press refresh,\r\nA higher road, a deeper breath.\r\nWe press refresh, we press refresh,\r\nWe build it bright, we build it fresh.\r\n\r\n[Ending]\r\n[gentle sequence]\r\n[Loop-ready fade; hats soften; keys glow out]\r\nWe press refresh and hold the line,\r\nWe press refresh and keep it kind.",
@@ -132,8 +132,8 @@
       27736,
       28421,
       29106,
-      29803,
-      30488,
+      29791,
+      30476,
       31161,
       31846,
       32531,
@@ -149,9 +149,9 @@
       39369,
       40043,
       40728,
-      41413,
-      42098,
-      42783,
+      41401,
+      42086,
+      42771,
       43468,
       44153,
       44838,
@@ -189,7 +189,7 @@
       66711,
       67396,
       68081,
-      68766,
+      68754,
       69439,
       70124,
       70809,
@@ -317,7 +317,7 @@
       154146,
       154831,
       155516,
-      156201,
+      156189,
       156874,
       157559,
       158244,
@@ -338,7 +338,7 @@
       168484,
       169169,
       169947,
-      170725,
+      170713,
       171491,
       172257,
       172989,
@@ -413,6 +413,26 @@
         "i": 10,
         "t0Ms": 38050,
         "t1Ms": 42877
+      },
+      {
+        "i": 12,
+        "t0Ms": 43318,
+        "t1Ms": 45701
+      },
+      {
+        "i": 13,
+        "t0Ms": 45721,
+        "t1Ms": 48445
+      },
+      {
+        "i": 12,
+        "t0Ms": 48785,
+        "t1Ms": 51149
+      },
+      {
+        "i": 15,
+        "t0Ms": 51229,
+        "t1Ms": 53873
       },
       {
         "i": 12,
@@ -947,162 +967,189 @@
         "conf": 0.384
       },
       {
+        "i": 12,
         "t0Ms": 43318,
         "t1Ms": 43438,
         "text": "We",
         "conf": 0.997
       },
       {
+        "i": 12,
         "t0Ms": 43498,
         "t1Ms": 43778,
         "text": "press",
         "conf": 0.728
       },
       {
+        "i": 12,
         "t0Ms": 43838,
         "t1Ms": 44359,
         "text": "refresh,",
         "conf": 0.887
       },
       {
+        "i": 12,
         "t0Ms": 44699,
         "t1Ms": 44820,
         "text": "we",
         "conf": 0.645
       },
       {
+        "i": 12,
         "t0Ms": 44860,
         "t1Ms": 45120,
         "text": "press",
         "conf": 0.729
       },
       {
+        "i": 12,
         "t0Ms": 45180,
         "t1Ms": 45701,
         "text": "refresh",
         "conf": 0.788
       },
       {
+        "i": 13,
         "t0Ms": 45721,
         "t1Ms": 45741,
         "text": "A",
         "conf": 1
       },
       {
+        "i": 13,
         "t0Ms": 46242,
         "t1Ms": 46582,
         "text": "rise",
         "conf": 0.892
       },
       {
+        "i": 13,
         "t0Ms": 46642,
         "t1Ms": 46722,
         "text": "in",
         "conf": 0.819
       },
       {
+        "i": 13,
         "t0Ms": 46802,
         "t1Ms": 47183,
         "text": "light,",
         "conf": 0.588
       },
       {
+        "i": 13,
         "t0Ms": 47443,
         "t1Ms": 47483,
         "text": "a",
         "conf": 0.893
       },
       {
+        "i": 13,
         "t0Ms": 47523,
         "t1Ms": 47964,
         "text": "steady",
         "conf": 0.868
       },
       {
+        "i": 13,
         "t0Ms": 48104,
         "t1Ms": 48445,
         "text": "breath",
         "conf": 0.822
       },
       {
+        "i": 12,
         "t0Ms": 48785,
         "t1Ms": 48905,
         "text": "We",
         "conf": 0.662
       },
       {
+        "i": 12,
         "t0Ms": 48966,
         "t1Ms": 49246,
         "text": "press",
         "conf": 0.926
       },
       {
+        "i": 12,
         "t0Ms": 49326,
         "t1Ms": 49787,
         "text": "refresh,",
         "conf": 0.881
       },
       {
+        "i": 12,
         "t0Ms": 49887,
         "t1Ms": 50067,
         "text": "we",
         "conf": 0.996
       },
       {
+        "i": 12,
         "t0Ms": 50187,
         "t1Ms": 50488,
         "text": "press",
         "conf": 0.888
       },
       {
+        "i": 12,
         "t0Ms": 50568,
         "t1Ms": 51149,
         "text": "refresh",
         "conf": 0.882
       },
       {
+        "i": 15,
         "t0Ms": 51229,
         "t1Ms": 51449,
         "text": "We",
         "conf": 0.974
       },
       {
+        "i": 15,
         "t0Ms": 51529,
         "t1Ms": 51910,
         "text": "build",
         "conf": 0.653
       },
       {
+        "i": 15,
         "t0Ms": 52010,
         "t1Ms": 52090,
         "text": "it",
         "conf": 0.908
       },
       {
+        "i": 15,
         "t0Ms": 52210,
         "t1Ms": 52511,
         "text": "bright,",
         "conf": 0.853
       },
       {
+        "i": 15,
         "t0Ms": 52571,
         "t1Ms": 52791,
         "text": "we",
         "conf": 0.814
       },
       {
+        "i": 15,
         "t0Ms": 52911,
         "t1Ms": 53272,
         "text": "build",
         "conf": 0.783
       },
       {
+        "i": 15,
         "t0Ms": 53372,
         "t1Ms": 53532,
         "text": "it",
         "conf": 0.372
       },
       {
+        "i": 15,
         "t0Ms": 53552,
         "t1Ms": 53873,
         "text": "fresh",
@@ -2158,7 +2205,7 @@
     ]
   },
   "assetPaths": {
-    "mix": "",
+    "mix": "assets/lanterns-on-the-refresh-line/01KHYRXRJESTY903ZCJ3/mix.mp3",
     "mixWav": "",
     "stemsZip": "assets/lanterns-on-the-refresh-line/01KHYRXRJESTY903ZCJ3/stems.zip",
     "effective": "assets/lanterns-on-the-refresh-line/01KHYRXRJESTY903ZCJ3/effective.json",

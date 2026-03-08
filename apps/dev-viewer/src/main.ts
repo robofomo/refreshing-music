@@ -79,7 +79,7 @@ type Track = {
   };
 };
 
-type PlaybackMode = "mix" | "stems";
+type PlaybackMode = "mix";
 type ViewerMode = "player" | "hint-edit" | "primitive-lab" | "recipe-view" | "random-scene";
 const VIEWER_MODES: ViewerMode[] = ["player", "hint-edit", "primitive-lab", "recipe-view", "random-scene"];
 type LabBackdropPolicy = "off" | "fixed" | "random";
@@ -240,12 +240,15 @@ const controls = document.getElementById("controls") as HTMLDivElement;
 const mixer = document.getElementById("mixer") as HTMLDivElement;
 const seek = document.getElementById("seek") as HTMLInputElement;
 const audio = document.getElementById("audio") as HTMLAudioElement;
+const audioBacking = document.createElement("audio");
 const audioVocals = document.createElement("audio");
 const ctx = canvas.getContext("2d");
 
 if (!ctx) throw new Error("Canvas2D not supported");
 
 audio.preload = "auto";
+audioBacking.preload = "auto";
+audioBacking.crossOrigin = "anonymous";
 audioVocals.preload = "auto";
 audioVocals.crossOrigin = "anonymous";
 
@@ -321,6 +324,8 @@ let wasPlayingBeforeSeek = false;
 let seekInFlight = false;
 const ampHistory: Array<{ tMs: number; amp: number }> = [];
 let playbackMode: PlaybackMode = "mix";
+let stemSignalsEnabled = false;
+let mixControlLabel = "Mix";
 const mixerState = {
   mix: { volume: 0.85, muted: false },
   backing: { volume: 0.85, muted: false },
@@ -336,6 +341,7 @@ let backingAnalyser: AnalyserNode | null = null;
 let vocalsAnalyser: AnalyserNode | null = null;
 let masterGain: GainNode | null = null;
 let primaryGain: GainNode | null = null;
+let backingGain: GainNode | null = null;
 let vocalsGain: GainNode | null = null;
 let audioData: Uint8Array<ArrayBuffer> | null = null;
 let audioFreqData: Uint8Array<ArrayBuffer> | null = null;
@@ -383,8 +389,9 @@ let lastGraphRebuildTs = 0;
 const CONTROLS_HIDE_MS = 5000;
 let controlsHideTimer = 0;
 let canvasClickTimer = 0;
-let stemResyncTimer = 0;
-let stemForceSyncUntilMs = 0;
+let stemLastDriftMs = 0;
+let stemVocalsReady = false;
+let stemVocalsBufferAheadSec = 0;
 let currentRecipe: any = null;
 const engine = createEngine({
   canvas,
@@ -1191,57 +1198,49 @@ function isStemsTrack(next: Track | null) {
   return Boolean(next?.assetPaths?.instrumental && next?.assetPaths?.vocals);
 }
 
-function stemsActive() {
-  return playbackMode === "stems";
+function stemSignalsActive() {
+  return stemSignalsEnabled;
+}
+
+function isMobileLike() {
+  const ua = String(navigator.userAgent || "");
+  const coarse = typeof window.matchMedia === "function" && window.matchMedia("(pointer: coarse)").matches;
+  const touch = Number((navigator as any).maxTouchPoints || 0) > 0;
+  return coarse || touch || /Android|iPhone|iPad|iPod|Mobi/i.test(ua);
+}
+
+function bufferedAheadSec(el: HTMLMediaElement, tSec: number) {
+  try {
+    const b = el.buffered;
+    for (let i = 0; i < b.length; i += 1) {
+      const start = b.start(i);
+      const end = b.end(i);
+      if (tSec >= start && tSec <= end) return Math.max(0, end - tSec);
+    }
+  } catch {
+    // ignore
+  }
+  return 0;
 }
 
 function activeAudioEls() {
-  return stemsActive() ? [audio, audioVocals] : [audio];
+  return stemSignalsActive() ? [audio, audioBacking, audioVocals] : [audio];
 }
 
-function clearStemResyncTimer() {
-  if (stemResyncTimer) {
-    window.clearInterval(stemResyncTimer);
-    stemResyncTimer = 0;
-  }
-}
-
-function syncStemTiming() {
-  if (!stemsActive() || !audioVocals.src) return;
-  if (audioVocals.readyState < 2) return;
+function sampleStemDrift() {
+  if (!stemSignalsActive() || !audioVocals.src) return;
+  stemVocalsReady = audioVocals.readyState >= 3;
+  stemVocalsBufferAheadSec = bufferedAheadSec(audioVocals, Number(audio.currentTime) || 0);
   const drift = audio.currentTime - audioVocals.currentTime;
-  const absDrift = Math.abs(drift);
-  const now = performance.now();
-  const inForceWindow = now < stemForceSyncUntilMs;
-  const hardSnapThreshold = inForceWindow ? 0.018 : 0.06;
-  if (absDrift > hardSnapThreshold) {
-    audioVocals.currentTime = audio.currentTime;
-    audioVocals.playbackRate = 1;
-    return;
-  }
-  if (inForceWindow && absDrift > 0.004) {
-    const adjust = Math.max(-0.04, Math.min(0.04, drift * 0.65));
-    audioVocals.playbackRate = 1 + adjust;
-    return;
-  }
-  audioVocals.playbackRate = 1;
+  stemLastDriftMs = Math.round(drift * 1000);
 }
 
-function scheduleStemResyncWindow(durationMs = 1400) {
-  if (!stemsActive()) return;
-  clearStemResyncTimer();
-  const t0 = performance.now();
-  stemForceSyncUntilMs = t0 + durationMs;
-  stemResyncTimer = window.setInterval(() => {
-    if (!stemsActive() || audio.paused) {
-      clearStemResyncTimer();
-      return;
-    }
-    syncStemTiming();
-    if (performance.now() - t0 >= durationMs) {
-      clearStemResyncTimer();
-    }
-  }, 90);
+function resetStemSyncState() {
+  stemLastDriftMs = 0;
+  stemVocalsReady = false;
+  stemVocalsBufferAheadSec = 0;
+  audioVocals.playbackRate = 1;
+  audioBacking.playbackRate = 1;
 }
 
 function waitForCanPlay(el: HTMLMediaElement, timeoutMs = 4000) {
@@ -1262,46 +1261,43 @@ function waitForCanPlay(el: HTMLMediaElement, timeoutMs = 4000) {
 }
 
 async function playSynced() {
-  if (!stemsActive()) {
-    await audio.play().catch((err) => {
-      logAudioState("play-failed", { err: err instanceof Error ? err.message : String(err) });
-      return undefined;
-    });
-    return;
-  }
-
   await ensureMetadataLoaded();
-  audioVocals.currentTime = audio.currentTime;
+  if (stemSignalsActive()) {
+    const t = Number(audio.currentTime) || 0;
+    audioBacking.currentTime = t;
+    audioVocals.currentTime = t;
+  }
   audio.playbackRate = 1;
+  audioBacking.playbackRate = 1;
   audioVocals.playbackRate = 1;
-  await Promise.all([waitForCanPlay(audio), waitForCanPlay(audioVocals)]);
-  const [main, vocals] = await Promise.allSettled([audio.play(), audioVocals.play()]);
+  const waits: Promise<void>[] = [waitForCanPlay(audio)];
+  if (stemSignalsActive()) waits.push(waitForCanPlay(audioBacking), waitForCanPlay(audioVocals));
+  await Promise.all(waits);
+  const plays: Promise<any>[] = [audio.play()];
+  if (stemSignalsActive()) plays.push(audioBacking.play(), audioVocals.play());
+  const [main, backing, vocals] = await Promise.allSettled(plays);
   if (main.status === "rejected") {
     logAudioState("play-main-failed", {
       err: main.reason instanceof Error ? main.reason.message : String(main.reason)
     });
   }
-  if (vocals.status === "rejected") {
+  if (stemSignalsActive() && backing && backing.status === "rejected") {
+    logAudioState("play-backing-failed", {
+      err: backing.reason instanceof Error ? backing.reason.message : String(backing.reason)
+    });
+  }
+  if (stemSignalsActive() && vocals && vocals.status === "rejected") {
     logAudioState("play-vocals-failed", {
       err: vocals.reason instanceof Error ? vocals.reason.message : String(vocals.reason)
     });
   }
-  syncStemTiming();
-  scheduleStemResyncWindow(3500);
 }
 
 function applyMixerGains() {
   if (!primaryGain || !vocalsGain) return;
-  if (stemsActive()) {
-    const b = mixerState.backing;
-    const v = mixerState.vocals;
-    primaryGain.gain.value = b.muted ? 0 : b.volume;
-    vocalsGain.gain.value = v.muted ? 0 : v.volume;
-  } else {
-    const m = mixerState.mix;
-    primaryGain.gain.value = m.muted ? 0 : m.volume;
-    vocalsGain.gain.value = 0;
-  }
+  const m = mixerState.mix;
+  primaryGain.gain.value = m.muted ? 0 : m.volume;
+  vocalsGain.gain.value = 1;
 }
 
 function createMixerRow(key: "mix" | "backing" | "vocals", label: string) {
@@ -1349,12 +1345,7 @@ function createMixerRow(key: "mix" | "backing" | "vocals", label: string) {
 
 function renderMixerControls() {
   mixer.innerHTML = "";
-  if (stemsActive()) {
-    mixer.appendChild(createMixerRow("backing", "Backing"));
-    mixer.appendChild(createMixerRow("vocals", "Vocals"));
-  } else {
-    mixer.appendChild(createMixerRow("mix", "Mix"));
-  }
+  mixer.appendChild(createMixerRow("mix", mixControlLabel));
 }
 
 function resolveTrackAssetUrl(candidate: string, baseTrackUrl: string) {
@@ -1736,12 +1727,23 @@ async function assetExists(candidateUrl: string) {
 }
 
 async function resolvePlaybackAssets(nextTrack: Track, baseTrackUrl: string) {
-  const mixPath = nextTrack.assetPaths?.mix || nextTrack.audio.path;
+  let mixPath = String(nextTrack.assetPaths?.mix || "").trim();
   let backingPath = nextTrack.assetPaths?.instrumental || "";
   let vocalsPath = nextTrack.assetPaths?.vocals || "";
 
+  const baseRel = dirnamePosix(mixPath || nextTrack.audio.path);
+  if (!mixPath && baseRel) {
+    const fallbackMix = `${baseRel}/mix.mp3`;
+    try {
+      const resp = await fetch(resolveTrackAssetUrl(fallbackMix, baseTrackUrl), { method: "HEAD" });
+      if (resp.ok) mixPath = fallbackMix;
+    } catch {
+      // ignore
+    }
+  }
+  if (!mixPath) mixPath = nextTrack.audio.path;
+
   if (!backingPath || !vocalsPath) {
-    const baseRel = dirnamePosix(mixPath || nextTrack.audio.path);
     if (baseRel) {
       const fallbackBacking = `${baseRel}/instrumental.mp3`;
       const fallbackVocals = `${baseRel}/vocals.mp3`;
@@ -1759,7 +1761,8 @@ async function resolvePlaybackAssets(nextTrack: Track, baseTrackUrl: string) {
   }
 
   const hasStems = Boolean(backingPath && vocalsPath);
-  return { hasStems, mixPath, backingPath: backingPath || mixPath, vocalsPath };
+  const hasTrueMix = Boolean(String(nextTrack.assetPaths?.mix || "").trim() || /\/mix\.mp3$/i.test(String(mixPath)));
+  return { hasStems, hasTrueMix, mixPath, backingPath: backingPath || mixPath, vocalsPath };
 }
 
 function normalizeMsList(value: unknown) {
@@ -1966,7 +1969,10 @@ async function togglePlayPause() {
     await playSynced();
   } else {
     audio.pause();
-    if (stemsActive()) audioVocals.pause();
+    if (stemSignalsActive()) {
+      audioBacking.pause();
+      audioVocals.pause();
+    }
   }
   setPlayButtonIcon();
 }
@@ -2019,7 +2025,12 @@ async function ensureMetadataLoaded() {
     audio.load();
     await once(audio, "loadedmetadata");
   }
-  if (stemsActive() && audioVocals.readyState < 1) {
+  if (stemSignalsActive() && audioBacking.readyState < 1) {
+    if (!audioBacking.preload) audioBacking.preload = "metadata";
+    audioBacking.load();
+    await once(audioBacking, "loadedmetadata");
+  }
+  if (stemSignalsActive() && audioVocals.readyState < 1) {
     if (!audioVocals.preload) audioVocals.preload = "metadata";
     audioVocals.load();
     await once(audioVocals, "loadedmetadata");
@@ -2029,13 +2040,20 @@ async function ensureMetadataLoaded() {
 async function seekToSeconds(seconds: number) {
   await ensureMetadataLoaded();
   audio.pause();
-  const stemsNow = stemsActive();
-  if (stemsNow) audioVocals.pause();
+  const stemsNow = stemSignalsActive();
+  if (stemsNow) {
+    audioBacking.pause();
+    audioVocals.pause();
+  }
   const waitPrimary = once(audio, "seeked");
+  const waitBacking = stemsNow ? once(audioBacking, "seeked") : Promise.resolve();
   const waitVocals = stemsNow ? once(audioVocals, "seeked") : Promise.resolve();
   audio.currentTime = seconds;
-  if (stemsNow) audioVocals.currentTime = seconds;
-  await Promise.all([waitPrimary, waitVocals]);
+  if (stemsNow) {
+    audioBacking.currentTime = seconds;
+    audioVocals.currentTime = seconds;
+  }
+  await Promise.all([waitPrimary, waitBacking, waitVocals]);
 
   // Some browsers land compressed-audio seeks slightly off target; nudge once if needed.
   if (Math.abs((Number(audio.currentTime) || 0) - seconds) > 0.03) {
@@ -2044,6 +2062,11 @@ async function seekToSeconds(seconds: number) {
     await waitPrimaryNudge;
   }
 
+  if (stemsNow && Math.abs((Number(audioBacking.currentTime) || 0) - seconds) > 0.03) {
+    const waitBackingNudge = once(audioBacking, "seeked");
+    audioBacking.currentTime = seconds;
+    await waitBackingNudge;
+  }
   if (stemsNow && Math.abs((Number(audioVocals.currentTime) || 0) - seconds) > 0.03) {
     const waitVocalsNudge = once(audioVocals, "seeked");
     audioVocals.currentTime = seconds;
@@ -2052,9 +2075,8 @@ async function seekToSeconds(seconds: number) {
 
   await waitForCanPlay(audio);
   if (stemsNow) {
+    await waitForCanPlay(audioBacking);
     await waitForCanPlay(audioVocals);
-    syncStemTiming();
-    scheduleStemResyncWindow(6000);
   }
 }
 
@@ -2062,7 +2084,10 @@ function beginSeek() {
   isSeeking = true;
   wasPlayingBeforeSeek = !audio.paused;
   audio.pause();
-  if (stemsActive()) audioVocals.pause();
+  if (stemSignalsActive()) {
+    audioBacking.pause();
+    audioVocals.pause();
+  }
   resetAmpHistory("seek-begin");
   logAudioState("seek-begin");
 }
@@ -2224,12 +2249,12 @@ function ensureAudioGraph() {
   vocalsGain = audioCtx.createGain();
 
   const primarySrc = audioCtx.createMediaElementSource(audio);
+  const backingSrc = audioCtx.createMediaElementSource(audioBacking);
   const vocalsSrc = audioCtx.createMediaElementSource(audioVocals);
   primarySrc.connect(primaryGain);
+  backingSrc.connect(backingAnalyser);
   vocalsSrc.connect(vocalsGain);
   primaryGain.connect(masterGain);
-  vocalsGain.connect(masterGain);
-  primaryGain.connect(backingAnalyser);
   vocalsGain.connect(vocalsAnalyser);
   masterGain.connect(analyser);
   analyser.connect(audioCtx.destination);
@@ -2392,11 +2417,11 @@ function sampleReactiveAudio(tAudioMs: number) {
     0,
     Math.min(1, (Number(vocalsRaw.ampFast) - 0.012) / 0.08)
   );
-  const vocalsActive = stemsActive() ? Math.max(wordGate * 0.9, vocalEnergyGate * 0.65) : 0;
+  const vocalsActive = stemSignalsActive() ? Math.max(wordGate * 0.9, vocalEnergyGate * 0.65) : 0;
   return {
     master,
-    backing: stemsActive() ? backing : master,
-    vocals: stemsActive() ? vocalsRaw : { ...master, ampFast: 0, ampSlow: 0, low: 0, mid: 0, high: 0, onsetScore: 0, onsetPulse: 0, ampRms: 0, wave: [], freq: [] },
+    backing: stemSignalsActive() ? backing : master,
+    vocals: stemSignalsActive() ? vocalsRaw : { ...master, ampFast: 0, ampSlow: 0, low: 0, mid: 0, high: 0, onsetScore: 0, onsetPulse: 0, ampRms: 0, wave: [], freq: [] },
     vocalsActive
   };
 }
@@ -3984,7 +4009,7 @@ function render() {
     }
   }
   lastFrameTsMs = frameNowMs;
-  if (stemsActive() && !audio.paused) syncStemTiming();
+  if (stemSignalsActive() && !audio.paused) sampleStemDrift();
   const tAudioMs = audio.currentTime * 1000;
   const lastAmp = ampHistory.length ? ampHistory[ampHistory.length - 1] : null;
   if (lastAmp && tAudioMs + 250 < lastAmp.tMs) {
@@ -4359,14 +4384,26 @@ async function loadTrack(nextIndex: number) {
 
   const assets = await resolvePlaybackAssets(track, trackUrl);
   const hasStems = assets.hasStems || isStemsTrack(track);
-  playbackMode = hasStems ? "stems" : "mix";
+  playbackMode = "mix";
+  stemSignalsEnabled = hasStems;
+  mixControlLabel = assets.hasTrueMix ? "Mix" : "Backing";
   renderMixerControls();
-  const audioUrl = resolveTrackAssetUrl(hasStems ? assets.backingPath : assets.mixPath, trackUrl);
+  const audioPlayPath = assets.hasTrueMix ? assets.mixPath : (assets.backingPath || assets.mixPath);
+  const audioUrl = resolveTrackAssetUrl(audioPlayPath, trackUrl);
   const wasPlaying = !audio.paused;
   audio.pause();
+  audioBacking.pause();
   audioVocals.pause();
+  resetStemSyncState();
   audio.src = audioUrl;
   audio.load();
+  if (hasStems && assets.backingPath) {
+    audioBacking.src = resolveTrackAssetUrl(assets.backingPath, trackUrl);
+    audioBacking.load();
+  } else {
+    audioBacking.removeAttribute("src");
+    audioBacking.load();
+  }
   if (hasStems && assets.vocalsPath) {
     audioVocals.src = resolveTrackAssetUrl(assets.vocalsPath, trackUrl);
     audioVocals.load();
@@ -4435,7 +4472,10 @@ async function goNextTrack() {
 async function goPrevTrackOrRestart() {
   if (audio.currentTime > 5) {
     audio.currentTime = 0;
-    if (stemsActive()) audioVocals.currentTime = 0;
+    if (stemSignalsActive()) {
+      audioBacking.currentTime = 0;
+      audioVocals.currentTime = 0;
+    }
     return;
   }
   await loadTrack(selectedIndex - 1);
@@ -4541,10 +4581,10 @@ window.addEventListener("keydown", async (e) => {
   if (e.code === "ArrowLeft") {
     e.preventDefault();
     audio.currentTime = Math.max(0, audio.currentTime - 5);
-    if (stemsActive()) {
-      audioVocals.currentTime = audio.currentTime;
-      syncStemTiming();
-      scheduleStemResyncWindow(2500);
+    if (stemSignalsActive()) {
+      const t = Number(audio.currentTime) || 0;
+      audioBacking.currentTime = t;
+      audioVocals.currentTime = t;
     }
     return;
   }
@@ -4552,10 +4592,10 @@ window.addEventListener("keydown", async (e) => {
     e.preventDefault();
     const maxT = Number.isFinite(audio.duration) ? audio.duration : audio.currentTime + 5;
     audio.currentTime = Math.min(maxT, audio.currentTime + 5);
-    if (stemsActive()) {
-      audioVocals.currentTime = audio.currentTime;
-      syncStemTiming();
-      scheduleStemResyncWindow(2500);
+    if (stemSignalsActive()) {
+      const t = Number(audio.currentTime) || 0;
+      audioBacking.currentTime = t;
+      audioVocals.currentTime = t;
     }
     return;
   }
@@ -4741,33 +4781,44 @@ canvas.addEventListener("dblclick", () => {
 audio.addEventListener("play", () => { 
   ensureAudioGraph();
   void resumeAudioContext();
+  sampleStemDrift();
   logAudioState("play");
   setPlayButtonIcon();
 });
 audio.addEventListener("seeking", () => {
   void resumeAudioContext();
-  if (stemsActive()) audioVocals.currentTime = audio.currentTime;
+  if (stemSignalsActive()) {
+    const t = Number(audio.currentTime) || 0;
+    audioBacking.currentTime = t;
+    audioVocals.currentTime = t;
+  }
   logAudioState("seeking");
 });
 audio.addEventListener("seeked", () => {
   logAudioState("seeked");
 });
 audioVocals.addEventListener("seeked", () => {
-  if (stemsActive()) syncStemTiming();
+  sampleStemDrift();
 });
 audioVocals.addEventListener("playing", () => {
-  if (stemsActive()) syncStemTiming();
+  sampleStemDrift();
 });
 audio.addEventListener("pause", () => {
-  if (stemsActive()) audioVocals.pause();
-  clearStemResyncTimer();
+  if (stemSignalsActive()) {
+    audioBacking.pause();
+    audioVocals.pause();
+  }
   audio.playbackRate = 1;
+  audioBacking.playbackRate = 1;
   audioVocals.playbackRate = 1;
   logAudioState("pause");
   setPlayButtonIcon();
 });
 audio.addEventListener("ended", async () => {
-  if (stemsActive()) audioVocals.pause();
+  if (stemSignalsActive()) {
+    audioBacking.pause();
+    audioVocals.pause();
+  }
   await goNextTrack();
   ensureAudioGraph();
   await resumeAudioContext();
@@ -4776,6 +4827,11 @@ audio.addEventListener("ended", async () => {
 document.addEventListener("visibilitychange", () => {
   if (!document.hidden) {
     void resumeAudioContext();
+    if (stemSignalsActive() && !audio.paused) {
+      const t = Number(audio.currentTime) || 0;
+      audioBacking.currentTime = t;
+      audioVocals.currentTime = t;
+    }
     logAudioState("visibility-return");
   }
 });

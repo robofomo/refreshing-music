@@ -511,6 +511,67 @@ function transcodeAudioToMp3(srcPath, dstPath, overwrite) {
   return { ok: true, skipped: false };
 }
 
+function mixStemPairToMp3(instPath, vocalsPath, dstPath, overwrite) {
+  if (fs.existsSync(dstPath) && !overwrite) return { ok: true, skipped: true };
+  const backend = chooseFfmpegBackend();
+  if (!backend) return { ok: false, skipped: true, reason: "ffmpeg-not-found" };
+  const instIn = backend === "wsl" ? toWslPath(instPath) : instPath;
+  const vocIn = backend === "wsl" ? toWslPath(vocalsPath) : vocalsPath;
+  const outPath = backend === "wsl" ? toWslPath(dstPath) : dstPath;
+  const cmd = backend === "wsl" ? "wsl" : "ffmpeg";
+  const args = backend === "wsl"
+    ? [
+        "ffmpeg",
+        "-y",
+        "-hide_banner",
+        "-loglevel",
+        "error",
+        "-i",
+        instIn,
+        "-i",
+        vocIn,
+        "-filter_complex",
+        "[0:a][1:a]amix=inputs=2:normalize=0",
+        "-ar",
+        "48000",
+        "-ac",
+        "2",
+        "-c:a",
+        "libmp3lame",
+        "-b:a",
+        "160k",
+        "-write_xing",
+        "1",
+        outPath
+      ]
+    : [
+        "-y",
+        "-hide_banner",
+        "-loglevel",
+        "error",
+        "-i",
+        instIn,
+        "-i",
+        vocIn,
+        "-filter_complex",
+        "[0:a][1:a]amix=inputs=2:normalize=0",
+        "-ar",
+        "48000",
+        "-ac",
+        "2",
+        "-c:a",
+        "libmp3lame",
+        "-b:a",
+        "160k",
+        "-write_xing",
+        "1",
+        outPath
+      ];
+  const r = runCmd(cmd, args);
+  if (!r.ok) return { ok: false, skipped: false, reason: (r.stderr || r.stdout || "ffmpeg amix failed").trim() };
+  return { ok: true, skipped: false };
+}
+
 function extractZipEntryToFile(zipPath, entryRelPath, outPath, overwrite) {
   return new Promise((resolve, reject) => {
     yauzl.open(zipPath, { lazyEntries: true }, (openErr, zip) => {
@@ -983,18 +1044,37 @@ async function main() {
         if (!copy.ok) groupReport.warnings.push(`Could not create mix.mp3 from ${anyAudio}`);
       }
     }
-    const instForMix = pickBestSource(assetDir, ["instrumental.mp3", "instrumental.wav"]);
-    if ((stemsUpdated || Boolean(existingEntry)) && instForMix) {
-      const forceMix = instForMix.endsWith(".wav")
-        ? (args.dryRun ? { ok: true } : transcodeAudioToMp3(instForMix, mixPath, true))
-        : moveOrCopy({
-          src: instForMix,
-          dst: mixPath,
-          overwrite: true,
-          dryRun: args.dryRun,
-          forceCopy: true
-        });
-      if (!forceMix.ok) groupReport.warnings.push("Could not refresh mix.mp3 from instrumental.mp3");
+    const instForMix = pickBestSource(assetDir, ["instrumental.wav", "instrumental.mp3"]);
+    const vocalsForMix = pickBestSource(assetDir, ["vocals.wav", "vocals.mp3"]);
+    const mixExists = fs.existsSync(mixPath);
+    const mixIsInstrumentalOnly = (!args.dryRun && mixExists && instForMix)
+      ? sha256FileSync(mixPath) === sha256FileSync(instForMix)
+      : false;
+    const shouldRebuildMixFromStems = Boolean(instForMix && vocalsForMix) && (
+      args.overwrite ||
+      stemsUpdated ||
+      !mixExists ||
+      mixIsInstrumentalOnly
+    );
+    if (shouldRebuildMixFromStems) {
+      const remixed = args.dryRun
+        ? { ok: true }
+        : mixStemPairToMp3(instForMix, vocalsForMix, mixPath, true);
+      if (!remixed.ok) {
+        groupReport.warnings.push(`Could not create mix.mp3 from instrumental+vocals: ${remixed.reason || "amix-failed"}`);
+        if (!mixExists && instForMix) {
+          const fallback = instForMix.endsWith(".wav")
+            ? transcodeAudioToMp3(instForMix, mixPath, true)
+            : moveOrCopy({
+              src: instForMix,
+              dst: mixPath,
+              overwrite: true,
+              dryRun: args.dryRun,
+              forceCopy: true
+            });
+          if (!fallback.ok) groupReport.warnings.push("Could not create fallback mix.mp3 from instrumental");
+        }
+      }
     }
     if (!args.dryRun && !fs.existsSync(mixPath)) {
       groupReport.reason = "mix-missing-after-import";

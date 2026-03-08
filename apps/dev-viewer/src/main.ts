@@ -470,6 +470,18 @@ function isHintEditMode() {
   return viewerMode === "hint-edit";
 }
 
+function isGraphMode(mode: ViewerMode = viewerMode) {
+  return mode === "recipe-view" || mode === "random-scene";
+}
+
+function isGraphCapableMode(mode: ViewerMode = viewerMode) {
+  return mode === "player" || isGraphMode(mode);
+}
+
+function isSeedRefreshMode(mode: ViewerMode = viewerMode) {
+  return mode === "player" || mode === "hint-edit" || mode === "primitive-lab";
+}
+
 function cycleViewerMode() {
   const i = VIEWER_MODES.indexOf(viewerMode);
   const next = VIEWER_MODES[(i + 1) % VIEWER_MODES.length];
@@ -2438,7 +2450,7 @@ function hudKeyHelpLines(): string[] {
     `keys: space play/pause`,
     `      left/right seek`
   ];
-  if (viewerMode === "player" || viewerMode === "hint-edit" || viewerMode === "primitive-lab") {
+  if (isSeedRefreshMode()) {
     lines.push(`      r refresh seed`);
   }
   lines.push(`      v cycle mode`);
@@ -2446,7 +2458,7 @@ function hudKeyHelpLines(): string[] {
     lines.push(`      j/k lab primitive prev/next`);
     lines.push(`      b lab backdrop off/fixed/random`);
   }
-  if (viewerMode === "recipe-view" || viewerMode === "random-scene") {
+  if (isGraphMode()) {
     lines.push(`      j/k/g prev/next graph recipe`);
     lines.push(`      r refresh graph variant`);
     lines.push(`      a auto refresh (downbeat+section)`);
@@ -3636,7 +3648,7 @@ function withModeRecipe(baseRecipe: any, mode: ViewerMode, sectionId: string, se
     recipe.graph.layers = labGraphLayers();
   }
 
-  if (mode === "player" || mode === "recipe-view" || mode === "random-scene") {
+  if (isGraphCapableMode(mode)) {
     // Keep beat-track overlay out of playback-focused scene modes.
     for (const layer of recipe.graph.layers) {
       const nodes = Array.isArray(layer?.nodes) ? layer.nodes : [];
@@ -4088,7 +4100,7 @@ function render() {
   const nextPlayerVariantIndex = Number.isFinite(nextSectionStartMs)
     ? Math.max(0, downbeatCountAt(nextSectionStartMs) - downbeatCountAt(nextSectionStartMs - 1))
     : 0;
-  if (viewerMode === "recipe-view" || viewerMode === "random-scene") {
+  if (isGraphMode()) {
     if (!graphAutoRefresh && graphManualRecipe && lastGraphSectionId && sectionId !== lastGraphSectionId) {
       graphManualRecipe = null;
     }
@@ -4101,7 +4113,7 @@ function render() {
     lastGraphSectionId = "";
   }
   const pulse = beatPulseInfo(tRenderMs);
-  if (viewerMode === "recipe-view" || viewerMode === "random-scene") {
+  if (isGraphMode()) {
     const dbCount = downbeatCountAt(tRenderMs);
     if (lastAutoDownbeatCount < 0) lastAutoDownbeatCount = dbCount;
     if (graphAutoRefresh && dbCount > lastAutoDownbeatCount) {
@@ -4305,7 +4317,7 @@ if (!isSeeking && Number.isFinite(audio.duration) && audio.duration > 0) {
           `labProfile: ${stableStringify(labProfileRounded)}`
         ]
       : []),
-    ...(viewerMode === "player" || viewerMode === "recipe-view" || viewerMode === "random-scene"
+    ...(isGraphCapableMode()
       ? [
           `graphLayers: ${Array.isArray(modeRecipe?.graph?.layers) ? modeRecipe.graph.layers.length : 0}`,
           ...(viewerMode === "player"
@@ -4567,7 +4579,7 @@ function handleHintEditKeydown(e: KeyboardEvent) {
 }
 
 function handleGraphModeKeydown(e: KeyboardEvent) {
-  if ((viewerMode !== "recipe-view" && viewerMode !== "random-scene") || e.repeat) return false;
+  if (!isGraphMode() || e.repeat) return false;
   const key = e.key.toLowerCase();
   if (key === "j") {
     if (viewerMode === "recipe-view") cycleGraphRecipeForSection(currentRecipe, currentSectionIdNow(), -1);
@@ -4749,7 +4761,7 @@ window.addEventListener("keydown", async (e) => {
     cycleViewerMode();
     return;
   }
-  if ((viewerMode === "player" || viewerMode === "hint-edit" || viewerMode === "primitive-lab") && key === "r" && !e.repeat) {
+  if (isSeedRefreshMode() && key === "r" && !e.repeat) {
     e.preventDefault();
     randomizeSeed();
     return;

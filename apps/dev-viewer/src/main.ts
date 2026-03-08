@@ -4552,13 +4552,17 @@ async function goNextTrack() {
   await loadTrack(selectedIndex + 1);
 }
 
+function restartCurrentTrack() {
+  audio.currentTime = 0;
+  if (stemSignalsActive()) {
+    audioBacking.currentTime = 0;
+    audioVocals.currentTime = 0;
+  }
+}
+
 async function goPrevTrackOrRestart() {
   if (audio.currentTime > 5) {
-    audio.currentTime = 0;
-    if (stemSignalsActive()) {
-      audioBacking.currentTime = 0;
-      audioVocals.currentTime = 0;
-    }
+    restartCurrentTrack();
     return;
   }
   await loadTrack(selectedIndex - 1);

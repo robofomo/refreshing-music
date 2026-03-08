@@ -2673,6 +2673,12 @@ function applyTrackSeed(trackId: string) {
   buildScene(seed);
 }
 
+function runPostTrackLoadHousekeeping(trackId: string) {
+  resetAmpHistory("track-load");
+  logAudioState("track-loaded", { trackId });
+  lyricsLines = String(track?.lyrics?.rawText ?? "").split("\n");
+}
+
 function applyInitialViewerConfigFromUrl() {
   const url = new URL(location.href);
   const requestedTrackId = url.searchParams.get("track");
@@ -4515,9 +4521,7 @@ async function loadTrack(nextIndex: number) {
       body: JSON.stringify({ workId: track.workId, trackId: track.trackId })
     }).catch(() => undefined);
   }
-  resetAmpHistory("track-load");
-  logAudioState("track-loaded", { trackId });
-  lyricsLines = String(track.lyrics?.rawText ?? "").split("\n");
+  runPostTrackLoadHousekeeping(trackId);
   try {
     currentRecipe = await resolveTrackRecipe(track);
   } catch {

@@ -4595,6 +4595,11 @@ function refreshSeedAndShowControls() {
   showControlsTemporarily();
 }
 
+function toggleHudAndShowControls() {
+  toggleHud();
+  showControlsTemporarily();
+}
+
 function captureAndQueueHintEvent(
   type: "hint/downbeat" | "hint/beat" | "hint/barBeat" | "hint/sectionMarker" | "hint/endMarker" | "hint/lyricSuppress",
   payload?: Record<string, any>
@@ -4808,8 +4813,7 @@ shareBtn?.addEventListener("click", () => {
 });
 
 hudBtn.addEventListener("click", () => {
-  toggleHud();
-  showControlsTemporarily();
+  toggleHudAndShowControls();
 });
 
 window.addEventListener("keydown", async (e) => {
@@ -4892,8 +4896,7 @@ canvas.addEventListener("dblclick", () => {
     window.clearTimeout(canvasClickTimer);
     canvasClickTimer = 0;
   }
-  toggleHud();
-  showControlsTemporarily();
+  toggleHudAndShowControls();
 });
 
 audio.addEventListener("play", () => { 

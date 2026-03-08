@@ -4759,6 +4759,32 @@ async function handleTransportKeydown(e: KeyboardEvent) {
   return false;
 }
 
+function handleGlobalModeKeydown(e: KeyboardEvent) {
+  const key = e.key.toLowerCase();
+  if (key === "h" || e.key === "?") {
+    e.preventDefault();
+    toggleHud();
+    return true;
+  }
+  if (key === "m") {
+    e.preventDefault();
+    lyricMode = lyricMode === "fixed" ? "center" : lyricMode === "center" ? "off" : "fixed";
+    syncLyricsUrlParams();
+    return true;
+  }
+  if (key === "v" && !e.repeat) {
+    e.preventDefault();
+    cycleViewerMode();
+    return true;
+  }
+  if (isSeedRefreshMode() && key === "r" && !e.repeat) {
+    e.preventDefault();
+    randomizeSeed();
+    return true;
+  }
+  return false;
+}
+
 playBtn.addEventListener("click", async () => {
   await togglePlayPause();
 });
@@ -4848,37 +4874,16 @@ hudBtn.addEventListener("click", () => {
 
 window.addEventListener("keydown", async (e) => {
   showControlsTemporarily();
-  const key = e.key.toLowerCase();
   if (await handleTransportKeydown(e)) return;
   if (handleHintEditKeydown(e)) {
     e.preventDefault();
-    return;
-  }
-  if (key === "h" || e.key === "?") {
-    e.preventDefault();
-    toggleHud();
     return;
   }
   if (handleGraphModeKeydown(e)) {
     e.preventDefault();
     return;
   }
-  if (key === "m") {
-    e.preventDefault();
-    lyricMode = lyricMode === "fixed" ? "center" : lyricMode === "center" ? "off" : "fixed";
-    syncLyricsUrlParams();
-    return;
-  }
-  if (key === "v" && !e.repeat) {
-    e.preventDefault();
-    cycleViewerMode();
-    return;
-  }
-  if (isSeedRefreshMode() && key === "r" && !e.repeat) {
-    e.preventDefault();
-    randomizeSeed();
-    return;
-  }
+  if (handleGlobalModeKeydown(e)) return;
   if (handlePrimitiveLabKeydown(e)) {
     e.preventDefault();
     return;

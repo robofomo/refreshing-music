@@ -2433,6 +2433,41 @@ function fmtMs(ms: number) {
   return `${m}:${String(s).padStart(2, "0")}`;
 }
 
+function hudKeyHelpLines(): string[] {
+  const lines: string[] = [
+    `keys: space play/pause`,
+    `      left/right seek`
+  ];
+  if (viewerMode === "player" || viewerMode === "hint-edit" || viewerMode === "primitive-lab") {
+    lines.push(`      r refresh seed`);
+  }
+  lines.push(`      v cycle mode`);
+  if (viewerMode === "primitive-lab") {
+    lines.push(`      j/k lab primitive prev/next`);
+    lines.push(`      b lab backdrop off/fixed/random`);
+  }
+  if (viewerMode === "recipe-view" || viewerMode === "random-scene") {
+    lines.push(`      j/k/g prev/next graph recipe`);
+    lines.push(`      r refresh graph variant`);
+    lines.push(`      a auto refresh (downbeat+section)`);
+  }
+  if (isHintEditMode()) {
+    lines.push(`      d = downbeat anchor (keep established tempo)`);
+    lines.push(`      1/2/3/4 = measure tempo hints`);
+    lines.push(`      b = single beat hint`);
+    lines.push(`      s = toggle section marker`);
+    lines.push(`      e = set ending marker`);
+    lines.push(`      u undo last hint group`);
+    lines.push(`      c clear hints`);
+    lines.push(`      x toggle lyric-suppression marker`);
+  }
+  lines.push(`      [ ] offset`);
+  lines.push(`      o cycle offset preset`);
+  lines.push(`      \\ reset offset`);
+  lines.push(`      h/? hud`);
+  return lines;
+}
+
 function sortedTimedSections() {
   const sections = Array.isArray(track?.timing?.sections) ? track.timing.sections : [];
   return sections
@@ -4295,35 +4330,7 @@ if (!isSeeking && Number.isFinite(audio.duration) && audio.duration > 0) {
     `lyricIndex: ${lyricIndex}`,
     `lyric: ${lyricText || "-"}`,
     ``,
-    `keys: space play/pause`,
-    `      left/right seek`,
-    ...(viewerMode === "player" || viewerMode === "hint-edit" || viewerMode === "primitive-lab" ? [`      r refresh seed`] : []),
-    `      v cycle mode`,
-    ...(viewerMode === "primitive-lab" ? [`      j/k lab primitive prev/next`] : []),
-    ...(viewerMode === "primitive-lab" ? [`      b lab backdrop off/fixed/random`] : []),
-    ...(viewerMode === "recipe-view" || viewerMode === "random-scene"
-      ? [
-          `      j/k/g prev/next graph recipe`,
-          `      r refresh graph variant`,
-          `      a auto refresh (downbeat+section)`
-        ]
-      : []),
-    ...(isHintEditMode()
-      ? [
-          `      d = downbeat anchor (keep established tempo)`,
-          `      1/2/3/4 = measure tempo hints`,
-          `      b = single beat hint`,
-          `      s = toggle section marker`,
-          `      e = set ending marker`,
-          `      u undo last hint group`,
-          `      c clear hints`
-        ]
-      : []),
-    ...(isHintEditMode() ? [`      x toggle lyric-suppression marker`] : []),
-    `      [ ] offset`,
-    `      o cycle offset preset`,
-    `      \\ reset offset`,
-    `      h/? hud`
+    ...hudKeyHelpLines()
   ].join("\n");
 
   requestAnimationFrame(render);

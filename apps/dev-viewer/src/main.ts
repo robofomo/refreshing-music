@@ -4600,6 +4600,11 @@ function toggleHudAndShowControls() {
   showControlsTemporarily();
 }
 
+function runControlAction(action: () => void) {
+  action();
+  showControlsTemporarily();
+}
+
 function captureAndQueueHintEvent(
   type: "hint/downbeat" | "hint/beat" | "hint/barBeat" | "hint/sectionMarker" | "hint/endMarker" | "hint/lyricSuppress",
   payload?: Record<string, any>
@@ -4844,28 +4849,25 @@ seedBtn.addEventListener("click", () => {
 });
 
 modeBtn?.addEventListener("click", () => {
-  cycleViewerMode();
-  showControlsTemporarily();
+  runControlAction(() => cycleViewerMode());
 });
 
 offsetDecBtn?.addEventListener("click", () => {
-  nudgeRenderOffset(-10);
-  showControlsTemporarily();
+  runControlAction(() => nudgeRenderOffset(-10));
 });
 
 offsetCycleBtn?.addEventListener("click", () => {
-  cycleOffsetPreset();
-  showControlsTemporarily();
+  runControlAction(() => cycleOffsetPreset());
 });
 
 offsetIncBtn?.addEventListener("click", () => {
-  nudgeRenderOffset(10);
-  showControlsTemporarily();
+  runControlAction(() => nudgeRenderOffset(10));
 });
 
 shareBtn?.addEventListener("click", () => {
-  void copyShareUrl();
-  showControlsTemporarily();
+  runControlAction(() => {
+    void copyShareUrl();
+  });
 });
 
 hudBtn.addEventListener("click", () => {

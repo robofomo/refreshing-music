@@ -2655,6 +2655,33 @@ function applyTrackSeed(trackId: string) {
   buildScene(seed);
 }
 
+function applyInitialViewerConfigFromUrl() {
+  const url = new URL(location.href);
+  const requestedTrackId = url.searchParams.get("track");
+  const seedParam = url.searchParams.get("seed");
+  const offsetParam = url.searchParams.get("offset");
+  const lyricsParam = url.searchParams.get("lyrics");
+  const lyricModeParam = url.searchParams.get("lyricMode");
+  const modeParam = url.searchParams.get("mode");
+  const labPrimitiveParam = url.searchParams.get("labPrimitive");
+  seed = seedParam ? Number(seedParam) : NaN;
+  const storedOffset = loadStoredOffsetMs();
+  const initialOffset = offsetParam ? Number(offsetParam) : (storedOffset ?? DEFAULT_RENDER_OFFSET_MS);
+  setRenderOffset(initialOffset);
+  labPrimitive = normalizeLabPrimitive(labPrimitiveParam);
+  setViewerMode(normalizeViewerMode(modeParam));
+  lyricsEnabled = lyricsParam !== "0";
+  lyricMode = lyricModeParam === "fixed" || lyricModeParam === "off" ? lyricModeParam : "center";
+  if (viewerMode !== "primitive-lab") {
+    updateUrlParam("lyrics", lyricsEnabled ? "1" : "0");
+    updateUrlParam("lyricMode", lyricMode);
+  } else {
+    updateUrlParam("lyrics", null);
+    updateUrlParam("lyricMode", null);
+  }
+  return { requestedTrackId };
+}
+
 function sortedTimedSections() {
   const sections = Array.isArray(track?.timing?.sections) ? track.timing.sections : [];
   return sections
@@ -4500,29 +4527,7 @@ async function init() {
   indexEntries = (await indexResp.json()) as string[];
   if (!indexEntries.length) throw new Error("No tracks found in index.json");
 
-  const url = new URL(location.href);
-  const requestedTrackId = url.searchParams.get("track");
-  const seedParam = url.searchParams.get("seed");
-  const offsetParam = url.searchParams.get("offset");
-  const lyricsParam = url.searchParams.get("lyrics");
-  const lyricModeParam = url.searchParams.get("lyricMode");
-  const modeParam = url.searchParams.get("mode");
-  const labPrimitiveParam = url.searchParams.get("labPrimitive");
-  seed = seedParam ? Number(seedParam) : NaN;
-  const storedOffset = loadStoredOffsetMs();
-  const initialOffset = offsetParam ? Number(offsetParam) : (storedOffset ?? DEFAULT_RENDER_OFFSET_MS);
-  setRenderOffset(initialOffset);
-  labPrimitive = normalizeLabPrimitive(labPrimitiveParam);
-  setViewerMode(normalizeViewerMode(modeParam));
-  lyricsEnabled = lyricsParam !== "0";
-  lyricMode = lyricModeParam === "fixed" || lyricModeParam === "off" ? lyricModeParam : "center";
-  if (viewerMode !== "primitive-lab") {
-    updateUrlParam("lyrics", lyricsEnabled ? "1" : "0");
-    updateUrlParam("lyricMode", lyricMode);
-  } else {
-    updateUrlParam("lyrics", null);
-    updateUrlParam("lyricMode", null);
-  }
+  const { requestedTrackId } = applyInitialViewerConfigFromUrl();
 
   const byTrackId = requestedTrackId
     ? indexEntries.findIndex((entry) => trackIdFromEntry(entry) === requestedTrackId)

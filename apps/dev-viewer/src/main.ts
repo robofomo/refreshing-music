@@ -1207,7 +1207,17 @@ async function copyShareUrl() {
 
 function setLyricsEnabled(next: boolean) {
   lyricsEnabled = next;
-  if (viewerMode !== "primitive-lab") updateUrlParam("lyrics", next ? "1" : "0");
+  syncLyricsUrlParams();
+}
+
+function syncLyricsUrlParams() {
+  if (viewerMode !== "primitive-lab") {
+    updateUrlParam("lyrics", lyricsEnabled ? "1" : "0");
+    updateUrlParam("lyricMode", lyricMode);
+    return;
+  }
+  updateUrlParam("lyrics", null);
+  updateUrlParam("lyricMode", null);
 }
 
 function setControlsVisible(visible: boolean) {
@@ -2680,13 +2690,7 @@ function applyInitialViewerConfigFromUrl() {
   setViewerMode(normalizeViewerMode(modeParam));
   lyricsEnabled = lyricsParam !== "0";
   lyricMode = lyricModeParam === "fixed" || lyricModeParam === "off" ? lyricModeParam : "center";
-  if (viewerMode !== "primitive-lab") {
-    updateUrlParam("lyrics", lyricsEnabled ? "1" : "0");
-    updateUrlParam("lyricMode", lyricMode);
-  } else {
-    updateUrlParam("lyrics", null);
-    updateUrlParam("lyricMode", null);
-  }
+  syncLyricsUrlParams();
   return { requestedTrackId };
 }
 
@@ -4819,7 +4823,7 @@ window.addEventListener("keydown", async (e) => {
   if (key === "m") {
     e.preventDefault();
     lyricMode = lyricMode === "fixed" ? "center" : lyricMode === "center" ? "off" : "fixed";
-    if (viewerMode !== "primitive-lab") updateUrlParam("lyricMode", lyricMode);
+    syncLyricsUrlParams();
     return;
   }
   if (key === "v" && !e.repeat) {

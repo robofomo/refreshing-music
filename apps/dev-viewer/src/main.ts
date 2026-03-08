@@ -4590,6 +4590,11 @@ function toggleHud() {
   updateUrlParam("hud", hudVisible ? "1" : null);
 }
 
+function refreshSeedAndShowControls() {
+  randomizeSeed();
+  showControlsTemporarily();
+}
+
 function captureAndQueueHintEvent(
   type: "hint/downbeat" | "hint/beat" | "hint/barBeat" | "hint/sectionMarker" | "hint/endMarker" | "hint/lyricSuppress",
   payload?: Record<string, any>
@@ -4774,8 +4779,7 @@ seek.addEventListener("change", () => {
 });
 
 seedBtn.addEventListener("click", () => {
-  randomizeSeed();
-  showControlsTemporarily();
+  refreshSeedAndShowControls();
 });
 
 modeBtn?.addEventListener("click", () => {
@@ -4879,8 +4883,7 @@ window.addEventListener("pointerdown", showControlsTemporarily);
 canvas.addEventListener("click", () => {
   if (canvasClickTimer) window.clearTimeout(canvasClickTimer);
   canvasClickTimer = window.setTimeout(() => {
-    randomizeSeed();
-    showControlsTemporarily();
+    refreshSeedAndShowControls();
   }, 220);
 });
 

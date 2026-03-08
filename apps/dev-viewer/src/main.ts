@@ -2574,6 +2574,16 @@ function hudGraphModeLines(
   return lines;
 }
 
+function resetTrackLoadModeState() {
+  graphManualRecipe = null;
+  graphVariantBySection.clear();
+  graphAutoRefresh = false;
+  lastGraphSectionId = "";
+  lastAutoDownbeatCount = -1;
+  playerLastSectionId = "";
+  playerLastTransitionLabel = "crossfade";
+}
+
 function sortedTimedSections() {
   const sections = Array.isArray(track?.timing?.sections) ? track.timing.sections : [];
   return sections
@@ -4374,13 +4384,7 @@ async function loadTrack(nextIndex: number) {
   selectedIndex = (nextIndex + indexEntries.length) % indexEntries.length;
   const entry = indexEntries[selectedIndex];
   const trackId = trackIdFromEntry(entry);
-  graphManualRecipe = null;
-  graphVariantBySection.clear();
-  graphAutoRefresh = false;
-  lastGraphSectionId = "";
-  lastAutoDownbeatCount = -1;
-  playerLastSectionId = "";
-  playerLastTransitionLabel = "crossfade";
+  resetTrackLoadModeState();
   updateUrlParam("track", trackId);
 
   trackUrl = new URL(`/tracks/${entry}`, location.origin).toString();

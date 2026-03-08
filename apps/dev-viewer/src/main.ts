@@ -2490,6 +2490,35 @@ function hudKeyHelpLines(): string[] {
   return lines;
 }
 
+function updateGraphSectionState(sectionId: string) {
+  if (isGraphMode()) {
+    if (!graphAutoRefresh && graphManualRecipe && lastGraphSectionId && sectionId !== lastGraphSectionId) {
+      graphManualRecipe = null;
+    }
+    if (graphAutoRefresh && lastGraphSectionId && sectionId !== lastGraphSectionId) {
+      if (viewerMode === "recipe-view") cycleGraphRecipeForSection(currentRecipe, sectionId);
+      else cycleRandomSceneForSection(sectionId);
+    }
+    lastGraphSectionId = sectionId;
+    return;
+  }
+  lastGraphSectionId = "";
+}
+
+function updateGraphAutoVariantState(sectionId: string, tRenderMs: number) {
+  if (isGraphMode()) {
+    const dbCount = downbeatCountAt(tRenderMs);
+    if (lastAutoDownbeatCount < 0) lastAutoDownbeatCount = dbCount;
+    if (graphAutoRefresh && dbCount > lastAutoDownbeatCount) {
+      const delta = dbCount - lastAutoDownbeatCount;
+      for (let i = 0; i < delta; i += 1) cycleGraphVariantForSection(sectionId);
+    }
+    lastAutoDownbeatCount = dbCount;
+    return;
+  }
+  lastAutoDownbeatCount = -1;
+}
+
 function sortedTimedSections() {
   const sections = Array.isArray(track?.timing?.sections) ? track.timing.sections : [];
   return sections
@@ -4110,30 +4139,9 @@ function render() {
   const nextPlayerVariantIndex = Number.isFinite(nextSectionStartMs)
     ? Math.max(0, downbeatCountAt(nextSectionStartMs) - downbeatCountAt(nextSectionStartMs - 1))
     : 0;
-  if (isGraphMode()) {
-    if (!graphAutoRefresh && graphManualRecipe && lastGraphSectionId && sectionId !== lastGraphSectionId) {
-      graphManualRecipe = null;
-    }
-    if (graphAutoRefresh && lastGraphSectionId && sectionId !== lastGraphSectionId) {
-      if (viewerMode === "recipe-view") cycleGraphRecipeForSection(currentRecipe, sectionId);
-      else cycleRandomSceneForSection(sectionId);
-    }
-    lastGraphSectionId = sectionId;
-  } else {
-    lastGraphSectionId = "";
-  }
+  updateGraphSectionState(sectionId);
   const pulse = beatPulseInfo(tRenderMs);
-  if (isGraphMode()) {
-    const dbCount = downbeatCountAt(tRenderMs);
-    if (lastAutoDownbeatCount < 0) lastAutoDownbeatCount = dbCount;
-    if (graphAutoRefresh && dbCount > lastAutoDownbeatCount) {
-      const delta = dbCount - lastAutoDownbeatCount;
-      for (let i = 0; i < delta; i += 1) cycleGraphVariantForSection(sectionId);
-    }
-    lastAutoDownbeatCount = dbCount;
-  } else {
-    lastAutoDownbeatCount = -1;
-  }
+  updateGraphAutoVariantState(sectionId, tRenderMs);
   const durationSec = Number.isFinite(audio.duration) ? Number(audio.duration) : 0;
   const modeRecipe = withModeRecipe(currentRecipe, viewerMode, sectionId, sectionType, playerVariantIndex);
   let nextModeRecipe = nextSectionId

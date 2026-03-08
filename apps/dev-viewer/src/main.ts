@@ -2679,6 +2679,15 @@ function runPostTrackLoadHousekeeping(trackId: string) {
   lyricsLines = String(track?.lyrics?.rawText ?? "").split("\n");
 }
 
+function triggerAuthoringReduce(nextTrack: Track) {
+  if (!__AUTHORING_MODE__ || !nextTrack.workId || !nextTrack.trackId) return;
+  void fetch("/authoring/reduce", {
+    method: "POST",
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify({ workId: nextTrack.workId, trackId: nextTrack.trackId })
+  }).catch(() => undefined);
+}
+
 function applyInitialViewerConfigFromUrl() {
   const url = new URL(location.href);
   const requestedTrackId = url.searchParams.get("track");
@@ -4514,13 +4523,7 @@ async function loadTrack(nextIndex: number) {
   if (!resp.ok) throw new Error(`Failed to load track json: ${entry}`);
   track = (await resp.json()) as Track;
   await loadEffectiveGuidance(track, trackUrl);
-  if (__AUTHORING_MODE__ && track.workId && track.trackId) {
-    void fetch("/authoring/reduce", {
-      method: "POST",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({ workId: track.workId, trackId: track.trackId })
-    }).catch(() => undefined);
-  }
+  triggerAuthoringReduce(track);
   runPostTrackLoadHousekeeping(trackId);
   try {
     currentRecipe = await resolveTrackRecipe(track);

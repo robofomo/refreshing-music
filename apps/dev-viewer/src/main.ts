@@ -4802,6 +4802,24 @@ function handleGlobalModeKeydown(e: KeyboardEvent) {
   return false;
 }
 
+function handlePostTransportKeydown(e: KeyboardEvent) {
+  if (handleHintEditKeydown(e)) {
+    e.preventDefault();
+    return true;
+  }
+  if (handleGraphModeKeydown(e)) {
+    e.preventDefault();
+    return true;
+  }
+  if (handleGlobalModeKeydown(e)) return true;
+  if (handlePrimitiveLabKeydown(e)) {
+    e.preventDefault();
+    return true;
+  }
+  if (handleOffsetKeydown(e)) return true;
+  return false;
+}
+
 playBtn.addEventListener("click", async () => {
   await togglePlayPause();
 });
@@ -4889,20 +4907,7 @@ hudBtn.addEventListener("click", () => {
 window.addEventListener("keydown", async (e) => {
   showControlsTemporarily();
   if (await handleTransportKeydown(e)) return;
-  if (handleHintEditKeydown(e)) {
-    e.preventDefault();
-    return;
-  }
-  if (handleGraphModeKeydown(e)) {
-    e.preventDefault();
-    return;
-  }
-  if (handleGlobalModeKeydown(e)) return;
-  if (handlePrimitiveLabKeydown(e)) {
-    e.preventDefault();
-    return;
-  }
-  if (handleOffsetKeydown(e)) return;
+  if (handlePostTransportKeydown(e)) return;
 });
 
 window.addEventListener("mousemove", showControlsTemporarily);

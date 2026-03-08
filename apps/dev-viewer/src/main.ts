@@ -1805,6 +1805,14 @@ async function resolvePlaybackAssets(nextTrack: Track, baseTrackUrl: string) {
   return { hasStems, hasTrueMix, mixPath, backingPath: backingPath || mixPath, vocalsPath };
 }
 
+async function resolveEffectivePlaybackAssets(nextTrack: Track, baseTrackUrl: string) {
+  const assets = await resolvePlaybackAssets(nextTrack, baseTrackUrl);
+  return {
+    ...assets,
+    hasStems: assets.hasStems || isStemsTrack(nextTrack)
+  };
+}
+
 function applyTrackPlaybackAssets(
   assets: Awaited<ReturnType<typeof resolvePlaybackAssets>>,
   baseTrackUrl: string
@@ -4547,11 +4555,8 @@ async function loadTrack(nextIndex: number) {
   runPostTrackLoadHousekeeping(trackId);
   currentRecipe = await resolveTrackRecipeWithFallback(track);
 
-  const assets = await resolvePlaybackAssets(track, trackUrl);
-  const { wasPlaying } = applyTrackPlaybackAssets({
-    ...assets,
-    hasStems: assets.hasStems || isStemsTrack(track)
-  }, trackUrl);
+  const assets = await resolveEffectivePlaybackAssets(track, trackUrl);
+  const { wasPlaying } = applyTrackPlaybackAssets(assets, trackUrl);
 
   applyTrackSeed(track.trackId || trackId);
   await resumePlaybackIfNeeded(wasPlaying);

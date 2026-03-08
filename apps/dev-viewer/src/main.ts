@@ -2688,6 +2688,13 @@ function triggerAuthoringReduce(nextTrack: Track) {
   }).catch(() => undefined);
 }
 
+async function resumePlaybackIfNeeded(wasPlaying: boolean) {
+  if (wasPlaying) {
+    await playSynced();
+  }
+  setPlayButtonIcon();
+}
+
 function applyInitialViewerConfigFromUrl() {
   const url = new URL(location.href);
   const requestedTrackId = url.searchParams.get("track");
@@ -4538,11 +4545,7 @@ async function loadTrack(nextIndex: number) {
   }, trackUrl);
 
   applyTrackSeed(track.trackId || trackId);
-
-  if (wasPlaying) {
-    await playSynced();
-  }
-  setPlayButtonIcon();
+  await resumePlaybackIfNeeded(wasPlaying);
 }
 
 async function init() {

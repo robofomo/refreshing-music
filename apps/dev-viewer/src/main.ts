@@ -4303,7 +4303,7 @@ if (!isSeeking && Number.isFinite(audio.duration) && audio.duration > 0) {
     ...(viewerMode === "primitive-lab" ? [`      b lab backdrop off/fixed/random`] : []),
     ...(viewerMode === "recipe-view" || viewerMode === "random-scene"
       ? [
-          `      j/k prev/next graph recipe`,
+          `      j/k/g prev/next graph recipe`,
           `      r refresh graph variant`,
           `      a auto refresh (downbeat+section)`
         ]
@@ -4323,8 +4323,7 @@ if (!isSeeking && Number.isFinite(audio.duration) && audio.duration > 0) {
     `      [ ] offset`,
     `      o cycle offset preset`,
     `      \\ reset offset`,
-    `      h/? hud`,
-    ...(isHintEditMode() ? [`      l lyrics on/off`] : [])
+    `      h/? hud`
   ].join("\n");
 
   requestAnimationFrame(render);
@@ -4481,6 +4480,127 @@ async function goPrevTrackOrRestart() {
   await loadTrack(selectedIndex - 1);
 }
 
+function syncAnalysisToCurrent() {
+  if (!stemSignalsActive()) return;
+  const t = Number(audio.currentTime) || 0;
+  audioBacking.currentTime = t;
+  audioVocals.currentTime = t;
+}
+
+function seekRelativeSec(deltaSec: number) {
+  if (deltaSec < 0) {
+    audio.currentTime = Math.max(0, audio.currentTime + deltaSec);
+  } else {
+    const maxT = Number.isFinite(audio.duration) ? audio.duration : audio.currentTime + deltaSec;
+    audio.currentTime = Math.min(maxT, audio.currentTime + deltaSec);
+  }
+  syncAnalysisToCurrent();
+}
+
+function toggleHud() {
+  hudVisible = !hudVisible;
+  updateUrlParam("hud", hudVisible ? "1" : null);
+}
+
+function handleHintEditKeydown(e: KeyboardEvent) {
+  if (!isHintEditMode()) return false;
+  const key = e.key.toLowerCase();
+  if (!e.repeat && (key === "d" || key === "b" || ["1", "2", "3", "4"].includes(e.key))) {
+    const tSec = currentHintCaptureSec();
+    if (key === "d") {
+      applyHintEventOptimistic({ type: "hint/downbeat", tSec });
+      queueHintEvent({ type: "hint/downbeat", tSec });
+      return true;
+    }
+    if (key === "b") {
+      applyHintEventOptimistic({ type: "hint/beat", tSec });
+      queueHintEvent({ type: "hint/beat", tSec });
+      return true;
+    }
+    const beatInBar = Number(e.key);
+    if (Number.isInteger(beatInBar) && beatInBar >= 1 && beatInBar <= 4) {
+      applyHintEventOptimistic({ type: "hint/barBeat", tSec, payload: { beatInBar } });
+      queueHintEvent({ type: "hint/barBeat", tSec, payload: { beatInBar } });
+      return true;
+    }
+  }
+  if (!e.repeat && key === "s") {
+    const tSec = currentHintCaptureSec();
+    const tMs = Math.max(0, Math.round(tSec * 1000));
+    const action = hasSectionMarkerNear(tMs, 140) ? "clear" : "set";
+    applyHintEventOptimistic({ type: "hint/sectionMarker", tSec, payload: { action } });
+    queueHintEvent({ type: "hint/sectionMarker", tSec, payload: { action } });
+    return true;
+  }
+  if (!e.repeat && key === "e") {
+    const tSec = currentHintCaptureSec();
+    applyHintEventOptimistic({ type: "hint/endMarker", tSec });
+    queueHintEvent({ type: "hint/endMarker", tSec });
+    return true;
+  }
+  if (!e.repeat && key === "x") {
+    const tSec = currentHintCaptureSec();
+    const tMs = Math.max(0, Math.round(tSec * 1000));
+    const action = hasLyricSuppressMarkerNear(tMs, 140)
+      ? "clear"
+      : (isLyricSuppressedAt(tMs) ? "clear" : "set");
+    applyHintEventOptimistic({ type: "hint/lyricSuppress", tSec, payload: { action } });
+    queueHintEvent({ type: "hint/lyricSuppress", tSec, payload: { action } });
+    return true;
+  }
+  if (!e.repeat && key === "c") {
+    void clearHintEventsForCurrentTrack();
+    return true;
+  }
+  if (!e.repeat && key === "u") {
+    void undoLastHintGroupForCurrentTrack();
+    return true;
+  }
+  return false;
+}
+
+function handleGraphModeKeydown(e: KeyboardEvent) {
+  if ((viewerMode !== "recipe-view" && viewerMode !== "random-scene") || e.repeat) return false;
+  const key = e.key.toLowerCase();
+  if (key === "j") {
+    if (viewerMode === "recipe-view") cycleGraphRecipeForSection(currentRecipe, currentSectionIdNow(), -1);
+    else cycleRandomSceneForSection(currentSectionIdNow(), -1);
+    return true;
+  }
+  if (key === "k" || key === "g") {
+    if (viewerMode === "recipe-view") cycleGraphRecipeForSection(currentRecipe, currentSectionIdNow(), 1);
+    else cycleRandomSceneForSection(currentSectionIdNow(), 1);
+    return true;
+  }
+  if (key === "r") {
+    cycleGraphVariantForSection(currentSectionIdNow());
+    return true;
+  }
+  if (key === "a") {
+    graphAutoRefresh = !graphAutoRefresh;
+    return true;
+  }
+  return false;
+}
+
+function handlePrimitiveLabKeydown(e: KeyboardEvent) {
+  if (viewerMode !== "primitive-lab" || e.repeat) return false;
+  const key = e.key.toLowerCase();
+  if (key === "b") {
+    cycleLabBackdropPolicy();
+    return true;
+  }
+  if (key === "j") {
+    cycleLabPrimitive(-1);
+    return true;
+  }
+  if (key === "k") {
+    cycleLabPrimitive(1);
+    return true;
+  }
+  return false;
+}
+
 playBtn.addEventListener("click", async () => {
   await togglePlayPause();
 });
@@ -4566,13 +4686,13 @@ shareBtn?.addEventListener("click", () => {
 });
 
 hudBtn.addEventListener("click", () => {
-  hudVisible = !hudVisible;
-  updateUrlParam("hud", hudVisible ? "1" : null);
+  toggleHud();
   showControlsTemporarily();
 });
 
 window.addEventListener("keydown", async (e) => {
   showControlsTemporarily();
+  const key = e.key.toLowerCase();
   if (e.code === "Space" && !e.repeat) {
     e.preventDefault();
     await togglePlayPause();
@@ -4580,166 +4700,58 @@ window.addEventListener("keydown", async (e) => {
   }
   if (e.code === "ArrowLeft") {
     e.preventDefault();
-    audio.currentTime = Math.max(0, audio.currentTime - 5);
-    if (stemSignalsActive()) {
-      const t = Number(audio.currentTime) || 0;
-      audioBacking.currentTime = t;
-      audioVocals.currentTime = t;
-    }
+    seekRelativeSec(-5);
     return;
   }
   if (e.code === "ArrowRight") {
     e.preventDefault();
-    const maxT = Number.isFinite(audio.duration) ? audio.duration : audio.currentTime + 5;
-    audio.currentTime = Math.min(maxT, audio.currentTime + 5);
-    if (stemSignalsActive()) {
-      const t = Number(audio.currentTime) || 0;
-      audioBacking.currentTime = t;
-      audioVocals.currentTime = t;
-    }
+    seekRelativeSec(5);
     return;
   }
-  if (isHintEditMode() && !e.repeat && (e.key.toLowerCase() === "d" || e.key.toLowerCase() === "b" || ["1", "2", "3", "4"].includes(e.key))) {
-    const tSec = currentHintCaptureSec();
-    if (e.key.toLowerCase() === "d") {
-      applyHintEventOptimistic({ type: "hint/downbeat", tSec });
-      queueHintEvent({ type: "hint/downbeat", tSec });
-      return;
-    }
-    if (e.key.toLowerCase() === "b") {
-      applyHintEventOptimistic({ type: "hint/beat", tSec });
-      queueHintEvent({ type: "hint/beat", tSec });
-      return;
-    }
-    const beatInBar = Number(e.key);
-    if (Number.isInteger(beatInBar) && beatInBar >= 1 && beatInBar <= 4) {
-      applyHintEventOptimistic({ type: "hint/barBeat", tSec, payload: { beatInBar } });
-      queueHintEvent({ type: "hint/barBeat", tSec, payload: { beatInBar } });
-      return;
-    }
-  }
-  if (isHintEditMode() && !e.repeat && e.key.toLowerCase() === "s") {
+  if (handleHintEditKeydown(e)) {
     e.preventDefault();
-    const tSec = currentHintCaptureSec();
-    const tMs = Math.max(0, Math.round(tSec * 1000));
-    const action = hasSectionMarkerNear(tMs, 140) ? "clear" : "set";
-    applyHintEventOptimistic({ type: "hint/sectionMarker", tSec, payload: { action } });
-    queueHintEvent({ type: "hint/sectionMarker", tSec, payload: { action } });
     return;
   }
-  if (isHintEditMode() && !e.repeat && e.key.toLowerCase() === "e") {
-    e.preventDefault();
-    const tSec = currentHintCaptureSec();
-    applyHintEventOptimistic({ type: "hint/endMarker", tSec });
-    queueHintEvent({ type: "hint/endMarker", tSec });
-    return;
-  }
-  if (isHintEditMode() && !e.repeat && e.key.toLowerCase() === "x") {
-    e.preventDefault();
-    const tSec = currentHintCaptureSec();
-    const tMs = Math.max(0, Math.round(tSec * 1000));
-    const action = hasLyricSuppressMarkerNear(tMs, 140)
-      ? "clear"
-      : (isLyricSuppressedAt(tMs) ? "clear" : "set");
-    applyHintEventOptimistic({ type: "hint/lyricSuppress", tSec, payload: { action } });
-    queueHintEvent({ type: "hint/lyricSuppress", tSec, payload: { action } });
-    return;
-  }
-  if (e.key.toLowerCase() === "n" || e.key === "." || e.key === ">") {
+  if (key === "n" || e.key === "." || e.key === ">") {
     e.preventDefault();
     await goNextTrack();
     return;
   }
-  if (e.key.toLowerCase() === "p" || e.key === "," || e.key === "<") {
+  if (key === "p" || e.key === "," || e.key === "<") {
     e.preventDefault();
     await goPrevTrackOrRestart();
     return;
   }
-  if (e.key.toLowerCase() === "h" || e.key === "?") {
+  if (key === "h" || e.key === "?") {
     e.preventDefault();
-    hudVisible = !hudVisible;
-    updateUrlParam("hud", hudVisible ? "1" : null);
+    toggleHud();
     return;
   }
-  if ((viewerMode === "recipe-view" || viewerMode === "random-scene") && !e.repeat) {
-    if (e.key.toLowerCase() === "j") {
-      e.preventDefault();
-      if (viewerMode === "recipe-view") cycleGraphRecipeForSection(currentRecipe, currentSectionIdNow(), -1);
-      else cycleRandomSceneForSection(currentSectionIdNow(), -1);
-      return;
-    }
-    if (e.key.toLowerCase() === "k") {
-      e.preventDefault();
-      if (viewerMode === "recipe-view") cycleGraphRecipeForSection(currentRecipe, currentSectionIdNow(), 1);
-      else cycleRandomSceneForSection(currentSectionIdNow(), 1);
-      return;
-    }
-    if (e.key.toLowerCase() === "g") {
-      e.preventDefault();
-      if (viewerMode === "recipe-view") cycleGraphRecipeForSection(currentRecipe, currentSectionIdNow(), 1);
-      else cycleRandomSceneForSection(currentSectionIdNow(), 1);
-      return;
-    }
-    if (e.key.toLowerCase() === "r") {
-      e.preventDefault();
-      cycleGraphVariantForSection(currentSectionIdNow());
-      return;
-    }
-    if (e.key.toLowerCase() === "a") {
-      e.preventDefault();
-      graphAutoRefresh = !graphAutoRefresh;
-      return;
-    }
-  }
-  if (isHintEditMode() && e.key.toLowerCase() === "l") {
+  if (handleGraphModeKeydown(e)) {
     e.preventDefault();
-    setLyricsEnabled(!lyricsEnabled);
     return;
   }
-  if (e.key.toLowerCase() === "m") {
+  if (key === "m") {
     e.preventDefault();
     lyricMode = lyricMode === "fixed" ? "center" : lyricMode === "center" ? "off" : "fixed";
     if (viewerMode !== "primitive-lab") updateUrlParam("lyricMode", lyricMode);
     return;
   }
-  if (e.key.toLowerCase() === "v" && !e.repeat) {
+  if (key === "v" && !e.repeat) {
     e.preventDefault();
     cycleViewerMode();
     return;
   }
-  if ((viewerMode === "player" || viewerMode === "hint-edit" || viewerMode === "primitive-lab") && e.key.toLowerCase() === "r" && !e.repeat) {
+  if ((viewerMode === "player" || viewerMode === "hint-edit" || viewerMode === "primitive-lab") && key === "r" && !e.repeat) {
     e.preventDefault();
     randomizeSeed();
     return;
   }
-  if (viewerMode === "primitive-lab" && !e.repeat) {
-    if (e.key.toLowerCase() === "b") {
-      e.preventDefault();
-      cycleLabBackdropPolicy();
-      return;
-    }
-    if (e.key.toLowerCase() === "j") {
-      e.preventDefault();
-      cycleLabPrimitive(-1);
-      return;
-    }
-    if (e.key.toLowerCase() === "k") {
-      e.preventDefault();
-      cycleLabPrimitive(1);
-      return;
-    }
-  }
-  if (isHintEditMode() && e.key.toLowerCase() === "c" && !e.repeat) {
+  if (handlePrimitiveLabKeydown(e)) {
     e.preventDefault();
-    await clearHintEventsForCurrentTrack();
     return;
   }
-  if (isHintEditMode() && e.key.toLowerCase() === "u" && !e.repeat) {
-    e.preventDefault();
-    await undoLastHintGroupForCurrentTrack();
-    return;
-  }
-  if (e.key.toLowerCase() === "o" && !e.repeat) {
+  if (key === "o" && !e.repeat) {
     e.preventDefault();
     cycleOffsetPreset();
     return;
@@ -4747,10 +4759,14 @@ window.addEventListener("keydown", async (e) => {
   if (e.code === "BracketLeft") {
     setRenderOffset(renderOffsetMs - 10);
     e.preventDefault();
-  } else if (e.code === "BracketRight") {
+    return;
+  }
+  if (e.code === "BracketRight") {
     setRenderOffset(renderOffsetMs + 10);
     e.preventDefault();
-  } else if (e.code === "Backslash") {
+    return;
+  }
+  if (e.code === "Backslash") {
     setRenderOffset(DEFAULT_RENDER_OFFSET_MS);
     e.preventDefault();
   }
@@ -4773,8 +4789,7 @@ canvas.addEventListener("dblclick", () => {
     window.clearTimeout(canvasClickTimer);
     canvasClickTimer = 0;
   }
-  hudVisible = !hudVisible;
-  updateUrlParam("hud", hudVisible ? "1" : null);
+  toggleHud();
   showControlsTemporarily();
 });
 
@@ -4787,11 +4802,7 @@ audio.addEventListener("play", () => {
 });
 audio.addEventListener("seeking", () => {
   void resumeAudioContext();
-  if (stemSignalsActive()) {
-    const t = Number(audio.currentTime) || 0;
-    audioBacking.currentTime = t;
-    audioVocals.currentTime = t;
-  }
+  syncAnalysisToCurrent();
   logAudioState("seeking");
 });
 audio.addEventListener("seeked", () => {
@@ -4827,11 +4838,7 @@ audio.addEventListener("ended", async () => {
 document.addEventListener("visibilitychange", () => {
   if (!document.hidden) {
     void resumeAudioContext();
-    if (stemSignalsActive() && !audio.paused) {
-      const t = Number(audio.currentTime) || 0;
-      audioBacking.currentTime = t;
-      audioVocals.currentTime = t;
-    }
+    if (stemSignalsActive() && !audio.paused) syncAnalysisToCurrent();
     logAudioState("visibility-return");
   }
 });
@@ -4844,4 +4851,5 @@ init().catch((err) => {
   hud.style.display = "block";
   hud.textContent = err instanceof Error ? err.message : String(err);
 });
+
 

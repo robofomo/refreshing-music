@@ -1177,6 +1177,14 @@ function cycleOffsetPreset() {
   setRenderOffset(OFFSET_PRESETS_MS[nextIdx]);
 }
 
+function nudgeRenderOffset(deltaMs: number) {
+  setRenderOffset(renderOffsetMs + deltaMs);
+}
+
+function resetRenderOffset() {
+  setRenderOffset(DEFAULT_RENDER_OFFSET_MS);
+}
+
 async function copyShareUrl() {
   const u = new URL(location.href);
   u.searchParams.set("offset", String(renderOffsetMs));
@@ -4740,7 +4748,7 @@ modeBtn?.addEventListener("click", () => {
 });
 
 offsetDecBtn?.addEventListener("click", () => {
-  setRenderOffset(renderOffsetMs - 10);
+  nudgeRenderOffset(-10);
   showControlsTemporarily();
 });
 
@@ -4750,7 +4758,7 @@ offsetCycleBtn?.addEventListener("click", () => {
 });
 
 offsetIncBtn?.addEventListener("click", () => {
-  setRenderOffset(renderOffsetMs + 10);
+  nudgeRenderOffset(10);
   showControlsTemporarily();
 });
 
@@ -4831,17 +4839,17 @@ window.addEventListener("keydown", async (e) => {
     return;
   }
   if (e.code === "BracketLeft") {
-    setRenderOffset(renderOffsetMs - 10);
+    nudgeRenderOffset(-10);
     e.preventDefault();
     return;
   }
   if (e.code === "BracketRight") {
-    setRenderOffset(renderOffsetMs + 10);
+    nudgeRenderOffset(10);
     e.preventDefault();
     return;
   }
   if (e.code === "Backslash") {
-    setRenderOffset(DEFAULT_RENDER_OFFSET_MS);
+    resetRenderOffset();
     e.preventDefault();
   }
 });

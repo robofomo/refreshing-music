@@ -2695,6 +2695,15 @@ async function resumePlaybackIfNeeded(wasPlaying: boolean) {
   setPlayButtonIcon();
 }
 
+async function loadTrackJsonAndGuidance(entry: string): Promise<Track> {
+  trackUrl = new URL(`/tracks/${entry}`, location.origin).toString();
+  const resp = await fetch(trackUrl);
+  if (!resp.ok) throw new Error(`Failed to load track json: ${entry}`);
+  const nextTrack = (await resp.json()) as Track;
+  await loadEffectiveGuidance(nextTrack, trackUrl);
+  return nextTrack;
+}
+
 function applyInitialViewerConfigFromUrl() {
   const url = new URL(location.href);
   const requestedTrackId = url.searchParams.get("track");
@@ -4525,11 +4534,7 @@ async function loadTrack(nextIndex: number) {
   resetTrackLoadModeState();
   updateUrlParam("track", trackId);
 
-  trackUrl = new URL(`/tracks/${entry}`, location.origin).toString();
-  const resp = await fetch(trackUrl);
-  if (!resp.ok) throw new Error(`Failed to load track json: ${entry}`);
-  track = (await resp.json()) as Track;
-  await loadEffectiveGuidance(track, trackUrl);
+  track = await loadTrackJsonAndGuidance(entry);
   triggerAuthoringReduce(track);
   runPostTrackLoadHousekeeping(trackId);
   try {

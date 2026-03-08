@@ -16,6 +16,7 @@ type EngineState = {
   nextSectionStartMs?: number;
   viewerMode?: string;
   signalBus?: any;
+  beatTrack?: { beatsMs?: number[]; downbeatsMs?: number[] };
   amp?: number;
   energy?: number;
   recipe?: any;

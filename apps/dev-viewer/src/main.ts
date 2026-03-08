@@ -44,6 +44,10 @@ type Track = {
   trackId: string;
   workId?: string;
   slug: string;
+  assetDir?: string;
+  beatReducer?: {
+    aiBeatDivisor?: number;
+  };
   composer?: { headerMap?: Record<string, string> };
   audio: { path: string; filename?: string };
   assetPaths?: {
@@ -80,6 +84,7 @@ type Track = {
 };
 
 type PlaybackMode = "mix";
+type LyricMode = "fixed" | "center" | "off";
 type ViewerMode = "player" | "hint-edit" | "primitive-lab" | "recipe-view" | "random-scene";
 const VIEWER_MODES: ViewerMode[] = ["player", "hint-edit", "primitive-lab", "recipe-view", "random-scene"];
 type LabBackdropPolicy = "off" | "fixed" | "random";
@@ -223,6 +228,8 @@ type Particle = {
   alpha: number;
   drift: number;
 };
+type MarkerSource = "hint" | "inferred" | "ai" | "corrected";
+type SectionMarkerSource = "default" | "hint";
 
 const canvas = document.getElementById("stage") as HTMLCanvasElement;
 const hud = document.getElementById("hud") as HTMLDivElement;
@@ -242,9 +249,7 @@ const seek = document.getElementById("seek") as HTMLInputElement;
 const audio = document.getElementById("audio") as HTMLAudioElement;
 const audioBacking = document.createElement("audio");
 const audioVocals = document.createElement("audio");
-const ctx = canvas.getContext("2d");
-
-if (!ctx) throw new Error("Canvas2D not supported");
+const ctx = canvas.getContext("2d")!;
 
 audio.preload = "auto";
 audioBacking.preload = "auto";
@@ -266,11 +271,11 @@ let trackUrl = "";
 let lyricsLines: string[] = [];
 let pulseBeatTimesMs: number[] = [];
 let pulseDownbeatTimesMs: number[] = [];
-let beatMarkers: Array<{ tMs: number; source: "hint" | "inferred" | "ai" }> = [];
-let downbeatMarkers: Array<{ tMs: number; source: "hint" | "inferred" | "ai" | "corrected" }> = [];
+let beatMarkers: Array<{ tMs: number; source: MarkerSource }> = [];
+let downbeatMarkers: Array<{ tMs: number; source: MarkerSource }> = [];
 let aiDownbeatMarkers: Array<{ tMs: number; source: "ai" }> = [];
 let hintOverlays: HintOverlay[] = [];
-let sectionMarkers: Array<{ tMs: number; source: "default" | "hint" }> = [];
+let sectionMarkers: Array<{ tMs: number; source: SectionMarkerSource }> = [];
 let lyricSuppressMarkers: Array<{ tMs: number; source: "hint" }> = [];
 let lyricSuppressWindows: Array<{ t0Ms: number; t1Ms: number }> = [];
 let activeHintCount = 0;
@@ -299,7 +304,7 @@ const OFFSET_PRESETS_MS = [-240, -120, 0, 120, 240];
 let renderOffsetMs = DEFAULT_RENDER_OFFSET_MS;
 let hudVisible = new URL(location.href).searchParams.get("hud") === "1";
 let lyricsEnabled = new URL(location.href).searchParams.get("lyrics") !== "0";
-let lyricMode = new URL(location.href).searchParams.get("lyricMode") || "center";
+let lyricMode: LyricMode = normalizeLyricMode(new URL(location.href).searchParams.get("lyricMode"));
 let viewerMode: ViewerMode = "player";
 let labPrimitive: LabPrimitiveId = LAB_PRIMITIVES[0];
 let labBackdropPolicy: LabBackdropPolicy = "off";
@@ -1446,7 +1451,7 @@ function rebuildSectionMarkersFromHintOverlays() {
     if (atA !== atB) return atA - atB;
     return Number(a.tSec) - Number(b.tSec);
   });
-  const out: Array<{ tMs: number; source: "default" | "hint" }> = [];
+  const out: Array<{ tMs: number; source: SectionMarkerSource }> = [];
   for (const row of rows) {
     if (row.type !== "hint/sectionMarker") continue;
     const tMs = Math.max(0, Math.round(Number(row.tSec) * 1000));
@@ -1456,19 +1461,19 @@ function rebuildSectionMarkersFromHintOverlays() {
         if (Math.abs(out[i].tMs - tMs) <= 140) out.splice(i, 1);
       }
     } else if (!out.some((x) => Math.abs(x.tMs - tMs) <= 90)) {
-      out.push({ tMs, source: "hint" });
+      out.push({ tMs, source: "hint" as const });
     }
   }
   sectionMarkers = out
-    .map((m) => ({ tMs: Math.max(0, Math.round(Number(m.tMs) || 0)), source: m.source === "hint" ? "hint" : "default" }))
+    .map((m) => ({ tMs: Math.max(0, Math.round(Number(m.tMs) || 0)), source: (m.source === "hint" ? "hint" : "default") as SectionMarkerSource }))
     .filter((m) => Number.isFinite(m.tMs))
     .sort((a, b) => a.tMs - b.tMs);
 }
 
 function addOrUpdateMarker(
-  markers: Array<{ tMs: number; source: "hint" | "inferred" | "ai" }>,
+  markers: Array<{ tMs: number; source: MarkerSource }>,
   tMs: number,
-  source: "hint" | "inferred" | "ai",
+  source: MarkerSource,
   tolMs = 90
 ) {
   const ms = Math.max(0, Math.round(Number(tMs) || 0));
@@ -1485,7 +1490,7 @@ function addOrUpdateMarker(
 }
 
 function removeMarkerNear(
-  markers: Array<{ tMs: number; source: "hint" | "inferred" | "ai" }>,
+  markers: Array<{ tMs: number; source: MarkerSource }>,
   tMs: number,
   tolMs = 120
 ) {
@@ -1528,9 +1533,9 @@ function applyHintEventOptimistic(event: {
     if (action === "clear") {
       removeSectionMarkerNear(tMs, 140);
     } else if (!hasSectionMarkerNear(tMs, 100)) {
-      sectionMarkers.push({ tMs, source: "hint" });
+      sectionMarkers.push({ tMs, source: "hint" as const });
       sectionMarkers = sectionMarkers
-        .map((m) => ({ tMs: Math.max(0, Math.round(Number(m.tMs) || 0)), source: m.source === "hint" ? "hint" : "default" }))
+        .map((m) => ({ tMs: Math.max(0, Math.round(Number(m.tMs) || 0)), source: (m.source === "hint" ? "hint" : "default") as SectionMarkerSource }))
         .filter((m) => Number.isFinite(m.tMs))
         .sort((a, b) => a.tMs - b.tMs);
     }

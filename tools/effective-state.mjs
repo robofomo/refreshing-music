@@ -864,7 +864,8 @@ function resolveEndMarkerMs(events, beatsMs) {
     .map((e, idx) => ({
       idx,
       atMs: normalizeIsoAt(e?.at),
-      tSec: Number(e?.tSec)
+      tSec: Number(e?.tSec),
+      action: e?.payload?.action === "clear" ? "clear" : "set"
     }))
     .filter((e) => Number.isFinite(e.tSec) && e.tSec >= 0)
     .sort((a, b) => {
@@ -872,10 +873,16 @@ function resolveEndMarkerMs(events, beatsMs) {
       return a.idx - b.idx;
     });
   if (!rows.length) return 0;
-  const last = rows[rows.length - 1];
-  const rawMs = Math.max(0, Math.round(last.tSec * 1000));
-  if (Array.isArray(beatsMs) && beatsMs.length) return nearestBeatMs(rawMs, beatsMs);
-  return rawMs;
+  let endMs = 0;
+  for (const row of rows) {
+    if (row.action === "clear") {
+      endMs = 0;
+      continue;
+    }
+    const rawMs = Math.max(0, Math.round(row.tSec * 1000));
+    endMs = Array.isArray(beatsMs) && beatsMs.length ? nearestBeatMs(rawMs, beatsMs) : rawMs;
+  }
+  return endMs;
 }
 
 function resolveLyricSuppressState(events, beatsMs, trackEndMs) {

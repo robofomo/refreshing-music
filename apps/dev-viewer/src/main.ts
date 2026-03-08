@@ -1189,10 +1189,6 @@ function nudgeRenderOffset(deltaMs: number) {
   setRenderOffset(renderOffsetMs + deltaMs);
 }
 
-function resetRenderOffset() {
-  setRenderOffset(DEFAULT_RENDER_OFFSET_MS);
-}
-
 async function copyShareUrl() {
   const u = new URL(location.href);
   u.searchParams.set("offset", String(renderOffsetMs));
@@ -1513,12 +1509,15 @@ function applyHintEventOptimistic(event: {
 }) {
   const tMs = Math.max(0, Math.round(event.tSec * 1000));
   if (event.type === "hint/endMarker") {
-    endMarkerMs = tMs;
-    pulseBeatTimesMs = normalizeMsList(pulseBeatTimesMs.filter((x) => Number(x) <= endMarkerMs));
-    pulseDownbeatTimesMs = normalizeMsList(pulseDownbeatTimesMs.filter((x) => Number(x) <= endMarkerMs));
-    beatMarkers = beatMarkers.filter((m) => Number(m.tMs) <= endMarkerMs);
-    downbeatMarkers = downbeatMarkers.filter((m) => Number(m.tMs) <= endMarkerMs);
-    aiDownbeatMarkers = aiDownbeatMarkers.filter((m) => Number(m.tMs) <= endMarkerMs);
+    const action = event?.payload?.action === "clear" ? "clear" : "set";
+    endMarkerMs = action === "clear" ? 0 : tMs;
+    if (endMarkerMs > 0) {
+      pulseBeatTimesMs = normalizeMsList(pulseBeatTimesMs.filter((x) => Number(x) <= endMarkerMs));
+      pulseDownbeatTimesMs = normalizeMsList(pulseDownbeatTimesMs.filter((x) => Number(x) <= endMarkerMs));
+      beatMarkers = beatMarkers.filter((m) => Number(m.tMs) <= endMarkerMs);
+      downbeatMarkers = downbeatMarkers.filter((m) => Number(m.tMs) <= endMarkerMs);
+      aiDownbeatMarkers = aiDownbeatMarkers.filter((m) => Number(m.tMs) <= endMarkerMs);
+    }
     hintOverlays.push({ type: event.type, tSec: event.tSec, payload: event.payload, actor: "user", at: new Date().toISOString() });
     hintOverlays.sort((a, b) => a.tSec - b.tSec);
     activeHintCount = hintOverlays.length;
@@ -2540,7 +2539,7 @@ function hudKeyHelpLines(): string[] {
     lines.push(`      b lab backdrop off/fixed/random`);
   }
   if (isGraphMode()) {
-    lines.push(`      j/k/g prev/next graph recipe`);
+    lines.push(`      j/k prev/next graph recipe`);
     lines.push(`      r refresh graph variant`);
     lines.push(`      a auto refresh (downbeat+section)`);
   }
@@ -2549,14 +2548,13 @@ function hudKeyHelpLines(): string[] {
     lines.push(`      1/2/3/4 = measure tempo hints`);
     lines.push(`      b = single beat hint`);
     lines.push(`      s = toggle section marker`);
-    lines.push(`      e = set ending marker`);
+    lines.push(`      e = toggle ending marker`);
     lines.push(`      u undo last hint group`);
     lines.push(`      c clear hints`);
     lines.push(`      x toggle lyric-suppression marker`);
   }
   lines.push(`      [ ] offset`);
   lines.push(`      o cycle offset preset`);
-  lines.push(`      \\ reset offset`);
   lines.push(`      h/? hud`);
   return lines;
 }
@@ -4679,7 +4677,10 @@ function handleHintEditKeydown(e: KeyboardEvent) {
     return true;
   }
   if (!e.repeat && key === "e") {
-    captureAndQueueHintEvent("hint/endMarker");
+    const tSec = currentHintCaptureSec();
+    const tMs = Math.max(0, Math.round(tSec * 1000));
+    const action = endMarkerMs > 0 && Math.abs(endMarkerMs - tMs) <= 140 ? "clear" : "set";
+    captureAndQueueHintEvent("hint/endMarker", { action });
     return true;
   }
   if (!e.repeat && key === "x") {
@@ -4714,7 +4715,7 @@ function handleGraphModeKeydown(e: KeyboardEvent) {
     cycleRecipeByMode(-1);
     return true;
   }
-  if (key === "k" || key === "g") {
+  if (key === "k") {
     cycleRecipeByMode(1);
     return true;
   }
@@ -4761,11 +4762,6 @@ function handleOffsetKeydown(e: KeyboardEvent) {
   }
   if (e.code === "BracketRight") {
     nudgeRenderOffset(10);
-    e.preventDefault();
-    return true;
-  }
-  if (e.code === "Backslash") {
-    resetRenderOffset();
     e.preventDefault();
     return true;
   }

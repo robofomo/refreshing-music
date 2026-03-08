@@ -2736,7 +2736,7 @@ function applyInitialViewerConfigFromUrl() {
   labPrimitive = normalizeLabPrimitive(labPrimitiveParam);
   setViewerMode(normalizeViewerMode(modeParam));
   lyricsEnabled = lyricsParam !== "0";
-  lyricMode = lyricModeParam === "fixed" || lyricModeParam === "off" ? lyricModeParam : "center";
+  lyricMode = normalizeLyricMode(lyricModeParam);
   syncLyricsUrlParams();
   return { requestedTrackId };
 }
@@ -2745,6 +2745,10 @@ function resolveInitialTrackIndex(requestedTrackId: string | null) {
   if (!requestedTrackId) return 0;
   const byTrackId = indexEntries.findIndex((entry) => trackIdFromEntry(entry) === requestedTrackId);
   return byTrackId >= 0 ? byTrackId : 0;
+}
+
+function normalizeLyricMode(value: string | null | undefined): LyricMode {
+  return value === "fixed" || value === "off" ? value : "center";
 }
 
 function sortedTimedSections() {

@@ -219,6 +219,14 @@ function drawOrbitRibbon(args: {
   const onset = rr.onsetPulse;
   const pointsBase = Math.max(16, Math.min(220, Number(params?.points ?? 56)));
   const points = Math.max(16, Math.round(pointsBase * performanceDensityScale(state)));
+  const perfScale = performanceDensityScale(state);
+  const revSeed = 1 + ((nodeSeed >>> 5) % 5);
+  const revByPerf = Math.max(1, 1 + Math.floor(perfScale * 4));
+  const revolutions = Math.max(
+    1,
+    Math.min(5, Math.min(Math.round(Number(params?.revolutions ?? revSeed)), revByPerf))
+  );
+  const pathPoints = Math.max(24, Math.min(1200, Math.round(points * (0.6 + revolutions * 0.8))));
   const radius = Math.max(24, Number(params?.radiusPx ?? Math.min(w, h) * 0.24));
   const thickness = Math.max(0.8, Number(params?.thicknessPx ?? 1.6) + beat * 0.9);
   const speedHz = Math.max(0.01, Number(params?.phaseHz ?? 0.08));
@@ -260,9 +268,9 @@ function drawOrbitRibbon(args: {
   ctx.beginPath();
   const driftBaseFreq = 3.4 + rng.float() * 1.1;
   const driftPhase = seedPhase * (0.8 + rng.float() * 0.6);
-  for (let i = 0; i <= points; i += 1) {
-    const u = i / points;
-    const a = u * Math.PI * 2 + t * 2 * Math.PI * speedHz * audioWarp * tempoMul + seedPhase + phaseBeatPush;
+  for (let i = 0; i <= pathPoints; i += 1) {
+    const u = i / pathPoints;
+    const a = u * Math.PI * 2 * revolutions + t * 2 * Math.PI * speedHz * audioWarp * tempoMul + seedPhase + phaseBeatPush;
     // Use periodic, continuous drift so the stroke stays smooth and avoids seam spikes.
     const drift = 1 + driftAmp * Math.sin(driftBaseFreq * a * driftFreqMul + t * (0.45 + amp * 0.45) + driftPhase);
     const radiusBoost =
@@ -346,50 +354,50 @@ function drawWaveStrip(args: {
   const { ctx, canvas, tMs, nodeSeed, colors, state, params } = args;
   const w = canvas.width;
   const h = canvas.height;
-  const rrAuto = resolveReactiveSeries(state?.signalBus?.reactive, params?.signalSource ?? "auto");
-  const hasVocals = rrAuto.sourceId === "vocals" || (Array.isArray(state?.signalBus?.reactive?.sources?.vocals?.wave) && state?.signalBus?.reactive?.sources?.vocals?.wave?.length > 0 && Number(state?.signalBus?.reactive?.vocalsActive ?? 0) > 0.04);
-  const stripModeRaw = String(params?.stripMode ?? "auto").toLowerCase();
-  const stripMode = stripModeRaw === "dual" || stripModeRaw === "single" ? stripModeRaw : "auto";
-  const shouldDual = stripMode === "dual" || (stripMode === "auto" && hasVocals && ((nodeSeed >>> 3) % 100) < 45);
-  const marginPx = Math.max(8, Math.min(w * 0.2, Number(params?.marginPx ?? 28)));
-  const usableW = Math.max(32, w - marginPx * 2);
-  const maxAmpPx = Math.max(12, Math.min(h * 0.46, Number(params?.heightPx ?? Math.min(h * 0.18, 128)))) * 2;
-  const smooth = clamp01(Number(params?.smooth ?? 0.1));
-  const bandSmoothing = clamp01(Number(params?.bandSmoothing ?? 0.1));
-  const lineCopies = Math.max(1, Math.min(10, Math.round(Number(params?.lineCopies ?? 4))));
+  const rr = resolveReactiveSeries(state?.signalBus?.reactive, "master");
+  const wave = rr.wave;
+  const lineCopies = Math.max(1, Math.min(8, Math.round(Number(params?.lineCopies ?? 4))));
   const lineWidth = Math.max(0.6, Math.min(4, Number(params?.lineWidth ?? 1.6)));
-  const alphaMulBase = Math.max(0.1, Math.min(2, Number(params?.alphaMul ?? 0.35)));
-  const mirrored = params?.mirrored !== false;
-  const zoom = Math.max(0.6, Math.min(2.6, Number(params?.zoom ?? 1.2)));
-  const t = tMs / 1000;
-  const rng = createRng(nodeSeed ^ hashStringToSeed("viz.waveStrip"));
+  const alphaMulBase = Math.max(0.08, Math.min(2, Number(params?.alphaMul ?? 0.28)));
+  const smooth = clamp01(Number(params?.smooth ?? 0.08));
+  const zoom = Math.max(0.5, Math.min(2.4, Number(params?.zoom ?? 1.0)));
+  const rng = createRng(nodeSeed ^ hashStringToSeed("viz.waveRing"));
   const baseColor = pickFrom(colors, nodeSeed, "#8AC7FF");
   const blend = String(params?.blend ?? "screen");
-  const centerY = Math.max(0.1, Math.min(0.9, Number(params?.centerY ?? 0.25)));
-  const yPadDual = Number(params?.dualGapPx ?? Math.max(22, Math.min(96, h * 0.12))) * 2;
-
-  const drawOne = (sourceRaw: "master" | "backing" | "vocals", cy: number, alphaMul: number) => {
-    const rr = resolveReactiveSeries(state?.signalBus?.reactive, sourceRaw);
-    const wave = rr.wave;
-    const ampGain = 0.75 + rr.ampFast * 0.8 + rr.onsetPulse * 0.18;
-    const yAmp = maxAmpPx * ampGain;
-    const sourceTag = rr.sourceId === "vocals" ? 17 : rr.sourceId === "backing" ? 9 : 3;
-    for (let pass = 0; pass < lineCopies; pass += 1) {
-      const uPass = pass / Math.max(1, lineCopies - 1);
-      const passAlpha = clamp01((0.18 + (1 - uPass) * 0.48) * alphaMul * alphaMulBase);
-      const passW = lineWidth * (1 + (1 - uPass) * 0.7);
-      const phaseShift = (t * (0.18 + 0.07 * uPass) + sourceTag * 0.043 + rng.float() * 0.2) * Math.PI * 2;
-      ctx.strokeStyle = colorToRgba(baseColor, passAlpha);
+  const cx = w * 0.5;
+  const cy = h * 0.5;
+  const minDim = Math.min(w, h);
+  const radiusRel = Number.isFinite(Number(params?.radiusRel))
+    ? Math.max(0.25, Math.min(0.375, Number(params?.radiusRel)))
+    : (0.25 + rng.float() * 0.125); // diameter ~ 0.5..0.75 of window height
+  const waveRel = Number.isFinite(Number(params?.waveHeightRel))
+    ? Math.max(0.1, Math.min(0.3, Number(params?.waveHeightRel)))
+    : (0.1 + rng.float() * 0.2); // spoke height ~ 0.1..0.3 of window height
+  const radius = Math.max(h * 0.25, Math.min(h * 0.375, Number(params?.radiusPx ?? (h * radiusRel))));
+  const waveHeight = Math.max(h * 0.1, Math.min(h * 0.3, Number(params?.waveHeightPx ?? (h * waveRel))));
+  const ampGain = 0.8 + rr.ampFast * 0.9 + rr.onsetPulse * 0.22;
+  const yAmp = waveHeight * ampGain;
+  const samples = Math.max(140, Math.min(960, Math.round(Number(params?.samples ?? 420) * performanceDensityScale(state))));
+  const phaseShift = -Math.PI * 0.5; // fixed seam at top (12 o'clock)
+  const span = Math.max(0.08, Math.min(1, 1 / zoom));
+  const start = (1 - span) * 0.5;
+  const innerColor = pickFrom(colors, nodeSeed + 9, "#FF4F7A");
+  ctx.save();
+  ctx.globalCompositeOperation = blend as GlobalCompositeOperation;
+  for (let pass = 0; pass < lineCopies; pass += 1) {
+    const uPass = pass / Math.max(1, lineCopies - 1);
+    const passAlpha = clamp01((0.2 + (1 - uPass) * 0.42) * alphaMulBase);
+    const passW = lineWidth * (1 + (1 - uPass) * 0.7);
+    const jitter = rng.float() * 0.22 + uPass * 0.12;
+    const drawSpokes = (strokeColor: string, sign: 1 | -1, alphaMul = 1) => {
+      ctx.strokeStyle = colorToRgba(strokeColor, passAlpha * alphaMul);
       ctx.lineWidth = passW;
       ctx.beginPath();
-      const samples = Math.max(96, Math.min(480, Math.round(Number(params?.samples ?? 220) * performanceDensityScale(state))));
-      for (let i = 0; i < samples; i += 1) {
-        const u = i / Math.max(1, samples - 1);
-        const x = marginPx + u * usableW;
+      for (let i = 0; i <= samples; i += 1) {
+        const u = i / Math.max(1, samples);
+        const theta = u * Math.PI * 2 + phaseShift + jitter;
         let yN = 0;
         if (wave.length > 4) {
-          const span = Math.max(0.08, Math.min(1, 1 / zoom));
-          const start = (1 - span) * 0.5;
           const pos = start + u * span;
           const idxF = pos * Math.max(1, wave.length - 1);
           const idx0 = Math.max(0, Math.min(wave.length - 1, Math.floor(idxF)));
@@ -399,33 +407,21 @@ function drawWaveStrip(args: {
           const b = Number(wave[idx1] ?? a);
           yN = a + (b - a) * uf;
         } else {
-          yN = Math.sin(u * Math.PI * 6 + phaseShift) * (0.35 + rr.mid * 0.45);
+          yN = Math.sin(u * Math.PI * 8 + phaseShift) * (0.35 + rr.mid * 0.45);
         }
-        const yPrimary = cy + yN * yAmp;
-        const yAlt = cy - yN * yAmp;
-        if (i === 0) ctx.moveTo(x, yPrimary);
-        else ctx.lineTo(x, yPrimary);
-        if (mirrored) {
-          if (i === 0) ctx.moveTo(x, yAlt);
-          else ctx.lineTo(x, yAlt);
-        }
+        const ySmooth = yN * (1 - smooth) + Math.sin(theta * (3 + rr.high * 4)) * smooth * 0.25;
+        const disp = sign * ySmooth * yAmp * (1 - uPass * 0.15);
+        const x0 = cx + Math.cos(theta) * radius;
+        const y0 = cy + Math.sin(theta) * radius;
+        const x1 = cx + Math.cos(theta) * (radius + disp);
+        const y1 = cy + Math.sin(theta) * (radius + disp);
+        ctx.moveTo(x0, y0);
+        ctx.lineTo(x1, y1);
       }
       ctx.stroke();
-    }
-  };
-
-  ctx.save();
-  ctx.globalCompositeOperation = blend as GlobalCompositeOperation;
-  if (shouldDual) {
-    drawOne("backing", h * centerY - yPadDual * 0.5, 0.82);
-    drawOne("vocals", h * centerY + yPadDual * 0.5, 0.82);
-  } else {
-    const sourceRoll = nodeSeed % 3;
-    const sourceAuto = sourceRoll === 0 ? "master" : sourceRoll === 1 ? "backing" : "vocals";
-    const source = String(params?.signalSource ?? "auto").toLowerCase() === "auto"
-      ? sourceAuto
-      : (String(params?.signalSource).toLowerCase() as "master" | "backing" | "vocals");
-    drawOne(source, h * centerY, 1);
+    };
+    drawSpokes(baseColor, 1, 1);
+    drawSpokes(innerColor, -1, 0.85);
   }
   ctx.restore();
 }

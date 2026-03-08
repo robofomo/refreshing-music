@@ -2530,6 +2530,24 @@ function fmtMs(ms: number) {
   return `${m}:${String(s).padStart(2, "0")}`;
 }
 
+function estimateBpmFromBeats(beatsMs: number[]): number {
+  const xs = (Array.isArray(beatsMs) ? beatsMs : [])
+    .map((v) => Number(v))
+    .filter((v) => Number.isFinite(v))
+    .sort((a, b) => a - b);
+  if (xs.length < 3) return NaN;
+  const diffs: number[] = [];
+  for (let i = 1; i < xs.length; i += 1) {
+    const d = xs[i] - xs[i - 1];
+    if (d >= 180 && d <= 2000) diffs.push(d);
+  }
+  if (!diffs.length) return NaN;
+  diffs.sort((a, b) => a - b);
+  const mid = diffs[Math.floor(diffs.length * 0.5)];
+  if (!Number.isFinite(mid) || mid <= 0) return NaN;
+  return 60000 / mid;
+}
+
 function hudKeyHelpLines(): string[] {
   const lines: string[] = [
     `keys: space play/pause`,
@@ -4532,6 +4550,7 @@ if (!isSeeking && Number.isFinite(audio.duration) && audio.duration > 0) {
   const playerSceneChoice = isPlayerMode() ? resolvePlayerSceneChoice(sectionId, sectionType, playerVariantIndex) : null;
   const nextSectionInMs = Number.isFinite(nextSectionStartMs) ? Math.round(nextSectionStartMs - sectionClockMs) : NaN;
   const graphSel = resolveHudGraphSelection(sectionId, sectionType, playerVariantIndex, playerSceneChoice);
+  const effectiveBpm = estimateBpmFromBeats(effectiveBeatsMs);
   hud.style.display = hudVisible ? "block" : "none";
   hud.textContent = [
     `title: ${preferredTrackTitle(track)}`,
@@ -4540,8 +4559,8 @@ if (!isSeeking && Number.isFinite(audio.duration) && audio.duration > 0) {
     `mode: ${viewerMode}`,
     `time: ${fmtMs(tRenderMs)}`,
     `fps: ${fpsSmoothed > 0 ? fpsSmoothed.toFixed(1) : "-"} density:${adaptiveDensityScale.toFixed(2)}`,
+    `bpm: ${Number.isFinite(effectiveBpm) ? effectiveBpm.toFixed(1) : "-"}`,
     `offsetMs: ${renderOffsetMs}`,
-    `playback: ${playbackMode}`,
     ...hudHintModeLines(signalBus, lyricsSuppressedNow),
     ...hudLabModeLines(labProfileRounded),
     ...hudGraphModeLines(modeRecipe, graphSel, playerSceneChoice, playerVariantIndex, nextSectionId, nextSectionInMs),

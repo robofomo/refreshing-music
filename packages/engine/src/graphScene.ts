@@ -377,7 +377,7 @@ function drawWaveStrip(args: {
   const waveHeight = Math.max(h * 0.1, Math.min(h * 0.3, Number(params?.waveHeightPx ?? (h * waveRel))));
   const ampGain = 0.8 + rr.ampFast * 0.9 + rr.onsetPulse * 0.22;
   const yAmp = waveHeight * ampGain;
-  const samples = Math.max(140, Math.min(960, Math.round(Number(params?.samples ?? 420) * performanceDensityScale(state))));
+  const samples = Math.max(98, Math.min(672, Math.round(Number(params?.samples ?? 294) * performanceDensityScale(state))));
   const phaseShift = -Math.PI * 0.5; // fixed seam at top (12 o'clock)
   const span = Math.max(0.08, Math.min(1, 1 / zoom));
   const start = (1 - span) * 0.5;

@@ -2611,20 +2611,11 @@ function updateGraphAutoVariantState(sectionId: string, tRenderMs: number) {
   lastAutoDownbeatCount = -1;
 }
 
-function hudHintModeLines(signalBus: any, lyricsSuppressedNow: boolean): string[] {
+function hudHintModeLines(signalBus: any): string[] {
   if (!isHintEditMode()) return [];
   return [
-    `hints: ${activeHintCount}`,
     `fusion: ${signalBus.hints.fusionModeLabel} (now: ${signalBus.beat.fusionMode})`,
-    `beats: ${signalBus.beat.beatCount}`,
-    `downbeats: ${signalBus.beat.downbeatCount}`,
-    `sections: ${sectionMarkers.length}`,
-    `end: ${endMarkerMs > 0 ? fmtMs(endMarkerMs) : "-"}`,
-    `lyricsSuppressedNow: ${lyricsSuppressedNow ? "yes" : "no"}`,
-    `aiDownbeats: ${signalBus.hints.aiDownbeats}`,
-    `reactive: L${signalBus.reactive.low.toFixed(2)} M${signalBus.reactive.mid.toFixed(2)} H${signalBus.reactive.high.toFixed(2)} O${signalBus.reactive.onsetPulse.toFixed(2)} VA${signalBus.reactive.vocalsActive.toFixed(2)}`,
-    `lyricSuppressMarkers: ${lyricSuppressMarkers.length}`,
-    `lyricSuppressWindows: ${lyricSuppressWindows.length}`
+    `reactive: L${signalBus.reactive.low.toFixed(2)} M${signalBus.reactive.mid.toFixed(2)} H${signalBus.reactive.high.toFixed(2)} O${signalBus.reactive.onsetPulse.toFixed(2)} VA${signalBus.reactive.vocalsActive.toFixed(2)}`
   ];
 }
 
@@ -3338,11 +3329,11 @@ function buildSignalBus(input: {
       fusionModeLabel: beatFusionModeLabel,
       aiDownbeats: aiDownbeatMarkers.length
     },
-    perf: {
-      fps: fpsSmoothed > 0 ? fpsSmoothed : 0,
-      targetFps: 60,
-      densityScale: adaptiveDensityScale
-    },
+      perf: {
+        fps: fpsSmoothed > 0 ? fpsSmoothed : 0,
+        targetFps: 30,
+        densityScale: adaptiveDensityScale
+      },
     theme: {
       coherence,
       pressure,
@@ -4346,7 +4337,7 @@ function render() {
     if (dt > 0 && dt < 1000) {
       const fpsInstant = 1000 / dt;
       fpsSmoothed = fpsSmoothed > 0 ? (fpsSmoothed * 0.9 + fpsInstant * 0.1) : fpsInstant;
-      const targetFps = 60;
+      const targetFps = 30;
       const wantedScale = fpsSmoothed < targetFps
         ? Math.max(0.45, Math.min(1, fpsSmoothed / targetFps))
         : 1;
@@ -4552,16 +4543,19 @@ if (!isSeeking && Number.isFinite(audio.duration) && audio.duration > 0) {
   const graphSel = resolveHudGraphSelection(sectionId, sectionType, playerVariantIndex, playerSceneChoice);
   const effectiveBpm = estimateBpmFromBeats(effectiveBeatsMs);
   hud.style.display = hudVisible ? "block" : "none";
+  const targetFps = 30;
+  const adaptiveFloorScale = 0.45;
+  const adaptiveFloorFps = targetFps * adaptiveFloorScale;
   hud.textContent = [
     `title: ${preferredTrackTitle(track)}`,
     `trackId: ${track?.trackId ?? "-"}`,
     `seed: ${seed}`,
     `mode: ${viewerMode}`,
     `time: ${fmtMs(tRenderMs)}`,
-    `fps: ${fpsSmoothed > 0 ? fpsSmoothed.toFixed(1) : "-"} density:${adaptiveDensityScale.toFixed(2)}`,
+    `fps: ${fpsSmoothed > 0 ? fpsSmoothed.toFixed(1) : "-"} target:${targetFps} density:${adaptiveDensityScale.toFixed(2)} floor:${adaptiveFloorFps.toFixed(1)}`,
     `bpm: ${Number.isFinite(effectiveBpm) ? effectiveBpm.toFixed(1) : "-"}`,
     `offsetMs: ${renderOffsetMs}`,
-    ...hudHintModeLines(signalBus, lyricsSuppressedNow),
+    ...hudHintModeLines(signalBus),
     ...hudLabModeLines(labProfileRounded),
     ...hudGraphModeLines(modeRecipe, graphSel, playerSceneChoice, playerVariantIndex, nextSectionId, nextSectionInMs),
     `sectionId: ${sectionId || "-"}`,

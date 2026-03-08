@@ -2704,6 +2704,14 @@ async function loadTrackJsonAndGuidance(entry: string): Promise<Track> {
   return nextTrack;
 }
 
+async function resolveTrackRecipeWithFallback(nextTrack: Track) {
+  try {
+    return await resolveTrackRecipe(nextTrack);
+  } catch {
+    return applyVisualHintsToRecipe(defaultFallbackRecipe(), nextTrack);
+  }
+}
+
 function applyInitialViewerConfigFromUrl() {
   const url = new URL(location.href);
   const requestedTrackId = url.searchParams.get("track");
@@ -4537,11 +4545,7 @@ async function loadTrack(nextIndex: number) {
   track = await loadTrackJsonAndGuidance(entry);
   triggerAuthoringReduce(track);
   runPostTrackLoadHousekeeping(trackId);
-  try {
-    currentRecipe = await resolveTrackRecipe(track);
-  } catch {
-    currentRecipe = applyVisualHintsToRecipe(defaultFallbackRecipe(), track);
-  }
+  currentRecipe = await resolveTrackRecipeWithFallback(track);
 
   const assets = await resolvePlaybackAssets(track, trackUrl);
   const { wasPlaying } = applyTrackPlaybackAssets({

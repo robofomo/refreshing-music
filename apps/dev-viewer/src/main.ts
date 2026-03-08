@@ -4574,25 +4574,31 @@ function toggleHud() {
   updateUrlParam("hud", hudVisible ? "1" : null);
 }
 
+function captureAndQueueHintEvent(
+  type: "hint/downbeat" | "hint/beat" | "hint/barBeat" | "hint/sectionMarker" | "hint/endMarker" | "hint/lyricSuppress",
+  payload?: Record<string, any>
+) {
+  const tSec = currentHintCaptureSec();
+  const event = payload ? { type, tSec, payload } : { type, tSec };
+  applyHintEventOptimistic(event as any);
+  queueHintEvent(event as any);
+}
+
 function handleHintEditKeydown(e: KeyboardEvent) {
   if (!isHintEditMode()) return false;
   const key = e.key.toLowerCase();
   if (!e.repeat && (key === "d" || key === "b" || ["1", "2", "3", "4"].includes(e.key))) {
-    const tSec = currentHintCaptureSec();
     if (key === "d") {
-      applyHintEventOptimistic({ type: "hint/downbeat", tSec });
-      queueHintEvent({ type: "hint/downbeat", tSec });
+      captureAndQueueHintEvent("hint/downbeat");
       return true;
     }
     if (key === "b") {
-      applyHintEventOptimistic({ type: "hint/beat", tSec });
-      queueHintEvent({ type: "hint/beat", tSec });
+      captureAndQueueHintEvent("hint/beat");
       return true;
     }
     const beatInBar = Number(e.key);
     if (Number.isInteger(beatInBar) && beatInBar >= 1 && beatInBar <= 4) {
-      applyHintEventOptimistic({ type: "hint/barBeat", tSec, payload: { beatInBar } });
-      queueHintEvent({ type: "hint/barBeat", tSec, payload: { beatInBar } });
+      captureAndQueueHintEvent("hint/barBeat", { beatInBar });
       return true;
     }
   }
@@ -4600,14 +4606,11 @@ function handleHintEditKeydown(e: KeyboardEvent) {
     const tSec = currentHintCaptureSec();
     const tMs = Math.max(0, Math.round(tSec * 1000));
     const action = hasSectionMarkerNear(tMs, 140) ? "clear" : "set";
-    applyHintEventOptimistic({ type: "hint/sectionMarker", tSec, payload: { action } });
-    queueHintEvent({ type: "hint/sectionMarker", tSec, payload: { action } });
+    captureAndQueueHintEvent("hint/sectionMarker", { action });
     return true;
   }
   if (!e.repeat && key === "e") {
-    const tSec = currentHintCaptureSec();
-    applyHintEventOptimistic({ type: "hint/endMarker", tSec });
-    queueHintEvent({ type: "hint/endMarker", tSec });
+    captureAndQueueHintEvent("hint/endMarker");
     return true;
   }
   if (!e.repeat && key === "x") {
@@ -4616,8 +4619,7 @@ function handleHintEditKeydown(e: KeyboardEvent) {
     const action = hasLyricSuppressMarkerNear(tMs, 140)
       ? "clear"
       : (isLyricSuppressedAt(tMs) ? "clear" : "set");
-    applyHintEventOptimistic({ type: "hint/lyricSuppress", tSec, payload: { action } });
-    queueHintEvent({ type: "hint/lyricSuppress", tSec, payload: { action } });
+    captureAndQueueHintEvent("hint/lyricSuppress", { action });
     return true;
   }
   if (!e.repeat && key === "c") {

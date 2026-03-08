@@ -515,6 +515,16 @@ function currentSectionIdNow() {
   return String(sec?.id ?? "");
 }
 
+function resolveHudGraphSelection(sectionId: string, sectionType: string, playerVariantIndex: number, playerSceneChoice?: any) {
+  if (viewerMode === "recipe-view") return resolveGraphSelection(currentRecipe, sectionId);
+  if (viewerMode === "random-scene") return randomSceneLayersForSection(sectionId).selection;
+  if (viewerMode !== "player") return null;
+  const choice = playerSceneChoice ?? resolvePlayerSceneChoice(sectionId, sectionType, playerVariantIndex);
+  return choice?.source === "recipe-view"
+    ? graphLayersForSection(currentRecipe, sectionId, { allowManual: false, variantOverride: choice?.variant ?? 0 }).selection
+    : randomSceneLayersForSection(sectionId, { allowManual: false, variantOverride: choice?.variant ?? 0 }).selection;
+}
+
 function currentGraphVariantForSection(sectionId: string) {
   const k = String(sectionId || "");
   return graphVariantBySection.get(k) ?? 0;
@@ -4270,15 +4280,7 @@ if (!isSeeking && Number.isFinite(audio.duration) && audio.duration > 0) {
   const rosetteGraphDebug = graphRosetteDebug(modeRecipe);
   const playerSceneChoice = viewerMode === "player" ? resolvePlayerSceneChoice(sectionId, sectionType, playerVariantIndex) : null;
   const nextSectionInMs = Number.isFinite(nextSectionStartMs) ? Math.round(nextSectionStartMs - sectionClockMs) : NaN;
-  const graphSel = viewerMode === "recipe-view"
-    ? resolveGraphSelection(currentRecipe, sectionId)
-    : viewerMode === "random-scene"
-      ? randomSceneLayersForSection(sectionId).selection
-      : viewerMode === "player"
-        ? (playerSceneChoice?.source === "recipe-view"
-          ? graphLayersForSection(currentRecipe, sectionId, { allowManual: false, variantOverride: playerSceneChoice?.variant ?? 0 }).selection
-          : randomSceneLayersForSection(sectionId, { allowManual: false, variantOverride: playerSceneChoice?.variant ?? 0 }).selection)
-        : null;
+  const graphSel = resolveHudGraphSelection(sectionId, sectionType, playerVariantIndex, playerSceneChoice);
   hud.style.display = hudVisible ? "block" : "none";
   hud.textContent = [
     `title: ${preferredTrackTitle(track)}`,

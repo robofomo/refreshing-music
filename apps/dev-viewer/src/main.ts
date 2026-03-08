@@ -4729,6 +4729,36 @@ function handleOffsetKeydown(e: KeyboardEvent) {
   return false;
 }
 
+async function handleTransportKeydown(e: KeyboardEvent) {
+  const key = e.key.toLowerCase();
+  if (e.code === "Space" && !e.repeat) {
+    e.preventDefault();
+    await togglePlayPause();
+    return true;
+  }
+  if (e.code === "ArrowLeft") {
+    e.preventDefault();
+    seekRelativeSec(-5);
+    return true;
+  }
+  if (e.code === "ArrowRight") {
+    e.preventDefault();
+    seekRelativeSec(5);
+    return true;
+  }
+  if (key === "n" || e.key === "." || e.key === ">") {
+    e.preventDefault();
+    await goNextTrack();
+    return true;
+  }
+  if (key === "p" || e.key === "," || e.key === "<") {
+    e.preventDefault();
+    await goPrevTrackOrRestart();
+    return true;
+  }
+  return false;
+}
+
 playBtn.addEventListener("click", async () => {
   await togglePlayPause();
 });
@@ -4819,33 +4849,9 @@ hudBtn.addEventListener("click", () => {
 window.addEventListener("keydown", async (e) => {
   showControlsTemporarily();
   const key = e.key.toLowerCase();
-  if (e.code === "Space" && !e.repeat) {
-    e.preventDefault();
-    await togglePlayPause();
-    return;
-  }
-  if (e.code === "ArrowLeft") {
-    e.preventDefault();
-    seekRelativeSec(-5);
-    return;
-  }
-  if (e.code === "ArrowRight") {
-    e.preventDefault();
-    seekRelativeSec(5);
-    return;
-  }
+  if (await handleTransportKeydown(e)) return;
   if (handleHintEditKeydown(e)) {
     e.preventDefault();
-    return;
-  }
-  if (key === "n" || e.key === "." || e.key === ">") {
-    e.preventDefault();
-    await goNextTrack();
-    return;
-  }
-  if (key === "p" || e.key === "," || e.key === "<") {
-    e.preventDefault();
-    await goPrevTrackOrRestart();
     return;
   }
   if (key === "h" || e.key === "?") {

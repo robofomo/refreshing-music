@@ -450,7 +450,7 @@ function normalizeLabPrimitive(value: string | null | undefined): LabPrimitiveId
 }
 
 function syncModeScopedUrlParams() {
-  if (viewerMode === "primitive-lab") {
+  if (isPrimitiveLabMode()) {
     updateUrlParam("labPrimitive", labPrimitive);
     updateUrlParam("lyrics", null);
     updateUrlParam("lyricMode", null);
@@ -470,16 +470,24 @@ function isHintEditMode() {
   return viewerMode === "hint-edit";
 }
 
+function isPlayerMode(mode: ViewerMode = viewerMode) {
+  return mode === "player";
+}
+
+function isPrimitiveLabMode(mode: ViewerMode = viewerMode) {
+  return mode === "primitive-lab";
+}
+
 function isGraphMode(mode: ViewerMode = viewerMode) {
   return mode === "recipe-view" || mode === "random-scene";
 }
 
 function isGraphCapableMode(mode: ViewerMode = viewerMode) {
-  return mode === "player" || isGraphMode(mode);
+  return isPlayerMode(mode) || isGraphMode(mode);
 }
 
 function isSeedRefreshMode(mode: ViewerMode = viewerMode) {
-  return mode === "player" || mode === "hint-edit" || mode === "primitive-lab";
+  return isPlayerMode(mode) || mode === "hint-edit" || isPrimitiveLabMode(mode);
 }
 
 function cycleViewerMode() {
@@ -492,7 +500,7 @@ function cycleLabPrimitive(dir: 1 | -1) {
   const i = LAB_PRIMITIVES.indexOf(labPrimitive);
   const next = (i + dir + LAB_PRIMITIVES.length) % LAB_PRIMITIVES.length;
   labPrimitive = LAB_PRIMITIVES[next];
-  if (viewerMode === "primitive-lab") updateUrlParam("labPrimitive", labPrimitive);
+  if (isPrimitiveLabMode()) updateUrlParam("labPrimitive", labPrimitive);
 }
 
 function cycleLabBackdropPolicy() {
@@ -518,7 +526,7 @@ function currentSectionIdNow() {
 function resolveHudGraphSelection(sectionId: string, sectionType: string, playerVariantIndex: number, playerSceneChoice?: any) {
   if (viewerMode === "recipe-view") return resolveGraphSelection(currentRecipe, sectionId);
   if (viewerMode === "random-scene") return randomSceneLayersForSection(sectionId).selection;
-  if (viewerMode !== "player") return null;
+  if (!isPlayerMode()) return null;
   const choice = playerSceneChoice ?? resolvePlayerSceneChoice(sectionId, sectionType, playerVariantIndex);
   return choice?.source === "recipe-view"
     ? graphLayersForSection(currentRecipe, sectionId, { allowManual: false, variantOverride: choice?.variant ?? 0 }).selection
@@ -1211,7 +1219,7 @@ function setLyricsEnabled(next: boolean) {
 }
 
 function syncLyricsUrlParams() {
-  if (viewerMode !== "primitive-lab") {
+  if (!isPrimitiveLabMode()) {
     updateUrlParam("lyrics", lyricsEnabled ? "1" : "0");
     updateUrlParam("lyricMode", lyricMode);
     return;
@@ -2527,7 +2535,7 @@ function hudKeyHelpLines(): string[] {
     lines.push(`      r refresh seed`);
   }
   lines.push(`      v cycle mode`);
-  if (viewerMode === "primitive-lab") {
+  if (isPrimitiveLabMode()) {
     lines.push(`      j/k lab primitive prev/next`);
     lines.push(`      b lab backdrop off/fixed/random`);
   }
@@ -2600,7 +2608,7 @@ function hudHintModeLines(signalBus: any, lyricsSuppressedNow: boolean): string[
 }
 
 function hudLabModeLines(labProfileRounded: any): string[] {
-  if (viewerMode !== "primitive-lab") return [];
+  if (!isPrimitiveLabMode()) return [];
   return [
     `labPrimitive: ${labPrimitive}`,
     `labBackdropPolicy: ${labBackdropPolicy}`,
@@ -2630,7 +2638,7 @@ function hudGraphModeLines(
   }
   lines.push(`graphRecipe: ${graphSel?.template?.id ?? "-"} (#${graphSel ? graphSel.selectedIndex + 1 : "-"}/${graphSel?.templates?.length ?? "-"})`);
   lines.push(`graphVariant: ${graphSel?.variant ?? 0}`);
-  if (viewerMode !== "player") {
+  if (!isPlayerMode()) {
     lines.push(`graphManual: ${graphSel?.isManual ? "on" : "off"} auto=${graphAutoRefresh ? "on" : "off"}`);
   }
   lines.push(`graphMode: ${viewerMode}`);
@@ -4379,7 +4387,7 @@ function render() {
   let nextModeRecipe = nextSectionId
     ? withModeRecipe(currentRecipe, viewerMode, nextSectionId, nextSectionType, nextPlayerVariantIndex)
     : null;
-  if (viewerMode === "player" && nextModeRecipe) {
+  if (isPlayerMode() && nextModeRecipe) {
     const curGraphSig = stableStringify(modeRecipe?.graph?.layers ?? []);
     const nextGraphSig = stableStringify(nextModeRecipe?.graph?.layers ?? []);
     if (curGraphSig === nextGraphSig) {
@@ -4387,7 +4395,7 @@ function render() {
       nextModeRecipe = withModeRecipe(currentRecipe, viewerMode, nextSectionId, nextSectionType, nextPlayerVariantIndex + 1);
     }
   }
-  if (viewerMode === "player") {
+  if (isPlayerMode()) {
     if (playerLastSectionId && playerLastSectionId !== sectionId) {
       playerLastTransitionLabel = selectTransitionLabel(modeRecipe, playerLastSectionId, sectionId);
     }
@@ -4489,7 +4497,7 @@ function render() {
     drawBeatOrb(pulse.beat, pulse.downbeat);
   }
   if (isHintEditMode()) drawHintOverlays();
-  if (viewerMode === "primitive-lab" && labPrimitive === "overlay.beatTrack") drawHintOverlays();
+  if (isPrimitiveLabMode() && labPrimitive === "overlay.beatTrack") drawHintOverlays();
 
 if (!isSeeking && Number.isFinite(audio.duration) && audio.duration > 0) {
   const max = Math.max(1, Number(seek.max) || SEEK_SCALE);
@@ -4518,7 +4526,7 @@ if (!isSeeking && Number.isFinite(audio.duration) && audio.duration > 0) {
   })();
   const rosetteLabDebug = labRosetteDebug();
   const rosetteGraphDebug = graphRosetteDebug(modeRecipe);
-  const playerSceneChoice = viewerMode === "player" ? resolvePlayerSceneChoice(sectionId, sectionType, playerVariantIndex) : null;
+  const playerSceneChoice = isPlayerMode() ? resolvePlayerSceneChoice(sectionId, sectionType, playerVariantIndex) : null;
   const nextSectionInMs = Number.isFinite(nextSectionStartMs) ? Math.round(nextSectionStartMs - sectionClockMs) : NaN;
   const graphSel = resolveHudGraphSelection(sectionId, sectionType, playerVariantIndex, playerSceneChoice);
   hud.style.display = hudVisible ? "block" : "none";
@@ -4722,7 +4730,7 @@ function handleGraphModeKeydown(e: KeyboardEvent) {
 }
 
 function handlePrimitiveLabKeydown(e: KeyboardEvent) {
-  if (viewerMode !== "primitive-lab" || e.repeat) return false;
+  if (!isPrimitiveLabMode() || e.repeat) return false;
   const key = e.key.toLowerCase();
   if (key === "b") {
     cycleLabBackdropPolicy();

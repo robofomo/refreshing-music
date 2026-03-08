@@ -2694,6 +2694,12 @@ function applyInitialViewerConfigFromUrl() {
   return { requestedTrackId };
 }
 
+function resolveInitialTrackIndex(requestedTrackId: string | null) {
+  if (!requestedTrackId) return 0;
+  const byTrackId = indexEntries.findIndex((entry) => trackIdFromEntry(entry) === requestedTrackId);
+  return byTrackId >= 0 ? byTrackId : 0;
+}
+
 function sortedTimedSections() {
   const sections = Array.isArray(track?.timing?.sections) ? track.timing.sections : [];
   return sections
@@ -4540,11 +4546,7 @@ async function init() {
   if (!indexEntries.length) throw new Error("No tracks found in index.json");
 
   const { requestedTrackId } = applyInitialViewerConfigFromUrl();
-
-  const byTrackId = requestedTrackId
-    ? indexEntries.findIndex((entry) => trackIdFromEntry(entry) === requestedTrackId)
-    : -1;
-  await loadTrack(byTrackId >= 0 ? byTrackId : 0);
+  await loadTrack(resolveInitialTrackIndex(requestedTrackId));
   showControlsTemporarily();
 }
 

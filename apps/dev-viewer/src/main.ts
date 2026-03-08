@@ -4644,14 +4644,17 @@ function handleHintEditKeydown(e: KeyboardEvent) {
 function handleGraphModeKeydown(e: KeyboardEvent) {
   if (!isGraphMode() || e.repeat) return false;
   const key = e.key.toLowerCase();
+  const cycleRecipeByMode = (dir: 1 | -1) => {
+    const sectionId = currentSectionIdNow();
+    if (viewerMode === "recipe-view") cycleGraphRecipeForSection(currentRecipe, sectionId, dir);
+    else cycleRandomSceneForSection(sectionId, dir);
+  };
   if (key === "j") {
-    if (viewerMode === "recipe-view") cycleGraphRecipeForSection(currentRecipe, currentSectionIdNow(), -1);
-    else cycleRandomSceneForSection(currentSectionIdNow(), -1);
+    cycleRecipeByMode(-1);
     return true;
   }
   if (key === "k" || key === "g") {
-    if (viewerMode === "recipe-view") cycleGraphRecipeForSection(currentRecipe, currentSectionIdNow(), 1);
-    else cycleRandomSceneForSection(currentSectionIdNow(), 1);
+    cycleRecipeByMode(1);
     return true;
   }
   if (key === "r") {

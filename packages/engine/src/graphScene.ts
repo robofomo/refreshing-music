@@ -217,6 +217,10 @@ function drawOrbitRibbon(args: {
   const mid = rr.mid;
   const high = rr.high;
   const onset = rr.onsetPulse;
+  const rhythm = state?.signalBus?.rhythm;
+  const rhythmGrid = clamp01(Number(rhythm?.lanes?.grid?.pulse ?? 0));
+  const rhythmMotion = clamp01(Number(rhythm?.lanes?.motion?.pulse ?? 0));
+  const rhythmAccent = clamp01(Number(rhythm?.lanes?.accent?.pulse ?? 0));
   const pointsBase = Math.max(16, Math.min(220, Number(params?.points ?? 56)));
   const points = Math.max(16, Math.round(pointsBase * performanceDensityScale(state)));
   const perfScale = performanceDensityScale(state);
@@ -240,12 +244,14 @@ function drawOrbitRibbon(args: {
   const profile = profileRaw === "auto"
     ? (["elastic", "wobble", "precess", "breathe"][Math.floor((nodeSeed >>> 3) % 4)] as "elastic" | "wobble" | "precess" | "breathe")
     : (profileRaw as "elastic" | "wobble" | "precess" | "breathe");
-  const audioWarp = 1 + amp * 0.6 + mid * 0.25 + downbeat * 0.18 + onset * 0.08;
+  const audioWarp = 1 + amp * 0.6 + mid * 0.25 + downbeat * 0.18 + onset * 0.08 + rhythmMotion * 0.08;
   const tempoMul = mode === "pulse-rotate" ? 0.72 : mode === "drift" ? (1.02 + high * 0.08) : (1 + low * 0.05);
-  const phaseBeatPush = mode === "pulse-rotate" ? (downbeat * 0.08 + beat * 0.03) : (beat * 0.015 + onset * 0.03);
+  const phaseBeatPush = mode === "pulse-rotate"
+    ? (downbeat * 0.08 + beat * 0.03 + rhythmAccent * 0.03)
+    : (beat * 0.015 + onset * 0.03 + rhythmGrid * 0.025);
   const radiusBoostBase = mode === "pulse-rotate"
-    ? (1 + amp * 0.1 + high * 0.08 + beat * 0.11 + downbeat * 0.09)
-    : (1 + amp * 0.12 + low * 0.1 + beat * 0.07);
+    ? (1 + amp * 0.1 + high * 0.08 + beat * 0.11 + downbeat * 0.09 + rhythmAccent * 0.08)
+    : (1 + amp * 0.12 + low * 0.1 + beat * 0.07 + rhythmGrid * 0.07);
   const yAxisScale = mode === "drift"
     ? (0.72 + 0.18 * Math.sin(t * (0.33 + mid * 0.5) + seedPhase))
     : (0.68 + 0.14 * Math.sin(t * (0.45 + high * 0.9) + seedPhase * 0.5));
@@ -262,19 +268,23 @@ function drawOrbitRibbon(args: {
           ? Math.sin(t * (0.26 + mid * 0.4) + seedPhase * 0.7) * 0.04
           : Math.sin(t * (0.18 + low * 0.22) + seedPhase * 0.35) * 0.08;
   ctx.strokeStyle = pickFrom(colors, nodeSeed, "#89D6FF");
-  if (!String(ctx.strokeStyle).startsWith("#")) ctx.globalAlpha = clamp01(0.44 + amp * 0.24 + downbeat * 0.1);
-  else ctx.globalAlpha = clamp01(0.52 + amp * 0.22 + downbeat * 0.1);
-  ctx.lineWidth = thickness * (1 + amp * 0.2);
+  const cueBoost = rhythmMotion * 0.35 + rhythmAccent * 0.22 + rhythmGrid * 0.12;
+  if (!String(ctx.strokeStyle).startsWith("#")) ctx.globalAlpha = clamp01(0.44 + amp * 0.24 + downbeat * 0.1 + cueBoost * 0.22);
+  else ctx.globalAlpha = clamp01(0.52 + amp * 0.22 + downbeat * 0.1 + cueBoost * 0.2);
+  ctx.lineWidth = thickness * (1 + amp * 0.2 + cueBoost * 0.65);
   ctx.beginPath();
   const driftBaseFreq = 3.4 + rng.float() * 1.1;
   const driftPhase = seedPhase * (0.8 + rng.float() * 0.6);
+  const cueHold = Math.max(0, Math.min(0.7, Number(params?.cueHold ?? 0.46)));
+  const cueGate = 1 - rhythmMotion * cueHold;
   for (let i = 0; i <= pathPoints; i += 1) {
     const u = i / pathPoints;
-    const a = u * Math.PI * 2 * revolutions + t * 2 * Math.PI * speedHz * audioWarp * tempoMul + seedPhase + phaseBeatPush;
+    const a = u * Math.PI * 2 * revolutions + t * 2 * Math.PI * speedHz * audioWarp * tempoMul * cueGate + seedPhase + phaseBeatPush;
     // Use periodic, continuous drift so the stroke stays smooth and avoids seam spikes.
     const drift = 1 + driftAmp * Math.sin(driftBaseFreq * a * driftFreqMul + t * (0.45 + amp * 0.45) + driftPhase);
     const radiusBoost =
       radiusBoostBase +
+      cueBoost * 0.32 +
       profileNudge +
       (mode === "drift" ? 0.03 * Math.sin(t * (0.35 + mid * 0.2) + u * Math.PI * 2) : 0) +
       (profile === "wobble" ? 0.035 * Math.sin(u * Math.PI * 8 + t * (0.3 + high * 0.6) + seedPhase) : 0) +

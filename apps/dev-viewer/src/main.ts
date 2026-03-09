@@ -85,8 +85,8 @@ type Track = {
 
 type PlaybackMode = "mix";
 type LyricMode = "fixed" | "center" | "off";
-type ViewerMode = "player" | "hint-edit" | "primitive-lab" | "recipe-view" | "random-scene";
-const VIEWER_MODES: ViewerMode[] = ["player", "hint-edit", "primitive-lab", "recipe-view", "random-scene"];
+type ViewerMode = "player" | "hint-edit" | "primitive-lab" | "recipe-view" | "random-scene" | "transition-lab";
+const VIEWER_MODES: ViewerMode[] = ["player", "hint-edit", "primitive-lab", "recipe-view", "random-scene", "transition-lab"];
 type LabBackdropPolicy = "off" | "fixed" | "random";
 type LabBackdropId = "black" | "gradient" | "vignette" | "bands";
 type LabPrimitiveId =
@@ -151,6 +151,31 @@ type ViewerSignalBus = {
     beatCount: number;
     downbeatCount: number;
     fusionMode: string;
+  };
+  rhythm: {
+    bpm: number;
+    beatMs: number;
+    barIndex: number;
+    barStartMs: number;
+    phaseBar: number;
+    step16: number;
+    patternId: string;
+    cueCount: number;
+    step16s: number[];
+    lanes: {
+      grid: { pulse: number; hit: boolean };
+      accent: { pulse: number; hit: boolean };
+      motion: { pulse: number; hit: boolean };
+      transition: { pulse: number; hit: boolean };
+      fill: { pulse: number; hit: boolean };
+    };
+    laneSteps16: {
+      grid: number[];
+      accent: number[];
+      motion: number[];
+      transition: number[];
+      fill: number[];
+    };
   };
   hints: {
     count: number;
@@ -303,8 +328,8 @@ const MAX_RENDER_OFFSET_MS = 500;
 const OFFSET_PRESETS_MS = [-240, -120, 0, 120, 240];
 let renderOffsetMs = DEFAULT_RENDER_OFFSET_MS;
 let hudVisible = new URL(location.href).searchParams.get("hud") === "1";
-let lyricsEnabled = new URL(location.href).searchParams.get("lyrics") !== "0";
-let lyricMode: LyricMode = normalizeLyricMode(new URL(location.href).searchParams.get("lyricMode"));
+let lyricsEnabled = true;
+let lyricMode: LyricMode = "center";
 let viewerMode: ViewerMode = "player";
 let labPrimitive: LabPrimitiveId = LAB_PRIMITIVES[0];
 let labBackdropPolicy: LabBackdropPolicy = "off";
@@ -313,8 +338,12 @@ let labCopyFlashUntilMs = 0;
 let graphAutoRefresh = false;
 let graphManualRecipe: { sectionId: string; index: number } | null = null;
 const graphVariantBySection = new Map<string, number>();
+let transitionLabPresetIndex = 0;
+let transitionLabVariant = 0;
+let transitionLabAutoVariantTick = 0;
 let lastGraphSectionId = "";
 let lastAutoDownbeatCount = -1;
+let lastAutoBarCount = -1;
 let playerLastSectionId = "";
 let playerLastTransitionLabel = "crossfade";
 let determinismProbeStatus = "idle";
@@ -443,7 +472,7 @@ function normalizeViewerMode(value: string | null | undefined): ViewerMode {
   const raw = String(value || "").trim().toLowerCase();
   if (raw === "player") return "player";
   if (raw === "playback" || raw === "hint-edit") return "hint-edit";
-  if (raw === "primitive-lab" || raw === "recipe-view" || raw === "random-scene") return raw as ViewerMode;
+  if (raw === "primitive-lab" || raw === "recipe-view" || raw === "random-scene" || raw === "transition-lab") return raw as ViewerMode;
   if (raw === "graph-scene") return "recipe-view";
   return "player";
 }
@@ -455,17 +484,25 @@ function normalizeLabPrimitive(value: string | null | undefined): LabPrimitiveId
 }
 
 function syncModeScopedUrlParams() {
+  updateUrlParam("lyrics", null);
+  updateUrlParam("lyricMode", null);
   if (isPrimitiveLabMode()) {
     updateUrlParam("labPrimitive", labPrimitive);
-    updateUrlParam("lyrics", null);
-    updateUrlParam("lyricMode", null);
-    return;
+  } else {
+    updateUrlParam("labPrimitive", null);
   }
-  updateUrlParam("labPrimitive", null);
+  if (viewerMode === "transition-lab") {
+    const preset = transitionLabPreset();
+    updateUrlParam("transition", String(preset.id));
+  } else {
+    updateUrlParam("transition", null);
+  }
+  updateUrlParam("transitionVariant", null);
 }
 
 function setViewerMode(nextMode: ViewerMode) {
   viewerMode = nextMode;
+  if (nextMode === "transition-lab") graphAutoRefresh = true;
   updateUrlParam("mode", nextMode === "player" ? null : nextMode);
   syncModeScopedUrlParams();
   if (modeBtn) modeBtn.textContent = nextMode;
@@ -484,7 +521,7 @@ function isPrimitiveLabMode(mode: ViewerMode = viewerMode) {
 }
 
 function isGraphMode(mode: ViewerMode = viewerMode) {
-  return mode === "recipe-view" || mode === "random-scene";
+  return mode === "recipe-view" || mode === "random-scene" || mode === "transition-lab";
 }
 
 function isGraphCapableMode(mode: ViewerMode = viewerMode) {
@@ -526,6 +563,113 @@ function currentSectionIdNow() {
   const tRenderMs = (Number(audio.currentTime) || 0) * 1000 + renderOffsetMs;
   const sec = findCurrentSection(tRenderMs);
   return String(sec?.id ?? "");
+}
+
+function sectionOrderIndexById(sectionId: string) {
+  const sid = String(sectionId || "");
+  if (!sid) return -1;
+  const sections = sortedTimedSections();
+  for (let i = 0; i < sections.length; i += 1) {
+    if (String(sections[i]?.id ?? "") === sid) return i;
+  }
+  return -1;
+}
+
+const TRANSITION_LAB_PRESETS = [
+  { id: "crossfade", label: "crossfade", build: () => ({ kind: "crossfade", durationMs: 900 }) },
+  { id: "wipe-x", label: "wipe x", build: (v: number) => ({ kind: "wipe", durationMs: 700 + (v % 4) * 180, params: { axis: "x" } }) },
+  { id: "noise", label: "noise dissolve", build: (v: number) => ({ kind: "noiseDissolve", durationMs: 900 + (v % 4) * 220, params: { cell: 6 + (v % 5) * 2 } }) },
+  {
+    id: "slice-step-x",
+    label: "slice step x",
+    build: (v: number) => {
+      return {
+        kind: "sliceStepWipe",
+        durationMs: 700 + (v % 5) * 180,
+        params: {
+          axis: "x",
+          slices: 5,
+          gapPx: 0,
+          direction: (v % 2 ? "reverse" : "forward"),
+          order: (["forward", "alternate", "center-out", "forward"][v % 4]),
+          useRhythmSteps: true,
+          beatsBeforeEnd: 4
+        }
+      };
+    }
+  },
+  {
+    id: "slice-step-y",
+    label: "slice step y",
+    build: (v: number) => {
+      return {
+        kind: "sliceStepWipe",
+        durationMs: 760 + (v % 5) * 170,
+        params: {
+          axis: "y",
+          slices: 5,
+          gapPx: 0,
+          direction: (v % 2 ? "reverse" : "forward"),
+          order: (["forward", "center-out", "alternate", "forward"][v % 4]),
+          useRhythmSteps: true,
+          beatsBeforeEnd: 4
+        }
+      };
+    }
+  }
+];
+
+function buildPlayerDefaultTransition(sectionId: string, sectionType: string) {
+  const sid = String(sectionId || "");
+  const st = String(sectionType || "");
+  const h = hashStringToSeed(`player-transition:${seed}:${sid}:${st}`) >>> 0;
+  const picks = [
+    () => ({ kind: "crossfade", durationMs: 700 + (h % 4) * 120 }),
+    () => ({ kind: "wipe", durationMs: 680 + (h % 5) * 110, params: { axis: (h % 2 === 0 ? "x" : "y") } }),
+    () => ({
+      kind: "sliceStepWipe",
+      durationMs: 1000,
+      params: {
+        axis: (h % 2 === 0 ? "x" : "y"),
+        slices: 5,
+        gapPx: 0,
+        direction: (h % 3 === 0 ? "reverse" : "forward"),
+        order: ["forward", "alternate", "center-out"][h % 3],
+        useRhythmSteps: true,
+        beatsBeforeEnd: 4
+      }
+    }),
+    () => ({ kind: "crossfade", durationMs: 620 + (h % 3) * 110 })
+  ];
+  return picks[h % picks.length]();
+}
+
+function transitionLabPreset() {
+  const idx = ((transitionLabPresetIndex % TRANSITION_LAB_PRESETS.length) + TRANSITION_LAB_PRESETS.length) % TRANSITION_LAB_PRESETS.length;
+  return TRANSITION_LAB_PRESETS[idx];
+}
+
+function transitionLabTransitionDef() {
+  const preset = transitionLabPreset();
+  return preset.build(transitionLabVariant);
+}
+
+function cycleTransitionLabPreset(dir: 1 | -1) {
+  transitionLabPresetIndex = (transitionLabPresetIndex + dir + TRANSITION_LAB_PRESETS.length) % TRANSITION_LAB_PRESETS.length;
+  syncModeScopedUrlParams();
+}
+
+function cycleTransitionLabVariant(dir: 1 | -1) {
+  transitionLabVariant = Math.max(0, transitionLabVariant + dir);
+  syncModeScopedUrlParams();
+}
+
+function randomizeTransitionLabVariant(sectionId: string) {
+  transitionLabAutoVariantTick += 1;
+  const sid = String(sectionId || "");
+  const h = hashStringToSeed(`transition-lab:variant:${seed}:${sid}:${transitionLabAutoVariantTick}`) >>> 0;
+  transitionLabVariant = h % 24;
+  syncModeScopedUrlParams();
 }
 
 function resolveHudGraphSelection(sectionId: string, sectionType: string, playerVariantIndex: number, playerSceneChoice?: any) {
@@ -1220,11 +1364,7 @@ function setLyricsEnabled(next: boolean) {
 }
 
 function syncLyricsUrlParams() {
-  if (!isPrimitiveLabMode()) {
-    updateUrlParam("lyrics", lyricsEnabled ? "1" : "0");
-    updateUrlParam("lyricMode", lyricMode);
-    return;
-  }
+  // Lyrics toggles stay runtime-only; keep URLs mode/seed/track-focused.
   updateUrlParam("lyrics", null);
   updateUrlParam("lyricMode", null);
 }
@@ -2548,6 +2688,247 @@ function estimateBpmFromBeats(beatsMs: number[]): number {
   return 60000 / mid;
 }
 
+function estimateBeatMsFromBeats(beatsMs: number[]): number {
+  const bpm = estimateBpmFromBeats(beatsMs);
+  if (!Number.isFinite(bpm) || bpm <= 0) return NaN;
+  return 60000 / bpm;
+}
+
+function pickRhythmPatternId(seedBase: number, sectionType: string) {
+  const st = String(sectionType || "").toLowerCase();
+  const families = st === "chorus"
+    ? ["quarters", "eighths", "eighths-sync", "sixteenths-lite", "offbeat"]
+    : st === "bridge"
+      ? ["eighths-sync", "offbeat", "fill-forward", "sixteenths-lite"]
+      : st === "intro" || st === "outro"
+        ? ["quarters", "offbeat", "eighths"]
+        : ["quarters", "eighths", "offbeat", "eighths-sync"];
+  const idx = (hashStringToSeed(`rhythm-pattern:${seedBase}:${st}`) >>> 0) % families.length;
+  return families[idx];
+}
+
+function buildPatternSteps16(patternId: string): {
+  grid: number[];
+  accent: number[];
+  motion: number[];
+  transition: number[];
+  fill: number[];
+} {
+  const p = String(patternId || "quarters").toLowerCase();
+  if (p === "eighths") {
+    return { grid: [0, 2, 4, 6, 8, 10, 12, 14], accent: [0, 8], motion: [0, 2, 4, 6, 8, 10, 12, 14], transition: [0, 4, 8, 12], fill: [12, 14] };
+  }
+  if (p === "eighths-sync") {
+    return { grid: [0, 2, 4, 6, 8, 10, 12, 14], accent: [0, 8], motion: [0, 3, 6, 8, 11, 14], transition: [0, 8], fill: [10, 12, 14] };
+  }
+  if (p === "offbeat") {
+    return { grid: [0, 4, 8, 12], accent: [0, 8], motion: [2, 6, 10, 14], transition: [0, 8], fill: [13, 14, 15] };
+  }
+  if (p === "fill-forward") {
+    return { grid: [0, 4, 8, 12], accent: [0, 8], motion: [0, 4, 8, 10, 12, 14], transition: [0, 8], fill: [11, 12, 13, 14, 15] };
+  }
+  if (p === "sixteenths-lite") {
+    return { grid: [0, 4, 8, 12], accent: [0, 8], motion: [0, 2, 4, 7, 8, 10, 12, 15], transition: [0, 8], fill: [12, 13, 14, 15] };
+  }
+  return { grid: [0, 4, 8, 12], accent: [0, 8], motion: [0, 4, 8, 12], transition: [0, 8], fill: [12] };
+}
+
+function nearestLanePulseFromSteps16(
+  tMs: number,
+  barStartMs: number,
+  stepMs: number,
+  steps16: number[],
+  windowMs: number
+) {
+  if (!steps16.length || !Number.isFinite(stepMs) || stepMs <= 0) return { pulse: 0, hit: false };
+  let best = Infinity;
+  for (let barOffset = -1; barOffset <= 1; barOffset += 1) {
+    const barBase = barStartMs + barOffset * stepMs * 16;
+    for (const s of steps16) {
+      const ts = barBase + s * stepMs;
+      const d = Math.abs(tMs - ts);
+      if (d < best) best = d;
+    }
+  }
+  if (!Number.isFinite(best)) return { pulse: 0, hit: false };
+  const pulse = Math.max(0, Math.min(1, 1 - best / Math.max(1, windowMs)));
+  return { pulse, hit: pulse > 0.88 };
+}
+
+function buildRhythmCueState(input: {
+  tMs: number;
+  beatsMs: number[];
+  downbeatsMs: number[];
+  sectionId: string;
+  sectionType: string;
+  seedBase: number;
+}) {
+  const beatsSorted = (Array.isArray(input.beatsMs) ? input.beatsMs : [])
+    .map((v) => Number(v))
+    .filter((v) => Number.isFinite(v))
+    .sort((a, b) => a - b);
+  const estimateLocalBeatMs = (tMs: number) => {
+    if (beatsSorted.length < 3) return estimateBeatMsFromBeats(beatsSorted);
+    let nearestIdx = 0;
+    let nearestDist = Infinity;
+    for (let i = 0; i < beatsSorted.length; i += 1) {
+      const d = Math.abs(beatsSorted[i] - tMs);
+      if (d < nearestDist) {
+        nearestDist = d;
+        nearestIdx = i;
+      }
+    }
+    const i0 = Math.max(1, nearestIdx - 5);
+    const i1 = Math.min(beatsSorted.length - 1, nearestIdx + 5);
+    const diffs: number[] = [];
+    for (let i = i0; i <= i1; i += 1) {
+      const d = beatsSorted[i] - beatsSorted[i - 1];
+      if (d >= 180 && d <= 2000) diffs.push(d);
+    }
+    if (!diffs.length) return estimateBeatMsFromBeats(beatsSorted);
+    diffs.sort((a, b) => a - b);
+    return diffs[Math.floor(diffs.length * 0.5)];
+  };
+  const tMs = Number(input.tMs);
+  const ds = (Array.isArray(input.downbeatsMs) ? input.downbeatsMs : [])
+    .map((v) => Number(v))
+    .filter((v) => Number.isFinite(v))
+    .sort((a, b) => a - b);
+  const estimateFromDownbeats = () => {
+    if (ds.length < 2) return NaN;
+    let nearestIdx = 0;
+    let nearestDist = Infinity;
+    for (let i = 0; i < ds.length; i += 1) {
+      const d = Math.abs(ds[i] - tMs);
+      if (d < nearestDist) {
+        nearestDist = d;
+        nearestIdx = i;
+      }
+    }
+    const i0 = Math.max(1, nearestIdx - 4);
+    const i1 = Math.min(ds.length - 1, nearestIdx + 4);
+    const quarterSteps: number[] = [];
+    for (let i = i0; i <= i1; i += 1) {
+      const d = ds[i] - ds[i - 1];
+      // downbeat-to-downbeat interval should be one bar; divide by 4 for quarter note.
+      const q = d / 4;
+      if (q >= 180 && q <= 2000) quarterSteps.push(q);
+    }
+    if (!quarterSteps.length) return NaN;
+    quarterSteps.sort((a, b) => a - b);
+    return quarterSteps[Math.floor(quarterSteps.length * 0.5)];
+  };
+  const beatFromDownbeats = estimateFromDownbeats();
+  const beatMs = Number.isFinite(beatFromDownbeats) && beatFromDownbeats > 0
+    ? beatFromDownbeats
+    : estimateLocalBeatMs(tMs);
+  if (!Number.isFinite(beatMs) || beatMs <= 0) {
+    return {
+      bpm: NaN,
+      beatMs: NaN,
+      barIndex: 0,
+      barStartMs: 0,
+      phaseBar: 0,
+      step16: 0,
+      patternId: "quarter4",
+      cueCount: 4,
+      step16s: [0, 4, 8, 12],
+      lanes: {
+        grid: { pulse: 0, hit: false },
+        accent: { pulse: 0, hit: false },
+        motion: { pulse: 0, hit: false },
+        transition: { pulse: 0, hit: false },
+        fill: { pulse: 0, hit: false }
+      },
+      laneSteps16: {
+        grid: [],
+        accent: [],
+        motion: [],
+        transition: [],
+        fill: []
+      }
+    };
+  }
+  const beatsPerBar = 4;
+  const barMs = beatMs * beatsPerBar;
+  let barIndex = 0;
+  let barStartMs = 0;
+  if (ds.length) {
+    let idx = -1;
+    for (let i = 0; i < ds.length; i += 1) {
+      if (ds[i] <= tMs) idx = i;
+      else break;
+    }
+    if (idx >= 0) {
+      barIndex = idx;
+      barStartMs = ds[idx];
+    } else {
+      const stepsBack = Math.ceil((ds[0] - tMs) / Math.max(1, barMs));
+      barIndex = 0;
+      barStartMs = ds[0] - Math.max(1, stepsBack) * barMs;
+    }
+  } else {
+    const origin = Number(beatsSorted[0] ?? 0);
+    const barIndexRaw = Number.isFinite(origin) ? Math.floor((tMs - origin) / Math.max(1, barMs)) : 0;
+    barIndex = Math.max(0, barIndexRaw);
+    barStartMs = Number.isFinite(origin) ? (origin + barIndex * barMs) : 0;
+  }
+  const phaseBar = Math.max(0, Math.min(1, (tMs - barStartMs) / Math.max(1, barMs)));
+  const step16f = (tMs - barStartMs) / Math.max(1, beatMs / 4);
+  const step16 = ((Math.floor(step16f) % 16) + 16) % 16;
+
+  const baseSteps = [0, 4, 8, 12];
+  const variationSeed = hashStringToSeed(`rhythm-variation:${input.seedBase}:${input.sectionId}:${barIndex}`) >>> 0;
+  const rng = mulberry32(variationSeed);
+  const removable = [4, 8, 12];
+  const offbeats = [2, 6, 10, 14];
+  const chosen = new Set<number>(baseSteps);
+  let removed: number | null = null;
+  if (rng() < 0.3) {
+    removed = removable[Math.floor(rng() * removable.length)];
+    chosen.delete(removed);
+  }
+  const added: number[] = [];
+  for (const s of offbeats) {
+    if (rng() < 0.3) {
+      chosen.add(s);
+      added.push(s);
+    }
+  }
+  const fixedSteps = Array.from(chosen).sort((a, b) => a - b);
+  const removedTag = removed === null ? "" : `-r${removed}`;
+  const addedTag = added.length ? `+o${added.join("o")}` : "";
+  const patternId = `quarter4${removedTag}${addedTag}`;
+  const pattern = {
+    grid: fixedSteps,
+    accent: fixedSteps,
+    motion: fixedSteps,
+    transition: fixedSteps,
+    fill: fixedSteps
+  };
+  const pulseWindowMs = Math.max(26, Math.min(120, beatMs * 0.16));
+  const stepMs = beatMs / 4;
+  return {
+    bpm: 60000 / beatMs,
+    beatMs,
+    barIndex,
+    barStartMs,
+    phaseBar,
+    step16,
+    patternId,
+    cueCount: fixedSteps.length,
+    step16s: fixedSteps,
+    lanes: {
+      grid: nearestLanePulseFromSteps16(tMs, barStartMs, stepMs, pattern.grid, pulseWindowMs),
+      accent: nearestLanePulseFromSteps16(tMs, barStartMs, stepMs, pattern.accent, pulseWindowMs),
+      motion: nearestLanePulseFromSteps16(tMs, barStartMs, stepMs, pattern.motion, pulseWindowMs),
+      transition: nearestLanePulseFromSteps16(tMs, barStartMs, stepMs, pattern.transition, pulseWindowMs),
+      fill: nearestLanePulseFromSteps16(tMs, barStartMs, stepMs, pattern.fill, pulseWindowMs)
+    },
+    laneSteps16: pattern
+  };
+}
+
 function hudKeyHelpLines(): string[] {
   const lines: string[] = [
     `keys: space play/pause`,
@@ -2565,6 +2946,10 @@ function hudKeyHelpLines(): string[] {
     lines.push(`      j/k prev/next graph recipe`);
     lines.push(`      r refresh graph variant`);
     lines.push(`      a auto refresh (downbeat+section)`);
+  }
+  if (viewerMode === "transition-lab") {
+    lines.push(`      t/y transition prev/next`);
+    lines.push(`      u/i transition variant -/+`);
   }
   if (isHintEditMode()) {
     lines.push(`      d = downbeat anchor (keep established tempo)`);
@@ -2584,11 +2969,17 @@ function hudKeyHelpLines(): string[] {
 
 function updateGraphSectionState(sectionId: string) {
   if (isGraphMode()) {
+    const sectionChanged = Boolean(lastGraphSectionId && sectionId !== lastGraphSectionId);
+    if (viewerMode === "transition-lab" && sectionChanged) {
+      randomizeTransitionLabVariant(sectionId);
+    }
     if (!graphAutoRefresh && graphManualRecipe && lastGraphSectionId && sectionId !== lastGraphSectionId) {
       graphManualRecipe = null;
     }
     if (graphAutoRefresh && lastGraphSectionId && sectionId !== lastGraphSectionId) {
-      if (viewerMode === "recipe-view") cycleGraphRecipeForSection(currentRecipe, sectionId);
+      if (viewerMode === "transition-lab") {
+        // In transition-lab keep graph selection stable across section boundary.
+      } else if (viewerMode === "recipe-view") cycleGraphRecipeForSection(currentRecipe, sectionId);
       else cycleRandomSceneForSection(sectionId);
     }
     lastGraphSectionId = sectionId;
@@ -2597,8 +2988,21 @@ function updateGraphSectionState(sectionId: string) {
   lastGraphSectionId = "";
 }
 
-function updateGraphAutoVariantState(sectionId: string, tRenderMs: number) {
+function updateGraphAutoVariantState(sectionId: string, tRenderMs: number, suspendAuto = false) {
   if (isGraphMode()) {
+    if (suspendAuto) return;
+    if (viewerMode === "transition-lab") {
+      const dbCount = downbeatCountAt(tRenderMs);
+      const barCount = Math.max(0, Math.floor(dbCount / 4));
+      if (lastAutoBarCount < 0) lastAutoBarCount = barCount;
+      if (graphAutoRefresh && barCount > lastAutoBarCount) {
+        const delta = barCount - lastAutoBarCount;
+        for (let i = 0; i < delta; i += 1) cycleGraphVariantForSection(sectionId);
+      }
+      lastAutoBarCount = barCount;
+      lastAutoDownbeatCount = -1;
+      return;
+    }
     const dbCount = downbeatCountAt(tRenderMs);
     if (lastAutoDownbeatCount < 0) lastAutoDownbeatCount = dbCount;
     if (graphAutoRefresh && dbCount > lastAutoDownbeatCount) {
@@ -2606,9 +3010,11 @@ function updateGraphAutoVariantState(sectionId: string, tRenderMs: number) {
       for (let i = 0; i < delta; i += 1) cycleGraphVariantForSection(sectionId);
     }
     lastAutoDownbeatCount = dbCount;
+    lastAutoBarCount = -1;
     return;
   }
   lastAutoDownbeatCount = -1;
+  lastAutoBarCount = -1;
 }
 
 function hudHintModeLines(signalBus: any): string[] {
@@ -2639,14 +3045,22 @@ function hudGraphModeLines(
   nextSectionInMs: number
 ): string[] {
   if (!isGraphCapableMode()) return [];
-  const lines: string[] = [
-    `graphLayers: ${Array.isArray(modeRecipe?.graph?.layers) ? modeRecipe.graph.layers.length : 0}`
-  ];
+  const graphLayerCount = Array.isArray(modeRecipe?.graph?.layers) ? modeRecipe.graph.layers.length : 0;
+  const lines: string[] = [`graphLayers: ${graphLayerCount}`];
   if (viewerMode === "player") {
     lines.push(`playerSource: ${playerSceneChoice?.source ?? "-"}`);
     lines.push(`playerVariant: ${playerVariantIndex}`);
     lines.push(`playerTransition: ${playerLastTransitionLabel}`);
     lines.push(`nextSection: ${nextSectionId || "-"} in ${Number.isFinite(nextSectionInMs) ? `${nextSectionInMs}ms` : "-"}`);
+  }
+  if (viewerMode === "transition-lab") {
+    const preset = transitionLabPreset();
+    lines.push(`transitionLab: ${preset.label}`);
+    lines.push(`transitionVariant: ${transitionLabVariant}`);
+    lines.push(`nextSection: ${nextSectionId || "-"} in ${Number.isFinite(nextSectionInMs) ? `${nextSectionInMs}ms` : "-"}`);
+    lines.push(`graphVariant: ${graphSel?.variant ?? 0} auto=${graphAutoRefresh ? "on" : "off"}`);
+    lines.push(`graphMode: ${viewerMode}`);
+    return lines;
   }
   lines.push(`graphRecipe: ${graphSel?.template?.id ?? "-"} (#${graphSel ? graphSel.selectedIndex + 1 : "-"}/${graphSel?.templates?.length ?? "-"})`);
   lines.push(`graphVariant: ${graphSel?.variant ?? 0}`);
@@ -2660,9 +3074,10 @@ function hudGraphModeLines(
 function resetTrackLoadModeState() {
   graphManualRecipe = null;
   graphVariantBySection.clear();
-  graphAutoRefresh = false;
+  graphAutoRefresh = viewerMode === "transition-lab";
   lastGraphSectionId = "";
   lastAutoDownbeatCount = -1;
+  lastAutoBarCount = -1;
   playerLastSectionId = "";
   playerLastTransitionLabel = "crossfade";
 }
@@ -2745,18 +3160,21 @@ function applyInitialViewerConfigFromUrl() {
   const requestedTrackId = url.searchParams.get("track");
   const seedParam = url.searchParams.get("seed");
   const offsetParam = url.searchParams.get("offset");
-  const lyricsParam = url.searchParams.get("lyrics");
-  const lyricModeParam = url.searchParams.get("lyricMode");
   const modeParam = url.searchParams.get("mode");
   const labPrimitiveParam = url.searchParams.get("labPrimitive");
+  const transitionParam = String(url.searchParams.get("transition") || "").trim().toLowerCase();
   seed = seedParam ? Number(seedParam) : NaN;
   const storedOffset = loadStoredOffsetMs();
   const initialOffset = offsetParam ? Number(offsetParam) : (storedOffset ?? DEFAULT_RENDER_OFFSET_MS);
   setRenderOffset(initialOffset);
   labPrimitive = normalizeLabPrimitive(labPrimitiveParam);
+  if (transitionParam) {
+    const i = TRANSITION_LAB_PRESETS.findIndex((p) => String(p.id).toLowerCase() === transitionParam);
+    if (i >= 0) transitionLabPresetIndex = i;
+  }
   setViewerMode(normalizeViewerMode(modeParam));
-  lyricsEnabled = lyricsParam !== "0";
-  lyricMode = normalizeLyricMode(lyricModeParam);
+  lyricsEnabled = true;
+  lyricMode = "center";
   syncLyricsUrlParams();
   return { requestedTrackId };
 }
@@ -3280,6 +3698,7 @@ function buildSignalBus(input: {
   sectionId: string;
   sectionType: string;
   pulse: { beat: number; downbeat: number };
+  rhythm: ViewerSignalBus["rhythm"];
 }): ViewerSignalBus {
   const sectionEnergy = clamp01(
     Number(input.reactive.low) * 0.34 +
@@ -3324,6 +3743,7 @@ function buildSignalBus(input: {
       downbeatCount: downbeatMarkers.length || pulseDownbeatTimesMs.length,
       fusionMode: fusionModeAt(input.tRenderMs)
     },
+    rhythm: input.rhythm,
     hints: {
       count: activeHintCount,
       fusionModeLabel: beatFusionModeLabel,
@@ -3889,6 +4309,11 @@ function resolvePlayerSceneChoice(sectionId: string, sectionType: string, varian
 }
 
 function selectTransitionLabel(recipe: any, fromSectionId: string, toSectionId: string) {
+  const t = resolveTransitionDefForSections(recipe, fromSectionId, toSectionId) ?? { kind: "crossfade", durationMs: 900 };
+  return `${String(t.kind ?? "crossfade")} (${Math.max(1, Number(t.durationMs ?? 900))}ms)`;
+}
+
+function resolveTransitionDefForSections(recipe: any, fromSectionId: string, toSectionId: string) {
   const transitions = recipe?.transitions ?? {};
   const fromNorm = normalizeSectionLabel(String(fromSectionId || ""));
   const toNorm = normalizeSectionLabel(String(toSectionId || ""));
@@ -3899,12 +4324,10 @@ function selectTransitionLabel(recipe: any, fromSectionId: string, toSectionId: 
     const fromOk = !fromAny || fromAny.includes(fromNorm);
     const toOk = !toAny || toAny.includes(toNorm);
     if (fromOk && toOk && rule?.transition) {
-      const t = rule.transition;
-      return `${String(t.kind ?? "crossfade")} (${Math.max(1, Number(t.durationMs ?? 900))}ms)`;
+      return rule.transition;
     }
   }
-  const def = transitions?.default ?? { kind: "crossfade", durationMs: 900 };
-  return `${String(def.kind ?? "crossfade")} (${Math.max(1, Number(def.durationMs ?? 900))}ms)`;
+  return transitions?.default ?? { kind: "crossfade", durationMs: 900 };
 }
 
 function withModeRecipe(baseRecipe: any, mode: ViewerMode, sectionId: string, sectionType: string, playerVariantOverride = 0) {
@@ -3925,12 +4348,56 @@ function withModeRecipe(baseRecipe: any, mode: ViewerMode, sectionId: string, se
   } else if (mode === "random-scene") {
     const picked = randomSceneLayersForSection(sectionId);
     recipe.graph.layers = picked.layers;
+  } else if (mode === "transition-lab") {
+    const picked = randomSceneLayersForSection(sectionId);
+    const secIdx = sectionOrderIndexById(sectionId);
+    const isLight = secIdx >= 0 ? (secIdx % 2 === 1) : ((hashStringToSeed(`transition-lab:${sectionId}`) >>> 0) % 2 === 1);
+    const stripped = (Array.isArray(picked.layers) ? picked.layers : []).map((l: any) => ({
+      ...l,
+      nodes: (Array.isArray(l?.nodes) ? l.nodes : []).filter((n: any) => !String(n?.type ?? "").toLowerCase().startsWith("bg."))
+    })).filter((l: any) => Array.isArray(l.nodes) && l.nodes.length > 0);
+    const bgLayer = isLight
+      ? {
+          id: "tlab-bg-light",
+          blend: "source-over",
+          opacity: 1,
+          nodes: [
+            { id: "tlab-gradient", type: "bg.gradientField", params: { gradientStops: 3, driftSpeed: 0.012, noiseScale: 0.5, soften: 0.94 } },
+            { id: "tlab-offset", type: "glitch.persistentOffset", params: { count: 10, widthPx: 7, driftPx: 0.5, alpha: 0.12 } }
+          ]
+        }
+      : {
+          id: "tlab-bg-dark",
+          blend: "source-over",
+          opacity: 1,
+          nodes: [{ id: "tlab-solid", type: "bg.solid", params: { color: "#05070B" } }]
+        };
+    recipe.graph.layers = [
+      bgLayer,
+      ...stripped,
+      {
+        id: "tlab-beats",
+        blend: "source-over",
+        opacity: 1,
+        nodes: [{ id: "tlab-beat-track", type: "overlay.beatTrack", params: { alpha: 0.92, topInsetPx: 44, bottomInsetPx: 8, playheadColor: "#000000", beatColor: "#8E8E8E", downbeatColor: "#D0D0D0" } }]
+      }
+    ];
+    recipe.transitions = {
+      ...(typeof recipe.transitions === "object" && recipe.transitions ? recipe.transitions : {}),
+      bySectionChange: [],
+      default: transitionLabTransitionDef()
+    };
   } else if (mode === "player") {
     const choice = resolvePlayerSceneChoice(sectionId, sectionType, playerVariantOverride);
     const picked = choice.source === "recipe-view"
       ? graphLayersForSection(baseRecipe, sectionId, { allowManual: false, variantOverride: choice.variant })
       : randomSceneLayersForSection(sectionId, { allowManual: false, variantOverride: choice.variant });
     recipe.graph.layers = picked.layers;
+    const transitions = typeof recipe.transitions === "object" && recipe.transitions ? recipe.transitions : {};
+    recipe.transitions = {
+      ...transitions,
+      default: buildPlayerDefaultTransition(sectionId, sectionType)
+    };
   }
 
   if (mode === "primitive-lab") {
@@ -3943,7 +4410,10 @@ function withModeRecipe(baseRecipe: any, mode: ViewerMode, sectionId: string, se
     // Keep beat-track overlay out of playback-focused scene modes.
     for (const layer of recipe.graph.layers) {
       const nodes = Array.isArray(layer?.nodes) ? layer.nodes : [];
-      layer.nodes = nodes.filter((n: any) => String(n?.type ?? "").toLowerCase() !== "overlay.beattrack");
+      layer.nodes = nodes.filter((n: any) => {
+        if (mode === "transition-lab") return true;
+        return String(n?.type ?? "").toLowerCase() !== "overlay.beattrack";
+      });
     }
     recipe.graph.layers = recipe.graph.layers.filter((l: any) => (Array.isArray(l?.nodes) ? l.nodes.length > 0 : false));
   }
@@ -4299,6 +4769,40 @@ function drawHintOverlays() {
   ctx.restore();
 }
 
+function drawSectionMarkersOverlay() {
+  const durationSec = Number(audio.duration);
+  if (!Number.isFinite(durationSec) || durationSec <= 0) return;
+  const y0 = canvas.height - 44;
+  const y1 = canvas.height - 8;
+  ctx.save();
+  for (const marker of sectionMarkers) {
+    const ms = Math.max(0, Math.round(Number(marker.tMs)));
+    const tSecRaw = Number(ms) / 1000;
+    const tSec = Math.max(0, Math.min(durationSec, tSecRaw + renderOffsetMs / 1000));
+    const x = Math.max(0, Math.min(canvas.width, (tSec / durationSec) * canvas.width));
+    ctx.strokeStyle = marker.source === "hint" ? "#F44336" : "#C62828";
+    ctx.lineWidth = marker.source === "hint" ? 3 : 2;
+    ctx.globalAlpha = marker.source === "hint" ? 0.95 : 0.78;
+    ctx.beginPath();
+    ctx.moveTo(x, y0 - 6);
+    ctx.lineTo(x, y1);
+    ctx.stroke();
+  }
+  if (endMarkerMs > 0) {
+    const tSecRaw = Number(endMarkerMs) / 1000;
+    const tSec = Math.max(0, Math.min(durationSec, tSecRaw + renderOffsetMs / 1000));
+    const x = Math.max(0, Math.min(canvas.width, (tSec / durationSec) * canvas.width));
+    ctx.strokeStyle = "#B71C1C";
+    ctx.lineWidth = 4;
+    ctx.globalAlpha = 1;
+    ctx.beginPath();
+    ctx.moveTo(x, y0 - 8);
+    ctx.lineTo(x, y1 + 2);
+    ctx.stroke();
+  }
+  ctx.restore();
+}
+
 function downbeatCountAt(tMs: number) {
   const ds = downbeatMarkers.length
     ? downbeatMarkers.map((m) => Number(m.tMs))
@@ -4378,6 +4882,13 @@ function render() {
   const reactiveAligned = reactiveAt(tRenderMs, reactiveNow);
   const amp = amplitudeAt(tRenderMs, ampNow);
   const sectionClockMs = tRenderMs;
+  const effectiveBeatsMs = beatMarkers.length
+    ? beatMarkers.map((m) => Number(m.tMs)).filter((x) => Number.isFinite(x))
+    : (pulseBeatTimesMs ?? []).map((x) => Number(x)).filter((x) => Number.isFinite(x));
+  const effectiveDownbeatsMs = downbeatMarkers.length
+    ? downbeatMarkers.map((m) => Number(m.tMs)).filter((x) => Number.isFinite(x))
+    : (pulseDownbeatTimesMs ?? []).map((x) => Number(x)).filter((x) => Number.isFinite(x));
+
   const sec = findCurrentSection(sectionClockMs);
   const nextSec = findNextSection(sectionClockMs);
   const sectionId = sec?.id ?? "";
@@ -4392,10 +4903,21 @@ function render() {
     ? Math.max(0, downbeatCountAt(nextSectionStartMs) - downbeatCountAt(nextSectionStartMs - 1))
     : 0;
   updateGraphSectionState(sectionId);
-  const pulse = beatPulseInfo(tRenderMs);
-  updateGraphAutoVariantState(sectionId, tRenderMs);
-  const durationSec = Number.isFinite(audio.duration) ? Number(audio.duration) : 0;
   const modeRecipe = withModeRecipe(currentRecipe, viewerMode, sectionId, sectionType, playerVariantIndex);
+  const pulse = beatPulseInfo(tRenderMs);
+  const transitionDefForNext = nextSectionId
+    ? resolveTransitionDefForSections(modeRecipe, sectionId, nextSectionId)
+    : null;
+  const transitionDurationMs = Math.max(1, Number((transitionDefForNext as any)?.durationMs ?? 900));
+  const transitionWindowStartMs = Number.isFinite(nextSectionStartMs)
+    ? (nextSectionStartMs - transitionDurationMs)
+    : NaN;
+  const inTransitionWindow = Number.isFinite(transitionWindowStartMs) &&
+    Number.isFinite(nextSectionStartMs) &&
+    tRenderMs >= transitionWindowStartMs &&
+    tRenderMs <= nextSectionStartMs;
+  updateGraphAutoVariantState(sectionId, tRenderMs, viewerMode === "transition-lab" && inTransitionWindow);
+  const durationSec = Number.isFinite(audio.duration) ? Number(audio.duration) : 0;
   let nextModeRecipe = nextSectionId
     ? withModeRecipe(currentRecipe, viewerMode, nextSectionId, nextSectionType, nextPlayerVariantIndex)
     : null;
@@ -4415,12 +4937,6 @@ function render() {
   } else {
     playerLastSectionId = "";
   }
-  const effectiveBeatsMs = beatMarkers.length
-    ? beatMarkers.map((m) => Number(m.tMs)).filter((x) => Number.isFinite(x))
-    : (pulseBeatTimesMs ?? []).map((x) => Number(x)).filter((x) => Number.isFinite(x));
-  const effectiveDownbeatsMs = downbeatMarkers.length
-    ? downbeatMarkers.map((m) => Number(m.tMs)).filter((x) => Number.isFinite(x))
-    : (pulseDownbeatTimesMs ?? []).map((x) => Number(x)).filter((x) => Number.isFinite(x));
   const signalBus = buildSignalBus({
     tAudioMs,
     tRenderMs,
@@ -4473,7 +4989,15 @@ function render() {
     },
     sectionId,
     sectionType,
-    pulse
+    pulse,
+    rhythm: buildRhythmCueState({
+      tMs: tRenderMs,
+      beatsMs: effectiveBeatsMs,
+      downbeatsMs: effectiveDownbeatsMs,
+      sectionId,
+      sectionType,
+      seedBase: seed
+    })
   });
   const lyricsSuppressedNow = isLyricSuppressedAt(tRenderMs);
   const runtimeRecipe = applyRuntimeLyricSuppression(modeRecipe, lyricsSuppressedNow);
@@ -4509,6 +5033,7 @@ function render() {
     drawBeatOrb(pulse.beat, pulse.downbeat);
   }
   if (isHintEditMode()) drawHintOverlays();
+  if (viewerMode === "transition-lab") drawSectionMarkersOverlay();
   if (isPrimitiveLabMode() && labPrimitive === "overlay.beatTrack") drawHintOverlays();
 
 if (!isSeeking && Number.isFinite(audio.duration) && audio.duration > 0) {
@@ -4560,6 +5085,8 @@ if (!isSeeking && Number.isFinite(audio.duration) && audio.duration > 0) {
     ...hudGraphModeLines(modeRecipe, graphSel, playerSceneChoice, playerVariantIndex, nextSectionId, nextSectionInMs),
     `sectionId: ${sectionId || "-"}`,
     `sectionType: ${frameInfo?.sectionType ?? sectionType}`,
+    `rhythm: ${signalBus.rhythm.patternId} bar:${signalBus.rhythm.barIndex} step16:${signalBus.rhythm.step16} M${signalBus.rhythm.lanes.motion.pulse.toFixed(2)}${signalBus.rhythm.lanes.motion.hit ? "*" : ""} T${signalBus.rhythm.lanes.transition.pulse.toFixed(2)}${signalBus.rhythm.lanes.transition.hit ? "*" : ""}`,
+    `rhythmSteps: cues:${signalBus.rhythm.cueCount} [${signalBus.rhythm.step16s.join(",")}]`,
     `theme: C${signalBus.theme.coherence.toFixed(2)} P${signalBus.theme.pressure.toFixed(2)} L${signalBus.theme.lyricActivity.toFixed(2)} E${signalBus.theme.sectionEnergy.toFixed(2)}`,
     `lyricIndex: ${lyricIndex}`,
     `lyric: ${lyricText || "-"}`,
@@ -4748,6 +5275,28 @@ function handleGraphModeKeydown(e: KeyboardEvent) {
   return false;
 }
 
+function handleTransitionLabKeydown(e: KeyboardEvent) {
+  if (viewerMode !== "transition-lab" || e.repeat) return false;
+  const key = e.key.toLowerCase();
+  if (key === "t") {
+    cycleTransitionLabPreset(-1);
+    return true;
+  }
+  if (key === "y") {
+    cycleTransitionLabPreset(1);
+    return true;
+  }
+  if (key === "u") {
+    cycleTransitionLabVariant(-1);
+    return true;
+  }
+  if (key === "i") {
+    cycleTransitionLabVariant(1);
+    return true;
+  }
+  return false;
+}
+
 function handlePrimitiveLabKeydown(e: KeyboardEvent) {
   if (!isPrimitiveLabMode() || e.repeat) return false;
   const key = e.key.toLowerCase();
@@ -4848,6 +5397,10 @@ function handlePostTransportKeydown(e: KeyboardEvent) {
     return true;
   }
   if (handleGraphModeKeydown(e)) {
+    e.preventDefault();
+    return true;
+  }
+  if (handleTransitionLabKeydown(e)) {
     e.preventDefault();
     return true;
   }

@@ -177,6 +177,20 @@ export function createEngine({
     return (transitions?.default ?? { kind: "crossfade", durationMs: 900 }) as TransitionDef;
   }
 
+  function resolveRuntimeTransitionDef(def: TransitionDef | null, state: EngineState): TransitionDef | null {
+    if (!def) return null;
+    const out: TransitionDef = { ...(def as any) };
+    const params = asObject((out as any)?.params);
+    if (params.useRhythmSteps === true) {
+      const beatMs = Number(state?.signalBus?.rhythm?.beatMs);
+      const beatsBeforeEnd = Math.max(1, Math.min(16, Number(params.beatsBeforeEnd ?? 4)));
+      if (Number.isFinite(beatMs) && beatMs > 0) {
+        out.durationMs = Math.max(1, Math.round(beatMs * beatsBeforeEnd));
+      }
+    }
+    return out;
+  }
+
   function renderLayers({
     targetCtx,
     layers,
@@ -282,6 +296,9 @@ export function createEngine({
         sectionChangeT0Ms = -1;
         sectionChangeT1Ms = -1;
         activeTransition = null;
+        lastSectionId = "";
+        lastSectionType = "other";
+        lastRecipe = null;
         transitionFromSectionId = "";
         transitionFromSectionType = "other";
         transitionFromRecipe = null;
@@ -354,7 +371,7 @@ export function createEngine({
       transitionToRecipe = null;
     }
     const transForNext = nextSectionId && nextSectionId !== sectionId
-      ? selectTransitionDef(recipe, sectionId, nextSectionId)
+      ? resolveRuntimeTransitionDef(selectTransitionDef(recipe, sectionId, nextSectionId), state)
       : null;
     const nextDurationMs = transForNext ? Math.max(1, Number(transForNext.durationMs ?? 900)) : 0;
     const nextT0 = Number.isFinite(nextSectionStartMs) ? (nextSectionStartMs - nextDurationMs) : NaN;
@@ -376,7 +393,7 @@ export function createEngine({
       nextSectionId &&
       nextSectionId !== sectionId;
     if (canPreRoll) {
-      const trans = selectTransitionDef(recipe, sectionId, nextSectionId);
+      const trans = resolveRuntimeTransitionDef(selectTransitionDef(recipe, sectionId, nextSectionId), state) as TransitionDef;
       const durationMs = Math.max(1, Number(trans.durationMs ?? 900));
       const t0 = nextSectionStartMs - durationMs;
       if (tMs >= t0) {
@@ -397,7 +414,7 @@ export function createEngine({
       transitionFromSectionType = lastSectionType;
       transitionFromRecipe = lastRecipe ?? recipe;
       sectionChangeT0Ms = tMs;
-      activeTransition = selectTransitionDef(recipe, lastSectionId, sectionId);
+      activeTransition = resolveRuntimeTransitionDef(selectTransitionDef(recipe, lastSectionId, sectionId), state);
       const durationMs = Math.max(1, Number(activeTransition.durationMs ?? 900));
       sectionChangeT1Ms = tMs + durationMs;
       transitionToSectionId = sectionId;
@@ -428,6 +445,7 @@ export function createEngine({
         viewerMode === "primitive-lab" ||
         viewerMode === "recipe-view" ||
         viewerMode === "random-scene" ||
+        viewerMode === "transition-lab" ||
         (viewerMode === "graph-scene") ||
         (viewerMode === "hint-edit" && hasGraphLayers);
       if (useGraphPipeline) {
@@ -502,6 +520,40 @@ export function createEngine({
         captureInfo: false
       });
 
+      const transitionDefForRender = (() => {
+        const base = activeTransition ?? {};
+        const params = asObject((base as any)?.params);
+        if (params.useRhythmSteps !== true) return base;
+        const fixedSteps16Raw = Array.isArray(state?.signalBus?.rhythm?.step16s)
+          ? state.signalBus.rhythm.step16s
+          : (Array.isArray(state?.signalBus?.rhythm?.laneSteps16?.transition) ? state.signalBus.rhythm.laneSteps16.transition : []);
+        const fixedSteps16 = fixedSteps16Raw
+          .map((v: any) => Number(v))
+          .filter((v: number) => Number.isFinite(v) && v >= 0 && v < 16)
+          .sort((a: number, b: number) => a - b);
+        const transitionStepsFromRhythm = fixedSteps16.length;
+        const mappedSteps = Number.isFinite(transitionStepsFromRhythm) && transitionStepsFromRhythm > 0
+          ? Math.max(2, Math.min(32, Math.round(transitionStepsFromRhythm)))
+          : 4;
+        const scheduleFromRhythm = fixedSteps16.length
+          ? fixedSteps16.map((s: number) => Math.max(0, Math.min(1, s / 16)))
+          : [];
+        // Ensure transition fully lands exactly at transition end (typically section downbeat).
+        if (!scheduleFromRhythm.length || scheduleFromRhythm[scheduleFromRhythm.length - 1] < 1) {
+          scheduleFromRhythm.push(1);
+        }
+        const dynamicSlices = Math.max(2, Math.min(24, scheduleFromRhythm.length));
+        return {
+          ...(base as any),
+          params: {
+            ...params,
+            steps: dynamicSlices,
+            slices: dynamicSlices,
+            stepSchedule: scheduleFromRhythm
+          }
+        } as TransitionDef;
+      })();
+
       compositeTransition({
         ctx,
         width,
@@ -509,7 +561,7 @@ export function createEngine({
         fromCanvas: scratchA,
         tempCtx: scratchBCtx,
         progress,
-        transitionDef: activeTransition,
+        transitionDef: transitionDefForRender,
         drawToFn: (targetCtx) => drawScene({
           targetCtx,
           sceneSectionId: transitionToSectionId || sectionId,

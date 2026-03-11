@@ -331,7 +331,7 @@ export function createEngine({
     const layers = Array.isArray(recipe?.layers) && recipe.layers.length
       ? recipe.layers
       : [{ module: "bg.gradientField", params: { gradientStops: 3 } }];
-    const viewerMode = String(state?.viewerMode ?? "playback");
+    const viewerMode = String(state?.viewerMode ?? "player");
     const sectionId = String(state?.sectionId ?? "section");
     const sectionType = state?.sectionType ?? classifySection(sectionId);
     const width = canvas.width;
@@ -446,7 +446,6 @@ export function createEngine({
         viewerMode === "recipe-view" ||
         viewerMode === "random-scene" ||
         viewerMode === "transition-lab" ||
-        (viewerMode === "graph-scene") ||
         (viewerMode === "hint-edit" && hasGraphLayers);
       if (useGraphPipeline) {
         targetCtx.setTransform(1, 0, 0, 1, 0, 0);

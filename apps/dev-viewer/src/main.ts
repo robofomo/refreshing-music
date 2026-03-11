@@ -484,9 +484,8 @@ function updateUrlParam(key: string, value: string | null) {
 function normalizeViewerMode(value: string | null | undefined): ViewerMode {
   const raw = String(value || "").trim().toLowerCase();
   if (raw === "player") return "player";
-  if (raw === "playback" || raw === "hint-edit") return "hint-edit";
+  if (raw === "hint-edit") return "hint-edit";
   if (raw === "primitive-lab" || raw === "recipe-view" || raw === "random-scene" || raw === "transition-lab") return raw as ViewerMode;
-  if (raw === "graph-scene") return "recipe-view";
   return "player";
 }
 

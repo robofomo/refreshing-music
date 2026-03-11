@@ -73,7 +73,7 @@ Notes:
    - local network / IP access: `npm --workspace apps/dev-viewer run dev -- --host 0.0.0.0`
    - optional fixed port for LAN testing: `npm --workspace apps/dev-viewer run dev -- --host 0.0.0.0 --port 5173`
    - open `http://localhost:5173` on the current machine, or `http://<your-local-ip>:5173` from another device on the same network
-   - Optional viewer mode query param: `?mode=player|hint-edit|primitive-lab|recipe-view|random-scene|transition-lab` (default `player`; legacy `playback` maps to `hint-edit`; legacy `graph-scene` maps to `recipe-view`).
+   - Optional viewer mode query param: `?mode=player|hint-edit|primitive-lab|recipe-view|random-scene|transition-lab` (default `player`).
    - In `primitive-lab`, use `j/k` to switch primitives, then vary only by seed (`seed` button, `r` key, or `?seed=...`).
    - In `player`, renderer runs a deterministic section playbook from seed (mixing curated recipe scenes and random scenes with section transitions).
    - In `recipe-view`, renderer uses section-selected recipe graph layers; in `random-scene`, renderer builds deterministic per-section random graph layers.
@@ -212,7 +212,7 @@ Authoring mode supports lightweight beat/downbeat hint events from the dev viewe
   - `d`: downbeat hint at current playhead
   - `b`: beat hint at current playhead
   - `1`/`2`/`3`/`4`: bar-beat hint (`beatInBar`)
-  - `v`: cycle viewer mode (`player` -> `hint-edit` -> `primitive-lab` -> `recipe-view` -> `random-scene`)
+  - `v`: cycle viewer mode (`player` -> `hint-edit` -> `primitive-lab` -> `recipe-view` -> `random-scene` -> `transition-lab`)
 - Authoring persistence:
   - Hints are written via local dev API and reduced with debounce.
   - Reducer also runs after `beats` / `whisperx` updates.

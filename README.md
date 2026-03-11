@@ -68,7 +68,11 @@ Notes:
 7. `import:inbox` automatically runs post-import processing for newly imported track IDs:
    - `preprocess:ai` (stems -> beats -> whisperx)
    - `preprocess` (embeds generated AI timing into `tracks/<trackId>.track.json`)
-8. Run `npm run dev` for the dev viewer.
+8. Run the dev viewer with Vite:
+   - local only: `npm run dev`
+   - local network / IP access: `npm --workspace apps/dev-viewer run dev -- --host 0.0.0.0`
+   - optional fixed port for LAN testing: `npm --workspace apps/dev-viewer run dev -- --host 0.0.0.0 --port 5173`
+   - open `http://localhost:5173` on the current machine, or `http://<your-local-ip>:5173` from another device on the same network
    - Optional viewer mode query param: `?mode=player|hint-edit|primitive-lab|recipe-view|random-scene` (default `player`; legacy `playback` maps to `hint-edit`; legacy `graph-scene` maps to `recipe-view`).
    - In `primitive-lab`, use `j/k` to switch primitives, then vary only by seed (`seed` button, `r` key, or `?seed=...`).
    - In `player`, renderer runs a deterministic section playbook from seed (mixing curated recipe scenes and random scenes with section transitions).

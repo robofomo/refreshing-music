@@ -277,9 +277,9 @@ const audioVocals = document.createElement("audio");
 const ctx = canvas.getContext("2d")!;
 
 audio.preload = "auto";
-audioBacking.preload = "auto";
+audioBacking.preload = "none";
 audioBacking.crossOrigin = "anonymous";
-audioVocals.preload = "auto";
+audioVocals.preload = "none";
 audioVocals.crossOrigin = "anonymous";
 
 const palettes = [
@@ -293,6 +293,8 @@ let indexEntries: string[] = [];
 let selectedIndex = 0;
 let track: Track | null = null;
 let trackUrl = "";
+let mixObjectUrl: string | null = null;
+let mixFetchController: AbortController | null = null;
 let lyricsLines: string[] = [];
 let pulseBeatTimesMs: number[] = [];
 let pulseDownbeatTimesMs: number[] = [];
@@ -310,10 +312,16 @@ let endMarkerMs = 0;
 let lastSeekTargetSec = 0;
 let lastSeekActualSec = 0;
 let lastSeekErrorMs = 0;
+let audioWaitingCount = 0;
+let audioStalledCount = 0;
+let audioSuspendCount = 0;
+let audioProgressAtMs = 0;
 let hintPersistTimer = 0;
 let hintRevision = 0;
 let latestQueuedBatchRevision = 0;
 const HINT_PERSIST_DEBOUNCE_MS = 1000;
+const REACTIVE_HISTORY_MS = 1500;
+const REACTIVE_SAMPLE_MIN_MS = 25;
 const pendingHintEvents: Array<{
   type: "hint/downbeat" | "hint/beat" | "hint/barBeat" | "hint/sectionMarker" | "hint/endMarker" | "hint/lyricSuppress";
   tSec: number;
@@ -352,6 +360,13 @@ let determinismProbeRequested = false;
 let lastFrameTsMs = 0;
 let fpsSmoothed = 0;
 let adaptiveDensityScale = 1;
+let cachedSectionsSorted: TimingSection[] = [];
+let modeRecipeMemoBase: any = null;
+const modeRecipeMemo = new Map<string, any>();
+const rhythmPlanCache = new Map<string, { step16s: number[]; patternId: string; cueCount: number }>();
+let hudLastUpdateMs = 0;
+let hudLastText = "";
+const HUD_UPDATE_INTERVAL_MS = 100;
 let isSeeking = false;
 let pendingSeekRatio = 0;
 let wasPlayingBeforeSeek = false;
@@ -501,6 +516,7 @@ function syncModeScopedUrlParams() {
 }
 
 function setViewerMode(nextMode: ViewerMode) {
+  if (viewerMode !== nextMode) invalidateModeRecipeMemo();
   viewerMode = nextMode;
   if (nextMode === "transition-lab") graphAutoRefresh = true;
   updateUrlParam("mode", nextMode === "player" ? null : nextMode);
@@ -542,6 +558,7 @@ function cycleLabPrimitive(dir: 1 | -1) {
   const i = LAB_PRIMITIVES.indexOf(labPrimitive);
   const next = (i + dir + LAB_PRIMITIVES.length) % LAB_PRIMITIVES.length;
   labPrimitive = LAB_PRIMITIVES[next];
+  invalidateModeRecipeMemo();
   if (isPrimitiveLabMode()) updateUrlParam("labPrimitive", labPrimitive);
 }
 
@@ -549,6 +566,7 @@ function cycleLabBackdropPolicy() {
   if (labBackdropPolicy === "off") labBackdropPolicy = "fixed";
   else if (labBackdropPolicy === "fixed") labBackdropPolicy = "random";
   else labBackdropPolicy = "off";
+  invalidateModeRecipeMemo();
 }
 
 function currentLabBackdropId(): LabBackdropId {
@@ -656,11 +674,13 @@ function transitionLabTransitionDef() {
 
 function cycleTransitionLabPreset(dir: 1 | -1) {
   transitionLabPresetIndex = (transitionLabPresetIndex + dir + TRANSITION_LAB_PRESETS.length) % TRANSITION_LAB_PRESETS.length;
+  invalidateModeRecipeMemo();
   syncModeScopedUrlParams();
 }
 
 function cycleTransitionLabVariant(dir: 1 | -1) {
   transitionLabVariant = Math.max(0, transitionLabVariant + dir);
+  invalidateModeRecipeMemo();
   syncModeScopedUrlParams();
 }
 
@@ -669,6 +689,7 @@ function randomizeTransitionLabVariant(sectionId: string) {
   const sid = String(sectionId || "");
   const h = hashStringToSeed(`transition-lab:variant:${seed}:${sid}:${transitionLabAutoVariantTick}`) >>> 0;
   transitionLabVariant = h % 24;
+  invalidateModeRecipeMemo();
   syncModeScopedUrlParams();
 }
 
@@ -691,6 +712,7 @@ function cycleGraphVariantForSection(sectionId: string) {
   const k = String(sectionId || "");
   const next = currentGraphVariantForSection(k) + 1;
   graphVariantBySection.set(k, next);
+  invalidateModeRecipeMemo();
 }
 
 function labSeedForPrimitive() {
@@ -1398,6 +1420,18 @@ function isMobileLike() {
   return coarse || touch || /Android|iPhone|iPad|iPod|Mobi/i.test(ua);
 }
 
+function stemSignalsOptIn() {
+  const v = String(new URL(location.href).searchParams.get("stemSignals") || "").toLowerCase();
+  return v === "1" || v === "true" || v === "on";
+}
+
+function fullBufferMixEnabled() {
+  const v = String(new URL(location.href).searchParams.get("fullBuffer") || "").toLowerCase();
+  if (v === "0" || v === "false" || v === "off") return false;
+  if (v === "1" || v === "true" || v === "on") return true;
+  return isMobileLike();
+}
+
 function bufferedAheadSec(el: HTMLMediaElement, tSec: number) {
   try {
     const b = el.buffered;
@@ -1544,6 +1578,40 @@ function resolveTrackAssetUrl(candidate: string, baseTrackUrl: string) {
   if (raw.startsWith("/")) return new URL(raw, location.origin).toString();
   if (raw.startsWith("assets/")) return new URL(`/${raw}`, location.origin).toString();
   return new URL(raw, baseTrackUrl).toString();
+}
+
+async function setPrimaryAudioSource(audioUrl: string) {
+  if (mixFetchController) {
+    mixFetchController.abort();
+    mixFetchController = null;
+  }
+  if (mixObjectUrl) {
+    URL.revokeObjectURL(mixObjectUrl);
+    mixObjectUrl = null;
+  }
+  if (!fullBufferMixEnabled()) {
+    audio.src = audioUrl;
+    audio.load();
+    return;
+  }
+  const controller = new AbortController();
+  mixFetchController = controller;
+  try {
+    const resp = await fetch(audioUrl, { signal: controller.signal, cache: "force-cache" });
+    if (!resp.ok) throw new Error(`mix fetch failed: ${resp.status}`);
+    const blob = await resp.blob();
+    if (controller.signal.aborted) return;
+    const obj = URL.createObjectURL(blob);
+    mixObjectUrl = obj;
+    audio.src = obj;
+    audio.load();
+  } catch {
+    if (controller.signal.aborted) return;
+    audio.src = audioUrl;
+    audio.load();
+  } finally {
+    if (mixFetchController === controller) mixFetchController = null;
+  }
 }
 
 function resolveAssetDirUrl(nextTrack: Track, baseTrackUrl: string) {
@@ -1965,13 +2033,15 @@ async function resolveEffectivePlaybackAssets(nextTrack: Track, baseTrackUrl: st
   };
 }
 
-function applyTrackPlaybackAssets(
+async function applyTrackPlaybackAssets(
   assets: Awaited<ReturnType<typeof resolvePlaybackAssets>>,
   baseTrackUrl: string
 ) {
   const hasStems = assets.hasStems;
   playbackMode = "mix";
-  stemSignalsEnabled = hasStems;
+  // Playback-first policy: keep auxiliary stem media disabled unless explicitly opted in.
+  // This avoids parallel decode/network pressure causing intermittent mix dropouts.
+  stemSignalsEnabled = hasStems && stemSignalsOptIn() && !isMobileLike();
   mixControlLabel = assets.hasTrueMix ? "Mix" : "Backing";
   renderMixerControls();
   const audioPlayPath = assets.hasTrueMix ? assets.mixPath : (assets.backingPath || assets.mixPath);
@@ -1981,16 +2051,15 @@ function applyTrackPlaybackAssets(
   audioBacking.pause();
   audioVocals.pause();
   resetStemSyncState();
-  audio.src = audioUrl;
-  audio.load();
-  if (hasStems && assets.backingPath) {
+  await setPrimaryAudioSource(audioUrl);
+  if (stemSignalsEnabled && assets.backingPath) {
     audioBacking.src = resolveTrackAssetUrl(assets.backingPath, baseTrackUrl);
     audioBacking.load();
   } else {
     audioBacking.removeAttribute("src");
     audioBacking.load();
   }
-  if (hasStems && assets.vocalsPath) {
+  if (stemSignalsEnabled && assets.vocalsPath) {
     audioVocals.src = resolveTrackAssetUrl(assets.vocalsPath, baseTrackUrl);
     audioVocals.load();
   } else {
@@ -2039,7 +2108,10 @@ async function loadEffectiveGuidance(nextTrack: Track, baseTrackUrl: string) {
   endMarkerMs = 0;
 
   const assetDirUrl = resolveAssetDirUrl(nextTrack, baseTrackUrl);
-  if (!assetDirUrl) return;
+  if (!assetDirUrl) {
+    refreshSectionCache(nextTrack);
+    return;
+  }
 
   const effectiveUrl = nextTrack.assetPaths?.effective
     ? resolveTrackAssetUrl(nextTrack.assetPaths.effective, baseTrackUrl)
@@ -2140,6 +2212,7 @@ async function loadEffectiveGuidance(nextTrack: Track, baseTrackUrl: string) {
       if (!sectionMarkers.length) rebuildSectionMarkersFromHintOverlays();
       if (!lyricSuppressMarkers.length) rebuildLyricSuppressFromHintOverlays();
       activeHintCount = hintOverlays.length;
+      refreshSectionCache(nextTrack);
       return;
     }
   } catch {
@@ -2180,6 +2253,7 @@ async function loadEffectiveGuidance(nextTrack: Track, baseTrackUrl: string) {
       // Optional fallback only.
     }
   }
+  refreshSectionCache(nextTrack);
 }
 
 function randomizeSeed() {
@@ -2375,6 +2449,8 @@ function pushAmplitudeSample(tAudioMs: number, amp: number) {
 }
 
 function cloneReactiveSeries(src: any): ReactiveSeriesSnapshot {
+  const wave = Array.isArray(src?.wave) ? (src.wave as number[]) : [];
+  const freq = Array.isArray(src?.freq) ? (src.freq as number[]) : [];
   return {
     ampFast: Number(src?.ampFast ?? 0),
     ampSlow: Number(src?.ampSlow ?? 0),
@@ -2383,12 +2459,14 @@ function cloneReactiveSeries(src: any): ReactiveSeriesSnapshot {
     high: Number(src?.high ?? 0),
     onsetScore: Number(src?.onsetScore ?? 0),
     onsetPulse: Number(src?.onsetPulse ?? 0),
-    wave: Array.isArray(src?.wave) ? src.wave.map((x: any) => Number(x) || 0) : [],
-    freq: Array.isArray(src?.freq) ? src.freq.map((x: any) => Number(x) || 0) : []
+    wave: wave.slice(),
+    freq: freq.slice()
   };
 }
 
 function pushReactiveSample(tAudioMs: number, reactiveNow: any) {
+  const last = reactiveHistory.length ? reactiveHistory[reactiveHistory.length - 1] : null;
+  if (last && tAudioMs - last.tMs < REACTIVE_SAMPLE_MIN_MS) return;
   reactiveHistory.push({
     tMs: Number(tAudioMs) || 0,
     vocalsActive: Number(reactiveNow?.vocalsActive ?? 0),
@@ -2396,7 +2474,7 @@ function pushReactiveSample(tAudioMs: number, reactiveNow: any) {
     backing: cloneReactiveSeries(reactiveNow?.backing),
     vocals: cloneReactiveSeries(reactiveNow?.vocals)
   });
-  const cutoff = tAudioMs - 5000;
+  const cutoff = tAudioMs - REACTIVE_HISTORY_MS;
   while (reactiveHistory.length > 2 && reactiveHistory[0].tMs < cutoff) reactiveHistory.shift();
 }
 
@@ -2405,14 +2483,8 @@ function lerp(a: number, b: number, u: number) {
 }
 
 function blendSeries(a: ReactiveSeriesSnapshot, b: ReactiveSeriesSnapshot, u: number): ReactiveSeriesSnapshot {
-  const waveLen = Math.min(a.wave.length, b.wave.length);
-  const freqLen = Math.min(a.freq.length, b.freq.length);
-  const wave = waveLen > 0
-    ? Array.from({ length: waveLen }, (_, i) => lerp(Number(a.wave[i] ?? 0), Number(b.wave[i] ?? 0), u))
-    : (u < 0.5 ? a.wave : b.wave).slice();
-  const freq = freqLen > 0
-    ? Array.from({ length: freqLen }, (_, i) => lerp(Number(a.freq[i] ?? 0), Number(b.freq[i] ?? 0), u))
-    : (u < 0.5 ? a.freq : b.freq).slice();
+  const wave = (u < 0.5 ? a.wave : b.wave).slice();
+  const freq = (u < 0.5 ? a.freq : b.freq).slice();
   return {
     ampFast: lerp(a.ampFast, b.ampFast, u),
     ampSlow: lerp(a.ampSlow, b.ampSlow, u),
@@ -2647,6 +2719,14 @@ function vocalsWordGateAt(tMs: number) {
 
 function sampleReactiveAudio(tAudioMs: number) {
   const master = sampleReactiveFromAnalyser(analyser, audioData, audioFreqData, reactiveMaster, tAudioMs);
+  if (!stemSignalsActive()) {
+    return {
+      master,
+      backing: master,
+      vocals: { ...master, ampFast: 0, ampSlow: 0, low: 0, mid: 0, high: 0, onsetScore: 0, onsetPulse: 0, ampRms: 0, wave: [], freq: [] },
+      vocalsActive: 0
+    };
+  }
   const backing = sampleReactiveFromAnalyser(backingAnalyser, backingData, backingFreqData, reactiveBacking, tAudioMs);
   const vocalsRaw = sampleReactiveFromAnalyser(vocalsAnalyser, vocalsData, vocalsFreqData, reactiveVocals, tAudioMs);
   const wordGate = vocalsWordGateAt(tAudioMs);
@@ -2654,11 +2734,11 @@ function sampleReactiveAudio(tAudioMs: number) {
     0,
     Math.min(1, (Number(vocalsRaw.ampFast) - 0.012) / 0.08)
   );
-  const vocalsActive = stemSignalsActive() ? Math.max(wordGate * 0.9, vocalEnergyGate * 0.65) : 0;
+  const vocalsActive = Math.max(wordGate * 0.9, vocalEnergyGate * 0.65);
   return {
     master,
-    backing: stemSignalsActive() ? backing : master,
-    vocals: stemSignalsActive() ? vocalsRaw : { ...master, ampFast: 0, ampSlow: 0, low: 0, mid: 0, high: 0, onsetScore: 0, onsetPulse: 0, ampRms: 0, wave: [], freq: [] },
+    backing,
+    vocals: vocalsRaw,
     vocalsActive
   };
 }
@@ -2877,28 +2957,40 @@ function buildRhythmCueState(input: {
   const step16f = (tMs - barStartMs) / Math.max(1, beatMs / 4);
   const step16 = ((Math.floor(step16f) % 16) + 16) % 16;
 
-  const baseSteps = [0, 4, 8, 12];
-  const variationSeed = hashStringToSeed(`rhythm-variation:${input.seedBase}:${input.sectionId}:${barIndex}`) >>> 0;
-  const rng = mulberry32(variationSeed);
-  const removable = [4, 8, 12];
-  const offbeats = [2, 6, 10, 14];
-  const chosen = new Set<number>(baseSteps);
-  let removed: number | null = null;
-  if (rng() < 0.3) {
-    removed = removable[Math.floor(rng() * removable.length)];
-    chosen.delete(removed);
-  }
-  const added: number[] = [];
-  for (const s of offbeats) {
+  const rhythmCacheKey = `${input.seedBase}:${String(input.sectionId || "")}:${barIndex}`;
+  let cachedPlan = rhythmPlanCache.get(rhythmCacheKey);
+  if (!cachedPlan) {
+    const baseSteps = [0, 4, 8, 12];
+    const variationSeed = hashStringToSeed(`rhythm-variation:${input.seedBase}:${input.sectionId}:${barIndex}`) >>> 0;
+    const rng = mulberry32(variationSeed);
+    const removable = [4, 8, 12];
+    const offbeats = [2, 6, 10, 14];
+    const chosen = new Set<number>(baseSteps);
+    let removed: number | null = null;
     if (rng() < 0.3) {
-      chosen.add(s);
-      added.push(s);
+      removed = removable[Math.floor(rng() * removable.length)];
+      chosen.delete(removed);
     }
+    const added: number[] = [];
+    for (const s of offbeats) {
+      if (rng() < 0.3) {
+        chosen.add(s);
+        added.push(s);
+      }
+    }
+    const fixed = Array.from(chosen).sort((a, b) => a - b);
+    const removedTag = removed === null ? "" : `-r${removed}`;
+    const addedTag = added.length ? `+o${added.join("o")}` : "";
+    cachedPlan = {
+      step16s: fixed,
+      patternId: `quarter4${removedTag}${addedTag}`,
+      cueCount: fixed.length
+    };
+    if (rhythmPlanCache.size > 2400) rhythmPlanCache.clear();
+    rhythmPlanCache.set(rhythmCacheKey, cachedPlan);
   }
-  const fixedSteps = Array.from(chosen).sort((a, b) => a - b);
-  const removedTag = removed === null ? "" : `-r${removed}`;
-  const addedTag = added.length ? `+o${added.join("o")}` : "";
-  const patternId = `quarter4${removedTag}${addedTag}`;
+  const fixedSteps = cachedPlan.step16s;
+  const patternId = cachedPlan.patternId;
   const pattern = {
     grid: fixedSteps,
     accent: fixedSteps,
@@ -2916,7 +3008,7 @@ function buildRhythmCueState(input: {
     phaseBar,
     step16,
     patternId,
-    cueCount: fixedSteps.length,
+    cueCount: cachedPlan.cueCount,
     step16s: fixedSteps,
     lanes: {
       grid: nearestLanePulseFromSteps16(tMs, barStartMs, stepMs, pattern.grid, pulseWindowMs),
@@ -3080,6 +3172,12 @@ function resetTrackLoadModeState() {
   lastAutoBarCount = -1;
   playerLastSectionId = "";
   playerLastTransitionLabel = "crossfade";
+  audioWaitingCount = 0;
+  audioStalledCount = 0;
+  audioSuspendCount = 0;
+  audioProgressAtMs = 0;
+  invalidateModeRecipeMemo();
+  rhythmPlanCache.clear();
 }
 
 function defaultFallbackRecipe() {
@@ -3189,27 +3287,48 @@ function normalizeLyricMode(value: string | null | undefined): LyricMode {
   return value === "fixed" || value === "off" ? value : "center";
 }
 
-function sortedTimedSections() {
-  const sections = Array.isArray(track?.timing?.sections) ? track.timing.sections : [];
-  return sections
+function invalidateModeRecipeMemo() {
+  modeRecipeMemo.clear();
+  modeRecipeMemoBase = null;
+}
+
+function refreshSectionCache(trackLike: Track | null = track) {
+  const sections = Array.isArray(trackLike?.timing?.sections) ? trackLike.timing.sections : [];
+  cachedSectionsSorted = sections
     .filter((s: any) => Number.isFinite(Number(s?.t0Ms)))
     .slice()
     .sort((a: any, b: any) => Number(a.t0Ms) - Number(b.t0Ms));
 }
 
+function sortedTimedSections() {
+  return cachedSectionsSorted;
+}
+
 function currentSectionIndex(currentTimeMs: number) {
   const sections = sortedTimedSections();
+  let lo = 0;
+  let hi = sections.length - 1;
   let idx = -1;
-  for (let i = 0; i < sections.length; i += 1) {
-    const t0 = Number(sections[i].t0Ms);
-    const t1Explicit = Number.isFinite(Number(sections[i].t1Ms)) ? Number(sections[i].t1Ms) : Number.POSITIVE_INFINITY;
-    const t1Next = i + 1 < sections.length ? Number(sections[i + 1].t0Ms) : Number.POSITIVE_INFINITY;
-    const t1 = Math.min(t1Explicit, t1Next);
-    if (currentTimeMs >= t0 && currentTimeMs < t1) {
-      idx = i;
-      break;
+  while (lo <= hi) {
+    const mid = (lo + hi) >> 1;
+    const t0 = Number(sections[mid]?.t0Ms);
+    if (!Number.isFinite(t0)) {
+      hi = mid - 1;
+      continue;
     }
-    if (currentTimeMs >= t0) idx = i;
+    if (t0 <= currentTimeMs) {
+      idx = mid;
+      lo = mid + 1;
+    } else {
+      hi = mid - 1;
+    }
+  }
+  if (idx >= 0) {
+    const t0 = Number(sections[idx].t0Ms);
+    const t1Explicit = Number.isFinite(Number(sections[idx].t1Ms)) ? Number(sections[idx].t1Ms) : Number.POSITIVE_INFINITY;
+    const t1Next = idx + 1 < sections.length ? Number(sections[idx + 1].t0Ms) : Number.POSITIVE_INFINITY;
+    const t1 = Math.min(t1Explicit, t1Next);
+    if (!(currentTimeMs >= t0 && currentTimeMs < t1) && currentTimeMs < t0) idx = idx - 1;
   }
   return { sections, idx };
 }
@@ -4286,6 +4405,7 @@ function cycleGraphRecipeForSection(baseRecipe: any, sectionId: string, dir: 1 |
   const total = Math.max(1, sel.templates.length);
   const next = (sel.selectedIndex + dir + total) % total;
   graphManualRecipe = { sectionId: String(sectionId || ""), index: next };
+  invalidateModeRecipeMemo();
 }
 
 function cycleRandomSceneForSection(sectionId: string, dir: 1 | -1 = 1) {
@@ -4294,6 +4414,7 @@ function cycleRandomSceneForSection(sectionId: string, dir: 1 | -1 = 1) {
   const total = Math.max(1, Number(sel?.templates?.length ?? 1));
   const next = (Number(sel?.selectedIndex ?? 0) + dir + total) % total;
   graphManualRecipe = { sectionId: secId, index: next };
+  invalidateModeRecipeMemo();
 }
 
 function resolvePlayerSceneChoice(sectionId: string, sectionType: string, variantOverride = 0) {
@@ -4331,6 +4452,29 @@ function resolveTransitionDefForSections(recipe: any, fromSectionId: string, toS
 }
 
 function withModeRecipe(baseRecipe: any, mode: ViewerMode, sectionId: string, sectionType: string, playerVariantOverride = 0) {
+  if (modeRecipeMemoBase !== baseRecipe) {
+    modeRecipeMemoBase = baseRecipe;
+    modeRecipeMemo.clear();
+  }
+  const sectionVariant = currentGraphVariantForSection(sectionId);
+  const manualSig = graphManualRecipe ? `${graphManualRecipe.sectionId}:${graphManualRecipe.index}` : "-";
+  const memoKey = [
+    mode,
+    String(sectionId || ""),
+    String(sectionType || ""),
+    Math.max(0, Math.floor(Number(playerVariantOverride) || 0)),
+    seed >>> 0,
+    sectionVariant,
+    graphAutoRefresh ? 1 : 0,
+    manualSig,
+    transitionLabPresetIndex,
+    transitionLabVariant,
+    labPrimitive,
+    labBackdropPolicy,
+    labBackdropFixed
+  ].join("|");
+  const memoHit = modeRecipeMemo.get(memoKey);
+  if (memoHit) return memoHit;
   const recipe = cloneRecipe(baseRecipe || {});
   recipe.layers = Array.isArray(recipe.layers) ? recipe.layers : [];
   recipe.graph = typeof recipe.graph === "object" && recipe.graph ? recipe.graph : {};
@@ -4445,6 +4589,8 @@ function withModeRecipe(baseRecipe: any, mode: ViewerMode, sectionId: string, se
     });
   }
 
+  if (modeRecipeMemo.size > 240) modeRecipeMemo.clear();
+  modeRecipeMemo.set(memoKey, recipe);
   return recipe;
 }
 
@@ -4818,6 +4964,10 @@ function downbeatCountAt(tMs: number) {
 
 function buildScene(nextSeed: number) {
   seed = nextSeed >>> 0;
+  invalidateModeRecipeMemo();
+  rhythmPlanCache.clear();
+  hudLastUpdateMs = 0;
+  hudLastText = "";
   engine.reset(seed);
 }
 
@@ -5053,46 +5203,51 @@ if (!isSeeking && Number.isFinite(audio.duration) && audio.duration > 0) {
     : typeof lyricRef?.i === "number" && lyricRef.i >= 0 && lyricRef.i < lyricsLines.length
       ? lyricsLines[lyricRef.i]
       : "";
-  const labProfileRounded = (() => {
-    const p = currentLabProfile();
-    return {
-      ...p,
-      scale: Number(p.scale.toFixed(2)),
-      density: Number(p.density.toFixed(2))
-    };
-  })();
-  const rosetteLabDebug = labRosetteDebug();
-  const rosetteGraphDebug = graphRosetteDebug(modeRecipe);
-  const playerSceneChoice = isPlayerMode() ? resolvePlayerSceneChoice(sectionId, sectionType, playerVariantIndex) : null;
-  const nextSectionInMs = Number.isFinite(nextSectionStartMs) ? Math.round(nextSectionStartMs - sectionClockMs) : NaN;
-  const graphSel = resolveHudGraphSelection(sectionId, sectionType, playerVariantIndex, playerSceneChoice);
-  const effectiveBpm = estimateBpmFromBeats(effectiveBeatsMs);
   hud.style.display = hudVisible ? "block" : "none";
-  const targetFps = 30;
-  const adaptiveFloorScale = 0.45;
-  const adaptiveFloorFps = targetFps * adaptiveFloorScale;
-  hud.textContent = [
-    `title: ${preferredTrackTitle(track)}`,
-    `trackId: ${track?.trackId ?? "-"}`,
-    `seed: ${seed}`,
-    `mode: ${viewerMode}`,
-    `time: ${fmtMs(tRenderMs)}`,
-    `fps: ${fpsSmoothed > 0 ? fpsSmoothed.toFixed(1) : "-"} target:${targetFps} density:${adaptiveDensityScale.toFixed(2)} floor:${adaptiveFloorFps.toFixed(1)}`,
-    `bpm: ${Number.isFinite(effectiveBpm) ? effectiveBpm.toFixed(1) : "-"}`,
-    `offsetMs: ${renderOffsetMs}`,
-    ...hudHintModeLines(signalBus),
-    ...hudLabModeLines(labProfileRounded),
-    ...hudGraphModeLines(modeRecipe, graphSel, playerSceneChoice, playerVariantIndex, nextSectionId, nextSectionInMs),
-    `sectionId: ${sectionId || "-"}`,
-    `sectionType: ${frameInfo?.sectionType ?? sectionType}`,
-    `rhythm: ${signalBus.rhythm.patternId} bar:${signalBus.rhythm.barIndex} step16:${signalBus.rhythm.step16} M${signalBus.rhythm.lanes.motion.pulse.toFixed(2)}${signalBus.rhythm.lanes.motion.hit ? "*" : ""} T${signalBus.rhythm.lanes.transition.pulse.toFixed(2)}${signalBus.rhythm.lanes.transition.hit ? "*" : ""}`,
-    `rhythmSteps: cues:${signalBus.rhythm.cueCount} [${signalBus.rhythm.step16s.join(",")}]`,
-    `theme: C${signalBus.theme.coherence.toFixed(2)} P${signalBus.theme.pressure.toFixed(2)} L${signalBus.theme.lyricActivity.toFixed(2)} E${signalBus.theme.sectionEnergy.toFixed(2)}`,
-    `lyricIndex: ${lyricIndex}`,
-    `lyric: ${lyricText || "-"}`,
-    ``,
-    ...hudKeyHelpLines()
-  ].join("\n");
+  if (hudVisible && (hudLastText === "" || frameNowMs - hudLastUpdateMs >= HUD_UPDATE_INTERVAL_MS)) {
+    const labProfileRounded = (() => {
+      const p = currentLabProfile();
+      return {
+        ...p,
+        scale: Number(p.scale.toFixed(2)),
+        density: Number(p.density.toFixed(2))
+      };
+    })();
+    const playerSceneChoice = isPlayerMode() ? resolvePlayerSceneChoice(sectionId, sectionType, playerVariantIndex) : null;
+    const nextSectionInMs = Number.isFinite(nextSectionStartMs) ? Math.round(nextSectionStartMs - sectionClockMs) : NaN;
+    const graphSel = resolveHudGraphSelection(sectionId, sectionType, playerVariantIndex, playerSceneChoice);
+    const effectiveBpm = estimateBpmFromBeats(effectiveBeatsMs);
+    const targetFps = 30;
+    const adaptiveFloorScale = 0.45;
+    const adaptiveFloorFps = targetFps * adaptiveFloorScale;
+    hudLastText = [
+      `title: ${preferredTrackTitle(track)}`,
+      `trackId: ${track?.trackId ?? "-"}`,
+      `seed: ${seed}`,
+      `mode: ${viewerMode}`,
+      `time: ${fmtMs(tRenderMs)}`,
+      `fps: ${fpsSmoothed > 0 ? fpsSmoothed.toFixed(1) : "-"} target:${targetFps} density:${adaptiveDensityScale.toFixed(2)} floor:${adaptiveFloorFps.toFixed(1)}`,
+      `bpm: ${Number.isFinite(effectiveBpm) ? effectiveBpm.toFixed(1) : "-"}`,
+      `offsetMs: ${renderOffsetMs}`,
+      `audioNet: wait:${audioWaitingCount} stall:${audioStalledCount} susp:${audioSuspendCount} prog:${audioProgressAtMs > 0 ? `${Math.max(0, Math.round((performance.now() - audioProgressAtMs) / 1000))}s` : "-"}`,
+      ...hudHintModeLines(signalBus),
+      ...hudLabModeLines(labProfileRounded),
+      ...hudGraphModeLines(modeRecipe, graphSel, playerSceneChoice, playerVariantIndex, nextSectionId, nextSectionInMs),
+      `sectionId: ${sectionId || "-"}`,
+      `sectionType: ${frameInfo?.sectionType ?? sectionType}`,
+      `rhythm: ${signalBus.rhythm.patternId} bar:${signalBus.rhythm.barIndex} step16:${signalBus.rhythm.step16} M${signalBus.rhythm.lanes.motion.pulse.toFixed(2)}${signalBus.rhythm.lanes.motion.hit ? "*" : ""} T${signalBus.rhythm.lanes.transition.pulse.toFixed(2)}${signalBus.rhythm.lanes.transition.hit ? "*" : ""}`,
+      `rhythmSteps: cues:${signalBus.rhythm.cueCount} [${signalBus.rhythm.step16s.join(",")}]`,
+      `theme: C${signalBus.theme.coherence.toFixed(2)} P${signalBus.theme.pressure.toFixed(2)} L${signalBus.theme.lyricActivity.toFixed(2)} E${signalBus.theme.sectionEnergy.toFixed(2)}`,
+      `lyricIndex: ${lyricIndex}`,
+      `lyric: ${lyricText || "-"}`,
+      ``,
+      ...hudKeyHelpLines()
+    ].join("\n");
+    hudLastUpdateMs = frameNowMs;
+    hud.textContent = hudLastText;
+  } else if (hudVisible && hud.textContent !== hudLastText) {
+    hud.textContent = hudLastText;
+  }
 
   requestAnimationFrame(render);
 }
@@ -5106,12 +5261,13 @@ async function loadTrack(nextIndex: number) {
   updateUrlParam("track", trackId);
 
   track = await loadTrackJsonAndGuidance(entry);
+  refreshSectionCache(track);
   triggerAuthoringReduce(track);
   runPostTrackLoadHousekeeping(trackId);
   currentRecipe = await resolveTrackRecipeWithFallback(track);
 
   const assets = await resolveEffectivePlaybackAssets(track, trackUrl);
-  const { wasPlaying } = applyTrackPlaybackAssets(assets, trackUrl);
+  const { wasPlaying } = await applyTrackPlaybackAssets(assets, trackUrl);
 
   applyTrackSeed(track.trackId || trackId);
   await resumePlaybackIfNeeded(wasPlaying);
@@ -5536,6 +5692,21 @@ audio.addEventListener("seeking", () => {
 });
 audio.addEventListener("seeked", () => {
   logAudioState("seeked");
+});
+audio.addEventListener("waiting", () => {
+  audioWaitingCount += 1;
+  logAudioState("waiting");
+});
+audio.addEventListener("stalled", () => {
+  audioStalledCount += 1;
+  logAudioState("stalled");
+});
+audio.addEventListener("suspend", () => {
+  audioSuspendCount += 1;
+  logAudioState("suspend");
+});
+audio.addEventListener("progress", () => {
+  audioProgressAtMs = performance.now();
 });
 audioVocals.addEventListener("seeked", () => {
   sampleStemDrift();

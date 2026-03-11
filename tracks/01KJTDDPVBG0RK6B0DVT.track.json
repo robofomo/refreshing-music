@@ -1513,6 +1513,8 @@
     "sourceGroupKey": "loose:margin-of-error-stems-105bpm",
     "archivedTo": "D:/seva/FOMO/Songs/the-refresh/refreshing-music/inbox/_done/2026-03-03/loose/margin-of-error-stems-105bpm/consumed.json"
   },
+  "hasUserHints": true,
+  "lastHintAt": "2026-03-03T18:09:39.514Z",
   "assetPaths": {
     "mix": "assets/margin-of-error/01KJTDDPVBG0RK6B0DVT/mix.mp3",
     "mixWav": "",
@@ -1523,7 +1525,5 @@
     "vocals": "assets/margin-of-error/01KJTDDPVBG0RK6B0DVT/vocals.mp3",
     "vocalsWav": "assets/margin-of-error/01KJTDDPVBG0RK6B0DVT/vocals.wav",
     "composer": "assets/margin-of-error/01KJTDDPVBG0RK6B0DVT/composer.txt"
-  },
-  "hasUserHints": true,
-  "lastHintAt": "2026-03-03T18:09:39.514Z"
+  }
 }

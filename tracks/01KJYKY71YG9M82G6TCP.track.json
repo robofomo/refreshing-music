@@ -1534,6 +1534,8 @@
     "sourceGroupKey": "loose:seventeen-sparks",
     "archivedTo": "D:/seva/FOMO/Songs/the-refresh/refreshing-music/inbox/_done/2026-03-05/loose/seventeen-sparks/consumed.json"
   },
+  "hasUserHints": true,
+  "lastHintAt": "2026-03-08T03:42:12.560Z",
   "assetPaths": {
     "mix": "assets/seventeen-sparks/01KJYKY71YG9M82G6TCP/mix.mp3",
     "mixWav": "",
@@ -1544,7 +1546,5 @@
     "vocals": "assets/seventeen-sparks/01KJYKY71YG9M82G6TCP/vocals.mp3",
     "vocalsWav": "assets/seventeen-sparks/01KJYKY71YG9M82G6TCP/vocals.wav",
     "composer": "assets/seventeen-sparks/01KJYKY71YG9M82G6TCP/composer.txt"
-  },
-  "hasUserHints": true,
-  "lastHintAt": "2026-03-08T03:42:12.560Z"
+  }
 }

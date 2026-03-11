@@ -13,7 +13,7 @@
     "path": "../assets/salt-on-the-northern-wind/e2KFysrR1BjTPk/mix.mp3",
     "cidOrTx": "",
     "mime": "audio/mpeg",
-    "bytes": 5396316
+    "bytes": 4657167
   },
   "composer": {
     "rawText": "[Title: Salt on the Northern Wind]\r\n[Style: Scottish folk orchestral, clean studio recording, instruments: Great Highland bagpipes, fiddle, acoustic guitar, bodhrán, frame drum, cello, upright bass, male emotive tenor vocalist]\r\n[Refresh Title: Sailing the Seas]\r\n[Theme: Colors]\r\n[Gradients: 3]\r\n[Seed: 62]\r\n[Image: Grey-green waves beneath a heather sky, a lone sail edged with tartan red]\r\n[Caption: Old routes sung anew by wind and tide]\r\n[Created: January 25, 2026 at 11:03 PM]\r\n[Composer Version: v1.2]\r\n\r\n[Intro]\r\nThe wind comes down from broken hills\r\nIt names the lochs, it bends our wills\r\n\r\n[Verse]\r\nWe loose the lines at first light’s call\r\nWhile echoes ring from stone to wall\r\nThe pipes awake the waiting bay\r\nAnd chase the sleep from brine and spray\r\n\r\n[Verse]\r\nThese boards have known both storm and song\r\nThey’ve borne us short, they’ve borne us long\r\nEach scar recalls a ચૂક course tried\r\nAnd lessons learned from turning tide\r\n\r\n[Chorus]\r\nOh heave away, my roving kin\r\nLet northern stars our path begin\r\nThrough iron swell and silver sea\r\nWe sail where we are meant to be\r\n\r\n[Verse]\r\nThe gulls cry out in broken time\r\nLike half-remembered ancient rhyme\r\nThe compass spins, then settles true\r\nAs hearts do when they choose the blue\r\n\r\n[Bridge]\r\nIf mist should fall and hide the shore\r\nWe’ll trust the songs we sang before\r\nFor every loss the waters give\r\nReturns as will, returns as live\r\n\r\n[Chorus]\r\nOh heave away, my roving kin\r\nLet northern stars our path begin\r\nThrough iron swell and silver sea\r\nWe sail where we are meant to be\r\n\r\n[Instrumental]\r\n\r\n[Chorus]\r\nOh heave away, my roving kin\r\nLet northern stars our path begin\r\nThrough iron swell and silver sea\r\nWe sail where we are meant to be\r\n\r\n[Ending]\r\nThe tide goes quiet, oars at rest\r\nThe sea keeps warm what we confessed\r\n",
@@ -1009,6 +1009,8 @@
       }
     ]
   },
+  "hasUserHints": true,
+  "lastHintAt": "2026-03-08T04:22:02.410Z",
   "assetPaths": {
     "mix": "assets/salt-on-the-northern-wind/e2KFysrR1BjTPk/mix.mp3",
     "mixWav": "",
@@ -1019,7 +1021,5 @@
     "vocals": "",
     "vocalsWav": "",
     "composer": "assets/salt-on-the-northern-wind/e2KFysrR1BjTPk/composer.txt"
-  },
-  "hasUserHints": true,
-  "lastHintAt": "2026-03-08T04:22:02.410Z"
+  }
 }

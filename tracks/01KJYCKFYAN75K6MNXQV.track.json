@@ -99,9 +99,6 @@
     "sectionFocus": "",
     "noGo": []
   },
-  "beatReducer": {
-    "aiBeatDivisor": 2
-  },
   "sourceGroupKey": "loose:rooms-of-unfinished-light",
   "assetDir": "assets/rooms-of-unfinished-light/01KJYCKFYAN75K6MNXQV",
   "createdLocalRaw": "March 5, 2026 at 7:39 PM",
@@ -2124,6 +2121,8 @@
     "sourceGroupKey": "loose:rooms-of-unfinished-light",
     "archivedTo": "D:/seva/FOMO/Songs/the-refresh/refreshing-music/inbox/_done/2026-03-05/loose/rooms-of-unfinished-light/consumed.json"
   },
+  "hasUserHints": true,
+  "lastHintAt": "2026-03-11T08:45:56.812Z",
   "assetPaths": {
     "mix": "assets/rooms-of-unfinished-light/01KJYCKFYAN75K6MNXQV/mix.mp3",
     "mixWav": "",
@@ -2134,7 +2133,5 @@
     "vocals": "assets/rooms-of-unfinished-light/01KJYCKFYAN75K6MNXQV/vocals.mp3",
     "vocalsWav": "assets/rooms-of-unfinished-light/01KJYCKFYAN75K6MNXQV/vocals.wav",
     "composer": "assets/rooms-of-unfinished-light/01KJYCKFYAN75K6MNXQV/composer.txt"
-  },
-  "hasUserHints": true,
-  "lastHintAt": "2026-03-08T08:26:57.484Z"
+  }
 }

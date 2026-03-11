@@ -13,7 +13,7 @@
     "path": "../assets/off-by-one-still-true/6o_ZqzRrXVMeec/mix.mp3",
     "cidOrTx": "",
     "mime": "audio/mpeg",
-    "bytes": 3714432
+    "bytes": 3322764
   },
   "composer": {
     "rawText": "[Song Title: Off by One, Still True]\r\n[Style: math rock, polyrhythmic, odd meter, changing meter, clean studio recording, phasing morphing effects guitars, elastic bass, dynamic live drums, expressive grounded male vocal]\r\n[Caption: Almost right can still be right.]\r\n[Image: A ruler slightly misaligned.]\r\n[Refresh Title: Random 4]\r\n[Theme: Random]\r\n[Gradients: 4]\r\n[Rank: 28]\r\n[Title Rarity: 1.94]\r\n[Seeds: 713, A:40, B:4, C:24, D:2]\r\n[Perspective: observer]\r\n[Concept: Imperfect alignment reveals deeper order.]\r\n[Topic: Complexity & Emergence → recursion_and_return]\r\n[Genre Bias: math_rock]\r\n[Style Change: none]\r\n[Modulation: none]\r\n[Hook Prominence: low]\r\n[Deviation: structural bend]\r\n[Created: January 29, 2026 at 9:03 AM]\r\n[Composer Version: v2.3]\r\n\r\n[Intro]\r\n[Guitars strike syncopated chords that never quite repeat.]\r\n[Motif shifts length each cycle.]\r\n\r\n[Verse]\r\n[Drums pivot between tight and loose accents.]\r\nI missed the mark by just a beat  \r\nStill landed somewhere on my feet  \r\nThe answer wasn’t what I planned  \r\nBut fit the question better than\r\n\r\n[Verse]\r\n[Bass climbs while guitars descend.]\r\nEvery loop returns misread  \r\nA clearer truth inside instead  \r\nNot broken, just a shade askew  \r\nEnough to show another view\r\n\r\n[Chorus]\r\n[Brief unison hit, then release.]\r\nOff by one, still true  \r\nThe math holds even when it moves  \r\nWhat looks wrong from far away  \r\nLocks in close enough to stay\r\n\r\n[Verse]\r\n[Guitar tapping grows denser, drums busier.]\r\nPerfection stalls, it wants control  \r\nNear-miss keeps the system whole  \r\nEvery flaw that doesn’t fail  \r\nIs a signal, not a tale\r\n\r\n[Bridge]\r\n[Dropout Before Final: bass alone, then drums creep back.]\r\nIf it lined up flawlessly  \r\nThere’d be nothing left to see  \r\nThe offset keeps the pulse alive  \r\nGives the reason room to drive\r\n\r\n[Final Chorus]\r\n[Full band, tighter phrasing.]\r\nOff by one, still true  \r\nThe math holds even when it moves  \r\nWhat looks wrong from far away  \r\nLocks in close enough to stay\r\n\r\n[Ending]\r\n[Guitars ring unresolved interval.]\r\nClose enough\r\n",
@@ -225,7 +225,7 @@
       82977,
       83627,
       84265,
-      84904,
+      84915,
       85554,
       86192,
       86819,
@@ -289,7 +289,7 @@
       123252,
       123878,
       124505,
-      125121,
+      125132,
       125748,
       126363,
       126990,
@@ -306,7 +306,7 @@
       133840,
       134467,
       135094,
-      135721,
+      135709,
       136324,
       136951,
       137578,
@@ -877,6 +877,8 @@
       }
     ]
   },
+  "hasUserHints": true,
+  "lastHintAt": "2026-03-03T08:01:35.855Z",
   "assetPaths": {
     "mix": "assets/off-by-one-still-true/6o_ZqzRrXVMeec/mix.mp3",
     "mixWav": "",
@@ -887,7 +889,5 @@
     "vocals": "",
     "vocalsWav": "",
     "composer": "assets/off-by-one-still-true/6o_ZqzRrXVMeec/composer.txt"
-  },
-  "hasUserHints": true,
-  "lastHintAt": "2026-03-03T08:01:35.855Z"
+  }
 }

@@ -157,12 +157,34 @@ Use these when Essentia/WhisperX are installed in WSL (for example in conda env 
   - `bash tools/wsl/run-ai.sh whisperx -- --trackId <trackId> --device cpu --model small --language en`
 - From PowerShell (calls WSL):
   - `.\tools\wsl\run-ai.ps1 -Task preprocess-ai`
-  - `.\tools\wsl\run-ai.ps1 -Task beats -- --trackId <trackId>`
-  - `.\tools\wsl\run-ai.ps1 -Task whisperx -- --trackId <trackId> --device cpu --model small --language en`
+  - `.\tools\wsl\run-ai.ps1 -Task beats -TaskArgs @("--trackId", "<trackId>")`
+  - `.\tools\wsl\run-ai.ps1 -Task whisperx -TaskArgs @("--trackId", "<trackId>", "--device", "cpu", "--model", "small", "--language", "en")`
 
 Notes:
 - Default conda env is `refresh-ai` (override via `-CondaEnv <name>` in PowerShell or `CONDA_ENV_NAME=<name>` in WSL).
   - Use `-SkipConda` (PowerShell) or `SKIP_CONDA=1` (WSL) if Python deps are already in PATH without conda activation.
+- `tools/wsl/run-ai.ps1` now prints the exact WSL command it is running and preflights WhisperX for the `whisperx` task.
+
+### AI Repair Workflow
+Use this when lyric timing or displayed words look wrong.
+
+1. Repair indexes and lyric line timing from existing AI outputs:
+   - one track: `npm run preprocess -- --trackId <trackId>`
+   - all tracks: `npm run preprocess`
+2. If the raw transcript itself is wrong, rerun WhisperX in WSL, then rebuild the track:
+   - `.\tools\repair-track-ai.ps1 -TrackId <trackId> -RerunWhisperx`
+   - equivalent explicit sequence:
+     - `.\tools\wsl\run-ai.ps1 -Task whisperx -TaskArgs @("--trackId", "<trackId>", "--overwrite-ai", "--device", "cpu", "--model", "small", "--language", "en")`
+     - `npm run preprocess -- --trackId <trackId>`
+3. Check for likely lyric-timing problems before opening the viewer:
+   - all tracks: `npm run check:lyrics`
+   - one track: `npm run check:lyrics -- --trackId <trackId>`
+
+`check:lyrics` flags:
+- words with no lyric line index
+- lyric lines with no `timing.lyricsLines` row
+- large timing gaps between lyric lines
+- lyric lines that land inside `instrumental` / `drop` / `breakdown` sections
 
 ## Static Release Packaging (Vercel + ARweave)
 Use one static package output that works for both:

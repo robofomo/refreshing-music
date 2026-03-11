@@ -13,7 +13,7 @@
     "path": "../assets/two-tones-one-reset/EdNkleskScFkNg/mix.mp3",
     "cidOrTx": "",
     "mime": "audio/mpeg",
-    "bytes": 5203778
+    "bytes": 4494922
   },
   "composer": {
     "rawText": "[Title: Two Tones, One Reset]\r\n[Theme: Random]\r\n[Variation: Random 2]\r\n[Gradients: 2]\r\n[Seed: 86]\r\n[Style: minimalist instrumental, soloist and accompanist, experimental ambient, glass textures, clean studio recording]\r\n[Image: soft two-color gradient with subtle motion]\r\n[Caption: A minimal refresh — same idea, new breath.]\r\n[Created: January 25, 2026 at 8:40 PM]\r\n[Composer Version: v1.0]\r\n\r\n[Intro]\r\n[Glass harmonica enters alone, slow sustained tones, wide stereo.]\r\n\r\n[Development]\r\n[Analog modular synth fades in beneath, low harmonic pulse, gentle filter movement.]\r\n\r\n[Refresh]\r\n[The opening motif repeats with slight timing variation, as if reloaded.]\r\n\r\n[Ending]\r\n[The synth drops out first, leaving a single glass harmonic that fades into silence.]\r\n\r\n\r\n\r\n",
@@ -101,6 +101,8 @@
       1500
     ]
   },
+  "hasUserHints": true,
+  "lastHintAt": "2026-03-02T06:43:49.922Z",
   "assetPaths": {
     "mix": "assets/two-tones-one-reset/EdNkleskScFkNg/mix.mp3",
     "mixWav": "",
@@ -111,7 +113,5 @@
     "vocals": "",
     "vocalsWav": "",
     "composer": "assets/two-tones-one-reset/EdNkleskScFkNg/composer.txt"
-  },
-  "hasUserHints": true,
-  "lastHintAt": "2026-03-02T06:43:49.922Z"
+  }
 }

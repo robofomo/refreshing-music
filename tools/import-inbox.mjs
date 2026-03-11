@@ -348,7 +348,7 @@ function workIdFromComposer(group) {
 }
 
 function chooseAudio(items) {
-  const audios = items.filter((x) => x.ext === ".mp3");
+  const audios = items.filter((x) => x.ext === ".mp3" || x.ext === ".wav");
   if (!audios.length) return null;
   for (const role of AUDIO_PRIORITY) {
     const found = audios

@@ -1797,6 +1797,8 @@
     "sourceGroupKey": "loose:fire-on-the-grid-stems-130bpm",
     "archivedTo": "D:/seva/FOMO/Songs/the-refresh/refreshing-music/inbox/_done/2026-02-27/loose/fire-on-the-grid-stems-130bpm/consumed.json"
   },
+  "hasUserHints": true,
+  "lastHintAt": "2026-03-08T08:05:07.926Z",
   "assetPaths": {
     "mix": "assets/fire-on-the-grid/01KJF0TJ97RF89D67K0S/mix.mp3",
     "mixWav": "",
@@ -1807,7 +1809,5 @@
     "vocals": "assets/fire-on-the-grid/01KJF0TJ97RF89D67K0S/vocals.mp3",
     "vocalsWav": "assets/fire-on-the-grid/01KJF0TJ97RF89D67K0S/vocals.wav",
     "composer": "assets/fire-on-the-grid/01KJF0TJ97RF89D67K0S/composer.txt"
-  },
-  "hasUserHints": true,
-  "lastHintAt": "2026-03-08T08:05:07.926Z"
+  }
 }

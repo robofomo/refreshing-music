@@ -5,15 +5,15 @@
     "albumId": "random",
     "trackOverrideId": "01KJ25PGKKP7KXH8R6PD"
   },
-  "createdAt": "2026-02-22T07:58:26.015Z",
+  "createdAt": "2026-03-08T02:29:19.893Z",
   "slug": "consensus-of-ash",
-  "title": "Consensus Of Ash",
+  "title": "Consensus of Ash",
   "audio": {
     "filename": "mix.mp3",
     "path": "../assets/consensus-of-ash/01KJ25PGKKP7KXH8R6PD/mix.mp3",
     "cidOrTx": "",
     "mime": "audio/mpeg",
-    "bytes": 5154703
+    "bytes": 4295599
   },
   "composer": {
     "rawText": "[SongTitle: Consensus of Ash]\r\n[Style: metal, clean studio recording, harsh male vocal, confident]\r\n[Caption: Decentralization under pressure.]\r\n[Image: Fractured stone blocks locking together in firelight.]\r\n[Refresh Title: Random 6]\r\n[Theme: Random]\r\n[Gradients: 6]\r\n[Rank: 4]\r\n[TitleRarityPct: 0.65]\r\n[Seeds: 911, A:34, B:90, C:16, D:40]\r\n[Composer Version: v2.0]\r\n\r\n[Plan]\r\n[Perspective: system_voice]\r\n[Concept: trust forged through resistance, not hype]\r\n[Topic: Crypto & Decentralization → proof_of_stake_patience]\r\n[GenreBias: metal]\r\n[StyleChange: none]\r\n[Modulation: none]\r\n[HookProminence: medium]\r\n[Deviation: abstraction spike]\r\n\r\n[Intro]\r\n[Jagged riff emerges, palm-muted and tense.]\r\nSilent nodes begin to wake  \r\nPressure tests what we can take  \r\n\r\n[Verse]\r\n[Harsh, rhythmic delivery with tight syncopation.]\r\nWeight of truth in every block  \r\nNo king crowned, no ticking clock  \r\nRules are steel, not hollow cries  \r\nHistory etched where reason lies  \r\n\r\n[Verse]\r\n[Low growl, slight register climb.]\r\nCold validation, earned not sold  \r\nTime decides what chains can hold  \r\nThrough delay and grinding strain  \r\nSignal cuts through noise and pain  \r\n\r\n[Chorus]\r\n[Chanted hook, gang-vocal feel.]\r\nHold the line, don’t bend the frame  \r\nTrust is slow, but stays the same  \r\nBurn the hype, endure the test  \r\nWhat survives deserves the rest  \r\n\r\n[Verse]\r\n[Sharper attack, shorter phrasing.]\r\nForks and failures mark the road  \r\nEvery loss a deeper code  \r\nNo retreat to easy lies  \r\nWe scale truth at human size  \r\n\r\n[Bridge]\r\n[Breakdown bridge, half-time crush.]\r\nStrip it down to what is real  \r\nConsensus forged in will and steel  \r\nNo escape, no central throne  \r\nStrength is found in standing alone  \r\n\r\n[Final Chorus]\r\n[Return to full tempo, expanded shouts.]\r\nHold the line, don’t bend the frame  \r\nTrust is slow, but stays the same  \r\nFrom the ash, the blocks align  \r\nDecentralized by design  \r\n\r\n[Ending]\r\n[Feedback swell, final hit cuts hard.]\r\nWhen the dust has cleared away  \r\nOnly tested chains remain  \r\n",
@@ -1750,6 +1750,8 @@
     "sourceGroupKey": "loose:consensus-of-ash",
     "archivedTo": "D:/seva/FOMO/Songs/the-refresh/refreshing-music/inbox/_done/2026-02-22/loose/consensus-of-ash/consumed.json"
   },
+  "hasUserHints": true,
+  "lastHintAt": "2026-03-03T08:35:20.300Z",
   "assetPaths": {
     "mix": "assets/consensus-of-ash/01KJ25PGKKP7KXH8R6PD/mix.mp3",
     "mixWav": "",
@@ -1760,7 +1762,5 @@
     "vocals": "assets/consensus-of-ash/01KJ25PGKKP7KXH8R6PD/vocals.mp3",
     "vocalsWav": "assets/consensus-of-ash/01KJ25PGKKP7KXH8R6PD/vocals.wav",
     "composer": "assets/consensus-of-ash/01KJ25PGKKP7KXH8R6PD/composer.txt"
-  },
-  "hasUserHints": true,
-  "lastHintAt": "2026-03-03T08:35:20.300Z"
+  }
 }

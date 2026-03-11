@@ -1,0 +1,1128 @@
+{
+  "workId": "schr-dinger-s-groove-loop",
+  "trackId": "01KKE1CZ4M9FXD5W85DJ",
+  "recipeRef": {
+    "albumId": "random",
+    "trackOverrideId": "01KKE1CZ4M9FXD5W85DJ"
+  },
+  "createdAt": "2026-03-11T06:42:00.000Z",
+  "slug": "schr-dinger-s-groove-loop",
+  "title": "Schrödinger’s Groove Loop",
+  "audio": {
+    "filename": "mix.mp3",
+    "path": "../assets/schr-dinger-s-groove-loop/01KKE1CZ4M9FXD5W85DJ/mix.mp3",
+    "cidOrTx": "",
+    "mime": "audio/mpeg",
+    "bytes": 4000950
+  },
+  "composer": {
+    "rawText": "[Song Title: Schrödinger’s Groove Loop]\r\n[Style: glitch funk, breakbeat, math rock, elastic synth bass, detuned analog leads, chopped drum breaks, interlocking guitars, bitcrush percussion, tape wobble textures, clean studio recording, conversational male lead]\r\n[Caption: The rules were followed… until they weren’t.]\r\n[Image: A grid collapsing into colorful chaos while equations blink on and off.]\r\n[Refresh Title: Random 5]\r\n[Theme: Random]\r\n[Gradients: 5]\r\n[Rank: 34]\r\n[Title Rarity: 2.32]\r\n[Tempo Lock BPM: 127]\r\n[Created: 2026-03-11]\r\n[Seeds: 777, A:32, B:52, C:10, D:66]\r\n[Perspective: observer]\r\n[Concept: A system meant to follow rules intentionally bends them—logic, randomness, and rhythm colliding.]\r\n[Topic: Complexity & Emergence → recursion_and_return]\r\n[Genre Bias: breakbeat (→ math rock)]\r\n[Style Change: Reset, Bridge]\r\n[Modulation: chaotic pivot before Final Chorus]\r\n[Hook Prominence: medium]\r\n[Deviation: rule bending delight]\r\n[Visual Mood: uplifting]\r\n[Visual Motion: high]\r\n[Visual Density: dense]\r\n[Visual Lyric Presence: auto]\r\n[Visual Color Bias: neutral]\r\n[Created: March 11, 2026 at 7:42 PM]\r\n[Composer Version: v2.8]\r\n\r\n[Intro]\r\n[melody zigzags unpredictably across intervals]\r\n[drums enter in 9/8 then slip into 4/4 without warning]\r\n[synth bass plays a prime-number rhythm cycle]\r\n[guitar taps echo themselves half a bar late]\r\n\r\nMaybe the groove begins here  \r\n\r\n[Verse]\r\n[Visual: scene=hold; motion=medium; density=normal; focus=rhythm]\r\n[melody alternates long held notes with sudden bursts]\r\nFlip the coin and call the frame  \r\nTruth and chaos look the same  \r\nIf the rule is written twice  \r\nDoes the error make it nice  \r\n\r\n(Or maybe that was the chorus)\r\n\r\n[Pre-Chorus]\r\n[ascending melody suddenly drops an octave]\r\nRandom numbers in the air  \r\nEvery answer almost fair  \r\n\r\n[Chorus]\r\n[Visual: scene=lift; motion=high; density=dense; focus=vocal]\r\n[hook melody repeats but shifts rhythm each pass]\r\nSpin the system, roll the dice  \r\nOnce is logic, twice is spice  \r\nPatterns bloom where none should be  \r\nRandom sings in harmony  \r\n\r\n[Fragment?]\r\n[melody fragmented into two-note echoes]\r\nMaybe this part was the bridge  \r\nOr maybe not  \r\n\r\n[Verse]\r\n[descending melodic contour interrupted mid-phrase]\r\nDuplicate the line again  \r\nPredicate becomes a friend  \r\nSay the theorem once or thrice  \r\nStill the groove will improvise  \r\n\r\n[Bridge]\r\n[Visual: scene=contrast; motion=medium; density=sparse; focus=texture]\r\n[Style Change: drums dissolve into glitch fragments]\r\n[melody floats freely with long sustained notes]\r\nDeterministic gears align  \r\nBut chance keeps scribbling in the margin  \r\nNoise becomes the hidden guide  \r\nOrder growing deep inside  \r\n\r\n[Instrumental Drift]\r\n[guitar taps in 11/8 against a 4/4 kick]\r\n[synth lead improvises around the chorus motif]\r\n[bass mutates rhythm every bar]\r\n[drums glitch into reversed hits]\r\n\r\n[Final Chorus]\r\n[hook returns slightly higher but rhythmically offset]\r\nSpin the system, roll the dice  \r\nOnce is logic, twice is spice  \r\nRandom dancing through the code  \r\nEvery path a shifting road  \r\n\r\nSpin the system, roll again  \r\nProof dissolves but truth remains  \r\n\r\n[Ending]\r\n[random adlib phrase]\r\nRefresh the noise",
+    "headerMap": {
+      "Song Title": "Schrödinger’s Groove Loop",
+      "Style": "glitch funk, breakbeat, math rock, elastic synth bass, detuned analog leads, chopped drum breaks, interlocking guitars, bitcrush percussion, tape wobble textures, clean studio recording, conversational male lead",
+      "Caption": "The rules were followed… until they weren’t.",
+      "Image": "A grid collapsing into colorful chaos while equations blink on and off.",
+      "Refresh Title": "Random 5",
+      "Theme": "Random",
+      "Gradients": "5",
+      "Rank": "34",
+      "Title Rarity": "2.32",
+      "Tempo Lock BPM": "127",
+      "Created": "March 11, 2026 at 7:42 PM",
+      "Seeds": "777, A:32, B:52, C:10, D:66",
+      "Perspective": "observer",
+      "Concept": "A system meant to follow rules intentionally bends them—logic, randomness, and rhythm colliding.",
+      "Topic": "Complexity & Emergence → recursion_and_return",
+      "Genre Bias": "breakbeat (→ math rock)",
+      "Style Change": "Reset, Bridge",
+      "Modulation": "chaotic pivot before Final Chorus",
+      "Hook Prominence": "medium",
+      "Deviation": "rule bending delight",
+      "Visual Mood": "uplifting",
+      "Visual Motion": "high",
+      "Visual Density": "dense",
+      "Visual Lyric Presence": "auto",
+      "Visual Color Bias": "neutral",
+      "Composer Version": "v2.8"
+    }
+  },
+  "sections": [
+    {
+      "id": "intro-1",
+      "labelRaw": "Intro",
+      "notesRaw": "melody zigzags unpredictably across intervals\ndrums enter in 9/8 then slip into 4/4 without warning\nsynth bass plays a prime-number rhythm cycle\nguitar taps echo themselves half a bar late"
+    },
+    {
+      "id": "verse-1",
+      "labelRaw": "Verse",
+      "notesRaw": "Visual: scene=hold; motion=medium; density=normal; focus=rhythm\nmelody alternates long held notes with sudden bursts"
+    },
+    {
+      "id": "pre-chorus-1",
+      "labelRaw": "Pre-Chorus",
+      "notesRaw": "ascending melody suddenly drops an octave"
+    },
+    {
+      "id": "chorus-1",
+      "labelRaw": "Chorus",
+      "notesRaw": "Visual: scene=lift; motion=high; density=dense; focus=vocal\nhook melody repeats but shifts rhythm each pass"
+    },
+    {
+      "id": "fragment-1",
+      "labelRaw": "Fragment?",
+      "notesRaw": "melody fragmented into two-note echoes"
+    },
+    {
+      "id": "verse-2",
+      "labelRaw": "Verse",
+      "notesRaw": "descending melodic contour interrupted mid-phrase"
+    },
+    {
+      "id": "bridge-1",
+      "labelRaw": "Bridge",
+      "notesRaw": "Visual: scene=contrast; motion=medium; density=sparse; focus=texture\nStyle Change: drums dissolve into glitch fragments\nmelody floats freely with long sustained notes"
+    },
+    {
+      "id": "instrumental-drift-1",
+      "labelRaw": "Instrumental Drift",
+      "notesRaw": "guitar taps in 11/8 against a 4/4 kick\nsynth lead improvises around the chorus motif\nbass mutates rhythm every bar\ndrums glitch into reversed hits"
+    },
+    {
+      "id": "final-chorus-1",
+      "labelRaw": "Final Chorus",
+      "notesRaw": "hook returns slightly higher but rhythmically offset"
+    },
+    {
+      "id": "ending-1",
+      "labelRaw": "Ending",
+      "notesRaw": "random adlib phrase"
+    }
+  ],
+  "lyrics": {
+    "rawText": "\nMaybe the groove begins here  \n\nFlip the coin and call the frame  \nTruth and chaos look the same  \nIf the rule is written twice  \nDoes the error make it nice  \n\n(Or maybe that was the chorus)\n\nRandom numbers in the air  \nEvery answer almost fair  \n\nSpin the system, roll the dice  \nOnce is logic, twice is spice  \nPatterns bloom where none should be  \nRandom sings in harmony  \n\nMaybe this part was the bridge  \nOr maybe not  \n\nDuplicate the line again  \nPredicate becomes a friend  \nSay the theorem once or thrice  \nStill the groove will improvise  \n\nDeterministic gears align  \nBut chance keeps scribbling in the margin  \nNoise becomes the hidden guide  \nOrder growing deep inside  \n\n\nSpin the system, roll the dice  \nOnce is logic, twice is spice  \nRandom dancing through the code  \nEvery path a shifting road  \n\nSpin the system, roll again  \nProof dissolves but truth remains  \n\nRefresh the noise"
+  },
+  "visualHints": {
+    "mood": "uplifting",
+    "motion": "high",
+    "density": "dense",
+    "lyricPresence": "auto",
+    "colorBias": "neutral",
+    "sectionFocus": "",
+    "noGo": []
+  },
+  "sourceGroupKey": "loose:schr-dinger-s-groove-loop",
+  "assetDir": "assets/schr-dinger-s-groove-loop/01KKE1CZ4M9FXD5W85DJ",
+  "createdLocalRaw": "March 11, 2026 at 7:42 PM",
+  "createdTz": "Pacific/Auckland",
+  "timing": {
+    "beatsMs": [
+      511,
+      1045,
+      1602,
+      2148,
+      2717,
+      3286,
+      3866,
+      4458,
+      5016,
+      5573,
+      6142,
+      6699,
+      7256,
+      7802,
+      8348,
+      8893,
+      9427,
+      9961,
+      10507,
+      11053,
+      11587,
+      12121,
+      12655,
+      13189,
+      13723,
+      14257,
+      14791,
+      15325,
+      15859,
+      16393,
+      16927,
+      17461,
+      17995,
+      18530,
+      19064,
+      19598,
+      20143,
+      20689,
+      21223,
+      21757,
+      22291,
+      22825,
+      23359,
+      23893,
+      24427,
+      24961,
+      25496,
+      26041,
+      26587,
+      27121,
+      27655,
+      28189,
+      28723,
+      29257,
+      29791,
+      30325,
+      30859,
+      31405,
+      31927,
+      32461,
+      32996,
+      33530,
+      34064,
+      34609,
+      35155,
+      35701,
+      36246,
+      36792,
+      37314,
+      37849,
+      38383,
+      38917,
+      39451,
+      39985,
+      40519,
+      41053,
+      41587,
+      42121,
+      42655,
+      43189,
+      43723,
+      44257,
+      44803,
+      45337,
+      45871,
+      46393,
+      46928,
+      47462,
+      48007,
+      48541,
+      49087,
+      49621,
+      50155,
+      50689,
+      51223,
+      51757,
+      52291,
+      52837,
+      53383,
+      53917,
+      54451,
+      54985,
+      55519,
+      56053,
+      56587,
+      57121,
+      57655,
+      58189,
+      58735,
+      59269,
+      59803,
+      60337,
+      60871,
+      61394,
+      61928,
+      62462,
+      62996,
+      63541,
+      64075,
+      64610,
+      65144,
+      65689,
+      66223,
+      66757,
+      67291,
+      67825,
+      68360,
+      68905,
+      69451,
+      69985,
+      70519,
+      71053,
+      71587,
+      72121,
+      72655,
+      73189,
+      73723,
+      74246,
+      74791,
+      75326,
+      75860,
+      76394,
+      76928,
+      77473,
+      78019,
+      78553,
+      79087,
+      79621,
+      80155,
+      80689,
+      81223,
+      81757,
+      82303,
+      82837,
+      83383,
+      83917,
+      84451,
+      84985,
+      85519,
+      86053,
+      86587,
+      87121,
+      87667,
+      88201,
+      88747,
+      89281,
+      89815,
+      90349,
+      90883,
+      91417,
+      91951,
+      92485,
+      93019,
+      93553,
+      94087,
+      94621,
+      95155,
+      95689,
+      96223,
+      96758,
+      97292,
+      97826,
+      98360,
+      98905,
+      99451,
+      99985,
+      100519,
+      101053,
+      101587,
+      102121,
+      102655,
+      103189,
+      103724,
+      104258,
+      104792,
+      105326,
+      105860,
+      106394,
+      106939,
+      107474,
+      108019,
+      108553,
+      109087,
+      109621,
+      110155,
+      110690,
+      111224,
+      111618,
+      112025,
+      112431,
+      112826,
+      113244,
+      113650,
+      114056,
+      114486,
+      114916,
+      115334,
+      115763,
+      116204,
+      116645,
+      117087,
+      117609,
+      118143,
+      118654,
+      119200,
+      119745,
+      120291,
+      120848,
+      121394,
+      121928,
+      122462,
+      122996,
+      123530,
+      124076,
+      124610,
+      125144,
+      125690,
+      126224,
+      126758,
+      127292,
+      127826,
+      128360,
+      128894,
+      129440,
+      129985,
+      130519,
+      131053,
+      131587,
+      132122,
+      132667,
+      133213,
+      133747,
+      134281,
+      134815,
+      135349,
+      135883,
+      136417,
+      136951,
+      137485,
+      138019,
+      138553,
+      139088,
+      139622,
+      140156,
+      140690,
+      141224,
+      141758,
+      142292,
+      142826,
+      143360,
+      143894,
+      144428,
+      144962,
+      145508,
+      146054,
+      146588,
+      147122,
+      147656,
+      148190,
+      148724,
+      149258,
+      149792,
+      150326,
+      150860,
+      151406,
+      151951,
+      152485,
+      153020,
+      153554,
+      154088,
+      154622,
+      155156,
+      155690,
+      156224,
+      156758,
+      157292,
+      157826,
+      158360,
+      158894,
+      159428,
+      159974,
+      160520,
+      161054,
+      161588,
+      162122,
+      162656,
+      163190,
+      163724,
+      164258,
+      164792,
+      165326,
+      165860,
+      166394,
+      166928,
+      167474,
+      168020,
+      168554,
+      169088,
+      169622,
+      170156,
+      170690,
+      171224,
+      171758,
+      172292,
+      172826,
+      173360,
+      173917,
+      174452,
+      174986,
+      175520,
+      176054,
+      176588,
+      177122,
+      177644,
+      178178,
+      178712,
+      179258,
+      179792,
+      180326,
+      180860,
+      181394,
+      181940,
+      182486,
+      183020,
+      183554,
+      184088,
+      184622,
+      185156,
+      185690,
+      186224,
+      186758,
+      187292,
+      187826,
+      188360,
+      188894,
+      189428,
+      189962,
+      190497,
+      191031,
+      191565,
+      192099,
+      192633,
+      193178,
+      193724,
+      194270,
+      194839,
+      195431,
+      195988,
+      196534,
+      197091,
+      197660,
+      198217,
+      198774,
+      199343
+    ],
+    "lyricsLines": [
+      {
+        "i": 1,
+        "t0Ms": 31,
+        "t1Ms": 21043
+      },
+      {
+        "i": 3,
+        "t0Ms": 22079,
+        "t1Ms": 25439
+      },
+      {
+        "i": 4,
+        "t0Ms": 25875,
+        "t1Ms": 28755
+      },
+      {
+        "i": 5,
+        "t0Ms": 29191,
+        "t1Ms": 30064
+      },
+      {
+        "i": 6,
+        "t0Ms": 30084,
+        "t1Ms": 32215
+      },
+      {
+        "i": 8,
+        "t0Ms": 34339,
+        "t1Ms": 37219
+      },
+      {
+        "i": 10,
+        "t0Ms": 39403,
+        "t1Ms": 41803
+      },
+      {
+        "i": 11,
+        "t0Ms": 44056,
+        "t1Ms": 45976
+      },
+      {
+        "i": 13,
+        "t0Ms": 47589,
+        "t1Ms": 50469
+      },
+      {
+        "i": 14,
+        "t0Ms": 51793,
+        "t1Ms": 54673
+      },
+      {
+        "i": 15,
+        "t0Ms": 55638,
+        "t1Ms": 58518
+      },
+      {
+        "i": 16,
+        "t0Ms": 59482,
+        "t1Ms": 61402
+      },
+      {
+        "i": 18,
+        "t0Ms": 61407,
+        "t1Ms": 64287
+      },
+      {
+        "i": 19,
+        "t0Ms": 64291,
+        "t1Ms": 64832
+      },
+      {
+        "i": 21,
+        "t0Ms": 65132,
+        "t1Ms": 67835
+      },
+      {
+        "i": 22,
+        "t0Ms": 67855,
+        "t1Ms": 70498
+      },
+      {
+        "i": 23,
+        "t0Ms": 70518,
+        "t1Ms": 72140
+      },
+      {
+        "i": 24,
+        "t0Ms": 72160,
+        "t1Ms": 79188
+      },
+      {
+        "i": 26,
+        "t0Ms": 79208,
+        "t1Ms": 79809
+      },
+      {
+        "i": 27,
+        "t0Ms": 82592,
+        "t1Ms": 86717
+      },
+      {
+        "i": 28,
+        "t0Ms": 87137,
+        "t1Ms": 91502
+      },
+      {
+        "i": 29,
+        "t0Ms": 91522,
+        "t1Ms": 92323
+      },
+      {
+        "i": 32,
+        "t0Ms": 128268,
+        "t1Ms": 131148
+      },
+      {
+        "i": 33,
+        "t0Ms": 167093,
+        "t1Ms": 172310
+      },
+      {
+        "i": 34,
+        "t0Ms": 173133,
+        "t1Ms": 177688
+      },
+      {
+        "i": 35,
+        "t0Ms": 177708,
+        "t1Ms": 178470
+      },
+      {
+        "i": 37,
+        "t0Ms": 182793,
+        "t1Ms": 185193
+      },
+      {
+        "i": 38,
+        "t0Ms": 188916,
+        "t1Ms": 191316
+      },
+      {
+        "i": 40,
+        "t0Ms": 195038,
+        "t1Ms": 199362
+      }
+    ],
+    "words": [
+      {
+        "i": 1,
+        "t0Ms": 31,
+        "t1Ms": 552,
+        "text": "Maybe",
+        "conf": 0.71
+      },
+      {
+        "i": 1,
+        "t0Ms": 712,
+        "t1Ms": 19481,
+        "text": "the",
+        "conf": 0.72
+      },
+      {
+        "i": 1,
+        "t0Ms": 19521,
+        "t1Ms": 19861,
+        "text": "groove",
+        "conf": 0.61
+      },
+      {
+        "i": 1,
+        "t0Ms": 19941,
+        "t1Ms": 20562,
+        "text": "begins",
+        "conf": 0.824
+      },
+      {
+        "i": 1,
+        "t0Ms": 20682,
+        "t1Ms": 21043,
+        "text": "here",
+        "conf": 0.564
+      },
+      {
+        "i": 5,
+        "t0Ms": 29191,
+        "t1Ms": 30064,
+        "text": "Twice,",
+        "conf": 0.579
+      },
+      {
+        "i": 6,
+        "t0Ms": 30084,
+        "t1Ms": 30165,
+        "text": "does",
+        "conf": 0.224
+      },
+      {
+        "i": 6,
+        "t0Ms": 30246,
+        "t1Ms": 30389,
+        "text": "the",
+        "conf": 0.84
+      },
+      {
+        "i": 6,
+        "t0Ms": 30713,
+        "t1Ms": 30815,
+        "text": "arrow",
+        "conf": 0.222
+      },
+      {
+        "i": 6,
+        "t0Ms": 30896,
+        "t1Ms": 31728,
+        "text": "make",
+        "conf": 0.728
+      },
+      {
+        "i": 6,
+        "t0Ms": 31748,
+        "t1Ms": 31951,
+        "text": "it",
+        "conf": 0.862
+      },
+      {
+        "i": 6,
+        "t0Ms": 32114,
+        "t1Ms": 32215,
+        "text": "nice?",
+        "conf": 0.2
+      },
+      {
+        "i": 19,
+        "t0Ms": 64291,
+        "t1Ms": 64591,
+        "text": "Maybe",
+        "conf": 0.879
+      },
+      {
+        "i": 19,
+        "t0Ms": 64651,
+        "t1Ms": 64832,
+        "text": "not.",
+        "conf": 0.933
+      },
+      {
+        "i": 21,
+        "t0Ms": 65132,
+        "t1Ms": 66353,
+        "text": "Duplicate",
+        "conf": 0.318
+      },
+      {
+        "i": 21,
+        "t0Ms": 66393,
+        "t1Ms": 66934,
+        "text": "the",
+        "conf": 0.842
+      },
+      {
+        "i": 21,
+        "t0Ms": 66954,
+        "t1Ms": 67054,
+        "text": "line",
+        "conf": 0.564
+      },
+      {
+        "i": 21,
+        "t0Ms": 67094,
+        "t1Ms": 67835,
+        "text": "again.",
+        "conf": 0.765
+      },
+      {
+        "i": 22,
+        "t0Ms": 67855,
+        "t1Ms": 68576,
+        "text": "Predicate",
+        "conf": 0.507
+      },
+      {
+        "i": 22,
+        "t0Ms": 68596,
+        "t1Ms": 70298,
+        "text": "becomes",
+        "conf": 0.411
+      },
+      {
+        "i": 22,
+        "t0Ms": 70318,
+        "t1Ms": 70338,
+        "text": "a",
+        "conf": 0.218
+      },
+      {
+        "i": 22,
+        "t0Ms": 70358,
+        "t1Ms": 70498,
+        "text": "friend.",
+        "conf": 0.019
+      },
+      {
+        "i": 23,
+        "t0Ms": 70518,
+        "t1Ms": 70578,
+        "text": "Say",
+        "conf": 0.001
+      },
+      {
+        "i": 23,
+        "t0Ms": 70598,
+        "t1Ms": 70658,
+        "text": "the",
+        "conf": 0.273
+      },
+      {
+        "i": 23,
+        "t0Ms": 70678,
+        "t1Ms": 70899,
+        "text": "theorem",
+        "conf": 0.308
+      },
+      {
+        "i": 23,
+        "t0Ms": 70979,
+        "t1Ms": 71139,
+        "text": "once",
+        "conf": 0.802
+      },
+      {
+        "i": 23,
+        "t0Ms": 71279,
+        "t1Ms": 71359,
+        "text": "or",
+        "conf": 0.655
+      },
+      {
+        "i": 23,
+        "t0Ms": 71459,
+        "t1Ms": 72140,
+        "text": "thrice.",
+        "conf": 0.56
+      },
+      {
+        "i": 24,
+        "t0Ms": 72160,
+        "t1Ms": 72400,
+        "text": "Still",
+        "conf": 0.438
+      },
+      {
+        "i": 24,
+        "t0Ms": 72440,
+        "t1Ms": 72520,
+        "text": "the",
+        "conf": 0.799
+      },
+      {
+        "t0Ms": 72560,
+        "t1Ms": 72981,
+        "text": "group",
+        "conf": 0.327
+      },
+      {
+        "i": 24,
+        "t0Ms": 73001,
+        "t1Ms": 73081,
+        "text": "will",
+        "conf": 0.257
+      },
+      {
+        "i": 24,
+        "t0Ms": 73141,
+        "t1Ms": 79188,
+        "text": "improvise.",
+        "conf": 0.476
+      },
+      {
+        "i": 26,
+        "t0Ms": 79208,
+        "t1Ms": 79809,
+        "text": "Deterministic",
+        "conf": 0.117
+      },
+      {
+        "t0Ms": 79829,
+        "t1Ms": 80169,
+        "text": "is",
+        "conf": 0.635
+      },
+      {
+        "t0Ms": 80269,
+        "t1Ms": 82472,
+        "text": "a",
+        "conf": 0.907
+      },
+      {
+        "t0Ms": 82492,
+        "t1Ms": 82572,
+        "text": "lie.",
+        "conf": 0
+      },
+      {
+        "i": 27,
+        "t0Ms": 82592,
+        "t1Ms": 82712,
+        "text": "But",
+        "conf": 0.928
+      },
+      {
+        "i": 27,
+        "t0Ms": 82812,
+        "t1Ms": 83173,
+        "text": "chance",
+        "conf": 0.846
+      },
+      {
+        "i": 27,
+        "t0Ms": 83253,
+        "t1Ms": 83473,
+        "text": "keeps",
+        "conf": 0.885
+      },
+      {
+        "i": 27,
+        "t0Ms": 83493,
+        "t1Ms": 84494,
+        "text": "scribbling",
+        "conf": 0.723
+      },
+      {
+        "i": 27,
+        "t0Ms": 84554,
+        "t1Ms": 84614,
+        "text": "in",
+        "conf": 0.776
+      },
+      {
+        "i": 27,
+        "t0Ms": 84654,
+        "t1Ms": 84714,
+        "text": "the",
+        "conf": 0.433
+      },
+      {
+        "i": 27,
+        "t0Ms": 84774,
+        "t1Ms": 86717,
+        "text": "margin.",
+        "conf": 0.678
+      },
+      {
+        "i": 28,
+        "t0Ms": 87137,
+        "t1Ms": 87518,
+        "text": "Noise",
+        "conf": 0.678
+      },
+      {
+        "i": 28,
+        "t0Ms": 87598,
+        "t1Ms": 88058,
+        "text": "becomes",
+        "conf": 0.478
+      },
+      {
+        "i": 28,
+        "t0Ms": 88098,
+        "t1Ms": 88258,
+        "text": "the",
+        "conf": 0.501
+      },
+      {
+        "i": 28,
+        "t0Ms": 90941,
+        "t1Ms": 91062,
+        "text": "hidden",
+        "conf": 0.13
+      },
+      {
+        "i": 28,
+        "t0Ms": 91322,
+        "t1Ms": 91502,
+        "text": "guide.",
+        "conf": 0.133
+      },
+      {
+        "i": 29,
+        "t0Ms": 91522,
+        "t1Ms": 91762,
+        "text": "Order",
+        "conf": 0.647
+      },
+      {
+        "i": 29,
+        "t0Ms": 92163,
+        "t1Ms": 92323,
+        "text": "growing.",
+        "conf": 0.157
+      },
+      {
+        "i": 33,
+        "t0Ms": 167093,
+        "t1Ms": 169180,
+        "text": "once",
+        "conf": 0.951
+      },
+      {
+        "i": 33,
+        "t0Ms": 169461,
+        "t1Ms": 169581,
+        "text": "is",
+        "conf": 0.841
+      },
+      {
+        "i": 33,
+        "t0Ms": 169842,
+        "t1Ms": 170303,
+        "text": "logic",
+        "conf": 0.808
+      },
+      {
+        "i": 33,
+        "t0Ms": 170404,
+        "t1Ms": 170865,
+        "text": "twice",
+        "conf": 0.879
+      },
+      {
+        "i": 33,
+        "t0Ms": 171006,
+        "t1Ms": 171106,
+        "text": "is",
+        "conf": 0.824
+      },
+      {
+        "i": 33,
+        "t0Ms": 171267,
+        "t1Ms": 172310,
+        "text": "spice",
+        "conf": 0.663
+      },
+      {
+        "i": 34,
+        "t0Ms": 173133,
+        "t1Ms": 173875,
+        "text": "random",
+        "conf": 0.898
+      },
+      {
+        "i": 34,
+        "t0Ms": 173955,
+        "t1Ms": 174597,
+        "text": "dancing",
+        "conf": 0.78
+      },
+      {
+        "i": 34,
+        "t0Ms": 174698,
+        "t1Ms": 175119,
+        "text": "through",
+        "conf": 0.668
+      },
+      {
+        "i": 34,
+        "t0Ms": 175179,
+        "t1Ms": 175400,
+        "text": "the",
+        "conf": 0.774
+      },
+      {
+        "i": 34,
+        "t0Ms": 175821,
+        "t1Ms": 177688,
+        "text": "code",
+        "conf": 0.446
+      },
+      {
+        "i": 35,
+        "t0Ms": 177708,
+        "t1Ms": 178470,
+        "text": "every",
+        "conf": 0.845
+      },
+      {
+        "i": 40,
+        "t0Ms": 195038,
+        "t1Ms": 198675,
+        "text": "Refresh",
+        "conf": 0.372
+      },
+      {
+        "i": 40,
+        "t0Ms": 198695,
+        "t1Ms": 198857,
+        "text": "the",
+        "conf": 0.305
+      },
+      {
+        "i": 40,
+        "t0Ms": 199241,
+        "t1Ms": 199362,
+        "text": "noise.",
+        "conf": 0.167
+      }
+    ]
+  },
+  "import": {
+    "firstImportedAt": "2026-03-11T08:49:47.154Z",
+    "lastImportedAt": "2026-03-11T08:49:47.154Z",
+    "inputHashes": {
+      "Schrödinger’s Groove Loop.txt": "e99c02abd29d24562f178c6cef2aaa9eec79cf82f3c6fc03b29179a51a8fbb7e",
+      "Schrödinger’s Groove Loop.wav": "c323bbf94981e354a545df116414e8f1b549cc056e0b285eaf5449386b881739"
+    },
+    "hashSource": "assets/schr-dinger-s-groove-loop/01KKE1CZ4M9FXD5W85DJ/mix.mp3",
+    "hashSourceSha256": "cfa7e1492e7794a60743d069d499fe99a74657e42a53daf50ab744a093545e95",
+    "filenameBpm": null,
+    "sourceGroupKey": "loose:schr-dinger-s-groove-loop",
+    "archivedTo": "D:/seva/FOMO/Songs/the-refresh/refreshing-music/inbox/_done/2026-03-11/loose/schr-dinger-s-groove-loop/consumed.json"
+  },
+  "hasUserHints": true,
+  "assetPaths": {
+    "mix": "assets/schr-dinger-s-groove-loop/01KKE1CZ4M9FXD5W85DJ/mix.mp3",
+    "mixWav": "",
+    "stemsZip": "",
+    "effective": "assets/schr-dinger-s-groove-loop/01KKE1CZ4M9FXD5W85DJ/effective.json",
+    "instrumental": "",
+    "instrumentalWav": "",
+    "vocals": "",
+    "vocalsWav": "",
+    "composer": "assets/schr-dinger-s-groove-loop/01KKE1CZ4M9FXD5W85DJ/composer.txt"
+  },
+  "lastHintAt": "2026-03-11T09:00:52.344Z"
+}

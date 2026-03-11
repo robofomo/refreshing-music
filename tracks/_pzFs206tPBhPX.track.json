@@ -13,7 +13,7 @@
     "path": "../assets/static-in-the-ultraviolet/_pzFs206tPBhPX/mix.mp3",
     "cidOrTx": "",
     "mime": "audio/mpeg",
-    "bytes": 6592916
+    "bytes": 5530676
   },
   "composer": {
     "rawText": "[Title: Static in the Ultraviolet]\r\n[Style: psychedelic rock, clean studio recording, electric guitar (fuzz), bass guitar, drum kit, analog synth pad, confident male vocalist]\r\n[Caption: A drift through distortion and thought.]\r\n[Image: violet fog with blurred neon lights]\r\n[Refresh Title: Purple Haze]\r\n[Theme: Colors]\r\n[Gradients: 2]\r\n[Seed: 41]\r\n[Created: January 26, 2026 at 11:15 AM]\r\n[Composer Version: v1.4]\r\n\r\n[Intro]\r\n[Smooth, exploratory melodic movement.]\r\nThe air is thick with colored sound,\r\nMy feet lift slightly off the ground.\r\n\r\n[Verse]\r\n[Grounded melodic contour that develops naturally.]\r\nThe walls all bend, the clocks unwind,\r\nA second sun inside my mind.\r\nI reach for words that slide away,\r\nThey melt like stars before the day.\r\n\r\n[Verse]\r\n[Calm melodic progression with slight variation.]\r\nThe mirror hums, it knows my name,\r\nIt smiles but never stays the same.\r\nI breathe in light, I breathe out doubt,\r\nThe edges blur, then fade me out.\r\n\r\n[Chorus]\r\n[Memorable melodic hook with emotional clarity.]\r\nThis purple haze won’t let me go,\r\nIt pulls me where I don’t yet know.\r\nBetween the truth and what I see,\r\nThe blur feels almost real to me.\r\n\r\n[Verse]\r\n[Focused melodic storytelling with light motion.]\r\nThe city sings in liquid tones,\r\nThrough borrowed thoughts and silent phones.\r\nI’m not lost, I’m just delayed,\r\nInside the mess the mind has made.\r\n\r\n[Bridge]\r\n[Unexpected melodic turn that feels intentional.]\r\nIf clarity comes crashing through,\r\nI hope it’s strange and slightly blue.\r\nDon’t wake me yet, don’t clear the phase,\r\nI’ve learned to live inside the haze.\r\n\r\n[Chorus]\r\n[Higher register with expanded phrasing.]\r\nThis purple haze won’t let me go,\r\nIt pulls me where I don’t yet know.\r\nBetween the truth and what I see,\r\nThe blur feels almost real to me.\r\n\r\n[Ending]\r\n[Melody gently resolves with clarity.]\r\nThe colors thin, the echoes stay,\r\nA softer shade to end the day.\r\n",
@@ -132,8 +132,8 @@
       17461,
       17810,
       18158,
-      18518,
-      18878,
+      18506,
+      18866,
       19226,
       19574,
       19923,
@@ -308,8 +308,8 @@
       79505,
       79853,
       80202,
-      80562,
-      80922,
+      80550,
+      80910,
       81270,
       81618,
       81966,
@@ -564,9 +564,9 @@
       169157,
       169506,
       169854,
-      170214,
-      170574,
-      170922,
+      170202,
+      170551,
+      170910,
       171270,
       171619,
       171967,
@@ -596,8 +596,8 @@
       180349,
       180698,
       181046,
-      181394,
-      181754,
+      181406,
+      181766,
       182114,
       182462,
       182811,
@@ -788,7 +788,7 @@
       246979,
       247316,
       247664,
-      248012,
+      248024,
       248361,
       248697,
       249034,
@@ -981,6 +981,21 @@
         "i": 26,
         "t0Ms": 143368,
         "t1Ms": 151300
+      },
+      {
+        "i": 14,
+        "t0Ms": 155688,
+        "t1Ms": 160638
+      },
+      {
+        "i": 15,
+        "t0Ms": 161239,
+        "t1Ms": 165547
+      },
+      {
+        "i": 16,
+        "t0Ms": 166729,
+        "t1Ms": 172480
       },
       {
         "i": 28,
@@ -2097,132 +2112,154 @@
         "conf": 0.903
       },
       {
+        "i": 14,
         "t0Ms": 155688,
         "t1Ms": 155788,
         "text": "It",
         "conf": 0.848
       },
       {
+        "i": 14,
         "t0Ms": 155848,
         "t1Ms": 156189,
         "text": "pulls",
         "conf": 0.903
       },
       {
+        "i": 14,
         "t0Ms": 156249,
         "t1Ms": 156450,
         "text": "me",
         "conf": 0.886
       },
       {
+        "i": 14,
         "t0Ms": 156550,
         "t1Ms": 157371,
         "text": "where",
         "conf": 0.529
       },
       {
+        "i": 14,
         "t0Ms": 157391,
         "t1Ms": 157592,
         "text": "I",
         "conf": 0.794
       },
       {
+        "i": 14,
         "t0Ms": 157872,
         "t1Ms": 158634,
         "text": "don't",
         "conf": 0.294
       },
       {
+        "i": 14,
         "t0Ms": 158654,
         "t1Ms": 158954,
         "text": "yet",
         "conf": 0.705
       },
       {
+        "i": 14,
         "t0Ms": 160457,
         "t1Ms": 160638,
         "text": "know",
         "conf": 0.633
       },
       {
+        "i": 15,
         "t0Ms": 161239,
         "t1Ms": 161820,
         "text": "Between",
         "conf": 0.668
       },
       {
+        "i": 15,
         "t0Ms": 161860,
         "t1Ms": 162060,
         "text": "the",
         "conf": 0.799
       },
       {
+        "i": 15,
         "t0Ms": 162140,
         "t1Ms": 162501,
         "text": "truth",
         "conf": 0.761
       },
       {
+        "i": 15,
         "t0Ms": 162822,
         "t1Ms": 163002,
         "text": "and",
         "conf": 0.686
       },
       {
+        "i": 15,
         "t0Ms": 165347,
         "t1Ms": 165427,
         "text": "what",
         "conf": 0
       },
       {
+        "i": 15,
         "t0Ms": 165447,
         "t1Ms": 165467,
         "text": "I",
         "conf": 0
       },
       {
+        "i": 15,
         "t0Ms": 165487,
         "t1Ms": 165547,
         "text": "see",
         "conf": 0.315
       },
       {
+        "i": 16,
         "t0Ms": 166729,
         "t1Ms": 166990,
         "text": "The",
         "conf": 0.929
       },
       {
+        "i": 16,
         "t0Ms": 167050,
         "t1Ms": 167370,
         "text": "blur",
         "conf": 0.697
       },
       {
+        "i": 16,
         "t0Ms": 167390,
         "t1Ms": 167951,
         "text": "feels",
         "conf": 0.644
       },
       {
+        "i": 16,
         "t0Ms": 167971,
         "t1Ms": 168853,
         "text": "almost",
         "conf": 0.575
       },
       {
+        "i": 16,
         "t0Ms": 168873,
         "t1Ms": 169434,
         "text": "real",
         "conf": 0.639
       },
       {
+        "i": 16,
         "t0Ms": 169514,
         "t1Ms": 169975,
         "text": "to",
         "conf": 0.966
       },
       {
+        "i": 16,
         "t0Ms": 170256,
         "t1Ms": 172480,
         "text": "me",
@@ -2523,6 +2560,8 @@
       }
     ]
   },
+  "hasUserHints": true,
+  "lastHintAt": "2026-03-03T08:24:52.973Z",
   "assetPaths": {
     "mix": "assets/static-in-the-ultraviolet/_pzFs206tPBhPX/mix.mp3",
     "mixWav": "",
@@ -2533,7 +2572,5 @@
     "vocals": "assets/static-in-the-ultraviolet/_pzFs206tPBhPX/vocals.mp3",
     "vocalsWav": "",
     "composer": "assets/static-in-the-ultraviolet/_pzFs206tPBhPX/composer.txt"
-  },
-  "hasUserHints": true,
-  "lastHintAt": "2026-03-03T08:24:52.973Z"
+  }
 }

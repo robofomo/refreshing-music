@@ -13,7 +13,7 @@
     "path": "../assets/channels-of-light/QNNU5P0F_Uos1i/mix.mp3",
     "cidOrTx": "",
     "mime": "audio/mpeg",
-    "bytes": 4312742
+    "bytes": 3587719
   },
   "composer": {
     "rawText": "[Song Title: Channels of Light]\r\n[Style: electro, breakbeat, clean studio recording, conversational male vocal]\r\n[Caption: Systems hum until color speaks.]\r\n[Image: RGB bars dissolving into motion.]\r\n[Refresh Title: R to the G to the B]\r\n[Theme: System & Process]\r\n[Gradients: 3]\r\n[Rank: 27]\r\n[Title Rarity: 1.70]\r\n[Seeds: 88304, A:41, B:6, C:199, D:72]\r\n[Perspective: system_voice → we_community]\r\n[Concept: Simple rules, vivid results.]\r\n[Topic: System & Process → rules_as_music]\r\n[Genre Bias: electro → breakbeat]\r\n[Style Change: Reset]\r\n[Modulation: none]\r\n[Hook Prominence: high]\r\n[Deviation: crisp contrast]\r\n[Created: February 10, 2026 at 9:30 PM]\r\n[Composer Version: v2.6]\r\n\r\n[Intro]\r\n[Glitch clicks, metronomic synth, no vocals]\r\n\r\n[Fragment A]\r\n[Dry drum machine, mono bass]\r\nRed sets the baseline  \r\nGreen finds the groove  \r\nBlue holds the ceiling  \r\nThat’s how we move  \r\n\r\n[Reset]\r\n[Tempo hiccup, filter sweep]\r\nR to the G to the B  \r\n\r\n[Fragment B]\r\n[Beat widens, syncopated hats]\r\nEvery rule hums softly  \r\nTill it’s played just right  \r\nNumbers turn to feeling  \r\nSignals turn to light  \r\n\r\n[Bridge]\r\n[Breakdown bridge, vocals closer]\r\nWe don’t need the noise loud  \r\nWe just tune the frame  \r\nSmall decisions repeating  \r\nNever twice the same  \r\n\r\n[Final Chorus]\r\n[Full beat return, call-and-response backing]\r\nR to the G to the B  \r\nWatch the pattern breathe  \r\nSimple lines in motion  \r\nShow us what we see  \r\n\r\n[Ending]\r\n[Strip to pulse and echo]\r\nR to the G to the B\r\n",
@@ -86,8 +86,8 @@
   "createdTz": "Pacific/Auckland",
   "timing": {
     "beatsMs": [
-      313,
-      650,
+      325,
+      662,
       987,
       1358,
       1730,
@@ -110,7 +110,7 @@
       7918,
       8278,
       8626,
-      8975,
+      8986,
       9346,
       9706,
       10066,
@@ -128,11 +128,11 @@
       14350,
       14710,
       15058,
-      15406,
-      15743,
-      16057,
-      16498,
-      16962,
+      15418,
+      15755,
+      16080,
+      16509,
+      16974,
       17438,
       17914,
       18402,
@@ -168,9 +168,9 @@
       32682,
       33158,
       33634,
-      34099,
-      34586,
-      35062,
+      34110,
+      34598,
+      35074,
       35550,
       36026,
       36502,
@@ -178,9 +178,9 @@
       37465,
       37941,
       38417,
-      38893,
-      39369,
-      39834,
+      38882,
+      39346,
+      39822,
       40298,
       40763,
       41239,
@@ -200,11 +200,11 @@
       47926,
       48402,
       48878,
-      49354,
-      49830,
-      50306,
-      50782,
-      51258,
+      49342,
+      49818,
+      50294,
+      50770,
+      51246,
       51734,
       52210,
       52686,
@@ -306,8 +306,8 @@
       98871,
       99347,
       99823,
-      100299,
-      100775,
+      100310,
+      100786,
       101251,
       101727,
       102203,
@@ -414,15 +414,14 @@
       148631,
       149107,
       149583,
-      150071,
-      150489,
-      150883,
-      151255,
-      151615,
-      151975,
-      152335,
-      152683,
-      153043,
+      150059,
+      150535,
+      151011,
+      151487,
+      151859,
+      152230,
+      152648,
+      153031,
       153403,
       153763,
       154122,
@@ -582,8 +581,18 @@
       },
       {
         "i": 20,
+        "t0Ms": 107885,
+        "t1Ms": 109407
+      },
+      {
+        "i": 20,
         "t0Ms": 111690,
         "t1Ms": 115495
+      },
+      {
+        "i": 20,
+        "t0Ms": 115515,
+        "t1Ms": 117197
       },
       {
         "i": 23,
@@ -1152,24 +1161,28 @@
         "conf": 0.643
       },
       {
+        "i": 20,
         "t0Ms": 107885,
         "t1Ms": 108085,
         "text": "Simple",
         "conf": 0.207
       },
       {
+        "i": 20,
         "t0Ms": 108265,
         "t1Ms": 108666,
         "text": "lines",
         "conf": 0.679
       },
       {
+        "i": 20,
         "t0Ms": 108806,
         "t1Ms": 108846,
         "text": "in",
         "conf": 0.004
       },
       {
+        "i": 20,
         "t0Ms": 108866,
         "t1Ms": 109407,
         "text": "motion",
@@ -1204,24 +1217,28 @@
         "conf": 0.828
       },
       {
+        "i": 20,
         "t0Ms": 115515,
         "t1Ms": 116176,
         "text": "Simple",
         "conf": 0.538
       },
       {
+        "i": 20,
         "t0Ms": 116196,
         "t1Ms": 116296,
         "text": "lines",
         "conf": 0.22
       },
       {
+        "i": 20,
         "t0Ms": 116436,
         "t1Ms": 116476,
         "text": "in",
         "conf": 0.002
       },
       {
+        "i": 20,
         "t0Ms": 116496,
         "t1Ms": 117197,
         "text": "motion",
@@ -1264,6 +1281,8 @@
       }
     ]
   },
+  "hasUserHints": true,
+  "lastHintAt": "2026-03-02T06:51:21.767Z",
   "assetPaths": {
     "mix": "assets/channels-of-light/QNNU5P0F_Uos1i/mix.mp3",
     "mixWav": "",
@@ -1274,7 +1293,5 @@
     "vocals": "",
     "vocalsWav": "",
     "composer": "assets/channels-of-light/QNNU5P0F_Uos1i/composer.txt"
-  },
-  "hasUserHints": true,
-  "lastHintAt": "2026-03-02T06:51:21.767Z"
+  }
 }

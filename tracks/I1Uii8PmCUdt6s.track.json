@@ -5,7 +5,7 @@
     "albumId": "example-theme",
     "trackOverrideId": "I1Uii8PmCUdt6s"
   },
-  "createdAt": "2026-02-13T01:52:42.291Z",
+  "createdAt": "2026-03-02T07:23:42.180Z",
   "slug": "lime-dust-on-neon-concrete",
   "title": "Lime Dust On Neon Concrete",
   "audio": {
@@ -13,7 +13,7 @@
     "path": "../assets/lime-dust-on-neon-concrete/I1Uii8PmCUdt6s/mix.mp3",
     "cidOrTx": "",
     "mime": "audio/mpeg",
-    "bytes": 2454126
+    "bytes": 2057968
   },
   "composer": {
     "rawText": "",
@@ -88,8 +88,8 @@
       37314,
       37941,
       38568,
-      39207,
-      39845,
+      39195,
+      39834,
       40472,
       41099,
       41726,
@@ -143,9 +143,9 @@
       72040,
       72678,
       73305,
-      73932,
-      74571,
-      75198,
+      73944,
+      74582,
+      75209,
       75836,
       76463,
       77090,
@@ -191,6 +191,8 @@
       102388
     ]
   },
+  "hasUserHints": true,
+  "lastHintAt": "2026-03-02T06:45:32.315Z",
   "assetPaths": {
     "mix": "assets/lime-dust-on-neon-concrete/I1Uii8PmCUdt6s/mix.mp3",
     "mixWav": "",
@@ -201,7 +203,5 @@
     "vocals": "",
     "vocalsWav": "",
     "composer": "assets/lime-dust-on-neon-concrete/I1Uii8PmCUdt6s/composer.txt"
-  },
-  "hasUserHints": true,
-  "lastHintAt": "2026-03-02T06:45:32.315Z"
+  }
 }

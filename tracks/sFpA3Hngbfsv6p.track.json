@@ -5,7 +5,7 @@
     "albumId": "example-theme",
     "trackOverrideId": "sFpA3Hngbfsv6p"
   },
-  "createdAt": "2026-02-13T01:52:33.394Z",
+  "createdAt": "2026-03-02T07:23:28.943Z",
   "slug": "clock-drift-over-static-fields",
   "title": "Clock Drift Over Static Fields",
   "audio": {
@@ -13,7 +13,7 @@
     "path": "../assets/clock-drift-over-static-fields/sFpA3Hngbfsv6p/mix.mp3",
     "cidOrTx": "",
     "mime": "audio/mpeg",
-    "bytes": 4302866
+    "bytes": 3349172
   },
   "composer": {
     "rawText": "",
@@ -62,8 +62,8 @@
       21037,
       21676,
       22314,
-      22941,
-      23580,
+      22953,
+      23591,
       24218,
       24845,
       25484,
@@ -143,13 +143,13 @@
       72458,
       73096,
       73723,
-      74362,
-      75000,
+      74350,
+      74989,
       75627,
       76266,
       76904,
       77531,
-      78170,
+      78182,
       78809,
       79435,
       80074,
@@ -173,8 +173,8 @@
       91498,
       92137,
       92764,
-      93402,
-      94041,
+      93391,
+      94029,
       94668,
       95295,
       95933,
@@ -292,6 +292,8 @@
       166940
     ]
   },
+  "hasUserHints": true,
+  "lastHintAt": "2026-03-08T04:29:30.595Z",
   "assetPaths": {
     "mix": "assets/clock-drift-over-static-fields/sFpA3Hngbfsv6p/mix.mp3",
     "mixWav": "",
@@ -302,7 +304,5 @@
     "vocals": "",
     "vocalsWav": "",
     "composer": "assets/clock-drift-over-static-fields/sFpA3Hngbfsv6p/composer.txt"
-  },
-  "hasUserHints": true,
-  "lastHintAt": "2026-03-08T04:29:30.595Z"
+  }
 }

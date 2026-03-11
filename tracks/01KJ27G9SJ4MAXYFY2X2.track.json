@@ -1243,6 +1243,8 @@
     "sourceGroupKey": "loose:offset-that-wouldn-t-clear",
     "archivedTo": "D:/seva/FOMO/Songs/the-refresh/refreshing-music/inbox/_done/2026-02-25/loose/offset-that-wouldn-t-clear/consumed.json"
   },
+  "hasUserHints": true,
+  "lastHintAt": "2026-03-02T06:15:44.330Z",
   "assetPaths": {
     "mix": "assets/offset-that-wouldn-t-clear/01KJ27G9SJ4MAXYFY2X2/mix.mp3",
     "mixWav": "",
@@ -1253,7 +1255,5 @@
     "vocals": "assets/offset-that-wouldn-t-clear/01KJ27G9SJ4MAXYFY2X2/vocals.mp3",
     "vocalsWav": "assets/offset-that-wouldn-t-clear/01KJ27G9SJ4MAXYFY2X2/vocals.wav",
     "composer": "assets/offset-that-wouldn-t-clear/01KJ27G9SJ4MAXYFY2X2/composer.txt"
-  },
-  "hasUserHints": true,
-  "lastHintAt": "2026-03-02T06:15:44.330Z"
+  }
 }

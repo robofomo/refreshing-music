@@ -600,3 +600,4 @@ export function createEngine({
 
 export { hashStringToSeed };
 export { registerModule } from "./moduleRegistry";
+export { registerGraphPrimitive } from "./graphPrimitiveRegistry";

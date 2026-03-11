@@ -4,6 +4,7 @@ import { classifySection } from "../../../packages/engine/src/sections";
 import { resolveResolvable } from "../../../packages/engine/src/resolvable";
 import { renderRegisteredModule } from "../../../packages/engine/src/moduleRegistry";
 import { normalizeSectionLabel } from "../../../packages/engine/src/transitions";
+import { createModeRecipeResolver } from "./modeRecipeBuilder";
 
 declare const __AUTHORING_MODE__: boolean;
 declare const __RELEASE_MODE__: boolean;
@@ -360,8 +361,6 @@ let lastFrameTsMs = 0;
 let fpsSmoothed = 0;
 let adaptiveDensityScale = 1;
 let cachedSectionsSorted: TimingSection[] = [];
-let modeRecipeMemoBase: any = null;
-const modeRecipeMemo = new Map<string, any>();
 const rhythmPlanCache = new Map<string, { step16s: number[]; patternId: string; cueCount: number }>();
 let hudLastUpdateMs = 0;
 let hudLastText = "";
@@ -3256,8 +3255,7 @@ function normalizeLyricMode(value: string | null | undefined): LyricMode {
 }
 
 function invalidateModeRecipeMemo() {
-  modeRecipeMemo.clear();
-  modeRecipeMemoBase = null;
+  modeRecipeResolver.clear();
 }
 
 function refreshSectionCache(trackLike: Track | null = track) {
@@ -4419,147 +4417,35 @@ function resolveTransitionDefForSections(recipe: any, fromSectionId: string, toS
   return transitions?.default ?? { kind: "crossfade", durationMs: 900 };
 }
 
-function withModeRecipe(baseRecipe: any, mode: ViewerMode, sectionId: string, sectionType: string, playerVariantOverride = 0) {
-  if (modeRecipeMemoBase !== baseRecipe) {
-    modeRecipeMemoBase = baseRecipe;
-    modeRecipeMemo.clear();
-  }
-  const sectionVariant = currentGraphVariantForSection(sectionId);
-  const manualSig = graphManualRecipe ? `${graphManualRecipe.sectionId}:${graphManualRecipe.index}` : "-";
-  const memoKey = [
-    mode,
-    String(sectionId || ""),
-    String(sectionType || ""),
-    Math.max(0, Math.floor(Number(playerVariantOverride) || 0)),
-    seed >>> 0,
-    sectionVariant,
-    graphAutoRefresh ? 1 : 0,
-    manualSig,
-    transitionLabPresetIndex,
+const modeRecipeResolver = createModeRecipeResolver({
+  hashStringToSeed,
+  getMemoState: (sectionId) => ({
+    seed,
+    sectionVariant: currentGraphVariantForSection(sectionId),
+    graphAutoRefresh,
+    manualRecipeSignature: graphManualRecipe ? `${graphManualRecipe.sectionId}:${graphManualRecipe.index}` : "-",
+    transitionLabPresetIndex
+  }),
+  getLabState: () => ({
     transitionLabVariant,
     labPrimitive,
     labBackdropPolicy,
     labBackdropFixed
-  ].join("|");
-  const memoHit = modeRecipeMemo.get(memoKey);
-  if (memoHit) return memoHit;
-  const recipe = cloneRecipe(baseRecipe || {});
-  recipe.layers = Array.isArray(recipe.layers) ? recipe.layers : [];
-  recipe.graph = typeof recipe.graph === "object" && recipe.graph ? recipe.graph : {};
-  recipe.graph.layers = Array.isArray(recipe.graph.layers) ? recipe.graph.layers : [];
+  }),
+  cloneRecipe,
+  baseGraphLayers,
+  graphLayersForSection,
+  randomSceneLayersForSection,
+  sectionOrderIndexById,
+  transitionLabTransitionDef,
+  resolvePlayerSceneChoice,
+  buildPlayerDefaultTransition,
+  labGraphLayers,
+  isGraphCapableMode
+});
 
-  const nodeType = (n: any) => String(n?.type ?? "").toLowerCase();
-  const isBaseType = (t: string) => t === "bg.gradientfield" || t === "fg.particles" || t === "shape.beatorb";
-
-  if (mode === "hint-edit") {
-    // Keep authoring view stable/classic: base visual stack + beat overlays + karaoke layers.
-    recipe.graph.layers = baseGraphLayers();
-  } else if (mode === "recipe-view") {
-    const picked = graphLayersForSection(baseRecipe, sectionId);
-    recipe.graph.layers = picked.layers;
-  } else if (mode === "random-scene") {
-    const picked = randomSceneLayersForSection(sectionId);
-    recipe.graph.layers = picked.layers;
-  } else if (mode === "transition-lab") {
-    const picked = randomSceneLayersForSection(sectionId);
-    const secIdx = sectionOrderIndexById(sectionId);
-    const isLight = secIdx >= 0 ? (secIdx % 2 === 1) : ((hashStringToSeed(`transition-lab:${sectionId}`) >>> 0) % 2 === 1);
-    const stripped = (Array.isArray(picked.layers) ? picked.layers : []).map((l: any) => ({
-      ...l,
-      nodes: (Array.isArray(l?.nodes) ? l.nodes : []).filter((n: any) => !String(n?.type ?? "").toLowerCase().startsWith("bg."))
-    })).filter((l: any) => Array.isArray(l.nodes) && l.nodes.length > 0);
-    const bgLayer = isLight
-      ? {
-          id: "tlab-bg-light",
-          blend: "source-over",
-          opacity: 1,
-          nodes: [
-            { id: "tlab-gradient", type: "bg.gradientField", params: { gradientStops: 3, driftSpeed: 0.012, noiseScale: 0.5, soften: 0.94 } },
-            { id: "tlab-offset", type: "glitch.persistentOffset", params: { count: 10, widthPx: 7, driftPx: 0.5, alpha: 0.12 } }
-          ]
-        }
-      : {
-          id: "tlab-bg-dark",
-          blend: "source-over",
-          opacity: 1,
-          nodes: [{ id: "tlab-solid", type: "bg.solid", params: { color: "#05070B" } }]
-        };
-    recipe.graph.layers = [
-      bgLayer,
-      ...stripped,
-      {
-        id: "tlab-beats",
-        blend: "source-over",
-        opacity: 1,
-        nodes: [{ id: "tlab-beat-track", type: "overlay.beatTrack", params: { alpha: 0.92, topInsetPx: 44, bottomInsetPx: 8, playheadColor: "#000000", beatColor: "#8E8E8E", downbeatColor: "#D0D0D0" } }]
-      }
-    ];
-    recipe.transitions = {
-      ...(typeof recipe.transitions === "object" && recipe.transitions ? recipe.transitions : {}),
-      bySectionChange: [],
-      default: transitionLabTransitionDef()
-    };
-  } else if (mode === "player") {
-    const choice = resolvePlayerSceneChoice(sectionId, sectionType, playerVariantOverride);
-    const picked = choice.source === "recipe-view"
-      ? graphLayersForSection(baseRecipe, sectionId, { allowManual: false, variantOverride: choice.variant })
-      : randomSceneLayersForSection(sectionId, { allowManual: false, variantOverride: choice.variant });
-    recipe.graph.layers = picked.layers;
-    const transitions = typeof recipe.transitions === "object" && recipe.transitions ? recipe.transitions : {};
-    recipe.transitions = {
-      ...transitions,
-      default: buildPlayerDefaultTransition(sectionId, sectionType)
-    };
-  }
-
-  if (mode === "primitive-lab") {
-    // Lab runs through graph primitives so behavior matches player/recipe/random modes.
-    recipe.layers = [];
-    recipe.graph.layers = labGraphLayers();
-  }
-
-  if (isGraphCapableMode(mode)) {
-    // Keep beat-track overlay out of playback-focused scene modes.
-    for (const layer of recipe.graph.layers) {
-      const nodes = Array.isArray(layer?.nodes) ? layer.nodes : [];
-      layer.nodes = nodes.filter((n: any) => {
-        if (mode === "transition-lab") return true;
-        return String(n?.type ?? "").toLowerCase() !== "overlay.beattrack";
-      });
-    }
-    recipe.graph.layers = recipe.graph.layers.filter((l: any) => (Array.isArray(l?.nodes) ? l.nodes.length > 0 : false));
-  }
-
-  const hasEchoTextNode = recipe.graph.layers.some((l: any) =>
-    (Array.isArray(l?.nodes) ? l.nodes : []).some((n: any) => {
-      const t = nodeType(n);
-      return (t === "text.echoword" || t === "text.karaoke") && n?.enabled !== false;
-    })
-  );
-  if (hasEchoTextNode) {
-    // Prevent dual lyric visualizations at once.
-    recipe.layers = recipe.layers.filter((layer: any) => {
-      const id = String(layer?.module ?? "").toLowerCase();
-      return !id.startsWith("ui.lyrics");
-    });
-  }
-
-  // Also guard against duplicate base nodes across layers.
-  const seenBase = new Set<string>();
-  for (const layer of recipe.graph.layers) {
-    const nodes = Array.isArray(layer?.nodes) ? layer.nodes : [];
-    layer.nodes = nodes.filter((n: any) => {
-      const t = nodeType(n);
-      if (!isBaseType(t)) return true;
-      if (seenBase.has(t)) return false;
-      seenBase.add(t);
-      return true;
-    });
-  }
-
-  if (modeRecipeMemo.size > 240) modeRecipeMemo.clear();
-  modeRecipeMemo.set(memoKey, recipe);
-  return recipe;
+function withModeRecipe(baseRecipe: any, mode: ViewerMode, sectionId: string, sectionType: string, playerVariantOverride = 0) {
+  return modeRecipeResolver.resolve(baseRecipe, mode, sectionId, sectionType, playerVariantOverride);
 }
 
 function applyRuntimeLyricSuppression(recipeIn: any, suppressed: boolean) {

@@ -1,6 +1,7 @@
 import { createRng, hashStringToSeed } from "./rng";
 import { resolveResolvable } from "./resolvable";
 import { renderRegisteredModule } from "./moduleRegistry";
+import { registerGraphPrimitive, renderRegisteredGraphPrimitive } from "./graphPrimitiveRegistry";
 
 type GraphNode = {
   id?: string;
@@ -1282,6 +1283,238 @@ function drawBandsBg(args: {
   ctx.restore();
 }
 
+function registerBuiltinGraphPrimitives() {
+  registerGraphPrimitive("bg.solid", (args) => {
+    drawSolidBg({ ctx: args.ctx, canvas: args.canvas, params: args.params });
+  });
+  registerGraphPrimitive("bg.vignette", (args) => {
+    drawVignetteBg({ ctx: args.ctx, canvas: args.canvas, params: args.params });
+  });
+  registerGraphPrimitive("bg.bands", (args) => {
+    drawBandsBg({ ctx: args.ctx, canvas: args.canvas, tMs: args.tMs, nodeSeed: args.seed, state: args.state, params: args.params });
+  });
+  registerGraphPrimitive("bg.gradientfield", (args) => {
+    renderRegisteredModule({
+      moduleId: "bg.gradientField",
+      ctx: args.ctx,
+      canvas: args.canvas,
+      tMs: args.tMs,
+      seed: args.seed,
+      params: args.params,
+      colors: args.colors,
+      sectionType: String(args.state?.sectionType ?? "default") as any,
+      state: args.state
+    });
+  });
+  registerGraphPrimitive("bg.radialgradientdrift", (args) => {
+    renderRegisteredModule({
+      moduleId: "bg.radialGradientDrift",
+      ctx: args.ctx,
+      canvas: args.canvas,
+      tMs: args.tMs,
+      seed: args.seed,
+      params: args.params,
+      colors: args.colors,
+      sectionType: String(args.state?.sectionType ?? "default") as any,
+      state: args.state
+    });
+  });
+  registerGraphPrimitive("fg.particles", (args) => {
+    renderRegisteredModule({
+      moduleId: "fg.particles",
+      ctx: args.ctx,
+      canvas: args.canvas,
+      tMs: args.tMs,
+      seed: args.seed,
+      params: args.params,
+      colors: args.colors,
+      sectionType: String(args.state?.sectionType ?? "default") as any,
+      state: args.state
+    });
+  });
+  registerGraphPrimitive("fg.shockrings", (args) => {
+    renderRegisteredModule({
+      moduleId: "fg.shockRings",
+      ctx: args.ctx,
+      canvas: args.canvas,
+      tMs: args.tMs,
+      seed: args.seed,
+      params: args.params,
+      colors: args.colors,
+      sectionType: String(args.state?.sectionType ?? "default") as any,
+      state: args.state
+    });
+  });
+  registerGraphPrimitive("fg.constellationlinks", (args) => {
+    renderRegisteredModule({
+      moduleId: "fg.constellationLinks",
+      ctx: args.ctx,
+      canvas: args.canvas,
+      tMs: args.tMs,
+      seed: args.seed,
+      params: args.params,
+      colors: args.colors,
+      sectionType: String(args.state?.sectionType ?? "default") as any,
+      state: args.state
+    });
+  });
+  registerGraphPrimitive("shape.beatorb", (args) => {
+    drawBeatOrb({ ctx: args.ctx, canvas: args.canvas, beat: args.beat, downbeat: args.downbeat, params: args.params });
+  });
+  registerGraphPrimitive("field.signalnoiseblend", (args) => {
+    drawSignalNoiseBlend({
+      ctx: args.ctx,
+      canvas: args.canvas,
+      tMs: args.tMs,
+      nodeSeed: args.seed,
+      colors: args.colors,
+      state: args.state,
+      params: args.params
+    });
+  });
+  registerGraphPrimitive("glitch.persistentoffset", (args) => {
+    drawPersistentOffsetGlitch({
+      ctx: args.ctx,
+      canvas: args.canvas,
+      tMs: args.tMs,
+      nodeSeed: args.seed,
+      state: args.state,
+      params: args.params
+    });
+  });
+  registerGraphPrimitive("energy.pressurebloom", (args) => {
+    drawPressureBloom({
+      ctx: args.ctx,
+      canvas: args.canvas,
+      tMs: args.tMs,
+      nodeSeed: args.seed,
+      colors: args.colors,
+      state: args.state,
+      params: args.params
+    });
+  });
+  registerGraphPrimitive("shape.circlepulse", (args) => {
+    drawCirclePulse({
+      ctx: args.ctx,
+      canvas: args.canvas,
+      colors: args.colors,
+      tMs: args.tMs,
+      amp: args.amp,
+      beat: args.beat,
+      downbeat: args.downbeat,
+      nodeSeed: args.seed,
+      params: args.params,
+      state: args.state
+    });
+  });
+  registerGraphPrimitive("polyline.orbitribbon", (args) => {
+    drawOrbitRibbon({
+      ctx: args.ctx,
+      canvas: args.canvas,
+      colors: args.colors,
+      tMs: args.tMs,
+      amp: args.amp,
+      beat: args.beat,
+      downbeat: args.downbeat,
+      reactive: args.reactive,
+      state: args.state,
+      nodeSeed: args.seed,
+      params: args.params
+    });
+  });
+  registerGraphPrimitive("text.echoword", (args) => {
+    drawTextEcho({
+      ctx: args.ctx,
+      canvas: args.canvas,
+      tMs: args.tMs,
+      beat: args.beat,
+      downbeat: args.downbeat,
+      nodeSeed: args.seed,
+      params: args.params,
+      track: args.state?.track
+    });
+  });
+  registerGraphPrimitive("text.karaoke", (args) => {
+    renderRegisteredModule({
+      moduleId: "ui.lyricsKaraoke",
+      ctx: args.ctx,
+      canvas: args.canvas,
+      tMs: args.tMs,
+      seed: args.seed,
+      params: args.params,
+      colors: args.colors,
+      sectionType: String(args.state?.sectionType ?? "default") as any,
+      state: args.state
+    });
+  });
+  registerGraphPrimitive("text.wordtrails", (args) => {
+    renderRegisteredModule({
+      moduleId: "text.wordTrails",
+      ctx: args.ctx,
+      canvas: args.canvas,
+      tMs: args.tMs,
+      seed: args.seed,
+      params: args.params,
+      colors: args.colors,
+      sectionType: String(args.state?.sectionType ?? "default") as any,
+      state: args.state
+    });
+  });
+  registerGraphPrimitive("overlay.beattrack", (args) => {
+    drawBeatTrackOverlay({ ctx: args.ctx, canvas: args.canvas, state: args.state, params: args.params });
+  });
+  registerGraphPrimitive("viz.wavestrip", (args) => {
+    drawWaveStrip({
+      ctx: args.ctx,
+      canvas: args.canvas,
+      tMs: args.tMs,
+      nodeSeed: args.seed,
+      colors: args.colors,
+      state: args.state,
+      params: args.params
+    });
+  });
+  registerGraphPrimitive("viz.spectrumbars", (args) => {
+    drawSpectrumBars({
+      ctx: args.ctx,
+      canvas: args.canvas,
+      tMs: args.tMs,
+      nodeSeed: args.seed,
+      colors: args.colors,
+      state: args.state,
+      params: args.params
+    });
+  });
+  registerGraphPrimitive("viz.responsiverings", (args) => {
+    drawResponsiveRings({
+      ctx: args.ctx,
+      canvas: args.canvas,
+      tMs: args.tMs,
+      nodeSeed: args.seed,
+      colors: args.colors,
+      state: args.state,
+      params: args.params
+    });
+  });
+  registerGraphPrimitive("curve.rosettespiral", (args) => {
+    drawRosetteSpiral({
+      ctx: args.ctx,
+      canvas: args.canvas,
+      colors: args.colors,
+      tMs: args.tMs,
+      amp: args.amp,
+      beat: args.beat,
+      downbeat: args.downbeat,
+      reactive: args.reactive,
+      state: args.state,
+      nodeSeed: args.seed,
+      params: args.params
+    });
+  });
+}
+
+registerBuiltinGraphPrimitives();
+
 function resolveNodeType(node: GraphNode) {
   const t = String(node?.type ?? "").trim();
   if (t) return t;
@@ -1370,190 +1603,20 @@ export function renderGraphScene({
         state,
         path: `graph.${layerId}.${nodeId}.params`
       });
-      if (type === "bg.solid") {
-        drawSolidBg({ ctx, canvas, params: resolvedParams });
-      } else if (type === "bg.vignette") {
-        drawVignetteBg({ ctx, canvas, params: resolvedParams });
-      } else if (type === "bg.bands") {
-        drawBandsBg({ ctx, canvas, tMs, nodeSeed, state, params: resolvedParams });
-      } else if (
-        type === "bg.gradientfield" ||
-        type === "bg.radialgradientdrift" ||
-        type === "fg.particles" ||
-        type === "fg.shockrings" ||
-        type === "fg.constellationlinks"
-      ) {
-        renderRegisteredModule({
-          moduleId:
-            type === "bg.gradientfield"
-              ? "bg.gradientField"
-              : type === "bg.radialgradientdrift"
-                ? "bg.radialGradientDrift"
-                : type === "fg.shockrings"
-                  ? "fg.shockRings"
-                  : type === "fg.constellationlinks"
-                    ? "fg.constellationLinks"
-                    : "fg.particles",
-          ctx,
-          canvas,
-          tMs,
-          seed: nodeSeed,
-          params: resolvedParams,
-          colors,
-          sectionType: String(state?.sectionType ?? "default") as any,
-          state
-        });
-      } else if (type === "shape.beatorb") {
-        drawBeatOrb({
-          ctx,
-          canvas,
-          beat,
-          downbeat,
-          params: resolvedParams
-        });
-      } else if (type === "field.signalnoiseblend") {
-        drawSignalNoiseBlend({
-          ctx,
-          canvas,
-          tMs,
-          nodeSeed,
-          colors,
-          state,
-          params: resolvedParams
-        });
-      } else if (type === "glitch.persistentoffset") {
-        drawPersistentOffsetGlitch({
-          ctx,
-          canvas,
-          tMs,
-          nodeSeed,
-          state,
-          params: resolvedParams
-        });
-      } else if (type === "energy.pressurebloom") {
-        drawPressureBloom({
-          ctx,
-          canvas,
-          tMs,
-          nodeSeed,
-          colors,
-          state,
-          params: resolvedParams
-        });
-      } else if (type === "shape.circlepulse") {
-        drawCirclePulse({
-          ctx,
-          canvas,
-          colors,
-          tMs,
-          amp,
-          beat,
-          downbeat,
-          nodeSeed,
-          params: resolvedParams,
-          state
-        });
-      } else if (type === "polyline.orbitribbon") {
-        drawOrbitRibbon({
-          ctx,
-          canvas,
-          colors,
-          tMs,
-          amp,
-          beat,
-          downbeat,
-          reactive: state?.signalBus?.reactive,
-          state,
-          nodeSeed,
-          params: resolvedParams
-        });
-      } else if (type === "text.echoword") {
-        drawTextEcho({
-          ctx,
-          canvas,
-          tMs,
-          beat,
-          downbeat,
-          nodeSeed,
-          params: resolvedParams,
-          track: state?.track
-        });
-      } else if (type === "text.karaoke") {
-        renderRegisteredModule({
-          moduleId: "ui.lyricsKaraoke",
-          ctx,
-          canvas,
-          tMs,
-          seed: nodeSeed,
-          params: resolvedParams,
-          colors,
-          sectionType: String(state?.sectionType ?? "default") as any,
-          state
-        });
-      } else if (type === "text.wordtrails") {
-        renderRegisteredModule({
-          moduleId: "text.wordTrails",
-          ctx,
-          canvas,
-          tMs,
-          seed: nodeSeed,
-          params: resolvedParams,
-          colors,
-          sectionType: String(state?.sectionType ?? "default") as any,
-          state
-        });
-      } else if (type === "overlay.beattrack") {
-        drawBeatTrackOverlay({
-          ctx,
-          canvas,
-          state,
-          params: resolvedParams
-        });
-      } else if (type === "viz.wavestrip") {
-        drawWaveStrip({
-          ctx,
-          canvas,
-          tMs,
-          nodeSeed,
-          colors,
-          state,
-          params: resolvedParams
-        });
-      } else if (type === "viz.spectrumbars") {
-        drawSpectrumBars({
-          ctx,
-          canvas,
-          tMs,
-          nodeSeed,
-          colors,
-          state,
-          params: resolvedParams
-        });
-      } else if (type === "viz.responsiverings") {
-        drawResponsiveRings({
-          ctx,
-          canvas,
-          tMs,
-          nodeSeed,
-          colors,
-          state,
-          params: resolvedParams
-        });
-      } else if (type === "curve.rosettespiral") {
-        drawRosetteSpiral({
-          ctx,
-          canvas,
-          colors,
-          tMs,
-          amp,
-          beat,
-          downbeat,
-          reactive: state?.signalBus?.reactive,
-          state,
-          nodeSeed,
-          params: resolvedParams
-        });
-      }
+      renderRegisteredGraphPrimitive({
+        primitiveId: type,
+        ctx,
+        canvas,
+        tMs,
+        seed: nodeSeed,
+        params: resolvedParams,
+        colors,
+        state,
+        amp,
+        beat,
+        downbeat,
+        reactive: state?.signalBus?.reactive
+      });
     }
     ctx.restore();
   }

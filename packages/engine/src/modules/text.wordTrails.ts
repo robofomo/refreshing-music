@@ -1,3 +1,5 @@
+import { getCorrectedTimingWords } from "./lyricWordCorrection";
+
 function clamp01(v: number) {
   return Math.max(0, Math.min(1, v));
 }
@@ -27,7 +29,7 @@ export function renderWordTrails({
   params?: Record<string, any>;
   state?: any;
 }) {
-  const words = Array.isArray(track?.timing?.words) ? track.timing.words : [];
+  const words = getCorrectedTimingWords(track);
   if (!words.length) return;
   const now = Number(tMs);
   const cur = words.find((w: any) => Number.isFinite(Number(w?.t0Ms)) && Number.isFinite(Number(w?.t1Ms)) && now >= Number(w.t0Ms) && now < Number(w.t1Ms));

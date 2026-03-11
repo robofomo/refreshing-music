@@ -628,6 +628,11 @@
         "t1Ms": 128719
       },
       {
+        "i": 27,
+        "t0Ms": 128900,
+        "t1Ms": 132086
+      },
+      {
         "i": 28,
         "t0Ms": 132868,
         "t1Ms": 136215
@@ -1446,12 +1451,14 @@
         "conf": 0.599
       },
       {
+        "i": 27,
         "t0Ms": 128900,
         "t1Ms": 129581,
         "text": "Human",
         "conf": 0.808
       },
       {
+        "i": 27,
         "t0Ms": 129641,
         "t1Ms": 129942,
         "text": "spark,",
@@ -1464,6 +1471,7 @@
         "conf": 0.846
       },
       {
+        "i": 27,
         "t0Ms": 131305,
         "t1Ms": 132086,
         "text": "combined.",
@@ -1715,6 +1723,8 @@
     "sourceGroupKey": "loose:spectral-groove-compiler-stems-122bpm",
     "archivedTo": "D:/seva/FOMO/Songs/the-refresh/refreshing-music/inbox/_done/2026-03-05/loose/spectral-groove-compiler-stems-122bpm/consumed.json"
   },
+  "hasUserHints": true,
+  "lastHintAt": "2026-03-08T03:39:14.502Z",
   "assetPaths": {
     "mix": "assets/spectral-groove-compiler/01KJY885NPHDH5QG456B/mix.mp3",
     "mixWav": "",
@@ -1725,7 +1735,5 @@
     "vocals": "assets/spectral-groove-compiler/01KJY885NPHDH5QG456B/vocals.mp3",
     "vocalsWav": "assets/spectral-groove-compiler/01KJY885NPHDH5QG456B/vocals.wav",
     "composer": "assets/spectral-groove-compiler/01KJY885NPHDH5QG456B/composer.txt"
-  },
-  "hasUserHints": true,
-  "lastHintAt": "2026-03-08T03:39:14.502Z"
+  }
 }

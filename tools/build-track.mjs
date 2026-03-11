@@ -294,6 +294,103 @@ function tokenSimilarity(a, b) {
   return 0;
 }
 
+function alignClusterWordsToLine(clusterWords, lineTokens) {
+  const words = Array.isArray(clusterWords)
+    ? clusterWords
+        .map((w) => ({
+          token: normalizeToken(String(w?.text ?? "")),
+          t0Ms: Number(w?.t0Ms),
+          t1Ms: Number(w?.t1Ms),
+          wordIndex: Number(w?.wi ?? w?.wordIndex)
+        }))
+        .filter((w) => w.token && Number.isFinite(w.t0Ms))
+    : [];
+  const tokens = Array.isArray(lineTokens)
+    ? lineTokens.map((token) => normalizeToken(String(token))).filter(Boolean)
+    : [];
+  if (!words.length || !tokens.length) return null;
+
+  const m = words.length;
+  const n = tokens.length;
+  const dp = Array.from({ length: m + 1 }, () => new Array(n + 1).fill(0));
+  const bt = Array.from({ length: m + 1 }, () => new Array(n + 1).fill(0));
+  const DEL_COST = 0.95;
+  const INS_COST = 0.9;
+  const SUB_FALLBACK = 1.2;
+
+  for (let i = 1; i <= m; i += 1) {
+    dp[i][0] = i * DEL_COST;
+    bt[i][0] = 1;
+  }
+  for (let j = 1; j <= n; j += 1) {
+    dp[0][j] = j * INS_COST;
+    bt[0][j] = 2;
+  }
+
+  for (let i = 1; i <= m; i += 1) {
+    for (let j = 1; j <= n; j += 1) {
+      const sim = tokenSimilarity(words[i - 1].token, tokens[j - 1]);
+      const subst = dp[i - 1][j - 1] + (sim > 0 ? (1 - sim) : SUB_FALLBACK);
+      const del = dp[i - 1][j] + DEL_COST;
+      const ins = dp[i][j - 1] + INS_COST;
+      let best = subst;
+      let op = 3;
+      if (del < best) {
+        best = del;
+        op = 1;
+      }
+      if (ins < best) {
+        best = ins;
+        op = 2;
+      }
+      dp[i][j] = best;
+      bt[i][j] = op;
+    }
+  }
+
+  const avgCost = dp[m][n] / Math.max(m, n);
+  if (avgCost > 0.98) return null;
+
+  const matchedWordIndexes = [];
+  let strong = 0;
+  let matched = 0;
+  let i = m;
+  let j = n;
+  while (i > 0 || j > 0) {
+    const op = bt[i][j];
+    if (op === 3 && i > 0 && j > 0) {
+      const sim = tokenSimilarity(words[i - 1].token, tokens[j - 1]);
+      if (sim >= 0.45) {
+        matched += 1;
+        if (sim >= 0.72) strong += 1;
+        matchedWordIndexes.push(words[i - 1].wordIndex);
+      }
+      i -= 1;
+      j -= 1;
+      continue;
+    }
+    if (op === 1 && i > 0) {
+      i -= 1;
+      continue;
+    }
+    if (j > 0) j -= 1;
+  }
+
+  const coverageLine = matched / Math.max(1, tokens.length);
+  const coverageCluster = matched / Math.max(1, words.length);
+  if (coverageLine < 0.55 || coverageCluster < 0.45 || strong < 1) return null;
+
+  return {
+    score: (coverageLine * 0.58) + (coverageCluster * 0.27) + (Math.max(0, 1 - avgCost) * 0.15),
+    coverageLine,
+    coverageCluster,
+    strong,
+    wordIndexes: matchedWordIndexes,
+    t0Ms: words[0].t0Ms,
+    t1Ms: Number.isFinite(words[words.length - 1].t1Ms) ? words[words.length - 1].t1Ms : words[words.length - 1].t0Ms + 180
+  };
+}
+
 function overlapRatio(a0, a1, b0, b1) {
   const lo = Math.max(a0, b0);
   const hi = Math.min(a1, b1);
@@ -834,6 +931,8 @@ function buildTimingFromAi(track, mp3Path, timingPath) {
     const lyricCatalog = rawLines
       .map((text, i) => ({ i, tokens: tokenize(String(text ?? "").trim()) }))
       .filter((x) => x.tokens.length >= 4);
+    const lyricCatalogPos = new Map();
+    for (let ci = 0; ci < lyricCatalog.length; ci += 1) lyricCatalogPos.set(lyricCatalog[ci].i, ci);
     const clusters = [];
     let cur = [];
     for (let wi = 0; wi < timing.words.length; wi += 1) {
@@ -871,7 +970,28 @@ function buildTimingFromAi(track, mp3Path, timingPath) {
       const t0 = cl[0]?.t0Ms;
       const t1 = cl[cl.length - 1]?.t1Ms;
       if (!Number.isFinite(t0) || !Number.isFinite(t1) || t1 <= t0) continue;
-      if (tokenCount < 5 || cl.length < 4 || t1 - t0 > 14000) continue;
+      if (tokenCount < 4 || cl.length < 3 || t1 - t0 > 14000) continue;
+      const timedRows = (timing.lyricsLines || [])
+        .filter((row) => Number.isInteger(row?.i) && Number.isFinite(Number(row?.t0Ms)))
+        .map((row) => ({
+          i: row.i,
+          t0Ms: Math.max(0, Math.round(Number(row.t0Ms))),
+          t1Ms: Number.isFinite(Number(row?.t1Ms))
+            ? Math.max(Math.round(Number(row.t0Ms)) + 240, Math.round(Number(row.t1Ms)))
+            : Math.round(Number(row.t0Ms)) + 2600
+        }))
+        .sort((a, b) => a.t0Ms - b.t0Ms);
+      let prevTimed = null;
+      let nextTimed = null;
+      for (const row of timedRows) {
+        if (row.t1Ms <= t0) prevTimed = row;
+        else if (row.t0Ms >= t1) {
+          nextTimed = row;
+          break;
+        }
+      }
+      const prevPos = prevTimed ? lyricCatalogPos.get(prevTimed.i) : undefined;
+      const nextPos = nextTimed ? lyricCatalogPos.get(nextTimed.i) : undefined;
       const maxTimedEnd = (timing.lyricsLines || [])
         .map((row) => Number.isFinite(Number(row?.t1Ms)) ? Number(row.t1Ms) : Number(row?.t0Ms))
         .filter((n) => Number.isFinite(n))
@@ -881,11 +1001,17 @@ function buildTimingFromAi(track, mp3Path, timingPath) {
       const candidates = [];
       for (const line of lyricCatalog) {
         const sc = scoreClusterToLine(cl, line.tokens);
+        const aligned = alignClusterWordsToLine(cl, line.tokens);
         const minLine = tailRecovery ? 0.52 : 0.68;
         const minCluster = tailRecovery ? 0.14 : 0.22;
         const minStrong = tailRecovery ? 1 : 2;
-        if (sc.coverageLine < minLine || sc.coverageCluster < minCluster || sc.strong < minStrong) continue;
-        candidates.push({ lineI: line.i, ...sc });
+        const best = aligned && aligned.score > sc.score ? aligned : sc;
+        if (best.coverageLine < minLine || best.coverageCluster < minCluster || best.strong < minStrong) continue;
+        const linePos = lyricCatalogPos.get(line.i);
+        let score = best.score;
+        if (Number.isInteger(prevPos) && linePos === prevPos + 1) score += 0.16;
+        if (Number.isInteger(nextPos) && linePos === nextPos - 1) score += 0.22;
+        candidates.push({ lineI: line.i, ...best, score });
       }
       if (!candidates.length) continue;
       candidates.sort((a, b) => b.score - a.score || a.lineI - b.lineI);
@@ -901,6 +1027,66 @@ function buildTimingFromAi(track, mp3Path, timingPath) {
         if (!Number.isInteger(timing.words[w.wi]?.i)) {
           timing.words[w.wi].i = best.lineI;
         }
+      }
+    }
+
+    const timedRowsForGaps = (timing.lyricsLines || [])
+      .filter((row) => Number.isInteger(row?.i) && Number.isFinite(Number(row?.t0Ms)))
+      .map((row) => ({
+        i: row.i,
+        t0Ms: Math.max(0, Math.round(Number(row.t0Ms))),
+        t1Ms: Number.isFinite(Number(row?.t1Ms))
+          ? Math.max(Math.round(Number(row.t0Ms)) + 240, Math.round(Number(row.t1Ms)))
+          : Math.round(Number(row.t0Ms)) + 2600
+      }))
+      .sort((a, b) => a.t0Ms - b.t0Ms);
+    for (let gi = 0; gi + 1 < timedRowsForGaps.length; gi += 1) {
+      const prevRow = timedRowsForGaps[gi];
+      const nextRow = timedRowsForGaps[gi + 1];
+      const prevPos = lyricCatalogPos.get(prevRow.i);
+      const nextPos = lyricCatalogPos.get(nextRow.i);
+      if (!Number.isInteger(prevPos) || !Number.isInteger(nextPos) || nextPos <= prevPos + 1) continue;
+      const gapStartMs = prevRow.t1Ms;
+      const gapEndMs = nextRow.t0Ms;
+      if (!Number.isFinite(gapStartMs) || !Number.isFinite(gapEndMs) || gapEndMs - gapStartMs < 500) continue;
+
+      const gapWords = timing.words
+        .map((word, wi) => ({
+          wi,
+          text: String(word?.text ?? ""),
+          t0Ms: Number(word?.t0Ms),
+          t1Ms: Number.isFinite(Number(word?.t1Ms)) ? Number(word.t1Ms) : Number(word?.t0Ms) + 180,
+          i: word?.i
+        }))
+        .filter((word) => !Number.isInteger(word.i))
+        .filter((word) => Number.isFinite(word.t0Ms) && word.t0Ms >= gapStartMs - 120 && word.t0Ms < gapEndMs + 120)
+        .sort((a, b) => a.t0Ms - b.t0Ms);
+      if (gapWords.length < 2) continue;
+
+      const candidates = [];
+      for (let pos = prevPos + 1; pos < nextPos; pos += 1) {
+        const line = lyricCatalog[pos];
+        if (!line) continue;
+        if (hasOverlap(line.i, gapStartMs, gapEndMs)) continue;
+        const aligned = alignClusterWordsToLine(gapWords, line.tokens);
+        if (!aligned) continue;
+        let score = aligned.score;
+        if (pos === nextPos - 1) score += 0.25;
+        if (pos === prevPos + 1) score += 0.1;
+        candidates.push({ lineI: line.i, pos, ...aligned, score });
+      }
+      if (!candidates.length) continue;
+      candidates.sort((a, b) => b.score - a.score || b.coverageLine - a.coverageLine);
+      const best = candidates[0];
+      if (best.score < 0.72) continue;
+
+      timing.lyricsLines.push({
+        i: best.lineI,
+        t0Ms: Math.max(0, Math.round(best.t0Ms)),
+        t1Ms: Math.max(Math.round(best.t0Ms) + 240, Math.round(best.t1Ms))
+      });
+      for (const wi of best.wordIndexes) {
+        if (!Number.isInteger(timing.words[wi]?.i)) timing.words[wi].i = best.lineI;
       }
     }
 
@@ -1028,6 +1214,12 @@ export function buildTrackWithOptions({
   // Preserve import metadata across preprocess runs.
   if (existing?.import && typeof existing.import === "object") {
     track.import = existing.import;
+  }
+  if (typeof existing?.hasUserHints === "boolean") {
+    track.hasUserHints = existing.hasUserHints;
+  }
+  if (typeof existing?.lastHintAt === "string" && existing.lastHintAt) {
+    track.lastHintAt = existing.lastHintAt;
   }
 
   // Keep asset path metadata current so runtime can discover stems/mix channels.

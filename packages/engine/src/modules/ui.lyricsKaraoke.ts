@@ -279,12 +279,22 @@ export function renderLyricsKaraoke({
     return { lyricIndex: -1, lyricText: "" };
   }
 
-  if (sectionType === "instrumental" || sectionType === "drop" || sectionType === "breakdown") {
-    return { lyricIndex: -1, lyricText: "" };
-  }
-
   const lines = buildLyricTimeline(track, tMs);
   if (!lines.length) return { lyricIndex: -1, lyricText: "" };
+  const { current } = findCurrent(lines, tMs);
+  const cur = lines[current] ?? null;
+  const next = current + 1 < lines.length ? lines[current + 1] : null;
+  const prev = current > 0 ? lines[current - 1] : null;
+
+  if (sectionType === "instrumental" || sectionType === "drop" || sectionType === "breakdown") {
+    const nearCurrentLine = cur && tMs >= (Number(cur.t0Ms) - 400) && tMs <= (Number(cur.t1Ms) + 400);
+    const nearNextPreview = next && tMs >= (Number(next.t0Ms) - Number(params?.nextPreviewMs ?? 1600));
+    const nearPrevTail = prev && tMs <= (Number(prev.t1Ms) + 300);
+    if (!nearCurrentLine && !nearNextPreview && !nearPrevTail) {
+      return { lyricIndex: -1, lyricText: "" };
+    }
+  }
+
   const nextPreviewMs = Number(params?.nextPreviewMs ?? 1600);
   const firstLineLeadInMs = Number(params?.firstLineLeadInMs ?? nextPreviewMs);
   const firstLineMinStartMs = Math.max(0, Number(params?.firstLineMinStartMs ?? 1200));
@@ -304,10 +314,6 @@ export function renderLyricsKaraoke({
     }
   }
 
-  const { current } = findCurrent(lines, tMs);
-  const prev = current > 0 ? lines[current - 1] : null;
-  const cur = lines[current] ?? null;
-  const next = current + 1 < lines.length ? lines[current + 1] : null;
   if (!cur) return { lyricIndex: -1, lyricText: "" };
   const showNext = Boolean(next?.text) && (tMs >= ((next?.t0Ms ?? Number.POSITIVE_INFINITY) - nextPreviewMs));
   const gapHideMs = Math.max(0, Number(params?.gapHideMs ?? 5000));

@@ -8,9 +8,9 @@ Local-first Canvas2D visualizer with:
 ## Structure
 - apps/dev-viewer: Vite dev viewer
 - packages/engine: renderer + RNG + weighted choice + constraints
+- packages/palettes: shared palette presets and helpers
 - packages/recipes: scene recipes (JSON5)
-- packages/preprocess: preprocess studio tools
-- schemas: JSON schemas for track + recipe
+- schemas: JSON schema for tracked `tracks/<trackId>.track.json`
 - inbox/ (gitignored): drop new source files here
 - assets/<workId>/<trackId>/ (gitignored): imported media + composer/timing files
 - tracks/<trackId>.track.json (tracked): small generated track metadata
@@ -73,13 +73,15 @@ Notes:
    - local network / IP access: `npm --workspace apps/dev-viewer run dev -- --host 0.0.0.0`
    - optional fixed port for LAN testing: `npm --workspace apps/dev-viewer run dev -- --host 0.0.0.0 --port 5173`
    - open `http://localhost:5173` on the current machine, or `http://<your-local-ip>:5173` from another device on the same network
-   - Optional viewer mode query param: `?mode=player|hint-edit|primitive-lab|recipe-view|random-scene` (default `player`; legacy `playback` maps to `hint-edit`; legacy `graph-scene` maps to `recipe-view`).
+   - Optional viewer mode query param: `?mode=player|hint-edit|primitive-lab|recipe-view|random-scene|transition-lab` (default `player`; legacy `playback` maps to `hint-edit`; legacy `graph-scene` maps to `recipe-view`).
    - In `primitive-lab`, use `j/k` to switch primitives, then vary only by seed (`seed` button, `r` key, or `?seed=...`).
    - In `player`, renderer runs a deterministic section playbook from seed (mixing curated recipe scenes and random scenes with section transitions).
    - In `recipe-view`, renderer uses section-selected recipe graph layers; in `random-scene`, renderer builds deterministic per-section random graph layers.
-   - Section transitions are now registry-based (like primitives) with built-ins: `cut`, `crossfade`, `wipe`, `noiseDissolve`.
+   - In `transition-lab`, renderer holds the graph scene steady while cycling deterministic transition variants against section boundaries.
+   - Section transitions are registry-based with built-ins: `cut`, `crossfade`, `wipe`, `noiseDissolve`, `sliceStepWipe`.
    - Graph node params support the same deterministic resolvable values (`map`, `pick`, `lfo`, `signal`, `add`, `mul`).
-   - Built-in graph primitive types currently include `shape.circlePulse`, `polyline.orbitRibbon`, `curve.rosetteSpiral`, and `text.echoWord`.
+   - Built-in graph primitives cover backgrounds, particles, signal/noise fields, glitch, pressure/energy blooms, audio-reactive overlays, geometric curves, and lyric/text treatments.
+   - Primitive-lab currently surfaces: `bg.gradientField`, `fg.particles`, `field.signalNoiseBlend`, `glitch.persistentOffset`, `energy.pressureBloom`, `shape.beatOrb`, `overlay.beatTrack`, `viz.waveStrip`, `viz.spectrumBars`, `viz.responsiveRings`, `shape.circlePulse`, `polyline.orbitRibbon`, `curve.rosetteSpiral`, `text.echoWord`, `text.wordTrails`, and `text.karaoke`.
    - `curve.rosetteSpiral` supports `mode`, `connectMode`, `symmetrySnap`, `skip`, and optional `color: "black"` for high-contrast variants.
    - In `recipe-view` and `random-scene`, `j/k` select previous/next graph, `r` refreshes variant, and `a` toggles auto refresh (variant on downbeats + graph step on section changes).
 

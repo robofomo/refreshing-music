@@ -94,7 +94,6 @@ type LabPrimitiveId =
   | "fg.particles"
   | "field.signalNoiseBlend"
   | "glitch.persistentOffset"
-  | "graph.branchGrowth"
   | "energy.pressureBloom"
   | "shape.beatOrb"
   | "overlay.beatTrack"
@@ -726,7 +725,6 @@ function currentLabProfile() {
     "fg.particles": { scale: [0.7, 2.0], density: [0.5, 4.0] },
     "field.signalNoiseBlend": { scale: [0.7, 2.3], density: [0.5, 3.8] },
     "glitch.persistentOffset": { scale: [0.7, 2.4], density: [0.6, 3.7] },
-    "graph.branchGrowth": { scale: [0.7, 2.3], density: [0.7, 3.8] },
     "energy.pressureBloom": { scale: [0.7, 2.5], density: [0.6, 3.9] },
     "shape.beatOrb": { scale: [0.7, 2.3], density: [0.7, 2.0] },
     "overlay.beatTrack": { scale: [1.0, 1.0], density: [1.0, 1.0] },
@@ -841,21 +839,6 @@ function labPrimitiveNode(profile: { scale: number; density: number; variant: nu
         maxShiftPx: Math.round(4 + scale * 9),
         alpha: 0.13 + Math.min(0.3, density * 0.06),
         pulseGain: 0.25 + Math.min(0.5, scale * 0.14)
-      }
-    };
-  }
-  if (labPrimitive === "graph.branchGrowth") {
-    const mode = "network";
-    return {
-      id: "lab-primitive",
-      type: "graph.branchGrowth",
-      params: {
-        mode,
-        rootCount: Math.max(1, Math.round(1 + density * 1.2)),
-        depth: Math.max(3, Math.round(3 + density * 1.8)),
-        spreadDeg: Math.round(14 + scale * 15),
-        segmentPx: Math.round(20 + scale * 18),
-        alpha: 0.18 + Math.min(0.4, density * 0.07)
       }
     };
   }
@@ -1176,27 +1159,12 @@ function activeLabSnippet() {
   if (labPrimitive === "shape.circlePulse") {
     return `{
   "id": "lab-circle",
-  "module": "primitive.circlePulse",
+  "type": "shape.circlePulse",
   "blend": "screen",
   "params": {
     "radiusPx": {"map":"beat.downbeatPulse","from":[0,1],"to":[48,${Math.round(120 * scale)}],"ease":"out"},
     "ringCount": ${Math.max(4, Math.round(9 * density))},
     "alpha": {"add":[0.2, {"mul":[{"signal":"audio.amp"},${pulseMul}]}]}
-  }
-}`;
-  }
-  if (labPrimitive === "graph.branchGrowth") {
-    const mode = "network";
-    return `{
-  "id": "lab-branch-growth",
-  "type": "graph.branchGrowth",
-  "params": {
-    "mode": "${mode}",
-    "rootCount": ${Math.max(1, Math.round(1 + density * 1.2))},
-    "depth": ${Math.max(3, Math.round(3 + density * 1.8))},
-    "spreadDeg": ${Math.round(14 + scale * 15)},
-    "segmentPx": ${Math.round(20 + scale * 18)},
-    "alpha": ${Number((0.18 + Math.min(0.4, density * 0.07)).toFixed(3))}
   }
 }`;
   }
@@ -1216,7 +1184,7 @@ function activeLabSnippet() {
   if (labPrimitive === "polyline.orbitRibbon") {
     return `{
   "id": "lab-ribbon",
-  "module": "primitive.orbitRibbon",
+  "type": "polyline.orbitRibbon",
   "blend": "screen",
   "params": {
     "points": ${Math.max(24, Math.round(48 * density))},
@@ -1236,7 +1204,7 @@ function activeLabSnippet() {
     const color = scale < 0.95 ? "black" : "palette";
     return `{
   "id": "lab-rosette",
-  "module": "curve.rosetteSpiral",
+  "type": "curve.rosetteSpiral",
   "blend": "screen",
   "params": {
     "mode": "${mode}",

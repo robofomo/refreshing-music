@@ -78,7 +78,7 @@ Notes:
    - In `player`, renderer runs a deterministic section playbook from seed (mixing curated recipe scenes and random scenes with section transitions).
    - In `recipe-view`, renderer uses section-selected recipe graph layers; in `random-scene`, renderer builds deterministic per-section random graph layers.
    - In `transition-lab`, renderer holds the graph scene steady while cycling deterministic transition variants against section boundaries.
-   - Section transitions are registry-based with built-ins: `cut`, `crossfade`, `wipe`, `noiseDissolve`, `sliceStepWipe`.
+   - Section transitions are registry-based with built-ins: `cut`, `crossfade`, `wipe`, `noiseDissolve`, `sliceStepWipe`, `directionalBlurWipe`, `lumaDissolve`.
    - Graph node params support the same deterministic resolvable values (`map`, `pick`, `lfo`, `signal`, `add`, `mul`).
    - Built-in graph primitives cover backgrounds, particles, signal/noise fields, glitch, pressure/energy blooms, audio-reactive overlays, geometric curves, and lyric/text treatments.
    - Primitive-lab currently surfaces: `bg.gradientField`, `fg.particles`, `field.signalNoiseBlend`, `glitch.persistentOffset`, `energy.pressureBloom`, `shape.beatOrb`, `overlay.beatTrack`, `viz.waveStrip`, `viz.spectrumBars`, `viz.responsiveRings`, `shape.circlePulse`, `polyline.orbitRibbon`, `curve.rosetteSpiral`, `text.echoWord`, `text.wordTrails`, and `text.karaoke`.

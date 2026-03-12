@@ -595,6 +595,42 @@ const TRANSITION_LAB_PRESETS = [
   { id: "wipe-x", label: "wipe x", build: (v: number) => ({ kind: "wipe", durationMs: 700 + (v % 4) * 180, params: { axis: "x" } }) },
   { id: "noise", label: "noise dissolve", build: (v: number) => ({ kind: "noiseDissolve", durationMs: 900 + (v % 4) * 220, params: { cell: 6 + (v % 5) * 2 } }) },
   {
+    id: "dir-blur",
+    label: "directional blur wipe",
+    build: (v: number) => ({
+      kind: "directionalBlurWipe",
+      durationMs: 760 + (v % 5) * 160,
+      params: {
+        angleDeg: [0, 30, 45, 60, 90, 120, 135, 150][v % 8],
+        blurSteps: 4 + (v % 5),
+        strength: 0.22 + (v % 4) * 0.06,
+        bandFrac: 0.1,
+        curve: ["smooth", "out", "in", "smooth"][v % 4],
+        useRhythmSteps: v % 2 === 0,
+        rhythmStepsMode: v % 3 === 2 ? "blend" : "hold",
+        beatsBeforeEnd: 4
+      }
+    })
+  },
+  {
+    id: "luma",
+    label: "luma dissolve",
+    build: (v: number) => ({
+      kind: "lumaDissolve",
+      durationMs: 900 + (v % 4) * 180,
+      params: {
+        mode: ["mix", "to", "from"][v % 3],
+        curve: ["smooth", "in", "out"][v % 3],
+        grain: 0.08 + (v % 5) * 0.05,
+        cell: 10 + (v % 2) * 2,
+        invert: v % 4 === 3,
+        useRhythmSteps: false,
+        rhythmStepsMode: "hold",
+        beatsBeforeEnd: 4
+      }
+    })
+  },
+  {
     id: "slice-step-x",
     label: "slice step x",
     build: (v: number) => {
@@ -641,6 +677,34 @@ function buildPlayerDefaultTransition(sectionId: string, sectionType: string) {
   const picks = [
     () => ({ kind: "crossfade", durationMs: 700 + (h % 4) * 120 }),
     () => ({ kind: "wipe", durationMs: 680 + (h % 5) * 110, params: { axis: (h % 2 === 0 ? "x" : "y") } }),
+    () => ({
+      kind: "directionalBlurWipe",
+      durationMs: 760 + (h % 5) * 110,
+      params: {
+        angleDeg: [0, 30, 45, 60, 90, 120, 135, 150][h % 8],
+        blurSteps: 4 + (h % 5),
+        strength: 0.22 + (h % 4) * 0.05,
+        bandFrac: 0.1,
+        curve: ["smooth", "out", "in"][h % 3],
+        useRhythmSteps: h % 2 === 0,
+        rhythmStepsMode: h % 3 === 2 ? "blend" : "hold",
+        beatsBeforeEnd: 4
+      }
+    }),
+    () => ({
+      kind: "lumaDissolve",
+      durationMs: 880 + (h % 5) * 120,
+      params: {
+        mode: ["mix", "to", "from"][h % 3],
+        curve: ["smooth", "out", "in"][h % 3],
+        grain: 0.1 + (h % 5) * 0.045,
+        cell: 10 + (h % 2) * 2,
+        invert: h % 7 === 0,
+        useRhythmSteps: false,
+        rhythmStepsMode: "hold",
+        beatsBeforeEnd: 4
+      }
+    }),
     () => ({
       kind: "sliceStepWipe",
       durationMs: 1000,

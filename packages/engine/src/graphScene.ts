@@ -111,14 +111,157 @@ function colorToRgba(color: string, alpha: number, fallback = [138, 199, 255] as
 function resolveThemeState(state: any) {
   const theme = state?.signalBus?.theme ?? {};
   const beat = state?.signalBus?.beat ?? {};
+  const backdropLight = estimateBackdropLight(state?.recipe);
   return {
     coherence: clamp01(Number(theme?.coherence ?? 0.6)),
     pressure: clamp01(Number(theme?.pressure ?? 0.25)),
     lyricActivity: clamp01(Number(theme?.lyricActivity ?? 0)),
     sectionEnergy: clamp01(Number(theme?.sectionEnergy ?? 0.4)),
     beatPulse: clamp01(Number(beat?.pulse ?? 0)),
-    downbeatPulse: clamp01(Number(beat?.downbeatPulse ?? 0))
+    downbeatPulse: clamp01(Number(beat?.downbeatPulse ?? 0)),
+    light: backdropLight
   };
+}
+
+function colorLightness(color: string, fallback = 0.5) {
+  const c = String(color || "").trim();
+  let r = 0;
+  let g = 0;
+  let b = 0;
+  if (c.startsWith("#")) {
+    const s = c.slice(1);
+    const hex = s.length >= 6 ? s.slice(0, 6) : s.padEnd(6, "0");
+    const n = Number.parseInt(hex, 16);
+    r = (n >> 16) & 255;
+    g = (n >> 8) & 255;
+    b = n & 255;
+  } else {
+    const m = c.match(/rgba?\(([^)]+)\)/i);
+    if (!m) return fallback;
+    const parts = m[1].split(",").map((x) => Number(x.trim()));
+    if (parts.length < 3 || parts.some((x) => !Number.isFinite(x))) return fallback;
+    r = parts[0];
+    g = parts[1];
+    b = parts[2];
+  }
+  return clamp01((0.2126 * r + 0.7152 * g + 0.0722 * b) / 255);
+}
+
+function colorRgb(color: string, fallback = [138, 199, 255] as [number, number, number]) {
+  const c = String(color || "").trim();
+  if (c.startsWith("#")) {
+    const s = c.slice(1);
+    const hex = s.length >= 6 ? s.slice(0, 6) : s.padEnd(6, "0");
+    const n = Number.parseInt(hex, 16);
+    return [(n >> 16) & 255, (n >> 8) & 255, n & 255] as [number, number, number];
+  }
+  const m = c.match(/rgba?\(([^)]+)\)/i);
+  if (!m) return fallback;
+  const parts = m[1].split(",").map((x) => Number(x.trim()));
+  if (parts.length < 3 || parts.some((x) => !Number.isFinite(x))) return fallback;
+  return [
+    Math.max(0, Math.min(255, Math.round(parts[0]))),
+    Math.max(0, Math.min(255, Math.round(parts[1]))),
+    Math.max(0, Math.min(255, Math.round(parts[2])))
+  ] as [number, number, number];
+}
+
+function rgbToHex(rgb: [number, number, number]) {
+  return `#${rgb.map((x) => Math.max(0, Math.min(255, Math.round(x))).toString(16).padStart(2, "0")).join("")}`;
+}
+
+function mixRgb(a: [number, number, number], b: [number, number, number], t: number) {
+  const u = clamp01(t);
+  return [
+    a[0] + (b[0] - a[0]) * u,
+    a[1] + (b[1] - a[1]) * u,
+    a[2] + (b[2] - a[2]) * u
+  ] as [number, number, number];
+}
+
+function adjustColorForContrast(color: string, backdropLight: number) {
+  const light = colorLightness(color, 0.5);
+  const rgb = colorRgb(color);
+  if (backdropLight > 0.62) {
+    const target = light > 0.48 ? ([10, 18, 30] as [number, number, number]) : ([24, 38, 58] as [number, number, number]);
+    return rgbToHex(mixRgb(rgb, target, light > 0.6 ? 0.76 : 0.5));
+  }
+  if (backdropLight < 0.28) {
+    const target = light < 0.34 ? ([214, 230, 255] as [number, number, number]) : ([248, 249, 255] as [number, number, number]);
+    return rgbToHex(mixRgb(rgb, target, light < 0.26 ? 0.52 : 0.24));
+  }
+  return color;
+}
+
+function resolveGraphColor(colorRaw: any, colors: string[], idxSeed: number, backdropLight: number, fallback = "#8AC7FF") {
+  const mode = String(colorRaw ?? "palette").toLowerCase();
+  if (mode === "black" || mode === "dark") {
+    return backdropLight < 0.3 ? "#DCE8FF" : "#091019";
+  }
+  if (mode === "white" || mode === "light") {
+    return backdropLight > 0.62 ? "#142234" : "#F6FAFF";
+  }
+  if (mode === "accent") {
+    return adjustColorForContrast(pickFrom(colors, idxSeed + 1, fallback), backdropLight);
+  }
+  if (mode === "palette" || mode === "auto") {
+    return adjustColorForContrast(pickFrom(colors, idxSeed, fallback), backdropLight);
+  }
+  if (mode.startsWith("#") || mode.startsWith("rgb")) {
+    return adjustColorForContrast(mode, backdropLight);
+  }
+  return adjustColorForContrast(pickFrom(colors, idxSeed, fallback), backdropLight);
+}
+
+function resolveGraphBlend(colorRaw: any, backdropLight: number, fallback = "screen") {
+  const mode = String(colorRaw ?? "").toLowerCase();
+  if ((mode === "black" || mode === "dark") && backdropLight > 0.55) return "multiply";
+  if ((mode === "white" || mode === "light") && backdropLight < 0.35) return "screen";
+  return fallback;
+}
+
+function resolveGraphBlendFromModes(colorRaw: any, colorModeRaw: any, backdropLight: number, fallback = "screen") {
+  const colorBlend = resolveGraphBlend(colorRaw, backdropLight, fallback);
+  if (colorBlend !== fallback) return colorBlend;
+  const mode = String(colorModeRaw ?? "").toLowerCase();
+  if ((mode === "black" || mode === "dark") && backdropLight > 0.55) return "multiply";
+  if ((mode === "white" || mode === "light") && backdropLight < 0.35) return "screen";
+  return fallback;
+}
+
+function estimateNodeBackdropLight(node: any) {
+  const type = String(node?.type || "").toLowerCase();
+  const params = typeof node?.params === "object" && node.params ? node.params : {};
+  const toneHintRaw = String(params?.toneHint ?? "").toLowerCase();
+  if (toneHintRaw === "dark") return 0.14;
+  if (toneHintRaw === "light") return 0.78;
+  if (toneHintRaw === "mid") return 0.5;
+  if (type === "bg.solid") return colorLightness(String(params?.color ?? "#000000"), 0.08);
+  if (type === "bg.vignette") {
+    const a = colorLightness(String(params?.tintA ?? "#102338"), 0.16);
+    const b = colorLightness(String(params?.tintB ?? "#000000"), 0.05);
+    return clamp01((a + b) * 0.5);
+  }
+  if (type === "bg.bands") return clamp01(0.42 + Number(params?.opacity ?? 0.1) * 0.18);
+  if (type === "bg.gradientfield") return clamp01(Number(params?.toneLight ?? 0.68));
+  if (type === "bg.radialgradientdrift") return clamp01(Number(params?.toneLight ?? 0.62));
+  return 0.5;
+}
+
+function estimateBackdropLight(recipe: any) {
+  const layers = Array.isArray(recipe?.graph?.layers) ? recipe.graph.layers : [];
+  const values: number[] = [];
+  for (const layer of layers) {
+    const nodes = Array.isArray(layer?.nodes) ? layer.nodes : [];
+    for (const node of nodes) {
+      const type = String(node?.type || "").toLowerCase();
+      if (!type.startsWith("bg.")) continue;
+      values.push(estimateNodeBackdropLight(node));
+    }
+  }
+  if (!values.length) return 0.2;
+  const avg = values.reduce((sum, v) => sum + v, 0) / values.length;
+  return clamp01(avg);
 }
 
 function sectionStyleFactors(state: any) {
@@ -159,17 +302,20 @@ function drawCirclePulse(args: {
   const cx = w * 0.5;
   const cy = h * 0.5;
   const t = tMs / 1000;
+  const theme = resolveThemeState(state);
   const ringCountBase = Math.max(3, Math.min(18, Number(params?.ringCount ?? 8)));
   const ringCount = Math.max(3, Math.round(ringCountBase * performanceDensityScale(state)));
   const baseR = Math.max(12, Number(params?.radiusPx ?? Math.min(w, h) * 0.1));
   const rng = createRng(nodeSeed);
+  ctx.save();
+  ctx.globalCompositeOperation = resolveGraphBlend(params?.color, theme.light, String(params?.blend ?? "screen")) as GlobalCompositeOperation;
   for (let i = 0; i < ringCount; i += 1) {
     const u = i / Math.max(1, ringCount - 1);
     const phase = rng.float() * Math.PI * 2 + i * 0.6;
     const wobble = 1 + 0.13 * Math.sin(t * (0.6 + u * 0.8) + phase);
     const r = baseR * (1 + u * 2.4) * wobble * (1 + amp * 0.24 + downbeat * 0.26);
     const alpha = clamp01((Number(params?.alpha ?? 0.2) + (1 - u) * 0.15) * (1 + beat * 0.25));
-    const color = pickFrom(colors, i + nodeSeed, "#8AC7FF");
+    const color = resolveGraphColor(params?.color, colors, i + nodeSeed, theme.light, "#8AC7FF");
     ctx.strokeStyle = color.replace(")", `, ${alpha})`).replace("rgb(", "rgba(");
     // Fallback for hex colors.
     if (!String(color).startsWith("rgb")) {
@@ -185,6 +331,89 @@ function drawCirclePulse(args: {
     ctx.arc(cx, cy, r, 0, Math.PI * 2);
     ctx.stroke();
   }
+  ctx.restore();
+}
+
+function drawHaloArcs(args: {
+  ctx: CanvasRenderingContext2D;
+  canvas: HTMLCanvasElement;
+  colors: string[];
+  tMs: number;
+  amp: number;
+  beat: number;
+  downbeat: number;
+  reactive?: any;
+  state?: any;
+  nodeSeed: number;
+  params?: Record<string, any>;
+}) {
+  const { ctx, canvas, colors, tMs, amp, beat, downbeat, reactive, state, nodeSeed, params } = args;
+  const w = canvas.width;
+  const h = canvas.height;
+  const minDim = Math.min(w, h);
+  const cx = w * Number(params?.centerX ?? 0.5);
+  const cy = h * Number(params?.centerY ?? 0.5);
+  const theme = resolveThemeState(state);
+  const rr = resolveReactiveSource(reactive, params?.signalSource ?? "auto");
+  const rng = createRng(nodeSeed ^ hashStringToSeed("frame.haloArcs"));
+  const arcCountBase = Math.max(3, Math.min(18, Math.round(Number(params?.arcCount ?? 7))));
+  const arcCount = Math.max(3, Math.round(arcCountBase * performanceDensityScale(state)));
+  const ringCount = Math.max(1, Math.min(4, Math.round(Number(params?.ringCount ?? 2))));
+  const baseRadius = Math.max(56, Number(params?.radiusPx ?? minDim * 0.31));
+  const gapPx = Math.max(10, Number(params?.gapPx ?? minDim * 0.05));
+  const arcSpanMin = Math.max(0.18, Math.min(1.3, Number(params?.arcSpanMin ?? 0.26)));
+  const arcSpanMax = Math.max(arcSpanMin + 0.04, Math.min(1.8, Number(params?.arcSpanMax ?? 0.62)));
+  const lineWidth = Math.max(1.2, Number(params?.lineWidthPx ?? 2.1));
+  const alphaBase = clamp01(Number(params?.alpha ?? 0.36));
+  const rotateHz = Number(params?.rotateHz ?? (0.01 + theme.coherence * 0.018));
+  const pulseGain = Number(params?.pulseGain ?? 0.18);
+  const wobble = Number(params?.wobble ?? 0.06);
+  const bandJitter = Number(params?.bandJitter ?? 0.12);
+  const colorMode = String(params?.colorMode ?? "palette").toLowerCase();
+  const mirror = params?.mirror !== false;
+  const t = tMs / 1000;
+  const rotation = t * Math.PI * 2 * rotateHz * (1 + rr.mid * 0.25) + beat * 0.06 + downbeat * 0.12;
+  const pulseRadius = 1 + pulseGain * (beat * 0.5 + downbeat * 0.9 + rr.low * 0.45 + theme.pressure * 0.2);
+
+  const pickArcColor = (index: number, alpha: number) => {
+    const backdropLight = theme.light;
+    if (colorMode === "white") return colorToRgba("#F4F7FF", alpha, [244, 247, 255]);
+    if (colorMode === "black") {
+      const dark = backdropLight < 0.32 ? "#DCE9FF" : "#05070B";
+      return colorToRgba(dark, alpha, backdropLight < 0.32 ? [220, 233, 255] : [5, 7, 11]);
+    }
+    if (colorMode === "accent") {
+      const accent = adjustColorForContrast(pickFrom(colors, index + 1 + nodeSeed, "#8AC7FF"), backdropLight);
+      return colorToRgba(accent, alpha);
+    }
+    const picked = adjustColorForContrast(pickFrom(colors, index + nodeSeed, "#8AC7FF"), backdropLight);
+    return colorToRgba(picked, alpha);
+  };
+
+  ctx.save();
+  ctx.globalCompositeOperation = resolveGraphBlendFromModes(params?.color, colorMode, theme.light, String(params?.blend ?? "screen")) as GlobalCompositeOperation;
+  ctx.lineCap = "round";
+  for (let ring = 0; ring < ringCount; ring += 1) {
+    const radius = (baseRadius + ring * gapPx) * pulseRadius * (1 + Math.sin(t * (0.2 + ring * 0.08) + rng.float() * Math.PI * 2) * wobble * 0.3);
+    for (let i = 0; i < arcCount; i += 1) {
+      const u = i / arcCount;
+      const start = rotation + u * Math.PI * 2 + rng.float() * 0.35 + ring * 0.18;
+      const span = arcSpanMin + (arcSpanMax - arcSpanMin) * (0.35 + rr.high * 0.4 + theme.lyricActivity * 0.2) * (0.75 + rng.float() * 0.5);
+      const jitter = 1 + Math.sin(t * (0.5 + rng.float() * 0.4) + i * 0.9 + ring * 0.4) * bandJitter * (0.3 + rr.mid * 0.5);
+      const alpha = alphaBase * (0.7 + rr.onsetPulse * 0.35 + theme.beatPulse * 0.12) * (1 - ring * 0.12);
+      ctx.strokeStyle = pickArcColor(i + ring * 7, alpha);
+      ctx.lineWidth = lineWidth * jitter * (1 + rr.ampFast * 0.28 + downbeat * 0.18);
+      ctx.beginPath();
+      ctx.arc(cx, cy, radius, start, start + span, false);
+      ctx.stroke();
+      if (mirror) {
+        ctx.beginPath();
+        ctx.arc(cx, cy, radius, start + Math.PI, start + Math.PI + span * 0.92, false);
+        ctx.stroke();
+      }
+    }
+  }
+  ctx.restore();
 }
 
 function drawOrbitRibbon(args: {
@@ -214,6 +443,7 @@ function drawOrbitRibbon(args: {
   const cy = h * 0.5;
   const t = tMs / 1000;
   const rr = resolveReactiveSource(reactive, params?.signalSource ?? "auto");
+  const theme = resolveThemeState(state);
   const low = rr.low;
   const mid = rr.mid;
   const high = rr.high;
@@ -268,7 +498,8 @@ function drawOrbitRibbon(args: {
         : profile === "precess"
           ? Math.sin(t * (0.26 + mid * 0.4) + seedPhase * 0.7) * 0.04
           : Math.sin(t * (0.18 + low * 0.22) + seedPhase * 0.35) * 0.08;
-  ctx.strokeStyle = pickFrom(colors, nodeSeed, "#89D6FF");
+  ctx.strokeStyle = resolveGraphColor(params?.color, colors, nodeSeed, theme.light, "#89D6FF");
+  ctx.globalCompositeOperation = resolveGraphBlend(params?.color, theme.light, String(params?.blend ?? "screen")) as GlobalCompositeOperation;
   const cueBoost = rhythmMotion * 0.35 + rhythmAccent * 0.22 + rhythmGrid * 0.12;
   if (!String(ctx.strokeStyle).startsWith("#")) ctx.globalAlpha = clamp01(0.44 + amp * 0.24 + downbeat * 0.1 + cueBoost * 0.22);
   else ctx.globalAlpha = clamp01(0.52 + amp * 0.22 + downbeat * 0.1 + cueBoost * 0.2);
@@ -365,6 +596,7 @@ function drawWaveStrip(args: {
   const { ctx, canvas, tMs, nodeSeed, colors, state, params } = args;
   const w = canvas.width;
   const h = canvas.height;
+  const theme = resolveThemeState(state);
   const rr = resolveReactiveSeries(state?.signalBus?.reactive, "master");
   const wave = rr.wave;
   const lineCopies = Math.max(1, Math.min(8, Math.round(Number(params?.lineCopies ?? 4))));
@@ -373,8 +605,8 @@ function drawWaveStrip(args: {
   const smooth = clamp01(Number(params?.smooth ?? 0.08));
   const zoom = Math.max(0.5, Math.min(2.4, Number(params?.zoom ?? 1.0)));
   const rng = createRng(nodeSeed ^ hashStringToSeed("viz.waveRing"));
-  const baseColor = pickFrom(colors, nodeSeed, "#8AC7FF");
-  const blend = String(params?.blend ?? "screen");
+  const baseColor = resolveGraphColor(params?.color, colors, nodeSeed, theme.light, "#8AC7FF");
+  const blend = resolveGraphBlend(params?.color, theme.light, String(params?.blend ?? "screen"));
   const cx = w * 0.5;
   const cy = h * 0.5;
   const minDim = Math.min(w, h);
@@ -392,7 +624,7 @@ function drawWaveStrip(args: {
   const phaseShift = -Math.PI * 0.5; // fixed seam at top (12 o'clock)
   const span = Math.max(0.08, Math.min(1, 1 / zoom));
   const start = (1 - span) * 0.5;
-  const innerColor = pickFrom(colors, nodeSeed + 9, "#FF4F7A");
+  const innerColor = resolveGraphColor(params?.innerColor ?? params?.color, colors, nodeSeed + 9, theme.light, "#FF4F7A");
   ctx.save();
   ctx.globalCompositeOperation = blend as GlobalCompositeOperation;
   for (let pass = 0; pass < lineCopies; pass += 1) {
@@ -449,6 +681,7 @@ function drawSpectrumBars(args: {
   const { ctx, canvas, tMs, nodeSeed, colors, state, params } = args;
   const w = canvas.width;
   const h = canvas.height;
+  const theme = resolveThemeState(state);
   const rr = resolveReactiveSeries(state?.signalBus?.reactive, params?.signalSource ?? "auto");
   const freq = rr.freq;
   const bars = Math.max(8, Math.min(96, Math.round(Number(params?.barCount ?? 36) * performanceDensityScale(state))));
@@ -463,7 +696,7 @@ function drawSpectrumBars(args: {
   const slotW = usableW / bars;
   const barW = Math.max(1, slotW - gapPx);
   const floorY = h - bottomPad;
-  const baseColorA = pickFrom(colors, nodeSeed + 3, "#58D7FF");
+  const baseColorA = resolveGraphColor(params?.color, colors, nodeSeed + 3, theme.light, "#58D7FF");
   const alpha = clamp01(Number(params?.alpha ?? 0.44));
   const edgeTaper = clamp01(Number(params?.edgeTaper ?? 0.16));
   const responseSpan = Math.max(0.2, Math.min(1, Number(params?.responseSpan ?? 0.75)));
@@ -476,14 +709,25 @@ function drawSpectrumBars(args: {
   const meterGain = Math.max(0.2, Math.min(6, Number(params?.meterGain ?? 1.0)));
   const meterFloor = Math.max(0, Math.min(0.5, Number(params?.meterFloor ?? 0)));
   const meterCeil = Math.max(0.2, Math.min(1, Number(params?.meterCeil ?? 0.88)));
-  const gradientStops = [
-    [50, 170, 255],   // cool blue
-    [68, 230, 220],   // cyan-green
-    [150, 240, 120],  // warm-green
-    [255, 210, 70],   // yellow
-    [255, 140, 35],   // orange
-    [255, 245, 215]   // bright warm top
-  ] as Array<[number, number, number]>;
+  const baseRgb = colorRgb(baseColorA, [88, 215, 255]);
+  const darkMode = String(params?.color ?? "").toLowerCase() === "black" || String(params?.color ?? "").toLowerCase() === "dark";
+  const gradientStops = darkMode
+    ? ([
+        colorRgb(adjustColorForContrast("#0E1622", theme.light), [14, 22, 34]),
+        colorRgb(adjustColorForContrast("#162638", theme.light), [22, 38, 56]),
+        colorRgb(adjustColorForContrast("#233851", theme.light), [35, 56, 81]),
+        colorRgb(adjustColorForContrast("#314B69", theme.light), [49, 75, 105]),
+        colorRgb(adjustColorForContrast("#456587", theme.light), [69, 101, 135]),
+        colorRgb(adjustColorForContrast("#6C8AB0", theme.light), [108, 138, 176])
+      ] as Array<[number, number, number]>)
+    : ([
+        mixRgb(baseRgb, [255, 255, 255], 0.12),
+        mixRgb(baseRgb, [140, 255, 220], 0.18),
+        mixRgb(baseRgb, [190, 240, 120], 0.28),
+        mixRgb(baseRgb, [255, 210, 70], 0.42),
+        mixRgb(baseRgb, [255, 140, 35], 0.55),
+        mixRgb(baseRgb, [255, 245, 215], 0.72)
+      ] as Array<[number, number, number]>);
   const gradColor = (u: number) => {
     const x = Math.max(0, Math.min(1, u)) * (gradientStops.length - 1);
     const i0 = Math.floor(x);
@@ -498,7 +742,7 @@ function drawSpectrumBars(args: {
   };
 
   ctx.save();
-  ctx.globalCompositeOperation = "screen";
+  ctx.globalCompositeOperation = resolveGraphBlend(params?.color, theme.light, "screen") as GlobalCompositeOperation;
   let levelState = spectrumBarsState.get(nodeSeed);
   if (!levelState || levelState.levels.length !== bars) {
     levelState = { lastTMs: tMs, levels: Array.from({ length: bars }, () => 0), normLo: 0.01, normHi: 0.12 };
@@ -628,6 +872,7 @@ function drawResponsiveRings(args: {
   const h = canvas.height;
   const cx = w * 0.5;
   const cy = h * 0.5;
+  const theme = resolveThemeState(state);
   const rr = resolveReactiveSeries(state?.signalBus?.reactive, params?.signalSource ?? "auto");
   const beat = clamp01(Number(state?.signalBus?.beat?.pulse ?? 0));
   const downbeat = clamp01(Number(state?.signalBus?.beat?.downbeatPulse ?? 0));
@@ -649,11 +894,11 @@ function drawResponsiveRings(args: {
     : null;
 
   ctx.save();
-  ctx.globalCompositeOperation = String(params?.blend ?? "screen") as GlobalCompositeOperation;
+  ctx.globalCompositeOperation = resolveGraphBlend(params?.color, theme.light, String(params?.blend ?? "screen")) as GlobalCompositeOperation;
   for (let ri = 0; ri < rings; ri += 1) {
     const uRing = ri / Math.max(1, rings - 1);
     const ringR = baseR + ri * gapR * (1 + downbeat * 0.12);
-    const ringColor = pickFrom(colors, nodeSeed + ri * 7, "#90D8FF");
+    const ringColor = resolveGraphColor(params?.color, colors, nodeSeed + ri * 7, theme.light, "#90D8FF");
     const ringAlpha = clamp01(alpha * (0.35 + (1 - uRing) * 0.75));
     const phase = (nodeSeed % 47) * 0.11 + ri * 0.28 + t * Math.PI * 2 * rotHz;
     const bandU = lowFirst ? uRing : (1 - uRing);
@@ -1173,6 +1418,378 @@ function drawTextEcho(args: {
   }
 }
 
+function drawOrbitTicks(args: {
+  ctx: CanvasRenderingContext2D;
+  canvas: HTMLCanvasElement;
+  colors: string[];
+  tMs: number;
+  amp: number;
+  beat: number;
+  downbeat: number;
+  reactive?: any;
+  state?: any;
+  nodeSeed: number;
+  params?: Record<string, any>;
+}) {
+  const { ctx, canvas, colors, tMs, amp, beat, downbeat, reactive, state, nodeSeed, params } = args;
+  const w = canvas.width;
+  const h = canvas.height;
+  const maxDim = Math.max(w, h);
+  const cx = w * Number(params?.centerX ?? 0.5);
+  const cy = h * Number(params?.centerY ?? 0.5);
+  const theme = resolveThemeState(state);
+  const rr = resolveReactiveSource(reactive, params?.signalSource ?? "auto");
+  const densityMul = performanceDensityScale(state);
+  const rng = createRng(nodeSeed ^ hashStringToSeed("frame.orbitTicks"));
+  const countBase = Math.max(7, Math.min(23, Math.round(Number(params?.count ?? 13))));
+  const count = Math.max(7, Math.min(23, Math.round(countBase * Math.max(0.7, densityMul))));
+  const ringCount = Math.max(1, Math.min(3, Math.round(Number(params?.ringCount ?? 1))));
+  const baseRadius = Math.max(maxDim * 0.33, Number(params?.radiusPx ?? maxDim * 0.38));
+  const gapPx = Math.max(24, Number(params?.gapPx ?? maxDim * 0.08));
+  const tickLen = Math.max(18, Number(params?.tickLenPx ?? maxDim * 0.08));
+  const lineWidth = Math.max(0.8, Number(params?.lineWidthPx ?? 1.8));
+  const alphaBase = clamp01(Number(params?.alpha ?? 0.36));
+  const rotateHz = Number(params?.rotateHz ?? ((nodeSeed % 2 === 0 ? 1 : -1) * 0.01));
+  const danceHz = Number(params?.danceHz ?? 0.08);
+  const danceAmp = Number(params?.danceAmpPx ?? Math.max(12, maxDim * 0.018));
+  const jitter = Number(params?.jitter ?? 0.018);
+  const mirror = params?.mirror !== false;
+  const style = String(params?.style ?? (rng.float() < 0.4 ? "triangle" : "line")).toLowerCase();
+  const patternMode = String(params?.patternMode ?? ["grouped", "alternate", "triple", "unison"][nodeSeed % 4]).toLowerCase();
+  const colorMode = String(params?.colorMode ?? (theme.light > 0.62 ? "dark" : ["palette", "accent", "gradient", "pattern"][nodeSeed % 4])).toLowerCase();
+  const t = tMs / 1000;
+  const signal = clamp01(Math.max(
+    Number(rr?.amp ?? 0),
+    Number(rr?.ampFast ?? 0) * 0.85,
+    Number(rr?.onsetPulse ?? 0) * 0.9,
+    amp * 0.7
+  ));
+  const palette = (() => {
+    if (colorMode === "white") return ["#F7F9FF", "#D9E6FF", "#FFFFFF"];
+    if (colorMode === "black" || colorMode === "dark") {
+      return theme.light < 0.3 ? ["#D9E6FF", "#F4F8FF", "#B8D4FF"] : ["#081018", "#10233A", "#142B44"];
+    }
+    if (colorMode === "accent") {
+      const base = colors.length ? colors.slice(0, 3) : ["#FF7A59", "#FFD166", "#7FDBFF"];
+      return base.map((c) => adjustColorForContrast(c, theme.light));
+    }
+    if (colorMode === "gradient") {
+      const base = colors.length ? [...colors, colors[0] ?? "#FFFFFF"] : ["#86B6FF", "#F7D488", "#FF8A7A", "#86B6FF"];
+      return base.map((c) => adjustColorForContrast(c, theme.light));
+    }
+    if (colorMode === "pattern") return theme.light > 0.62 ? ["#10161F", "#D8E4F4", "#10161F", "#45678C"] : ["#8FB7FF", "#F9D27C", "#FF8A7A", "#D7E8FF"];
+    return (colors.length ? colors : ["#8FB7FF", "#F9D27C", "#FF8A7A"]).map((c) => adjustColorForContrast(c, theme.light));
+  })();
+  const groupCount = patternMode === "triple" ? 3 : patternMode === "alternate" ? 2 : patternMode === "grouped" ? Math.max(2, Math.min(5, Math.round(Number(params?.groupCount ?? 4)))) : 1;
+
+  ctx.save();
+  ctx.globalCompositeOperation = resolveGraphBlendFromModes(params?.color, colorMode, theme.light, String(params?.blend ?? "screen")) as GlobalCompositeOperation;
+
+  for (let ring = 0; ring < ringCount; ring += 1) {
+    const ringRadius = baseRadius + ring * gapPx;
+    const ringScale = 1 + ring * 0.08;
+    for (let i = 0; i < count; i += 1) {
+      const frac = i / count;
+      const groupIndex = groupCount <= 1 ? 0 : (i % groupCount);
+      const groupPhase = groupIndex / Math.max(1, groupCount);
+      const theta0 = frac * Math.PI * 2 + rotateHz * t * Math.PI * 2 * (mirror && i % 2 === 1 ? -1 : 1);
+      const jitterTheta = (rng.float() - 0.5) * jitter * 0.35;
+      const motionWave = (() => {
+        if (patternMode === "unison") {
+          return Math.sin(t * danceHz * Math.PI * 2);
+        }
+        if (patternMode === "alternate") {
+          return Math.sin(t * danceHz * Math.PI * 2 + (i % 2 === 0 ? 0 : Math.PI));
+        }
+        if (patternMode === "triple") {
+          return Math.sin(t * danceHz * Math.PI * 2 + groupIndex * (Math.PI * 2 / 3) + ring * 0.55);
+        }
+        return Math.sin(t * danceHz * Math.PI * 2 + groupPhase * Math.PI * 2 + ring * 0.7);
+      })();
+      const beatKick = beat * (12 + tickLen * 0.08) + downbeat * (18 + tickLen * 0.12);
+      const pulse = 1 + signal * 0.46 + beat * 0.34 + downbeat * 0.44;
+      const radialModeMul =
+        patternMode === "unison" ? 0.72 :
+        patternMode === "alternate" ? 0.96 :
+        patternMode === "triple" ? 1.08 :
+        0.88;
+      const radialOffset = danceAmp * ringScale * motionWave * radialModeMul * (0.75 + signal * 0.45) + beatKick;
+      const thetaSwing =
+        patternMode === "alternate"
+          ? motionWave * 0.09 * (i % 2 === 0 ? 1 : -1)
+          : patternMode === "triple"
+            ? motionWave * 0.05
+            : patternMode === "grouped"
+              ? motionWave * 0.035 * (groupIndex % 2 === 0 ? 1 : -1)
+              : 0;
+      const theta = theta0 + jitterTheta + thetaSwing;
+      const lengthMul =
+        patternMode === "unison" ? 0.96 + signal * 0.18 :
+        patternMode === "alternate" ? 0.9 + Math.max(0, motionWave) * 0.42 + beat * 0.1 :
+        patternMode === "triple" ? 0.88 + (groupIndex === 0 ? 0.34 : groupIndex === 1 ? 0.18 : 0.08) + downbeat * 0.08 :
+        0.9 + Math.max(0, motionWave) * 0.24;
+      const outward = ringRadius + radialOffset;
+      const inward = outward - tickLen * (lengthMul + signal * 0.42 + beat * 0.12 + downbeat * 0.16);
+      const nx = Math.cos(theta);
+      const ny = Math.sin(theta);
+      const px = -ny;
+      const py = nx;
+      const patternAlphaMul =
+        patternMode === "unison" ? 1.08 :
+        patternMode === "alternate" ? (i % 2 === 0 ? 1.22 : 0.94) :
+        patternMode === "triple" ? (groupIndex === 0 ? 1.24 : groupIndex === 1 ? 1.04 : 0.9) :
+        1.0 + groupIndex * 0.05;
+      const groupAlpha = alphaBase * patternAlphaMul * (1.1 + 0.34 * Math.max(0, motionWave)) * (1 + beat * 0.3 + downbeat * 0.42);
+      const colorA = palette[i % palette.length] ?? "#FFFFFF";
+      const colorB = palette[(i + 1) % palette.length] ?? colorA;
+      const strokeStyle = (() => {
+        if (colorMode === "gradient") {
+          const g = ctx.createLinearGradient(cx + nx * inward, cy + ny * inward, cx + nx * outward, cy + ny * outward);
+          g.addColorStop(0, colorToRgba(colorA, groupAlpha * 0.3));
+          g.addColorStop(0.5, colorToRgba(colorB, groupAlpha));
+          g.addColorStop(1, colorToRgba(colorA, groupAlpha * 0.5));
+          return g;
+        }
+        if (colorMode === "pattern") {
+          return colorToRgba(palette[(i + groupIndex) % palette.length] ?? colorA, groupAlpha);
+        }
+        return colorToRgba(pickFrom(palette, i + ring + nodeSeed, colorA), groupAlpha);
+      })();
+      ctx.save();
+      ctx.strokeStyle = strokeStyle;
+      ctx.fillStyle = strokeStyle;
+      ctx.lineWidth = lineWidth * (1.08 + signal * 0.34 + beat * 0.14 + downbeat * 0.22 + (style === "line" ? 0 : 0.12));
+      ctx.lineCap = "round";
+      if (style === "triangle") {
+        const widthMul = Math.max(3, Number(params?.triangleWidthPx ?? (lineWidth * 2.3 + tickLen * 0.08)));
+        const tipX = cx + nx * inward;
+        const tipY = cy + ny * inward;
+        const baseX = cx + nx * outward;
+        const baseY = cy + ny * outward;
+        ctx.beginPath();
+        ctx.moveTo(tipX, tipY);
+        ctx.lineTo(baseX + px * widthMul, baseY + py * widthMul);
+        ctx.lineTo(baseX - px * widthMul, baseY - py * widthMul);
+        ctx.closePath();
+        ctx.globalAlpha = clamp01(groupAlpha * 0.96);
+        ctx.fill();
+      } else {
+        ctx.beginPath();
+        ctx.moveTo(cx + nx * outward, cy + ny * outward);
+        ctx.lineTo(cx + nx * inward, cy + ny * inward);
+        ctx.stroke();
+      }
+      ctx.restore();
+    }
+  }
+  ctx.restore();
+}
+
+function drawArcLattice(args: {
+  ctx: CanvasRenderingContext2D;
+  canvas: HTMLCanvasElement;
+  colors: string[];
+  tMs: number;
+  amp: number;
+  beat: number;
+  downbeat: number;
+  reactive?: any;
+  state?: any;
+  nodeSeed: number;
+  params?: Record<string, any>;
+}) {
+  const { ctx, canvas, colors, tMs, amp, beat, downbeat, reactive, state, nodeSeed, params } = args;
+  const w = canvas.width;
+  const h = canvas.height;
+  const maxDim = Math.max(w, h);
+  const cx = w * Number(params?.centerX ?? 0.5);
+  const cy = h * Number(params?.centerY ?? 0.5);
+  const theme = resolveThemeState(state);
+  const rr = resolveReactiveSource(reactive, params?.signalSource ?? "auto");
+  const rng = createRng(nodeSeed ^ hashStringToSeed("frame.arcLattice"));
+  const ringCount = Math.max(2, Math.min(4, Math.round(Number(params?.ringCount ?? 3))));
+  const baseRadius = Math.max(maxDim * 0.26, Number(params?.radiusPx ?? maxDim * 0.34));
+  const gapPx = Math.max(24, Number(params?.gapPx ?? maxDim * 0.07));
+  const segmentCountBase = Math.max(6, Math.min(18, Math.round(Number(params?.segmentsPerRing ?? 12))));
+  const spokeDensity = clamp01(Number(params?.spokeDensity ?? 0.34));
+  const arcCoverage = clamp01(Number(params?.arcCoverage ?? 0.62));
+  const lineWidth = Math.max(0.8, Number(params?.lineWidthPx ?? 1.7));
+  const alphaBase = clamp01(Number(params?.alpha ?? 0.28));
+  const motionMode = String(params?.motionMode ?? ["mesh", "ratchet", "driftLock"][nodeSeed % 3]).toLowerCase();
+  const symmetryMode = String(params?.symmetryMode ?? ["mirror", "repeat", "offset"][nodeSeed % 3]).toLowerCase();
+  const colorMode = String(params?.colorMode ?? (theme.light > 0.62 ? "dark" : ["palette", "accent", "gradient"][nodeSeed % 3])).toLowerCase();
+  const rotateHz = Number(params?.rotateHz ?? 0.012);
+  const lockMix = clamp01(Number(params?.lockMix ?? 0.46));
+  const spokeWidthMul = Math.max(0.7, Number(params?.spokeWidthMul ?? 0.92));
+  const spokeAlphaMul = Math.max(0.6, Number(params?.spokeAlphaMul ?? 1.18));
+  const spokeSlack = Math.max(0, Number(params?.spokeSlack ?? 0.028));
+  const ratchetSnap = clamp01(Number(params?.ratchetSnap ?? 0.84));
+  const endpointBridgeBias = clamp01(Number(params?.endpointBridgeBias ?? 0.78));
+  const lockFlashGain = Math.max(0, Number(params?.lockFlashGain ?? 0.32));
+  const signal = clamp01(Math.max(Number(rr?.amp ?? 0), Number(rr?.ampFast ?? 0) * 0.9, amp * 0.75));
+  const pulse = 1 + signal * 0.3 + beat * 0.22 + downbeat * 0.34;
+  const mix = (a: number, b: number, t: number) => a + (b - a) * clamp01(t);
+  const palette = (() => {
+    if (colorMode === "dark") return theme.light < 0.3 ? ["#DCE8FF", "#F2F7FF", "#A9CBFF"] : ["#091019", "#102238", "#17304A"];
+    if (colorMode === "accent") return (colors.length ? colors.slice(0, 3) : ["#FF8A7A", "#FFD166", "#8FB7FF"]).map((c) => adjustColorForContrast(c, theme.light));
+    if (colorMode === "gradient") return (colors.length ? [...colors, colors[0] ?? "#FFFFFF"] : ["#8FB7FF", "#FAD38A", "#FF8A7A", "#8FB7FF"]).map((c) => adjustColorForContrast(c, theme.light));
+    return (colors.length ? colors : ["#8FB7FF", "#D8E6FF", "#FAD38A"]).map((c) => adjustColorForContrast(c, theme.light));
+  })();
+  const ringMeta = Array.from({ length: ringCount }, (_, ring) => {
+    const segCount = Math.max(6, Math.min(20, segmentCountBase + ((ring % 2 === 0) ? 0 : 2)));
+    const segSpan = (Math.PI * 2) / segCount;
+    const coverage = arcCoverage * (0.82 + ring * 0.08);
+    const presence = Array.from({ length: segCount }, (_, i) => {
+      if (symmetryMode === "mirror") {
+        const j = i < Math.ceil(segCount / 2) ? i : segCount - 1 - i;
+        return ((hashStringToSeed(`arcLattice:ring:${ring}:seg:${j}:${nodeSeed}`) >>> 0) % 1000) / 1000 < coverage;
+      }
+      if (symmetryMode === "repeat") {
+        return ((i + ring) % 3) !== 1 || coverage > 0.56;
+      }
+      return ((hashStringToSeed(`arcLattice:ring:${ring}:seg:${i}:${nodeSeed}`) >>> 0) % 1000) / 1000 < coverage;
+    });
+    return { segCount, segSpan, coverage, presence };
+  });
+
+  const t = tMs / 1000;
+  const stepPhase = downbeat + beat * 0.45;
+
+  ctx.save();
+  ctx.globalCompositeOperation = resolveGraphBlendFromModes(params?.color, colorMode, theme.light, String(params?.blend ?? "screen")) as GlobalCompositeOperation;
+
+  for (let ring = 0; ring < ringCount; ring += 1) {
+    const radius = baseRadius + ring * gapPx * (1 + signal * 0.08);
+    const meta = ringMeta[ring];
+    const direction = ring % 2 === 0 ? 1 : -1;
+    const ratchetStep = (Math.PI * 2) / Math.max(6, meta.segCount);
+    const baseDrift = rotateHz * direction * t * Math.PI * 2;
+    const lockSnap = Math.round(baseDrift / ratchetStep) * ratchetStep;
+    const lockAmount =
+      motionMode === "ratchet"
+        ? ratchetSnap * clamp01(0.12 + stepPhase * 1.12)
+        : motionMode === "driftlock"
+          ? lockMix * clamp01(0.35 + downbeat * 0.7)
+          : 0;
+    const offset =
+      motionMode === "ratchet"
+        ? mix(baseDrift, lockSnap, lockAmount)
+        : motionMode === "driftlock"
+          ? mix(baseDrift, lockSnap, lockAmount)
+          : baseDrift;
+    const coupledOffset =
+      ring > 0
+        ? offset + Math.sin(t * (0.45 + ring * 0.08) + ring * 0.7) * spokeSlack
+        : offset;
+    const ringColor = palette[ring % palette.length] ?? "#FFFFFF";
+    const strokeStyle = colorMode === "gradient"
+      ? (() => {
+          const g = ctx.createRadialGradient(cx, cy, radius * 0.55, cx, cy, radius + gapPx * 0.6);
+          g.addColorStop(0, colorToRgba(palette[ring % palette.length] ?? ringColor, alphaBase * 0.32));
+          g.addColorStop(1, colorToRgba(palette[(ring + 1) % palette.length] ?? ringColor, alphaBase * 1.1));
+          return g;
+        })()
+      : colorToRgba(ringColor, alphaBase * (1.02 + beat * 0.18 + downbeat * 0.24 + lockAmount * lockFlashGain));
+
+    ctx.save();
+    ctx.strokeStyle = strokeStyle;
+    ctx.lineWidth = lineWidth * (1 + ring * 0.08 + signal * 0.2);
+    ctx.lineCap = "round";
+
+    for (let seg = 0; seg < meta.segCount; seg += 1) {
+      if (!meta.presence[seg]) continue;
+      const activeSeg =
+        motionMode === "ratchet"
+          ? ((seg + Math.round(t * 2) + ring) % 2 === 0) || downbeat > 0.18
+          : motionMode === "driftlock"
+            ? Math.sin(t * 0.8 + seg * 0.7 + ring) > -0.72
+            : true;
+      if (!activeSeg) continue;
+      const spanTighten =
+        motionMode === "mesh" ? 0.16 :
+        motionMode === "ratchet" ? 0.24 - downbeat * 0.08 :
+        0.18 - beat * 0.03;
+      const a0 = coupledOffset + seg * meta.segSpan + meta.segSpan * 0.08;
+      const a1 = coupledOffset + (seg + 1) * meta.segSpan - meta.segSpan * Math.max(0.08, spanTighten);
+      ctx.beginPath();
+      ctx.arc(cx, cy, radius, a0, a1);
+      ctx.stroke();
+    }
+
+    ctx.restore();
+
+    if (ring < ringCount - 1) {
+      const innerRadius = radius;
+      const outerRadius = baseRadius + (ring + 1) * gapPx * (1 + signal * 0.08);
+      const spokeCount = Math.max(2, Math.round(meta.segCount * spokeDensity * (motionMode === "mesh" ? 0.7 : 1)));
+      const nextMeta = ringMeta[ring + 1];
+      const nextSegSpan = nextMeta.segSpan;
+      const nextDirection = (ring + 1) % 2 === 0 ? 1 : -1;
+      const nextBaseOffset = rotateHz * nextDirection * t * Math.PI * 2;
+      const nextLockSnap = Math.round(nextBaseOffset / ((Math.PI * 2) / Math.max(6, nextMeta.segCount))) * ((Math.PI * 2) / Math.max(6, nextMeta.segCount));
+      const nextLockAmount =
+        motionMode === "ratchet"
+          ? ratchetSnap * clamp01(0.12 + stepPhase * 1.12)
+          : motionMode === "driftlock"
+            ? lockMix * clamp01(0.35 + downbeat * 0.7)
+            : 0;
+      const nextOffset =
+        motionMode === "ratchet"
+          ? mix(nextBaseOffset, nextLockSnap, nextLockAmount)
+          : motionMode === "driftlock"
+            ? mix(nextBaseOffset, nextLockSnap, nextLockAmount)
+            : nextBaseOffset;
+      for (let i = 0; i < spokeCount; i += 1) {
+        const baseIndex = symmetryMode === "repeat" ? (i * 3 + ring) % meta.segCount : Math.floor((i / spokeCount) * meta.segCount);
+        const thetaCenter = coupledOffset + (baseIndex + 0.5) * meta.segSpan + (motionMode === "mesh" ? Math.sin(t * 0.7 + i) * 0.03 : 0);
+        const thetaA = coupledOffset + baseIndex * meta.segSpan + meta.segSpan * 0.08;
+        const thetaB = coupledOffset + (baseIndex + 1) * meta.segSpan - meta.segSpan * 0.1;
+        const nextIndex = Math.round((((thetaCenter - nextOffset) % (Math.PI * 2)) + Math.PI * 2) % (Math.PI * 2) / nextSegSpan) % nextMeta.segCount;
+        const nextThetaA = nextOffset + nextIndex * nextSegSpan + nextSegSpan * 0.08;
+        const nextThetaB = nextOffset + (nextIndex + 1) * nextSegSpan - nextSegSpan * 0.1;
+        const chooseEndpoint = (((hashStringToSeed(`arcLattice:endpoint:${nodeSeed}:${ring}:${i}`) >>> 0) % 1000) / 1000) < endpointBridgeBias;
+        const theta = chooseEndpoint
+          ? (((hashStringToSeed(`arcLattice:endpointSide:${nodeSeed}:${ring}:${i}`) >>> 0) & 1) === 0 ? thetaA : thetaB)
+          : thetaCenter;
+        const thetaOuter = theta;
+        const active =
+          motionMode === "ratchet"
+            ? (i + Math.round(t * 2)) % 2 === 0 || downbeat > 0.08
+            : motionMode === "driftlock"
+              ? Math.sin(t * 0.8 + i * 0.7) > -0.1
+              : Math.sin(t * 1.1 + i * 0.9) > -0.35;
+        if (!active) continue;
+        const alignedTarget = chooseEndpoint
+          ? (Math.abs(theta - nextThetaA) < Math.abs(theta - nextThetaB) ? nextThetaA : nextThetaB)
+          : thetaCenter;
+        const alignedGap = Math.abs(Math.atan2(Math.sin(alignedTarget - theta), Math.cos(alignedTarget - theta)));
+        const aligned = chooseEndpoint ? clamp01(1 - alignedGap / Math.max(0.001, meta.segSpan * 0.9)) : 0.6;
+        const alpha = alphaBase * spokeAlphaMul * (0.74 + signal * 0.18 + aligned * 0.22) * (1 + beat * 0.28 + downbeat * 0.46 + lockAmount * 0.22);
+        ctx.save();
+        ctx.strokeStyle = colorToRgba(palette[(i + ring) % palette.length] ?? "#FFFFFF", alpha);
+        ctx.lineWidth = Math.max(0.8, lineWidth * spokeWidthMul * (1 + downbeat * 0.12));
+        ctx.beginPath();
+        ctx.moveTo(cx + Math.cos(theta) * innerRadius, cy + Math.sin(theta) * innerRadius);
+        ctx.lineTo(cx + Math.cos(thetaOuter) * outerRadius, cy + Math.sin(thetaOuter) * outerRadius);
+        ctx.stroke();
+        if (motionMode !== "mesh") {
+          const jointAlpha = alpha * (motionMode === "ratchet" ? 0.9 : 0.7);
+          ctx.fillStyle = colorToRgba(palette[(i + ring + 1) % palette.length] ?? "#FFFFFF", jointAlpha);
+          const jointR = Math.max(1.6, lineWidth * (motionMode === "ratchet" ? 1.2 : 0.95));
+          ctx.beginPath();
+          ctx.arc(cx + Math.cos(theta) * innerRadius, cy + Math.sin(theta) * innerRadius, jointR, 0, Math.PI * 2);
+          ctx.fill();
+          ctx.beginPath();
+          ctx.arc(cx + Math.cos(thetaOuter) * outerRadius, cy + Math.sin(thetaOuter) * outerRadius, jointR, 0, Math.PI * 2);
+          ctx.fill();
+        }
+        ctx.restore();
+      }
+    }
+  }
+  ctx.restore();
+}
+
 function drawBeatOrb(args: {
   ctx: CanvasRenderingContext2D;
   canvas: HTMLCanvasElement;
@@ -1407,6 +2024,51 @@ function registerBuiltinGraphPrimitives() {
       state: args.state
     });
   });
+  registerGraphPrimitive("frame.haloarcs", (args) => {
+    drawHaloArcs({
+      ctx: args.ctx,
+      canvas: args.canvas,
+      colors: args.colors,
+      tMs: args.tMs,
+      amp: args.amp,
+      beat: args.beat,
+      downbeat: args.downbeat,
+      reactive: args.reactive,
+      state: args.state,
+      nodeSeed: args.seed,
+      params: args.params
+    });
+  });
+  registerGraphPrimitive("frame.orbitticks", (args) => {
+    drawOrbitTicks({
+      ctx: args.ctx,
+      canvas: args.canvas,
+      colors: args.colors,
+      tMs: args.tMs,
+      amp: args.amp,
+      beat: args.beat,
+      downbeat: args.downbeat,
+      reactive: args.reactive,
+      state: args.state,
+      nodeSeed: args.seed,
+      params: args.params
+    });
+  });
+  registerGraphPrimitive("frame.arclattice", (args) => {
+    drawArcLattice({
+      ctx: args.ctx,
+      canvas: args.canvas,
+      colors: args.colors,
+      tMs: args.tMs,
+      amp: args.amp,
+      beat: args.beat,
+      downbeat: args.downbeat,
+      reactive: args.reactive,
+      state: args.state,
+      nodeSeed: args.seed,
+      params: args.params
+    });
+  });
   registerGraphPrimitive("polyline.orbitribbon", (args) => {
     drawOrbitRibbon({
       ctx: args.ctx,
@@ -1577,12 +2239,13 @@ export function renderGraphScene({
   recipe: any;
   colors: string[];
 }) {
+  const graphState = state && typeof state === "object" ? { ...state, recipe } : { recipe };
   const layers: GraphLayer[] = Array.isArray(recipe?.graph?.layers) && recipe.graph.layers.length
     ? recipe.graph.layers
     : fallbackGraph();
-  const amp = Number(state?.amp ?? 0);
-  const beat = Number(state?.signalBus?.beat?.pulse ?? 0);
-  const downbeat = Number(state?.signalBus?.beat?.downbeatPulse ?? 0);
+  const amp = Number(graphState?.amp ?? 0);
+  const beat = Number(graphState?.signalBus?.beat?.pulse ?? 0);
+  const downbeat = Number(graphState?.signalBus?.beat?.downbeatPulse ?? 0);
 
   for (const layer of layers) {
     if (layer?.opacity !== undefined && Number(layer.opacity) <= 0) continue;
@@ -1600,7 +2263,7 @@ export function renderGraphScene({
       const resolvedParams = resolveResolvable(node?.params ?? {}, {
         tMs,
         seed: nodeSeed,
-        state,
+        state: graphState,
         path: `graph.${layerId}.${nodeId}.params`
       });
       renderRegisteredGraphPrimitive({
@@ -1611,7 +2274,7 @@ export function renderGraphScene({
         seed: nodeSeed,
         params: resolvedParams,
         colors,
-        state,
+        state: graphState,
         amp,
         beat,
         downbeat,

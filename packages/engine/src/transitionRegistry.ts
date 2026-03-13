@@ -345,6 +345,9 @@ function registerBuiltins() {
     const bandFrac = clamp01(Number(params?.bandFrac ?? 0.1));
     const bandSpan = Math.max(span * 0.04, Math.min(span * 0.22, Math.max(width, height) * bandFrac));
     const bandSlices = Math.max(4, Math.min(18, Number(params?.bandSlices ?? 8)));
+    const flipBand = typeof params?.flipBand === "boolean"
+      ? params.flipBand
+      : hashUnit(seed, "directionalBlurWipe:flipBand") < (2 / 3);
 
     drawClippedPolygon(ctx, clipPolygonHalfPlane(corners, nx, ny, threshold, true), () => {
       ctx.globalAlpha = 1;
@@ -357,7 +360,8 @@ function registerBuiltins() {
       const bandMin = threshold - bandSpan * 0.5 + u0 * bandSpan;
       const bandMax = threshold - bandSpan * 0.5 + u1 * bandSpan;
       const polygon = clipPolygonBand(width, height, nx, ny, bandMin, bandMax);
-      const alpha = clamp01((u0 + u1) * 0.5);
+      const mixU = (u0 + u1) * 0.5;
+      const alpha = clamp01(flipBand ? (1 - mixU) : mixU);
       drawClippedPolygon(ctx, polygon, () => {
         ctx.globalAlpha = alpha;
         ctx.drawImage(toCanvas, 0, 0, width, height);

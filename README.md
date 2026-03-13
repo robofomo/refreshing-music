@@ -81,7 +81,7 @@ Notes:
    - Section transitions are registry-based with built-ins: `cut`, `crossfade`, `wipe`, `noiseDissolve`, `sliceStepWipe`, `directionalBlurWipe`, `lumaDissolve`.
    - Graph node params support the same deterministic resolvable values (`map`, `pick`, `lfo`, `signal`, `add`, `mul`).
    - Built-in graph primitives cover backgrounds, particles, signal/noise fields, glitch, pressure/energy blooms, audio-reactive overlays, geometric curves, and lyric/text treatments.
-   - Primitive-lab currently surfaces: `bg.gradientField`, `fg.particles`, `field.signalNoiseBlend`, `glitch.persistentOffset`, `energy.pressureBloom`, `shape.beatOrb`, `overlay.beatTrack`, `viz.waveStrip`, `viz.spectrumBars`, `viz.responsiveRings`, `shape.circlePulse`, `polyline.orbitRibbon`, `curve.rosetteSpiral`, `text.echoWord`, `text.wordTrails`, and `text.karaoke`.
+   - Primitive-lab currently surfaces: `bg.gradientField`, `fg.particles`, `field.signalNoiseBlend`, `glitch.persistentOffset`, `energy.pressureBloom`, `shape.beatOrb`, `overlay.beatTrack`, `viz.waveStrip`, `viz.spectrumBars`, `viz.responsiveRings`, `shape.circlePulse`, `frame.haloArcs`, `frame.orbitTicks`, `frame.arcLattice`, `polyline.orbitRibbon`, `curve.rosetteSpiral`, `text.echoWord`, `text.wordTrails`, and `text.karaoke`.
    - `curve.rosetteSpiral` supports `mode`, `connectMode`, `symmetrySnap`, `skip`, and optional `color: "black"` for high-contrast variants.
    - In `recipe-view` and `random-scene`, `j/k` select previous/next graph, `r` refreshes variant, and `a` toggles auto refresh (variant on downbeats + graph step on section changes).
 

@@ -5,6 +5,16 @@ type GraphLayerSet = { layers: any[] };
 type PlayerSceneChoice = {
   source: "recipe-view" | "random-scene";
   variant: number;
+  sceneIndex?: number;
+  backgroundIndex?: number;
+  cycleEvery2Bars?: boolean;
+  beat3Accent?: boolean;
+};
+
+type PlayerTimingState = {
+  variantIndex: number;
+  sectionBarIndex: number;
+  beatInBar: number;
 };
 
 type ModeRecipeBuilderDeps = {
@@ -24,11 +34,11 @@ type ModeRecipeBuilderDeps = {
   };
   cloneRecipe: <T>(value: T) => T;
   baseGraphLayers: () => any[];
-  graphLayersForSection: (baseRecipe: any, sectionId: string, options?: { allowManual?: boolean; variantOverride?: number }) => GraphLayerSet;
-  randomSceneLayersForSection: (sectionId: string, options?: { allowManual?: boolean; variantOverride?: number }) => GraphLayerSet;
+  graphLayersForSection: (baseRecipe: any, sectionId: string, options?: { allowManual?: boolean; variantOverride?: number; selectedIndexOverride?: number }) => GraphLayerSet;
+  randomSceneLayersForSection: (sectionId: string, options?: { allowManual?: boolean; variantOverride?: number; selectedIndexOverride?: number; backgroundIndexOverride?: number }) => GraphLayerSet;
   sectionOrderIndexById: (sectionId: string) => number;
   transitionLabTransitionDef: () => any;
-  resolvePlayerSceneChoice: (sectionId: string, sectionType: string, variantOverride?: number) => PlayerSceneChoice;
+  resolvePlayerSceneChoice: (sectionId: string, sectionType: string, playerState?: PlayerTimingState) => PlayerSceneChoice;
   buildPlayerDefaultTransition: (sectionId: string, sectionType: string) => any;
   labGraphLayers: () => any[];
   isGraphCapableMode: (mode: ViewerMode) => boolean;
@@ -47,7 +57,7 @@ export function createModeRecipeResolver(deps: ModeRecipeBuilderDeps) {
     memoBase = null;
   }
 
-  function resolve(baseRecipe: any, mode: ViewerMode, sectionId: string, sectionType: string, playerVariantOverride = 0) {
+  function resolve(baseRecipe: any, mode: ViewerMode, sectionId: string, sectionType: string, playerState?: PlayerTimingState) {
     if (memoBase !== baseRecipe) {
       memoBase = baseRecipe;
       memo.clear();
@@ -70,7 +80,9 @@ export function createModeRecipeResolver(deps: ModeRecipeBuilderDeps) {
       mode,
       sectionId,
       sectionType,
-      playerVariantOverride,
+      playerState?.variantIndex ?? 0,
+      playerState?.sectionBarIndex ?? 0,
+      playerState?.beatInBar ?? 1,
       seed >>> 0,
       sectionVariant,
       graphAutoRefresh ? 1 : 0,
@@ -140,10 +152,19 @@ export function createModeRecipeResolver(deps: ModeRecipeBuilderDeps) {
         default: deps.transitionLabTransitionDef()
       };
     } else if (mode === "player") {
-      const choice = deps.resolvePlayerSceneChoice(sectionId, sectionType, playerVariantOverride);
+      const choice = deps.resolvePlayerSceneChoice(sectionId, sectionType, playerState);
       const picked = choice.source === "recipe-view"
-        ? deps.graphLayersForSection(baseRecipe, sectionId, { allowManual: false, variantOverride: choice.variant })
-        : deps.randomSceneLayersForSection(sectionId, { allowManual: false, variantOverride: choice.variant });
+        ? deps.graphLayersForSection(baseRecipe, sectionId, {
+            allowManual: false,
+            variantOverride: choice.variant,
+            selectedIndexOverride: choice.sceneIndex
+          })
+        : deps.randomSceneLayersForSection(sectionId, {
+            allowManual: false,
+            variantOverride: choice.variant,
+            selectedIndexOverride: choice.sceneIndex,
+            backgroundIndexOverride: choice.backgroundIndex
+          });
       recipe.graph.layers = picked.layers;
       const transitions = typeof recipe.transitions === "object" && recipe.transitions ? recipe.transitions : {};
       recipe.transitions = {

@@ -102,6 +102,9 @@ type LabPrimitiveId =
   | "viz.spectrumBars"
   | "viz.responsiveRings"
   | "shape.circlePulse"
+  | "frame.haloArcs"
+  | "frame.orbitTicks"
+  | "frame.arcLattice"
   | "polyline.orbitRibbon"
   | "curve.rosetteSpiral"
   | "text.echoWord"
@@ -119,6 +122,9 @@ const LAB_PRIMITIVES: LabPrimitiveId[] = [
   "viz.spectrumBars",
   "viz.responsiveRings",
   "shape.circlePulse",
+  "frame.haloArcs",
+  "frame.orbitTicks",
+  "frame.arcLattice",
   "polyline.orbitRibbon",
   "curve.rosetteSpiral",
   "text.echoWord",
@@ -758,10 +764,23 @@ function resolveHudGraphSelection(sectionId: string, sectionType: string, player
   if (viewerMode === "recipe-view") return resolveGraphSelection(currentRecipe, sectionId);
   if (viewerMode === "random-scene") return randomSceneLayersForSection(sectionId).selection;
   if (!isPlayerMode()) return null;
-  const choice = playerSceneChoice ?? resolvePlayerSceneChoice(sectionId, sectionType, playerVariantIndex);
+  const choice = playerSceneChoice ?? resolvePlayerSceneChoice(sectionId, sectionType, {
+    variantIndex: playerVariantIndex,
+    sectionBarIndex: Math.max(0, playerVariantIndex - 1),
+    beatInBar: 1
+  });
   return choice?.source === "recipe-view"
-    ? graphLayersForSection(currentRecipe, sectionId, { allowManual: false, variantOverride: choice?.variant ?? 0 }).selection
-    : randomSceneLayersForSection(sectionId, { allowManual: false, variantOverride: choice?.variant ?? 0 }).selection;
+    ? graphLayersForSection(currentRecipe, sectionId, {
+        allowManual: false,
+        variantOverride: choice?.variant ?? 0,
+        selectedIndexOverride: choice?.sceneIndex
+      }).selection
+    : randomSceneLayersForSection(sectionId, {
+        allowManual: false,
+        variantOverride: choice?.variant ?? 0,
+        selectedIndexOverride: choice?.sceneIndex,
+        backgroundIndexOverride: choice?.backgroundIndex
+      }).selection;
 }
 
 function currentGraphVariantForSection(sectionId: string) {
@@ -794,6 +813,9 @@ function currentLabProfile() {
     "viz.spectrumBars": { scale: [0.7, 2.0], density: [0.6, 3.6] },
     "viz.responsiveRings": { scale: [0.7, 2.2], density: [0.7, 3.6] },
     "shape.circlePulse": { scale: [0.75, 2.1], density: [0.6, 2.0] },
+    "frame.haloArcs": { scale: [0.7, 2.3], density: [0.7, 3.8] },
+    "frame.orbitTicks": { scale: [0.8, 2.5], density: [0.8, 4.0] },
+    "frame.arcLattice": { scale: [0.8, 2.6], density: [0.8, 4.0] },
     "polyline.orbitRibbon": { scale: [0.7, 2.4], density: [0.4, 3.9] },
     "curve.rosetteSpiral": { scale: [0.7, 2.5], density: [0.45, 4.2] },
     "text.echoWord": { scale: [0.7, 2.0], density: [0.5, 2.3] },
@@ -809,7 +831,7 @@ function currentLabProfile() {
 
 function labBackdropNode(backdrop: LabBackdropId, profile: { scale: number; density: number }) {
   if (backdrop === "black") {
-    return { id: "lab-bg-black", type: "bg.solid", params: { color: "#000000" } };
+    return { id: "lab-bg-black", type: "bg.solid", params: { color: "#000000", toneHint: "dark" } };
   }
   if (backdrop === "gradient") {
     return {
@@ -819,7 +841,9 @@ function labBackdropNode(backdrop: LabBackdropId, profile: { scale: number; dens
         gradientStops: Math.max(3, Math.min(7, Math.round(2 + profile.density))),
         driftSpeed: 0.006 + profile.scale * 0.01,
         noiseScale: 0.25 + profile.density * 0.22,
-        soften: 0.9 + Math.min(0.08, profile.scale * 0.03)
+        soften: 0.9 + Math.min(0.08, profile.scale * 0.03),
+        toneHint: "light",
+        toneLight: 0.72
       }
     };
   }
@@ -831,7 +855,8 @@ function labBackdropNode(backdrop: LabBackdropId, profile: { scale: number; dens
         inner: 0.16,
         outer: 0.82,
         tintA: "#102338",
-        tintB: "#000000"
+        tintB: "#000000",
+        toneHint: "dark"
       }
     };
   }
@@ -840,7 +865,8 @@ function labBackdropNode(backdrop: LabBackdropId, profile: { scale: number; dens
     type: "bg.bands",
     params: {
       count: 12,
-      opacity: 0.11
+      opacity: 0.11,
+      toneHint: "mid"
     }
   };
 }
@@ -849,9 +875,147 @@ function clamp01(v: number) {
   return Math.max(0, Math.min(1, Number(v) || 0));
 }
 
+type BackdropTone = "dark" | "light" | "mid";
+
+function labBackdropTone(backdrop: LabBackdropId): BackdropTone {
+  if (backdrop === "black" || backdrop === "vignette") return "dark" as const;
+  if (backdrop === "gradient") return "light" as const;
+  return "mid" as const;
+}
+
+function graphBackdropToneFromLayer(layer: any): BackdropTone {
+  const node = Array.isArray(layer?.nodes) ? layer.nodes[0] : null;
+  const params = node?.params ?? {};
+  const toneHint = String(params?.toneHint ?? "").toLowerCase();
+  if (toneHint === "dark") return "dark";
+  if (toneHint === "light") return "light";
+  if (toneHint === "mid") return "mid";
+  const toneLight = Number(params?.toneLight);
+  if (Number.isFinite(toneLight)) {
+    if (toneLight >= 0.62) return "light";
+    if (toneLight <= 0.32) return "dark";
+  }
+  return "mid";
+}
+
+function pickWeightedValue<T>(rng: () => number, items: Array<{ value: T; w: number }>) {
+  const total = items.reduce((sum, item) => sum + Math.max(0, Number(item.w) || 0), 0);
+  if (total <= 0) return items[0]?.value;
+  let remaining = rng() * total;
+  for (const item of items) {
+    remaining -= Math.max(0, Number(item.w) || 0);
+    if (remaining <= 0) return item.value;
+  }
+  return items[items.length - 1]?.value;
+}
+
+function graphStrokeColorChoice(backdropTone: BackdropTone, rng: () => number, darkWeight = 0.58) {
+  if (backdropTone === "light") {
+    return pickWeightedValue(rng, [
+      { value: "black", w: darkWeight },
+      { value: "palette", w: Math.max(0.12, 1 - darkWeight) }
+    ]) ?? "palette";
+  }
+  if (backdropTone === "mid") {
+    return pickWeightedValue(rng, [
+      { value: "palette", w: 0.82 },
+      { value: "black", w: 0.18 }
+    ]) ?? "palette";
+  }
+  return pickWeightedValue(rng, [
+    { value: "palette", w: 0.78 },
+    { value: "white", w: 0.18 },
+    { value: "black", w: 0.04 }
+  ]) ?? "palette";
+}
+
+function graphFrameColorMode(backdropTone: BackdropTone, rng: () => number, family: "halo" | "ticks" | "lattice" = "halo") {
+  if (backdropTone === "light") {
+    const shared = family === "ticks"
+      ? [
+          { value: "dark", w: 0.4 },
+          { value: "pattern", w: 0.22 },
+          { value: "accent", w: 0.18 },
+          { value: "gradient", w: 0.12 },
+          { value: "palette", w: 0.08 }
+        ]
+      : [
+          { value: "dark", w: 0.42 },
+          { value: "accent", w: 0.22 },
+          { value: "gradient", w: 0.16 },
+          { value: "palette", w: 0.14 },
+          { value: "white", w: 0.06 }
+        ];
+    return pickWeightedValue(rng, shared) ?? "dark";
+  }
+  if (backdropTone === "mid") {
+    const shared = family === "ticks"
+      ? [
+          { value: "pattern", w: 0.3 },
+          { value: "gradient", w: 0.24 },
+          { value: "accent", w: 0.2 },
+          { value: "palette", w: 0.18 },
+          { value: "dark", w: 0.08 }
+        ]
+      : [
+          { value: "accent", w: 0.28 },
+          { value: "gradient", w: 0.24 },
+          { value: "palette", w: 0.22 },
+          { value: "dark", w: 0.18 },
+          { value: "white", w: 0.08 }
+        ];
+    return pickWeightedValue(rng, shared) ?? "accent";
+  }
+  const shared = family === "ticks"
+    ? [
+        { value: "gradient", w: 0.28 },
+        { value: "pattern", w: 0.24 },
+        { value: "palette", w: 0.2 },
+        { value: "accent", w: 0.16 },
+        { value: "white", w: 0.08 },
+        { value: "dark", w: 0.04 }
+      ]
+    : [
+        { value: "accent", w: 0.26 },
+        { value: "palette", w: 0.24 },
+        { value: "gradient", w: 0.22 },
+        { value: "white", w: 0.16 },
+        { value: "dark", w: 0.08 },
+        { value: "black", w: 0.04 }
+      ];
+  return pickWeightedValue(rng, shared) ?? "accent";
+}
+
+function applySharedGraphColorStyle(node: any, backdropTone: BackdropTone, rng: () => number, role: "lab" | "hero" | "wrapper") {
+  const type = String(node?.type ?? "").toLowerCase();
+  node.params = typeof node?.params === "object" && node.params ? node.params : {};
+  if (type === "viz.wavestrip") {
+    node.params.color = graphStrokeColorChoice(backdropTone, rng, role === "lab" ? 0.62 : 0.56);
+  } else if (type === "viz.spectrumbars") {
+    node.params.color = graphStrokeColorChoice(backdropTone, rng, role === "lab" ? 0.62 : 0.58);
+  } else if (type === "viz.responsiverings") {
+    node.params.color = graphStrokeColorChoice(backdropTone, rng, role === "wrapper" ? 0.54 : 0.58);
+  } else if (type === "shape.circlepulse") {
+    node.params.color = graphStrokeColorChoice(backdropTone, rng, role === "wrapper" ? 0.52 : 0.56);
+  } else if (type === "polyline.orbitribbon") {
+    node.params.color = graphStrokeColorChoice(backdropTone, rng, role === "wrapper" ? 0.48 : 0.54);
+  } else if (type === "curve.rosettespiral") {
+    node.params.color = graphStrokeColorChoice(backdropTone, rng, role === "lab" ? 0.68 : 0.28);
+  } else if (type === "frame.haloarcs") {
+    node.params.colorMode = graphFrameColorMode(backdropTone, rng, "halo");
+  } else if (type === "frame.orbitticks") {
+    node.params.colorMode = graphFrameColorMode(backdropTone, rng, "ticks");
+  } else if (type === "frame.arclattice") {
+    node.params.colorMode = graphFrameColorMode(backdropTone, rng, "lattice");
+  }
+  return node;
+}
+
 function labPrimitiveNode(profile: { scale: number; density: number; variant: number }, backdrop: LabBackdropId) {
   const scale = profile.scale;
   const density = profile.density;
+  const backdropTone = labBackdropTone(backdrop);
+  const styleRng = mulberry32(hashStringToSeed(`lab-style:${labPrimitive}:${backdrop}:${profile.variant}`) >>> 0);
   if (labPrimitive === "bg.gradientField") {
     return {
       id: "lab-primitive",
@@ -931,7 +1095,7 @@ function labPrimitiveNode(profile: { scale: number; density: number; variant: nu
     return { id: "lab-primitive", type: "overlay.beatTrack", params: {} };
   }
   if (labPrimitive === "viz.waveStrip") {
-    return {
+    return applySharedGraphColorStyle({
       id: "lab-primitive",
       type: "viz.waveStrip",
       params: {
@@ -947,10 +1111,10 @@ function labPrimitiveNode(profile: { scale: number; density: number; variant: nu
         smooth: Number((0.42 + Math.min(0.42, density * 0.1)).toFixed(2)),
         zoom: Number((0.9 + Math.min(1.3, scale * 0.38)).toFixed(2))
       }
-    };
+    }, backdropTone, styleRng, "lab");
   }
   if (labPrimitive === "viz.spectrumBars") {
-    return {
+    return applySharedGraphColorStyle({
       id: "lab-primitive",
       type: "viz.spectrumBars",
       params: {
@@ -967,10 +1131,10 @@ function labPrimitiveNode(profile: { scale: number; density: number; variant: nu
         edgeTaper: Number((0.12 + Math.min(0.18, density * 0.04)).toFixed(2)),
         responseSpan: 0.75
       }
-    };
+    }, backdropTone, styleRng, "lab");
   }
   if (labPrimitive === "viz.responsiveRings") {
-    return {
+    return applySharedGraphColorStyle({
       id: "lab-primitive",
       type: "viz.responsiveRings",
       params: {
@@ -984,10 +1148,10 @@ function labPrimitiveNode(profile: { scale: number; density: number; variant: nu
         warp: Number((0.55 + Math.min(1.1, scale * 0.32)).toFixed(2)),
         rotateHz: Number(((profile.variant % 2 === 0 ? 1 : -1) * (0.02 + Math.min(0.06, scale * 0.015))).toFixed(3))
       }
-    };
+    }, backdropTone, styleRng, "lab");
   }
   if (labPrimitive === "shape.circlePulse") {
-    return {
+    return applySharedGraphColorStyle({
       id: "lab-primitive",
       type: "shape.circlePulse",
       params: {
@@ -995,10 +1159,76 @@ function labPrimitiveNode(profile: { scale: number; density: number; variant: nu
         ringCount: Math.max(4, Math.round(9 * density)),
         alpha: 0.22
       }
-    };
+    }, backdropTone, styleRng, "lab");
+  }
+  if (labPrimitive === "frame.haloArcs") {
+    return applySharedGraphColorStyle({
+      id: "lab-primitive",
+      type: "frame.haloArcs",
+      params: {
+        arcCount: Math.max(4, Math.round(6 + density * 2.2)),
+        ringCount: Math.max(1, Math.min(3, Math.round(1.4 + density * 0.7))),
+        radiusPx: Math.round(128 + scale * 92),
+        gapPx: Math.round(20 + scale * 18),
+        arcSpanMin: Number((0.22 + Math.min(0.22, density * 0.04)).toFixed(3)),
+        arcSpanMax: Number((0.48 + Math.min(0.36, density * 0.08)).toFixed(3)),
+        lineWidthPx: Number((1.4 + Math.min(1.8, density * 0.28)).toFixed(2)),
+        alpha: Number((0.28 + Math.min(0.2, density * 0.05)).toFixed(2)),
+        rotateHz: Number((((profile.variant % 2 === 0 ? 1 : -1) * (0.008 + Math.min(0.03, scale * 0.008)))).toFixed(3)),
+        pulseGain: Number((0.14 + Math.min(0.16, scale * 0.04)).toFixed(3)),
+        wobble: Number((0.04 + Math.min(0.06, density * 0.015)).toFixed(3)),
+        signalSource: "auto"
+      }
+    }, backdropTone, styleRng, "lab");
+  }
+  if (labPrimitive === "frame.orbitTicks") {
+    return applySharedGraphColorStyle({
+      id: "lab-primitive",
+      type: "frame.orbitTicks",
+      params: {
+        count: Math.max(7, Math.min(23, Math.round(7 + density * 4.2))),
+        ringCount: Math.max(1, Math.min(3, Math.round(1 + density * 0.45))),
+        radiusPx: Math.round(180 + scale * 128),
+        gapPx: Math.round(26 + scale * 24),
+        tickLenPx: Math.round(36 + scale * 22),
+        lineWidthPx: Number((1.45 + Math.min(2.1, density * 0.24)).toFixed(2)),
+        alpha: Number((0.34 + Math.min(0.22, density * 0.05)).toFixed(2)),
+        rotateHz: Number((((profile.variant % 2 === 0 ? 1 : -1) * (0.01 + Math.min(0.05, scale * 0.012)))).toFixed(3)),
+        danceHz: Number((0.05 + Math.min(0.08, density * 0.01)).toFixed(3)),
+        danceAmpPx: Math.round(18 + scale * 12),
+        style: profile.variant % 3 === 0 ? "triangle" : "line",
+        patternMode: ["grouped", "alternate", "triple", "unison"][profile.variant % 4],
+        signalSource: "auto"
+      }
+    }, backdropTone, styleRng, "lab");
+  }
+  if (labPrimitive === "frame.arcLattice") {
+    return applySharedGraphColorStyle({
+      id: "lab-primitive",
+      type: "frame.arcLattice",
+      params: {
+        ringCount: Math.max(2, Math.min(4, Math.round(2 + density * 0.45))),
+        radiusPx: Math.round(160 + scale * 120),
+        gapPx: Math.round(26 + scale * 22),
+        segmentsPerRing: Math.max(6, Math.min(18, Math.round(8 + density * 2.2))),
+        spokeDensity: Number((0.2 + Math.min(0.38, density * 0.06)).toFixed(2)),
+        arcCoverage: Number((0.42 + Math.min(0.36, density * 0.06)).toFixed(2)),
+        lineWidthPx: Number((1.2 + Math.min(1.7, density * 0.18)).toFixed(2)),
+        alpha: Number((0.22 + Math.min(0.18, density * 0.04)).toFixed(2)),
+        rotateHz: Number((0.008 + Math.min(0.03, scale * 0.008)).toFixed(3)),
+        spokeWidthMul: Number((0.94 + Math.min(0.3, density * 0.04)).toFixed(2)),
+        spokeAlphaMul: Number((1.12 + Math.min(0.28, density * 0.04)).toFixed(2)),
+        ratchetSnap: Number((0.76 + Math.min(0.18, density * 0.03)).toFixed(2)),
+        endpointBridgeBias: Number((0.7 + Math.min(0.2, density * 0.03)).toFixed(2)),
+        lockFlashGain: Number((0.26 + Math.min(0.18, density * 0.03)).toFixed(2)),
+        motionMode: ["mesh", "ratchet", "driftLock"][profile.variant % 3],
+        symmetryMode: ["mirror", "repeat", "offset"][profile.variant % 3],
+        signalSource: "auto"
+      }
+    }, backdropTone, styleRng, "lab");
   }
   if (labPrimitive === "polyline.orbitRibbon") {
-    return {
+    return applySharedGraphColorStyle({
       id: "lab-primitive",
       type: "polyline.orbitRibbon",
       params: {
@@ -1008,12 +1238,12 @@ function labPrimitiveNode(profile: { scale: number; density: number; variant: nu
         phaseHz: [0.05, 0.08, 0.12][profile.variant % 3],
         animationMode: "auto"
       }
-    };
+    }, backdropTone, styleRng, "lab");
   }
   if (labPrimitive === "curve.rosetteSpiral") {
     const petals = Math.max(3, Math.round(3 + density * 2.8));
     const symmetrySnap = density > 2.3 ? petals : density > 1.2 ? Math.max(4, petals - 1) : 0;
-    return {
+    return applySharedGraphColorStyle({
       id: "lab-primitive",
       type: "curve.rosetteSpiral",
       params: {
@@ -1028,11 +1258,10 @@ function labPrimitiveNode(profile: { scale: number; density: number; variant: nu
         connectMode: density > 3.1 ? "chords" : density > 2.1 ? "skip" : density < 0.95 ? "radial" : "sequential",
         symmetrySnap,
         symmetryMix: symmetrySnap > 0 ? 0.72 : 0,
-        color: scale < 0.95 && backdrop !== "black" ? "black" : "palette",
         alpha: 0.68,
         animationMode: "auto"
       }
-    };
+    }, backdropTone, styleRng, "lab");
   }
   if (labPrimitive === "text.karaoke") {
     return {
@@ -1129,6 +1358,75 @@ function activeLabSnippet() {
   "params": {
     "baseRadiusRatio": ${Number((0.026 + scale * 0.02).toFixed(4))},
     "blend": "screen"
+  }
+}`;
+  }
+  if (labPrimitive === "frame.haloArcs") {
+    return `{
+  "id": "lab-halo-arcs",
+  "type": "frame.haloArcs",
+  "params": {
+    "arcCount": ${Math.max(4, Math.round(6 + density * 2.2))},
+    "ringCount": ${Math.max(1, Math.min(3, Math.round(1.4 + density * 0.7)))},
+    "radiusPx": ${Math.round(128 + scale * 92)},
+    "gapPx": ${Math.round(20 + scale * 18)},
+    "arcSpanMin": ${Number((0.22 + Math.min(0.22, density * 0.04)).toFixed(3))},
+    "arcSpanMax": ${Number((0.48 + Math.min(0.36, density * 0.08)).toFixed(3))},
+    "lineWidthPx": ${Number((1.4 + Math.min(1.8, density * 0.28)).toFixed(2))},
+    "alpha": ${Number((0.28 + Math.min(0.2, density * 0.05)).toFixed(2))},
+    "rotateHz": ${Number((((profile.variant % 2 === 0 ? 1 : -1) * (0.008 + Math.min(0.03, scale * 0.008)))).toFixed(3))},
+    "pulseGain": ${Number((0.14 + Math.min(0.16, scale * 0.04)).toFixed(3))},
+    "wobble": ${Number((0.04 + Math.min(0.06, density * 0.015)).toFixed(3))},
+    "colorMode": "${["palette", "accent", "white", "black"][profile.variant % 4]}",
+    "signalSource": "auto"
+  }
+}`;
+  }
+  if (labPrimitive === "frame.orbitTicks") {
+    return `{
+  "id": "lab-orbit-ticks",
+  "type": "frame.orbitTicks",
+  "params": {
+    "count": ${Math.max(7, Math.min(23, Math.round(7 + density * 4.2)))},
+    "ringCount": ${Math.max(1, Math.min(3, Math.round(1 + density * 0.45)))},
+    "radiusPx": ${Math.round(180 + scale * 128)},
+    "gapPx": ${Math.round(26 + scale * 24)},
+    "tickLenPx": ${Math.round(36 + scale * 22)},
+    "lineWidthPx": ${Number((1.45 + Math.min(2.1, density * 0.24)).toFixed(2))},
+    "alpha": ${Number((0.34 + Math.min(0.22, density * 0.05)).toFixed(2))},
+    "rotateHz": ${Number((((profile.variant % 2 === 0 ? 1 : -1) * (0.01 + Math.min(0.05, scale * 0.012)))).toFixed(3))},
+    "danceHz": ${Number((0.05 + Math.min(0.08, density * 0.01)).toFixed(3))},
+    "danceAmpPx": ${Math.round(18 + scale * 12)},
+    "style": "${profile.variant % 3 === 0 ? "triangle" : "line"}",
+    "patternMode": "${["grouped", "alternate", "triple", "unison"][profile.variant % 4]}",
+    "colorMode": "${["palette", "gradient", "pattern", "dark"][profile.variant % 4]}",
+    "signalSource": "auto"
+  }
+}`;
+  }
+  if (labPrimitive === "frame.arcLattice") {
+    return `{
+  "id": "lab-arc-lattice",
+  "type": "frame.arcLattice",
+  "params": {
+    "ringCount": ${Math.max(2, Math.min(4, Math.round(2 + density * 0.45)))},
+    "radiusPx": ${Math.round(160 + scale * 120)},
+    "gapPx": ${Math.round(26 + scale * 22)},
+    "segmentsPerRing": ${Math.max(6, Math.min(18, Math.round(8 + density * 2.2)))},
+    "spokeDensity": ${Number((0.2 + Math.min(0.38, density * 0.06)).toFixed(2))},
+    "arcCoverage": ${Number((0.42 + Math.min(0.36, density * 0.06)).toFixed(2))},
+    "lineWidthPx": ${Number((1.2 + Math.min(1.7, density * 0.18)).toFixed(2))},
+    "alpha": ${Number((0.22 + Math.min(0.18, density * 0.04)).toFixed(2))},
+    "rotateHz": ${Number((0.008 + Math.min(0.03, scale * 0.008)).toFixed(3))},
+    "spokeWidthMul": ${Number((0.94 + Math.min(0.3, density * 0.04)).toFixed(2))},
+    "spokeAlphaMul": ${Number((1.12 + Math.min(0.28, density * 0.04)).toFixed(2))},
+    "ratchetSnap": ${Number((0.76 + Math.min(0.18, density * 0.03)).toFixed(2))},
+    "endpointBridgeBias": ${Number((0.7 + Math.min(0.2, density * 0.03)).toFixed(2))},
+    "lockFlashGain": ${Number((0.26 + Math.min(0.18, density * 0.03)).toFixed(2))},
+    "motionMode": "${["mesh", "ratchet", "driftLock"][profile.variant % 3]}",
+    "symmetryMode": "${["mirror", "repeat", "offset"][profile.variant % 3]}",
+    "colorMode": "${["palette", "accent", "gradient", "dark"][profile.variant % 4]}",
+    "signalSource": "auto"
   }
 }`;
   }
@@ -3172,6 +3470,7 @@ function hudGraphModeLines(
   if (viewerMode === "player") {
     lines.push(`playerSource: ${playerSceneChoice?.source ?? "-"}`);
     lines.push(`playerVariant: ${playerVariantIndex}`);
+    lines.push(`playerScene: ${playerSceneChoice?.sceneIndex ?? "-"} bg:${playerSceneChoice?.backgroundIndex ?? "-"} 2bar:${playerSceneChoice?.cycleEvery2Bars ? "on" : "off"} b3:${playerSceneChoice?.beat3Accent ? "*" : "-"}`);
     lines.push(`playerTransition: ${playerLastTransitionLabel}`);
     lines.push(`nextSection: ${nextSectionId || "-"} in ${Number.isFinite(nextSectionInMs) ? `${nextSectionInMs}ms` : "-"}`);
   }
@@ -4044,6 +4343,9 @@ function graphTemplateLibrary(baseRecipe: any) {
           opacity: 1,
           nodes: [
             { id: "pulse", type: "shape.circlePulse", params: { ringCount: 8, radiusPx: 88, alpha: 0.18 } },
+            { id: "halo", type: "frame.haloArcs", params: { arcCount: 8, ringCount: 2, radiusPx: 178, gapPx: 28, arcSpanMin: 0.24, arcSpanMax: 0.58, lineWidthPx: 1.8, alpha: 0.28, rotateHz: 0.015, pulseGain: 0.16, wobble: 0.05, colorMode: "accent", signalSource: "auto" } },
+            { id: "ticks", type: "frame.orbitTicks", params: { count: 15, ringCount: 1, radiusPx: 246, gapPx: 30, tickLenPx: 44, lineWidthPx: 1.5, alpha: 0.22, rotateHz: -0.014, danceHz: 0.08, danceAmpPx: 20, style: "line", patternMode: "alternate", colorMode: "gradient", signalSource: "auto" } },
+            { id: "lattice", type: "frame.arcLattice", params: { ringCount: 3, radiusPx: 214, gapPx: 28, segmentsPerRing: 10, spokeDensity: 0.34, arcCoverage: 0.58, lineWidthPx: 1.25, alpha: 0.18, rotateHz: 0.014, motionMode: "driftLock", symmetryMode: "mirror", colorMode: "accent", signalSource: "auto" } },
             { id: "ribbon", type: "polyline.orbitRibbon", params: { points: 60, radiusPx: 170, thicknessPx: 1.7, phaseHz: 0.08 } },
             { id: "rose", type: "curve.rosetteSpiral", params: { mode: "hybrid", steps: 860, turns: 11, growth: 3.2, petalCount: 7, petalAmp: 20, spin: 0.14, skip: 2, alpha: 0.5, lineWidth: 1.1 } }
           ]
@@ -4104,6 +4406,9 @@ function graphTemplateLibrary(baseRecipe: any) {
           blend: "screen",
           opacity: 1,
           nodes: [
+            { id: "halo", type: "frame.haloArcs", params: { arcCount: 7, ringCount: 2, radiusPx: 168, gapPx: 24, arcSpanMin: 0.2, arcSpanMax: 0.48, lineWidthPx: 1.6, alpha: 0.24, rotateHz: 0.012, pulseGain: 0.14, wobble: 0.04, colorMode: "palette", signalSource: "auto" } },
+            { id: "ticks", type: "frame.orbitTicks", params: { count: 12, ringCount: 1, radiusPx: 244, gapPx: 28, tickLenPx: 40, lineWidthPx: 1.35, alpha: 0.18, rotateHz: 0.01, danceHz: 0.06, danceAmpPx: 16, style: "triangle", patternMode: "triple", colorMode: "dark", signalSource: "auto" } },
+            { id: "lattice", type: "frame.arcLattice", params: { ringCount: 3, radiusPx: 220, gapPx: 26, segmentsPerRing: 12, spokeDensity: 0.28, arcCoverage: 0.54, lineWidthPx: 1.15, alpha: 0.16, rotateHz: 0.012, motionMode: "mesh", symmetryMode: "repeat", colorMode: "dark", signalSource: "auto" } },
             { id: "rings", type: "viz.responsiveRings", params: { signalSource: "auto", ringCount: 6, points: 124, baseRadiusPx: 56, gapPx: 28, alpha: 0.44, lineWidth: 1.2, warp: 0.86, rotateHz: 0.03 } },
             { id: "bars", type: "viz.spectrumBars", params: { signalSource: "auto", barCount: 32, marginPx: 26, topRel: 0.41, bottomPadPx: 12, gapPx: 5, alpha: 0.4, smooth: 0.1, bandSmoothing: 0.08, spectralTilt: 0.2, edgeTaper: 0.16, responseSpan: 0.75 } }
           ]
@@ -4136,6 +4441,9 @@ function graphTemplateLibrary(baseRecipe: any) {
           opacity: 1,
           nodes: [
             { id: "pulse", type: "shape.circlePulse", params: { ringCount: 6, radiusPx: 76, alpha: 0.14 } },
+            { id: "halo", type: "frame.haloArcs", params: { arcCount: 9, ringCount: 2, radiusPx: 186, gapPx: 30, arcSpanMin: 0.26, arcSpanMax: 0.62, lineWidthPx: 1.9, alpha: 0.3, rotateHz: 0.014, pulseGain: 0.18, wobble: 0.05, colorMode: "accent", signalSource: "auto" } },
+            { id: "ticks", type: "frame.orbitTicks", params: { count: 18, ringCount: 1, radiusPx: 270, gapPx: 30, tickLenPx: 46, lineWidthPx: 1.45, alpha: 0.16, rotateHz: -0.012, danceHz: 0.07, danceAmpPx: 18, style: "line", patternMode: "grouped", colorMode: "pattern", signalSource: "auto" } },
+            { id: "lattice", type: "frame.arcLattice", params: { ringCount: 4, radiusPx: 236, gapPx: 24, segmentsPerRing: 9, spokeDensity: 0.36, arcCoverage: 0.6, lineWidthPx: 1.2, alpha: 0.18, rotateHz: 0.01, motionMode: "ratchet", symmetryMode: "mirror", colorMode: "gradient", signalSource: "auto" } },
             { id: "rose", type: "curve.rosetteSpiral", params: { mode: "rosette", steps: 980, turns: 13, growth: 2.8, petalCount: 8, petalAmp: 24, spin: 0.11, skip: 1, alpha: 0.62, lineWidth: 1.25 } }
           ]
         }
@@ -4145,18 +4453,20 @@ function graphTemplateLibrary(baseRecipe: any) {
   return templates;
 }
 
-function resolveGraphSelection(baseRecipe: any, sectionId: string, options?: { allowManual?: boolean; variantOverride?: number }) {
+function resolveGraphSelection(baseRecipe: any, sectionId: string, options?: { allowManual?: boolean; variantOverride?: number; selectedIndexOverride?: number }) {
   const allowManual = options?.allowManual !== false;
   const templates = graphTemplateLibrary(baseRecipe);
   const safeTemplates = templates.length ? templates : [{ id: "fallback", name: "Fallback", layers: [] }];
   const secId = String(sectionId || "");
   const autoIndex = (hashStringToSeed(`graph:auto:${seed}:${secId}`) >>> 0) % safeTemplates.length;
-  let selectedIndex = autoIndex;
+  let selectedIndex = Number.isFinite(Number(options?.selectedIndexOverride))
+    ? Math.max(0, Math.floor(Number(options?.selectedIndexOverride)))
+    : autoIndex;
   let isManual = false;
-  if (allowManual && graphAutoRefresh && graphManualRecipe) {
+  if (!Number.isFinite(Number(options?.selectedIndexOverride)) && allowManual && graphAutoRefresh && graphManualRecipe) {
     selectedIndex = graphManualRecipe.index;
     isManual = true;
-  } else if (allowManual && graphManualRecipe && graphManualRecipe.sectionId === secId) {
+  } else if (!Number.isFinite(Number(options?.selectedIndexOverride)) && allowManual && graphManualRecipe && graphManualRecipe.sectionId === secId) {
     selectedIndex = graphManualRecipe.index;
     isManual = true;
   }
@@ -4174,7 +4484,7 @@ function resolveGraphSelection(baseRecipe: any, sectionId: string, options?: { a
   };
 }
 
-function graphLayersForSection(baseRecipe: any, sectionId: string, options?: { allowManual?: boolean; variantOverride?: number }) {
+function graphLayersForSection(baseRecipe: any, sectionId: string, options?: { allowManual?: boolean; variantOverride?: number; selectedIndexOverride?: number }) {
   const sel = resolveGraphSelection(baseRecipe, sectionId, options);
   const secTag = (hashStringToSeed(`graph:sec:${sectionId}`) >>> 0).toString(16).slice(0, 6);
   const vTag = `v${Math.max(0, sel.variant)}`;
@@ -4194,25 +4504,35 @@ function graphLayersForSection(baseRecipe: any, sectionId: string, options?: { a
   };
 }
 
-function randomSceneLayersForSection(sectionId: string, options?: { allowManual?: boolean; variantOverride?: number }) {
+const RANDOM_SCENE_COUNT = 1024;
+
+function randomSceneLayersForSection(sectionId: string, options?: { allowManual?: boolean; variantOverride?: number; selectedIndexOverride?: number; backgroundIndexOverride?: number }) {
   const allowManual = options?.allowManual !== false;
   const secId = String(sectionId || "");
   const sectionType = classifySection(secId || "");
-  const sceneCount = 1024;
+  const sceneCount = RANDOM_SCENE_COUNT;
   const autoIndex = (hashStringToSeed(`random-scene:auto:${seed}:${secId}`) >>> 0) % sceneCount;
-  let selectedIndex = autoIndex;
+  let selectedIndex = Number.isFinite(Number(options?.selectedIndexOverride))
+    ? Math.max(0, Math.floor(Number(options?.selectedIndexOverride)))
+    : autoIndex;
   let isManual = false;
-  if (allowManual && graphAutoRefresh && graphManualRecipe) {
+  if (!Number.isFinite(Number(options?.selectedIndexOverride)) && allowManual && graphAutoRefresh && graphManualRecipe) {
     selectedIndex = graphManualRecipe.index;
     isManual = true;
-  } else if (allowManual && graphManualRecipe && graphManualRecipe.sectionId === secId) {
+  } else if (!Number.isFinite(Number(options?.selectedIndexOverride)) && allowManual && graphManualRecipe && graphManualRecipe.sectionId === secId) {
     selectedIndex = graphManualRecipe.index;
     isManual = true;
   }
   selectedIndex = ((selectedIndex % sceneCount) + sceneCount) % sceneCount;
+  let backgroundIndex = Number.isFinite(Number(options?.backgroundIndexOverride))
+    ? Math.max(0, Math.floor(Number(options?.backgroundIndexOverride)))
+    : selectedIndex;
+  backgroundIndex = ((backgroundIndex % sceneCount) + sceneCount) % sceneCount;
   const variant = Number.isFinite(Number(options?.variantOverride))
     ? Math.max(0, Number(options?.variantOverride))
     : currentGraphVariantForSection(secId);
+  const bgLayoutRng = mulberry32(hashStringToSeed(`random-scene:bg-layout:${seed}:${secId}:${backgroundIndex}`) >>> 0);
+  const bgParamRng = mulberry32(hashStringToSeed(`random-scene:bg-param:${seed}:${secId}:${backgroundIndex}`) >>> 0);
   const layoutRng = mulberry32(hashStringToSeed(`random-scene:layout:${seed}:${secId}:${selectedIndex}`) >>> 0);
   const paramRng = mulberry32(hashStringToSeed(`random-scene:param:${seed}:${secId}:${selectedIndex}:v${variant}`) >>> 0);
   const pickWeighted = (items: Array<{ value: string; w: number }>) => {
@@ -4269,14 +4589,14 @@ function randomSceneLayersForSection(sectionId: string, options?: { allowManual?
     { value: "backing", w: 1 }
   ]);
 
-  const bgPick = Math.floor(layoutRng() * 5);
+  const bgPick = Math.floor(bgLayoutRng() * 5);
   const bgLayer = (() => {
     if (bgPick === 0) {
       return {
         id: "bg-black",
         blend: "source-over",
         opacity: 1,
-        nodes: [{ id: "bg-black", type: "bg.solid", params: { color: "#000000" } }]
+        nodes: [{ id: "bg-black", type: "bg.solid", params: { color: "#000000", toneHint: "dark" } }]
       };
     }
     if (bgPick === 1) {
@@ -4284,7 +4604,7 @@ function randomSceneLayersForSection(sectionId: string, options?: { allowManual?
         id: "bg-gradient",
         blend: "source-over",
         opacity: 1,
-        nodes: [{ id: "bg-gradient", type: "bg.gradientField", params: { gradientStops: 3 + Math.floor(paramRng() * 3), driftSpeed: 0.008 + paramRng() * 0.016, noiseScale: 0.3 + paramRng() * 0.45, soften: 0.9 + paramRng() * 0.08 } }]
+        nodes: [{ id: "bg-gradient", type: "bg.gradientField", params: { gradientStops: 3 + Math.floor(bgParamRng() * 3), driftSpeed: 0.008 + bgParamRng() * 0.016, noiseScale: 0.3 + bgParamRng() * 0.45, soften: 0.9 + bgParamRng() * 0.08, toneHint: "light", toneLight: 0.7 } }]
       };
     }
     if (bgPick === 2) {
@@ -4292,7 +4612,7 @@ function randomSceneLayersForSection(sectionId: string, options?: { allowManual?
         id: "bg-vignette",
         blend: "source-over",
         opacity: 1,
-        nodes: [{ id: "bg-vignette", type: "bg.vignette", params: { inner: 0.14 + paramRng() * 0.08, outer: 0.7 + paramRng() * 0.2, tintA: "#102338", tintB: "#000000" } }]
+        nodes: [{ id: "bg-vignette", type: "bg.vignette", params: { inner: 0.14 + bgParamRng() * 0.08, outer: 0.7 + bgParamRng() * 0.2, tintA: "#102338", tintB: "#000000", toneHint: "dark" } }]
       };
     }
     if (bgPick === 3) {
@@ -4300,59 +4620,130 @@ function randomSceneLayersForSection(sectionId: string, options?: { allowManual?
         id: "bg-radial",
         blend: "source-over",
         opacity: 1,
-        nodes: [{ id: "bg-radial", type: "bg.radialGradientDrift", params: { drift: 0.08 + paramRng() * 0.12 } }]
+        nodes: [{ id: "bg-radial", type: "bg.radialGradientDrift", params: { drift: 0.08 + bgParamRng() * 0.12, toneHint: "light", toneLight: 0.64 } }]
       };
     }
     return {
       id: "bg-bands",
       blend: "source-over",
       opacity: 1,
-      nodes: [{ id: "bg-bands", type: "bg.bands", params: { count: 8 + Math.floor(paramRng() * 10), opacity: 0.07 + paramRng() * 0.12 } }]
+      nodes: [{ id: "bg-bands", type: "bg.bands", params: { count: 8 + Math.floor(bgParamRng() * 10), opacity: 0.07 + bgParamRng() * 0.12, toneHint: "mid" } }]
     };
   })();
   const bgLayer2 = (() => {
-    if (layoutRng() >= 0.32) return null;
-    const pick = Math.floor(layoutRng() * 2);
+    if (bgLayoutRng() >= 0.32) return null;
+    const pick = Math.floor(bgLayoutRng() * 2);
     if (pick === 0) {
       return {
         id: "bg2-gradient",
         blend: "screen",
-        opacity: 0.38 + paramRng() * 0.28,
-        nodes: [{ id: "bg2-gradient", type: "bg.gradientField", params: { gradientStops: 3 + Math.floor(paramRng() * 2), driftSpeed: 0.006 + paramRng() * 0.01, noiseScale: 0.3 + paramRng() * 0.35, soften: 0.92 + paramRng() * 0.06 } }]
+        opacity: 0.38 + bgParamRng() * 0.28,
+        nodes: [{ id: "bg2-gradient", type: "bg.gradientField", params: { gradientStops: 3 + Math.floor(bgParamRng() * 2), driftSpeed: 0.006 + bgParamRng() * 0.01, noiseScale: 0.3 + bgParamRng() * 0.35, soften: 0.92 + bgParamRng() * 0.06, toneHint: "light", toneLight: 0.68 } }]
       };
     }
     return {
       id: "bg2-bands",
       blend: "screen",
-      opacity: 0.3 + paramRng() * 0.3,
-      nodes: [{ id: "bg2-bands", type: "bg.bands", params: { count: 8 + Math.floor(paramRng() * 8), opacity: 0.05 + paramRng() * 0.1 } }]
+      opacity: 0.3 + bgParamRng() * 0.3,
+      nodes: [{ id: "bg2-bands", type: "bg.bands", params: { count: 8 + Math.floor(bgParamRng() * 8), opacity: 0.05 + bgParamRng() * 0.1, toneHint: "mid" } }]
     };
   })();
+  const backdropTone = graphBackdropToneFromLayer(bgLayer);
+  const styleRng = mulberry32(hashStringToSeed(`random-scene:style:${seed}:${secId}:${selectedIndex}:v${variant}:bg${backgroundIndex}`) >>> 0);
 
-  const fgPool = [
-    { id: "particles", type: "fg.particles", params: { count: 90 + Math.floor(paramRng() * 130), sizeRange: [1.2 + paramRng() * 1.1, 2.6 + paramRng() * 2.4], speed: 0.25 + paramRng() * 0.55, curl: 0.35 + paramRng() * 0.85, opacity: 0.48 + paramRng() * 0.35, signalSource: particleSignalSource, splitVocalsRatio: 0.2 + paramRng() * 0.45 } },
-    { id: "signal-noise", type: "field.signalNoiseBlend", params: { pointCount: 120 + Math.floor(paramRng() * 160), lineCount: 10 + Math.floor(paramRng() * 24), noiseOpacity: 0.12 + paramRng() * 0.22, lineOpacity: 0.1 + paramRng() * 0.2, driftPx: 8 + Math.floor(paramRng() * 20), zipChance: 0.08 + paramRng() * 0.25, zipSpeedPx: 520 + Math.floor(paramRng() * 760) } },
-    { id: "persistent-offset", type: "glitch.persistentOffset", params: { bandCount: 8 + Math.floor(paramRng() * 16), maxShiftPx: 3 + Math.floor(paramRng() * 10), alpha: 0.08 + paramRng() * 0.2, pulseGain: 0.2 + paramRng() * 0.45 } },
-    { id: "wave-strip", type: "viz.waveStrip", params: { stripMode: ["auto", "single", "dual"][Math.floor(paramRng() * 3)], signalSource: "auto", heightPx: 46 + Math.floor(paramRng() * 58), lineCopies: 2 + Math.floor(paramRng() * 4), lineWidth: 0.9 + paramRng() * 1.4, alphaMul: 0.25 + paramRng() * 0.24, centerY: 0.21 + paramRng() * 0.08, dualGapPx: 20 + Math.floor(paramRng() * 38), mirrored: true, smooth: 0.3 + paramRng() * 0.45, zoom: 0.8 + paramRng() * 0.85 } },
-    { id: "spectrum-bars", type: "viz.spectrumBars", params: { signalSource: "auto", barCount: 16 + Math.floor(paramRng() * 30), marginPx: 14 + Math.floor(paramRng() * 26), topRel: 0.3 + paramRng() * 0.24, bottomPadPx: 8 + Math.floor(paramRng() * 18), gapPx: 2 + Math.floor(paramRng() * 4), alpha: 0.3 + paramRng() * 0.18, smooth: 0.04 + paramRng() * 0.18, bandSmoothing: 0.03 + paramRng() * 0.14, spectralTilt: 0.08 + paramRng() * 0.24, edgeTaper: 0.08 + paramRng() * 0.16, responseSpan: 0.75 } },
-    { id: "responsive-rings", type: "viz.responsiveRings", params: { signalSource: "auto", ringCount: 4 + Math.floor(paramRng() * 7), points: 84 + Math.floor(paramRng() * 90), baseRadiusPx: 32 + Math.floor(paramRng() * 56), gapPx: 14 + Math.floor(paramRng() * 24), alpha: 0.26 + paramRng() * 0.26, lineWidth: 0.75 + paramRng() * 1.15, warp: 0.45 + paramRng() * 1.2, rotateHz: (paramRng() < 0.5 ? -1 : 1) * (0.01 + paramRng() * 0.08) } },
-    { id: "pressure-bloom", type: "energy.pressureBloom", params: { bloomCount: 5 + Math.floor(paramRng() * 7), baseRadiusPx: 22 + Math.floor(paramRng() * 36), maxRadiusPx: 100 + Math.floor(paramRng() * 180), alpha: 0.17 + paramRng() * 0.28, ringWidth: 1.4 + paramRng() * 2.4 } },
-    { id: "constellation", type: "fg.constellationLinks", params: { count: 16 + Math.floor(paramRng() * 30), linkDistPx: 72 + Math.floor(paramRng() * 120), dotRadiusPx: 0.8 + paramRng() * 1.8, lineWidthPx: 0.5 + paramRng() * 1.1 } },
-    { id: "shock-rings", type: "fg.shockRings", params: { ringCount: 4 + Math.floor(paramRng() * 8), speedHz: 0.22 + paramRng() * 0.4, spreadPx: 150 + Math.floor(paramRng() * 420), thicknessPx: 0.8 + paramRng() * 1.8 } },
-    { id: "pulse", type: "shape.circlePulse", params: { ringCount: 5 + Math.floor(paramRng() * 8), radiusPx: 70 + Math.floor(paramRng() * 70), alpha: 0.14 + paramRng() * 0.2 } },
-    { id: "ribbon", type: "polyline.orbitRibbon", params: { points: 44 + Math.floor(paramRng() * 80), radiusPx: 130 + Math.floor(paramRng() * 90), thicknessPx: 1 + paramRng() * 2.3, phaseHz: 0.04 + paramRng() * 0.1, animationMode: ribbonAnim, motionProfile: ribbonProfile, signalSource: ribbonSignalSource } },
-    { id: "rosette", type: "curve.rosetteSpiral", params: { mode: ["rosette", "hybrid", "star"][Math.floor(paramRng() * 3)], steps: 520 + Math.floor(paramRng() * 900), turns: 7 + paramRng() * 10, growth: 2 + paramRng() * 2.2, petalCount: 4 + Math.floor(paramRng() * 6), petalAmp: 12 + Math.floor(paramRng() * 20), spin: 0.08 + paramRng() * 0.12, skip: 1 + Math.floor(paramRng() * 3), alpha: 0.4 + paramRng() * 0.4, lineWidth: 0.7 + paramRng() * 1.2, color: paramRng() < 0.2 ? "black" : "palette", animationMode: rosetteAnim, motionProfile: rosetteProfile, signalSource: rosetteSignalSource } }
+  const buildNode = (id: string, type: string, params: Record<string, any>) => ({ id, type, params });
+  const texturePool = [
+    buildNode("particles", "fg.particles", { count: 90 + Math.floor(paramRng() * 130), sizeRange: [1.2 + paramRng() * 1.1, 2.6 + paramRng() * 2.4], speed: 0.25 + paramRng() * 0.55, curl: 0.35 + paramRng() * 0.85, opacity: 0.34 + paramRng() * 0.24, signalSource: particleSignalSource, splitVocalsRatio: 0.2 + paramRng() * 0.45 }),
+    buildNode("signal-noise", "field.signalNoiseBlend", { pointCount: 120 + Math.floor(paramRng() * 160), lineCount: 10 + Math.floor(paramRng() * 24), noiseOpacity: 0.08 + paramRng() * 0.16, lineOpacity: 0.08 + paramRng() * 0.12, driftPx: 8 + Math.floor(paramRng() * 20), zipChance: 0.08 + paramRng() * 0.2, zipSpeedPx: 520 + Math.floor(paramRng() * 760) }),
+    buildNode("persistent-offset", "glitch.persistentOffset", { bandCount: 8 + Math.floor(paramRng() * 16), maxShiftPx: 3 + Math.floor(paramRng() * 10), alpha: 0.06 + paramRng() * 0.14, pulseGain: 0.2 + paramRng() * 0.4 }),
+    buildNode("constellation", "fg.constellationLinks", { count: 16 + Math.floor(paramRng() * 30), linkDistPx: 72 + Math.floor(paramRng() * 120), dotRadiusPx: 0.8 + paramRng() * 1.8, lineWidthPx: 0.5 + paramRng() * 1.1 })
   ];
-  const fgCount = 1 + Math.floor(layoutRng() * 3);
-  const fgNodes: any[] = [];
-  const used = new Set<number>();
-  while (fgNodes.length < fgCount && used.size < fgPool.length) {
-    const idx = Math.floor(layoutRng() * fgPool.length);
-    if (used.has(idx)) continue;
-    used.add(idx);
-    fgNodes.push(cloneRecipe(fgPool[idx]));
+  const heroPool = [
+    applySharedGraphColorStyle(buildNode("wave-strip", "viz.waveStrip", { stripMode: ["auto", "single", "dual"][Math.floor(paramRng() * 3)], signalSource: "auto", heightPx: 46 + Math.floor(paramRng() * 58), lineCopies: 2 + Math.floor(paramRng() * 4), lineWidth: 0.9 + paramRng() * 1.4, alphaMul: 0.25 + paramRng() * 0.24, centerY: 0.21 + paramRng() * 0.08, dualGapPx: 20 + Math.floor(paramRng() * 38), mirrored: true, smooth: 0.3 + paramRng() * 0.45, zoom: 0.8 + paramRng() * 0.85 }), backdropTone, styleRng, "hero"),
+    applySharedGraphColorStyle(buildNode("spectrum-bars", "viz.spectrumBars", { signalSource: "auto", barCount: 16 + Math.floor(paramRng() * 30), marginPx: 14 + Math.floor(paramRng() * 26), topRel: 0.3 + paramRng() * 0.24, bottomPadPx: 8 + Math.floor(paramRng() * 18), gapPx: 2 + Math.floor(paramRng() * 4), alpha: 0.3 + paramRng() * 0.18, smooth: 0.04 + paramRng() * 0.18, bandSmoothing: 0.03 + paramRng() * 0.14, spectralTilt: 0.08 + paramRng() * 0.24, edgeTaper: 0.08 + paramRng() * 0.16, responseSpan: 0.75 }), backdropTone, styleRng, "hero"),
+    applySharedGraphColorStyle(buildNode("responsive-rings", "viz.responsiveRings", { signalSource: "auto", ringCount: 4 + Math.floor(paramRng() * 7), points: 84 + Math.floor(paramRng() * 90), baseRadiusPx: 32 + Math.floor(paramRng() * 56), gapPx: 14 + Math.floor(paramRng() * 24), alpha: 0.26 + paramRng() * 0.22, lineWidth: 0.75 + paramRng() * 1.15, warp: 0.45 + paramRng() * 1.2, rotateHz: (paramRng() < 0.5 ? -1 : 1) * (0.01 + paramRng() * 0.08) }), backdropTone, styleRng, "hero"),
+    buildNode("pressure-bloom", "energy.pressureBloom", { bloomCount: 5 + Math.floor(paramRng() * 7), baseRadiusPx: 22 + Math.floor(paramRng() * 36), maxRadiusPx: 100 + Math.floor(paramRng() * 180), alpha: 0.17 + paramRng() * 0.24, ringWidth: 1.4 + paramRng() * 2.4 }),
+    applySharedGraphColorStyle(buildNode("pulse", "shape.circlePulse", { ringCount: 5 + Math.floor(paramRng() * 8), radiusPx: 70 + Math.floor(paramRng() * 70), alpha: 0.14 + paramRng() * 0.18 }), backdropTone, styleRng, "hero"),
+    applySharedGraphColorStyle(buildNode("ribbon", "polyline.orbitRibbon", { points: 44 + Math.floor(paramRng() * 80), radiusPx: 130 + Math.floor(paramRng() * 90), thicknessPx: 1 + paramRng() * 2.3, phaseHz: 0.04 + paramRng() * 0.1, animationMode: ribbonAnim, motionProfile: ribbonProfile, signalSource: ribbonSignalSource }), backdropTone, styleRng, "hero"),
+    applySharedGraphColorStyle(buildNode("rosette", "curve.rosetteSpiral", { mode: ["rosette", "hybrid", "star"][Math.floor(paramRng() * 3)], steps: 520 + Math.floor(paramRng() * 900), turns: 7 + paramRng() * 10, growth: 2 + paramRng() * 2.2, petalCount: 4 + Math.floor(paramRng() * 6), petalAmp: 12 + Math.floor(paramRng() * 20), spin: 0.08 + paramRng() * 0.12, skip: 1 + Math.floor(paramRng() * 3), alpha: 0.4 + paramRng() * 0.32, lineWidth: 0.7 + paramRng() * 1.2, animationMode: rosetteAnim, motionProfile: rosetteProfile, signalSource: rosetteSignalSource }), backdropTone, styleRng, "hero")
+  ];
+  const wrapperPool = [
+    applySharedGraphColorStyle(buildNode("wrap-rings", "viz.responsiveRings", { signalSource: "auto", ringCount: 3 + Math.floor(paramRng() * 4), points: 92 + Math.floor(paramRng() * 60), baseRadiusPx: 86 + Math.floor(paramRng() * 70), gapPx: 18 + Math.floor(paramRng() * 26), alpha: 0.18 + paramRng() * 0.14, lineWidth: 0.7 + paramRng() * 0.8, warp: 0.3 + paramRng() * 0.8, rotateHz: (paramRng() < 0.5 ? -1 : 1) * (0.008 + paramRng() * 0.04) }), backdropTone, styleRng, "wrapper"),
+    applySharedGraphColorStyle(buildNode("wrap-halo", "frame.haloArcs", { arcCount: 5 + Math.floor(paramRng() * 6), ringCount: 1 + Math.floor(paramRng() * 2), radiusPx: 156 + Math.floor(paramRng() * 120), gapPx: 22 + Math.floor(paramRng() * 22), arcSpanMin: 0.2 + paramRng() * 0.12, arcSpanMax: 0.44 + paramRng() * 0.24, lineWidthPx: 1.4 + paramRng() * 1.3, alpha: 0.22 + paramRng() * 0.14, rotateHz: (paramRng() < 0.5 ? -1 : 1) * (0.008 + paramRng() * 0.028), pulseGain: 0.12 + paramRng() * 0.12, wobble: 0.03 + paramRng() * 0.05, signalSource: "auto" }), backdropTone, styleRng, "wrapper"),
+    applySharedGraphColorStyle(buildNode("wrap-ticks", "frame.orbitTicks", { count: 7 + Math.floor(paramRng() * 17), ringCount: 1 + Math.floor(paramRng() * 2), radiusPx: 190 + Math.floor(paramRng() * 150), gapPx: 28 + Math.floor(paramRng() * 24), tickLenPx: 34 + Math.floor(paramRng() * 26), lineWidthPx: 1.45 + paramRng() * 2.1, alpha: 0.32 + paramRng() * 0.18, rotateHz: (paramRng() < 0.5 ? -1 : 1) * (0.008 + paramRng() * 0.038), danceHz: 0.05 + paramRng() * 0.08, danceAmpPx: 16 + Math.floor(paramRng() * 18), style: paramRng() < 0.34 ? "triangle" : "line", patternMode: ["grouped", "alternate", "triple", "unison"][Math.floor(paramRng() * 4)], signalSource: "auto" }), backdropTone, styleRng, "wrapper"),
+    applySharedGraphColorStyle(buildNode("wrap-lattice", "frame.arcLattice", { ringCount: 2 + Math.floor(paramRng() * 2), radiusPx: 176 + Math.floor(paramRng() * 120), gapPx: 28 + Math.floor(paramRng() * 20), segmentsPerRing: 8 + Math.floor(paramRng() * 8), spokeDensity: 0.22 + paramRng() * 0.34, arcCoverage: 0.42 + paramRng() * 0.28, lineWidthPx: 1.2 + paramRng() * 1.3, alpha: 0.2 + paramRng() * 0.14, rotateHz: 0.008 + paramRng() * 0.02, spokeWidthMul: 0.92 + paramRng() * 0.26, spokeAlphaMul: 1.06 + paramRng() * 0.3, ratchetSnap: 0.72 + paramRng() * 0.22, endpointBridgeBias: 0.68 + paramRng() * 0.24, lockFlashGain: 0.24 + paramRng() * 0.18, motionMode: ["mesh", "ratchet", "driftLock"][Math.floor(paramRng() * 3)], symmetryMode: ["mirror", "repeat", "offset"][Math.floor(paramRng() * 3)], signalSource: "auto" }), backdropTone, styleRng, "wrapper"),
+    applySharedGraphColorStyle(buildNode("wrap-ribbon", "polyline.orbitRibbon", { points: 56 + Math.floor(paramRng() * 42), radiusPx: 180 + Math.floor(paramRng() * 90), thicknessPx: 0.8 + paramRng() * 1.2, phaseHz: 0.03 + paramRng() * 0.05, animationMode: ribbonAnim, motionProfile: ribbonProfile, signalSource: ribbonSignalSource }), backdropTone, styleRng, "wrapper"),
+    buildNode("wrap-constellation", "fg.constellationLinks", { count: 20 + Math.floor(paramRng() * 24), linkDistPx: 90 + Math.floor(paramRng() * 140), dotRadiusPx: 0.8 + paramRng() * 1.2, lineWidthPx: 0.45 + paramRng() * 0.9 }),
+    buildNode("wrap-shock", "fg.shockRings", { ringCount: 3 + Math.floor(paramRng() * 6), speedHz: 0.18 + paramRng() * 0.24, spreadPx: 180 + Math.floor(paramRng() * 360), thicknessPx: 0.8 + paramRng() * 1.4 }),
+    applySharedGraphColorStyle(buildNode("wrap-pulse", "shape.circlePulse", { ringCount: 4 + Math.floor(paramRng() * 5), radiusPx: 110 + Math.floor(paramRng() * 90), alpha: 0.1 + paramRng() * 0.1 }), backdropTone, styleRng, "wrapper")
+  ];
+  const accentPool = [
+    buildNode("accent-offset", "glitch.persistentOffset", { bandCount: 8 + Math.floor(paramRng() * 12), maxShiftPx: 3 + Math.floor(paramRng() * 7), alpha: 0.06 + paramRng() * 0.08, pulseGain: 0.18 + paramRng() * 0.28 }),
+    buildNode("accent-shock", "fg.shockRings", { ringCount: 4 + Math.floor(paramRng() * 5), speedHz: 0.22 + paramRng() * 0.28, spreadPx: 170 + Math.floor(paramRng() * 280), thicknessPx: 0.9 + paramRng() * 1.2 }),
+    buildNode("accent-pressure", "energy.pressureBloom", { bloomCount: 4 + Math.floor(paramRng() * 5), baseRadiusPx: 28 + Math.floor(paramRng() * 26), maxRadiusPx: 120 + Math.floor(paramRng() * 120), alpha: 0.12 + paramRng() * 0.14, ringWidth: 1.2 + paramRng() * 1.8 })
+  ];
+  const pickNode = (pool: any[], items: Array<{ value: string; w: number }>) => {
+    const pickedId = pickWeighted(items);
+    const hit = pool.find((node: any) => String(node.id) === pickedId);
+    return cloneRecipe(hit ?? pool[0]);
+  };
+  const heroChoice = (() => {
+    if (sectionType === "intro") return pickNode(heroPool, [
+      { value: "rosette", w: 3 }, { value: "ribbon", w: 3 }, { value: "responsive-rings", w: 2 }, { value: "wave-strip", w: 1 }, { value: "pulse", w: 1 }
+    ]);
+    if (sectionType === "verse") return pickNode(heroPool, [
+      { value: "ribbon", w: 3 }, { value: "rosette", w: 3 }, { value: "wave-strip", w: 2 }, { value: "responsive-rings", w: 2 }, { value: "pulse", w: 1 }, { value: "spectrum-bars", w: 1 }
+    ]);
+    if (sectionType === "chorus") return pickNode(heroPool, [
+      { value: "responsive-rings", w: 3 }, { value: "pressure-bloom", w: 3 }, { value: "spectrum-bars", w: 2 }, { value: "wave-strip", w: 2 }, { value: "rosette", w: 2 }, { value: "ribbon", w: 1 }
+    ]);
+    if (sectionType === "bridge") return pickNode(heroPool, [
+      { value: "rosette", w: 4 }, { value: "pressure-bloom", w: 2 }, { value: "ribbon", w: 2 }, { value: "responsive-rings", w: 1 }, { value: "wave-strip", w: 1 }
+    ]);
+    if (sectionType === "outro") return pickNode(heroPool, [
+      { value: "rosette", w: 3 }, { value: "pulse", w: 3 }, { value: "wave-strip", w: 2 }, { value: "responsive-rings", w: 2 }
+    ]);
+    return pickNode(heroPool, [
+      { value: "ribbon", w: 3 }, { value: "rosette", w: 3 }, { value: "responsive-rings", w: 2 }, { value: "wave-strip", w: 2 }, { value: "pressure-bloom", w: 2 }, { value: "spectrum-bars", w: 1 }
+    ]);
+  })();
+  const heroType = String(heroChoice?.type ?? "").toLowerCase();
+  const wrapperWeights = (() => {
+    if (heroType === "curve.rosettespiral") return [
+      { value: "wrap-lattice", w: 5 }, { value: "wrap-ticks", w: 5 }, { value: "wrap-halo", w: 3 }, { value: "wrap-rings", w: 2 }, { value: "wrap-ribbon", w: 2 }, { value: "wrap-constellation", w: 2 }, { value: "wrap-pulse", w: 1 }, { value: "wrap-shock", w: 1 }
+    ];
+    if (heroType === "polyline.orbitribbon") return [
+      { value: "wrap-lattice", w: 4 }, { value: "wrap-ticks", w: 4 }, { value: "wrap-halo", w: 2 }, { value: "wrap-rings", w: 2 }, { value: "wrap-constellation", w: 3 }, { value: "wrap-pulse", w: 2 }, { value: "wrap-shock", w: 1 }
+    ];
+    if (heroType === "viz.responsiverings") return [
+      { value: "wrap-lattice", w: 5 }, { value: "wrap-ticks", w: 5 }, { value: "wrap-halo", w: 2 }, { value: "wrap-ribbon", w: 3 }, { value: "wrap-constellation", w: 2 }, { value: "wrap-shock", w: 2 }, { value: "wrap-pulse", w: 1 }
+    ];
+    if (heroType === "viz.spectrumbars" || heroType === "viz.wavestrip") return [
+      { value: "wrap-lattice", w: 3 }, { value: "wrap-ticks", w: 6 }, { value: "wrap-halo", w: 2 }, { value: "wrap-rings", w: 2 }, { value: "wrap-pulse", w: 2 }, { value: "wrap-constellation", w: 2 }, { value: "wrap-shock", w: 1 }
+    ];
+    return [
+      { value: "wrap-lattice", w: 4 }, { value: "wrap-ticks", w: 4 }, { value: "wrap-halo", w: 2 }, { value: "wrap-rings", w: 2 }, { value: "wrap-ribbon", w: 2 }, { value: "wrap-constellation", w: 2 }, { value: "wrap-pulse", w: 2 }, { value: "wrap-shock", w: 1 }
+    ];
+  })();
+  const wrapperNode = layoutRng() < (sectionType === "chorus" ? 0.92 : 0.78)
+    ? pickNode(wrapperPool.filter((node: any) => String(node.type).toLowerCase() !== heroType), wrapperWeights)
+    : null;
+  const textureCount = sectionType === "chorus" ? 2 : (layoutRng() < 0.6 ? 1 : 0);
+  const textureNodes: any[] = [];
+  const textureUsed = new Set<string>();
+  while (textureNodes.length < textureCount && textureUsed.size < texturePool.length) {
+    const candidate = cloneRecipe(texturePool[Math.floor(layoutRng() * texturePool.length)]);
+    if (textureUsed.has(String(candidate.id))) continue;
+    textureUsed.add(String(candidate.id));
+    textureNodes.push(candidate);
   }
-  if (!fgNodes.length) fgNodes.push(cloneRecipe(fgPool[0]));
+  const accentNode = layoutRng() < (sectionType === "bridge" ? 0.72 : 0.48)
+    ? cloneRecipe(accentPool[Math.floor(layoutRng() * accentPool.length)])
+    : null;
+  const focalNodes = [heroChoice, ...(wrapperNode ? [wrapperNode] : [])];
+  const atmosphereNodes = [...textureNodes, ...(accentNode ? [accentNode] : [])];
+  const fgNodes: any[] = [...atmosphereNodes, ...focalNodes];
+  if (!fgNodes.length) fgNodes.push(cloneRecipe(heroPool[0]));
   for (const node of fgNodes) {
     const t = String(node?.type || "").toLowerCase();
     node.params = typeof node.params === "object" && node.params ? node.params : {};
@@ -4380,6 +4771,38 @@ function randomSceneLayersForSection(sectionId: string, options?: { allowManual?
         node.params.bloomCount = Math.max(4, Math.round(Number(node.params.bloomCount ?? 5) + 1));
       } else if (sectionType === "verse") {
         node.params.alpha = Math.max(0.08, Number(node.params.alpha ?? 0.16) * 0.9);
+      }
+    } else if (t === "viz.responsiverings") {
+      if (heroType !== t) {
+        node.params.alpha = Math.max(0.12, Number(node.params.alpha ?? 0.24) * 0.78);
+        node.params.lineWidth = Math.max(0.6, Number(node.params.lineWidth ?? 1) * 0.9);
+      }
+    } else if (t === "polyline.orbitribbon") {
+      if (heroType !== t) {
+        node.params.thicknessPx = Math.max(0.7, Number(node.params.thicknessPx ?? 1.2) * 0.82);
+        node.params.radiusPx = Math.round(Number(node.params.radiusPx ?? 150) * 1.08);
+        node.params.alpha = 0.26 + paramRng() * 0.18;
+      }
+    } else if (t === "fg.constellationlinks") {
+      node.params.alpha = sectionType === "bridge" ? 0.34 : 0.24;
+    } else if (t === "fg.shockrings") {
+      node.params.alpha = sectionType === "chorus" ? 0.28 : 0.18;
+    } else if (t === "frame.haloarcs") {
+      if (heroType !== t) {
+        node.params.alpha = Math.max(0.12, Number(node.params.alpha ?? 0.22) * 0.9);
+        node.params.lineWidthPx = Math.max(0.8, Number(node.params.lineWidthPx ?? 1.2) * 0.92);
+      }
+    } else if (t === "frame.orbitticks") {
+      if (heroType !== t) {
+        node.params.alpha = Math.max(0.1, Number(node.params.alpha ?? 0.2) * 0.92);
+        node.params.lineWidthPx = Math.max(0.8, Number(node.params.lineWidthPx ?? 1.3) * 0.96);
+        node.params.radiusPx = Math.round(Number(node.params.radiusPx ?? 220) * 1.04);
+      }
+    } else if (t === "frame.arclattice") {
+      if (heroType !== t) {
+        node.params.alpha = Math.max(0.12, Number(node.params.alpha ?? 0.22) * 0.96);
+        node.params.lineWidthPx = Math.max(0.9, Number(node.params.lineWidthPx ?? 1.3) * 0.98);
+        node.params.radiusPx = Math.round(Number(node.params.radiusPx ?? 220) * 1.03);
       }
     }
   }
@@ -4422,6 +4845,7 @@ function randomSceneLayersForSection(sectionId: string, options?: { allowManual?
       template: { id: `random-${selectedIndex}`, name: "Random Scene" },
       templates: Array.from({ length: sceneCount }, (_, i) => ({ id: `random-${i}` })),
       selectedIndex,
+      backgroundIndex,
       autoIndex,
       isManual,
       variant
@@ -4446,16 +4870,36 @@ function cycleRandomSceneForSection(sectionId: string, dir: 1 | -1 = 1) {
   invalidateModeRecipeMemo();
 }
 
-function resolvePlayerSceneChoice(sectionId: string, sectionType: string, variantOverride = 0) {
+function resolvePlayerSceneChoice(
+  sectionId: string,
+  sectionType: string,
+  variantOverride:
+    | number
+    | { variantIndex?: number; sectionBarIndex?: number; beatInBar?: number } = 0
+) {
   const sid = String(sectionId || "");
   const st = String(sectionType || "");
+  const state = typeof variantOverride === "object" && variantOverride
+    ? variantOverride
+    : { variantIndex: Number(variantOverride) || 0, sectionBarIndex: Math.max(0, (Number(variantOverride) || 0) - 1), beatInBar: 1 };
+  const variantIndex = Math.max(0, Math.floor(Number(state.variantIndex) || 0));
+  const sectionBarIndex = Math.max(0, Math.floor(Number(state.sectionBarIndex) || 0));
+  const beatInBar = Math.max(1, Math.min(4, Math.floor(Number(state.beatInBar) || 1)));
   const h = hashStringToSeed(`player:${seed}:${sid}:${st}`) >>> 0;
-  // Favor curated recipe scenes in chorus/bridge/outro; allow random scenes elsewhere.
-  const curatedBias = st === "chorus" || st === "bridge" || st === "outro" ? 0.7 : 0.4;
+  const curatedBias = st === "chorus" || st === "bridge" || st === "outro" ? 0.72 : 0.42;
   const roll = (h % 1000) / 1000;
   const source: "recipe-view" | "random-scene" = roll < curatedBias ? "recipe-view" : "random-scene";
-  const variant = Math.max(0, Math.floor(Number(variantOverride) || 0));
-  return { source, variant };
+  const beat3Chance = st === "chorus" ? 0.68 : st === "bridge" ? 0.48 : st === "verse" ? 0.3 : 0.22;
+  const cycleChance = st === "chorus" ? 0.56 : st === "bridge" ? 0.34 : st === "verse" ? 0.18 : 0.24;
+  const beat3Accent = beatInBar === 3 && ((((hashStringToSeed(`player:beat3:${seed}:${sid}:${st}`) >>> 0) % 1000) / 1000) < beat3Chance);
+  const cycleEvery2Bars = source === "random-scene" && ((((hashStringToSeed(`player:cycle:${seed}:${sid}:${st}`) >>> 0) % 1000) / 1000) < cycleChance);
+  const variant = variantIndex + (beat3Accent ? 1 : 0);
+  const baseSceneIndex = hashStringToSeed(`player:scene:${seed}:${sid}:${st}`) >>> 0;
+  const sceneIndex = source === "random-scene" && cycleEvery2Bars
+    ? (baseSceneIndex + Math.floor(sectionBarIndex / 2)) >>> 0
+    : baseSceneIndex;
+  const backgroundIndex = hashStringToSeed(`player:bg:${seed}:${sid}:${st}`) >>> 0;
+  return { source, variant, sceneIndex, backgroundIndex, cycleEvery2Bars, beat3Accent };
 }
 
 function selectTransitionLabel(recipe: any, fromSectionId: string, toSectionId: string) {
@@ -4507,8 +4951,14 @@ const modeRecipeResolver = createModeRecipeResolver({
   isGraphCapableMode
 });
 
-function withModeRecipe(baseRecipe: any, mode: ViewerMode, sectionId: string, sectionType: string, playerVariantOverride = 0) {
-  return modeRecipeResolver.resolve(baseRecipe, mode, sectionId, sectionType, playerVariantOverride);
+function withModeRecipe(
+  baseRecipe: any,
+  mode: ViewerMode,
+  sectionId: string,
+  sectionType: string,
+  playerState = { variantIndex: 0, sectionBarIndex: 0, beatInBar: 1 }
+) {
+  return modeRecipeResolver.resolve(baseRecipe, mode, sectionId, sectionType, playerState);
 }
 
 function applyRuntimeLyricSuppression(recipeIn: any, suppressed: boolean) {
@@ -4879,6 +5329,36 @@ function downbeatCountAt(tMs: number) {
   return count;
 }
 
+function beatCountAt(tMs: number) {
+  const bs = beatMarkers.length
+    ? beatMarkers.map((m) => Number(m.tMs))
+    : (pulseBeatTimesMs ?? []).map((x) => Number(x));
+  if (!bs.length) return 0;
+  let count = 0;
+  for (const x of bs) {
+    if (!Number.isFinite(x)) continue;
+    if (x <= tMs) count += 1;
+  }
+  return count;
+}
+
+function beatInBarAt(tMs: number) {
+  const bs = beatMarkers.length
+    ? beatMarkers.map((m) => Number(m.tMs)).filter((x) => Number.isFinite(x))
+    : (pulseBeatTimesMs ?? []).map((x) => Number(x)).filter((x) => Number.isFinite(x));
+  if (!bs.length) return 1;
+  const ds = downbeatMarkers.length
+    ? downbeatMarkers.map((m) => Number(m.tMs)).filter((x) => Number.isFinite(x))
+    : (pulseDownbeatTimesMs ?? []).map((x) => Number(x)).filter((x) => Number.isFinite(x));
+  let lastDownbeat = -Infinity;
+  for (const x of ds) {
+    if (x <= tMs) lastDownbeat = x;
+    else break;
+  }
+  const beatsSinceDownbeat = Math.max(1, beatCountAt(tMs) - beatCountAt(lastDownbeat) + 1);
+  return Math.max(1, Math.min(4, beatsSinceDownbeat));
+}
+
 function buildScene(nextSeed: number) {
   seed = nextSeed >>> 0;
   invalidateModeRecipeMemo();
@@ -4965,12 +5445,23 @@ function render() {
   const nextSectionStartMs = Number.isFinite(Number(nextSec?.t0Ms)) ? Number(nextSec?.t0Ms) : NaN;
   const sectionStartMsRaw = Number(sec?.t0Ms);
   const sectionStartMs = Number.isFinite(sectionStartMsRaw) ? sectionStartMsRaw : 0;
-  const playerVariantIndex = Math.max(0, downbeatCountAt(sectionClockMs) - downbeatCountAt(sectionStartMs - 1));
-  const nextPlayerVariantIndex = Number.isFinite(nextSectionStartMs)
+  const sectionDownbeatIndex = Math.max(0, downbeatCountAt(sectionClockMs) - downbeatCountAt(sectionStartMs - 1));
+  const sectionBarIndex = Math.max(0, sectionDownbeatIndex - 1);
+  const playerTimingState = {
+    variantIndex: sectionDownbeatIndex,
+    sectionBarIndex,
+    beatInBar: beatInBarAt(sectionClockMs)
+  };
+  const nextSectionDownbeatIndex = Number.isFinite(nextSectionStartMs)
     ? Math.max(0, downbeatCountAt(nextSectionStartMs) - downbeatCountAt(nextSectionStartMs - 1))
     : 0;
+  const nextPlayerTimingState = {
+    variantIndex: nextSectionDownbeatIndex,
+    sectionBarIndex: Math.max(0, nextSectionDownbeatIndex - 1),
+    beatInBar: 1
+  };
   updateGraphSectionState(sectionId);
-  const modeRecipe = withModeRecipe(currentRecipe, viewerMode, sectionId, sectionType, playerVariantIndex);
+  const modeRecipe = withModeRecipe(currentRecipe, viewerMode, sectionId, sectionType, playerTimingState);
   const pulse = beatPulseInfo(tRenderMs);
   const transitionDefForNext = nextSectionId
     ? resolveTransitionDefForSections(modeRecipe, sectionId, nextSectionId)
@@ -4986,14 +5477,17 @@ function render() {
   updateGraphAutoVariantState(sectionId, tRenderMs, viewerMode === "transition-lab" && inTransitionWindow);
   const durationSec = Number.isFinite(audio.duration) ? Number(audio.duration) : 0;
   let nextModeRecipe = nextSectionId
-    ? withModeRecipe(currentRecipe, viewerMode, nextSectionId, nextSectionType, nextPlayerVariantIndex)
+    ? withModeRecipe(currentRecipe, viewerMode, nextSectionId, nextSectionType, nextPlayerTimingState)
     : null;
   if (isPlayerMode() && nextModeRecipe) {
     const curGraphSig = stableStringify(modeRecipe?.graph?.layers ?? []);
     const nextGraphSig = stableStringify(nextModeRecipe?.graph?.layers ?? []);
     if (curGraphSig === nextGraphSig) {
       // Ensure section transitions stay visually legible when hash picks collide.
-      nextModeRecipe = withModeRecipe(currentRecipe, viewerMode, nextSectionId, nextSectionType, nextPlayerVariantIndex + 1);
+      nextModeRecipe = withModeRecipe(currentRecipe, viewerMode, nextSectionId, nextSectionType, {
+        ...nextPlayerTimingState,
+        variantIndex: nextPlayerTimingState.variantIndex + 1
+      });
     }
   }
   if (isPlayerMode()) {
@@ -5130,9 +5624,9 @@ if (!isSeeking && Number.isFinite(audio.duration) && audio.duration > 0) {
         density: Number(p.density.toFixed(2))
       };
     })();
-    const playerSceneChoice = isPlayerMode() ? resolvePlayerSceneChoice(sectionId, sectionType, playerVariantIndex) : null;
+    const playerSceneChoice = isPlayerMode() ? resolvePlayerSceneChoice(sectionId, sectionType, playerTimingState) : null;
     const nextSectionInMs = Number.isFinite(nextSectionStartMs) ? Math.round(nextSectionStartMs - sectionClockMs) : NaN;
-    const graphSel = resolveHudGraphSelection(sectionId, sectionType, playerVariantIndex, playerSceneChoice);
+    const graphSel = resolveHudGraphSelection(sectionId, sectionType, playerTimingState.variantIndex, playerSceneChoice);
     const effectiveBpm = estimateBpmFromBeats(effectiveBeatsMs);
     const targetFps = 30;
     const adaptiveFloorScale = 0.45;
@@ -5149,7 +5643,7 @@ if (!isSeeking && Number.isFinite(audio.duration) && audio.duration > 0) {
       `audioNet: wait:${audioWaitingCount} stall:${audioStalledCount} susp:${audioSuspendCount} prog:${audioProgressAtMs > 0 ? `${Math.max(0, Math.round((performance.now() - audioProgressAtMs) / 1000))}s` : "-"}`,
       ...hudHintModeLines(signalBus),
       ...hudLabModeLines(labProfileRounded),
-      ...hudGraphModeLines(modeRecipe, graphSel, playerSceneChoice, playerVariantIndex, nextSectionId, nextSectionInMs),
+      ...hudGraphModeLines(modeRecipe, graphSel, playerSceneChoice, playerTimingState.variantIndex, nextSectionId, nextSectionInMs),
       `sectionId: ${sectionId || "-"}`,
       `sectionType: ${frameInfo?.sectionType ?? sectionType}`,
       `rhythm: ${signalBus.rhythm.patternId} bar:${signalBus.rhythm.barIndex} step16:${signalBus.rhythm.step16} M${signalBus.rhythm.lanes.motion.pulse.toFixed(2)}${signalBus.rhythm.lanes.motion.hit ? "*" : ""} T${signalBus.rhythm.lanes.transition.pulse.toFixed(2)}${signalBus.rhythm.lanes.transition.hit ? "*" : ""}`,

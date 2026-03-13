@@ -86,8 +86,8 @@ type Track = {
 
 type PlaybackMode = "mix";
 type LyricMode = "fixed" | "center" | "off";
-type ViewerMode = "player" | "hint-edit" | "primitive-lab" | "recipe-view" | "random-scene" | "transition-lab";
-const VIEWER_MODES: ViewerMode[] = ["player", "hint-edit", "primitive-lab", "recipe-view", "random-scene", "transition-lab"];
+type ViewerMode = "player" | "hint-edit" | "primitive-lab" | "transition-lab";
+const VIEWER_MODES: ViewerMode[] = ["player", "hint-edit", "primitive-lab", "transition-lab"];
 type LabBackdropPolicy = "off" | "fixed" | "random";
 type LabBackdropId = "black" | "gradient" | "vignette" | "bands";
 type LabPrimitiveId =
@@ -491,7 +491,7 @@ function normalizeViewerMode(value: string | null | undefined): ViewerMode {
   const raw = String(value || "").trim().toLowerCase();
   if (raw === "player") return "player";
   if (raw === "hint-edit") return "hint-edit";
-  if (raw === "primitive-lab" || raw === "recipe-view" || raw === "random-scene" || raw === "transition-lab") return raw as ViewerMode;
+  if (raw === "primitive-lab" || raw === "transition-lab") return raw as ViewerMode;
   return "player";
 }
 
@@ -540,11 +540,11 @@ function isPrimitiveLabMode(mode: ViewerMode = viewerMode) {
 }
 
 function isGraphMode(mode: ViewerMode = viewerMode) {
-  return mode === "recipe-view" || mode === "random-scene" || mode === "transition-lab";
+  return mode === "transition-lab";
 }
 
 function isGraphCapableMode(mode: ViewerMode = viewerMode) {
-  return isPlayerMode(mode) || isGraphMode(mode);
+  return isPlayerMode(mode) || isPrimitiveLabMode(mode) || mode === "transition-lab";
 }
 
 function isSeedRefreshMode(mode: ViewerMode = viewerMode) {
@@ -761,8 +761,6 @@ function randomizeTransitionLabVariant(sectionId: string) {
 }
 
 function resolveHudGraphSelection(sectionId: string, sectionType: string, playerVariantIndex: number, playerSceneChoice?: any) {
-  if (viewerMode === "recipe-view") return resolveGraphSelection(currentRecipe, sectionId);
-  if (viewerMode === "random-scene") return randomSceneLayersForSection(sectionId).selection;
   if (!isPlayerMode()) return null;
   const choice = playerSceneChoice ?? resolvePlayerSceneChoice(sectionId, sectionType, {
     variantIndex: playerVariantIndex,
@@ -3362,7 +3360,7 @@ function hudKeyHelpLines(): string[] {
     lines.push(`      j/k lab primitive prev/next`);
     lines.push(`      b lab backdrop off/fixed/random`);
   }
-  if (isGraphMode()) {
+  if (viewerMode === "transition-lab") {
     lines.push(`      j/k prev/next graph recipe`);
     lines.push(`      r refresh graph variant`);
     lines.push(`      a auto refresh (downbeat+section)`);
@@ -3390,17 +3388,11 @@ function hudKeyHelpLines(): string[] {
 function updateGraphSectionState(sectionId: string) {
   if (isGraphMode()) {
     const sectionChanged = Boolean(lastGraphSectionId && sectionId !== lastGraphSectionId);
-    if (viewerMode === "transition-lab" && sectionChanged) {
+    if (sectionChanged) {
       randomizeTransitionLabVariant(sectionId);
     }
     if (!graphAutoRefresh && graphManualRecipe && lastGraphSectionId && sectionId !== lastGraphSectionId) {
       graphManualRecipe = null;
-    }
-    if (graphAutoRefresh && lastGraphSectionId && sectionId !== lastGraphSectionId) {
-      if (viewerMode === "transition-lab") {
-        // In transition-lab keep graph selection stable across section boundary.
-      } else if (viewerMode === "recipe-view") cycleGraphRecipeForSection(currentRecipe, sectionId);
-      else cycleRandomSceneForSection(sectionId);
     }
     lastGraphSectionId = sectionId;
     return;
@@ -5818,17 +5810,12 @@ function handleHintEditKeydown(e: KeyboardEvent) {
 function handleGraphModeKeydown(e: KeyboardEvent) {
   if (!isGraphMode() || e.repeat) return false;
   const key = e.key.toLowerCase();
-  const cycleRecipeByMode = (dir: 1 | -1) => {
-    const sectionId = currentSectionIdNow();
-    if (viewerMode === "recipe-view") cycleGraphRecipeForSection(currentRecipe, sectionId, dir);
-    else cycleRandomSceneForSection(sectionId, dir);
-  };
   if (key === "j") {
-    cycleRecipeByMode(-1);
+    cycleRandomSceneForSection(currentSectionIdNow(), -1);
     return true;
   }
   if (key === "k") {
-    cycleRecipeByMode(1);
+    cycleRandomSceneForSection(currentSectionIdNow(), 1);
     return true;
   }
   if (key === "r") {

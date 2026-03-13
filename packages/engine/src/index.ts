@@ -443,8 +443,6 @@ export function createEngine({
       const useGraphPipeline =
         viewerMode === "player" ||
         viewerMode === "primitive-lab" ||
-        viewerMode === "recipe-view" ||
-        viewerMode === "random-scene" ||
         viewerMode === "transition-lab" ||
         (viewerMode === "hint-edit" && hasGraphLayers);
       if (useGraphPipeline) {

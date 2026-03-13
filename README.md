@@ -73,17 +73,16 @@ Notes:
    - local network / IP access: `npm --workspace apps/dev-viewer run dev -- --host 0.0.0.0`
    - optional fixed port for LAN testing: `npm --workspace apps/dev-viewer run dev -- --host 0.0.0.0 --port 5173`
    - open `http://localhost:5173` on the current machine, or `http://<your-local-ip>:5173` from another device on the same network
-   - Optional viewer mode query param: `?mode=player|hint-edit|primitive-lab|recipe-view|random-scene|transition-lab` (default `player`).
+   - Optional viewer mode query param: `?mode=player|hint-edit|primitive-lab|transition-lab` (default `player`).
    - In `primitive-lab`, use `j/k` to switch primitives, then vary only by seed (`seed` button, `r` key, or `?seed=...`).
-   - In `player`, renderer runs a deterministic section playbook from seed (mixing curated recipe scenes and random scenes with section transitions).
-   - In `recipe-view`, renderer uses section-selected recipe graph layers; in `random-scene`, renderer builds deterministic per-section random graph layers.
+   - In `player`, renderer runs a deterministic seeded section playbook with section transitions and scene variation over time.
    - In `transition-lab`, renderer holds the graph scene steady while cycling deterministic transition variants against section boundaries.
    - Section transitions are registry-based with built-ins: `cut`, `crossfade`, `wipe`, `noiseDissolve`, `sliceStepWipe`, `directionalBlurWipe`, `lumaDissolve`.
    - Graph node params support the same deterministic resolvable values (`map`, `pick`, `lfo`, `signal`, `add`, `mul`).
    - Built-in graph primitives cover backgrounds, particles, signal/noise fields, glitch, pressure/energy blooms, audio-reactive overlays, geometric curves, and lyric/text treatments.
    - Primitive-lab currently surfaces: `bg.gradientField`, `fg.particles`, `field.signalNoiseBlend`, `glitch.persistentOffset`, `energy.pressureBloom`, `shape.beatOrb`, `overlay.beatTrack`, `viz.waveStrip`, `viz.spectrumBars`, `viz.responsiveRings`, `shape.circlePulse`, `frame.haloArcs`, `frame.orbitTicks`, `frame.arcLattice`, `polyline.orbitRibbon`, `curve.rosetteSpiral`, `text.echoWord`, `text.wordTrails`, and `text.karaoke`.
    - `curve.rosetteSpiral` supports `mode`, `connectMode`, `symmetrySnap`, `skip`, and optional `color: "black"` for high-contrast variants.
-   - In `recipe-view` and `random-scene`, `j/k` select previous/next graph, `r` refreshes variant, and `a` toggles auto refresh (variant on downbeats + graph step on section changes).
+   - In `transition-lab`, `j/k` select previous/next graph, `r` refreshes variant, and `a` toggles auto refresh.
 
 ### Import Flags
 - `npm run import:inbox -- --dry-run`
@@ -234,7 +233,7 @@ Authoring mode supports lightweight beat/downbeat hint events from the dev viewe
   - `d`: downbeat hint at current playhead
   - `b`: beat hint at current playhead
   - `1`/`2`/`3`/`4`: bar-beat hint (`beatInBar`)
-  - `v`: cycle viewer mode (`player` -> `hint-edit` -> `primitive-lab` -> `recipe-view` -> `random-scene` -> `transition-lab`)
+  - `v`: cycle viewer mode (`player` -> `hint-edit` -> `primitive-lab` -> `transition-lab`)
 - Authoring persistence:
   - Hints are written via local dev API and reduced with debounce.
   - Reducer also runs after `beats` / `whisperx` updates.

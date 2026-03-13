@@ -1,4 +1,4 @@
-type ViewerMode = "player" | "hint-edit" | "primitive-lab" | "recipe-view" | "random-scene" | "transition-lab";
+type ViewerMode = "player" | "hint-edit" | "primitive-lab" | "transition-lab";
 
 type GraphLayerSet = { layers: any[] };
 
@@ -106,10 +106,6 @@ export function createModeRecipeResolver(deps: ModeRecipeBuilderDeps) {
 
     if (mode === "hint-edit") {
       recipe.graph.layers = deps.baseGraphLayers();
-    } else if (mode === "recipe-view") {
-      recipe.graph.layers = deps.graphLayersForSection(baseRecipe, sectionId).layers;
-    } else if (mode === "random-scene") {
-      recipe.graph.layers = deps.randomSceneLayersForSection(sectionId).layers;
     } else if (mode === "transition-lab") {
       const picked = deps.randomSceneLayersForSection(sectionId);
       const secIdx = deps.sectionOrderIndexById(sectionId);

@@ -1435,6 +1435,11 @@ function drawOrbitTicks(args: {
   const w = canvas.width;
   const h = canvas.height;
   const maxDim = Math.max(w, h);
+  const mod = (value: number, n: number) => ((value % n) + n) % n;
+  const hashFloat = (seed: number) => {
+    const x = Math.sin(seed * 12.9898 + 78.233) * 43758.5453;
+    return x - Math.floor(x);
+  };
   const cx = w * Number(params?.centerX ?? 0.5);
   const cy = h * Number(params?.centerY ?? 0.5);
   const theme = resolveThemeState(state);
@@ -1448,14 +1453,13 @@ function drawOrbitTicks(args: {
   const gapPx = Math.max(24, Number(params?.gapPx ?? maxDim * 0.08));
   const tickLen = Math.max(18, Number(params?.tickLenPx ?? maxDim * 0.08));
   const lineWidth = Math.max(0.8, Number(params?.lineWidthPx ?? 1.8));
-  const alphaBase = clamp01(Number(params?.alpha ?? 0.36));
+  const alphaBase = clamp01(Number(params?.alpha ?? 0.36) * 0.8);
   const rotateHz = Number(params?.rotateHz ?? ((nodeSeed % 2 === 0 ? 1 : -1) * 0.01));
   const danceHz = Number(params?.danceHz ?? 0.08);
   const danceAmp = Number(params?.danceAmpPx ?? Math.max(12, maxDim * 0.018));
-  const jitter = Number(params?.jitter ?? 0.018);
+  const jitter = Number(params?.jitter ?? 0.004);
   const mirror = params?.mirror !== false;
   const style = String(params?.style ?? (rng.float() < 0.4 ? "triangle" : "line")).toLowerCase();
-  const patternMode = String(params?.patternMode ?? ["grouped", "alternate", "triple", "unison"][nodeSeed % 4]).toLowerCase();
   const colorMode = String(params?.colorMode ?? (theme.light > 0.62 ? "dark" : ["palette", "accent", "gradient", "pattern"][nodeSeed % 4])).toLowerCase();
   const t = tMs / 1000;
   const signal = clamp01(Math.max(
@@ -1480,7 +1484,17 @@ function drawOrbitTicks(args: {
     if (colorMode === "pattern") return theme.light > 0.62 ? ["#10161F", "#D8E4F4", "#10161F", "#45678C"] : ["#8FB7FF", "#F9D27C", "#FF8A7A", "#D7E8FF"];
     return (colors.length ? colors : ["#8FB7FF", "#F9D27C", "#FF8A7A"]).map((c) => adjustColorForContrast(c, theme.light));
   })();
-  const groupCount = patternMode === "triple" ? 3 : patternMode === "alternate" ? 2 : patternMode === "grouped" ? Math.max(2, Math.min(5, Math.round(Number(params?.groupCount ?? 4)))) : 1;
+  const stepHz = Math.max(0.35, Number(params?.stepHz ?? Math.max(0.8, danceHz * 10)));
+  const beatsPerBar = Math.max(2, Math.min(8, Math.round(Number(params?.beatsPerBar ?? 4))));
+  const burstChance = clamp01(Number(params?.burstChance ?? (0.42 + hashFloat(nodeSeed + 17) * 0.22)));
+  const burstRotateHz = Number(params?.burstRotateHz ?? (0.045 + hashFloat(nodeSeed + 31) * 0.11));
+  const slowBreathHz = Math.max(0.01, Number(params?.slowBreathHz ?? (0.018 + hashFloat(nodeSeed + 47) * 0.03)));
+  const slowBreathPx = Math.max(4, Number(params?.slowBreathPx ?? (6 + hashFloat(nodeSeed + 53) * Math.max(8, danceAmp * 0.7))));
+  const burstLiftPx = Math.max(0, Number(params?.burstLiftPx ?? (6 + hashFloat(nodeSeed + 59) * Math.max(10, tickLen * 0.22))));
+  const idleWaveAmp = Number(params?.idleWaveAmp ?? (0.01 + hashFloat(nodeSeed + 71) * 0.03));
+  const idleWaveHz = Math.max(0.01, Number(params?.idleWaveHz ?? (0.04 + hashFloat(nodeSeed + 73) * 0.06)));
+  const stepOffset = hashFloat(nodeSeed + 89) * beatsPerBar;
+  const burstWindow = clamp01(Number(params?.burstWindow ?? 0.5));
 
   ctx.save();
   ctx.globalCompositeOperation = resolveGraphBlendFromModes(params?.color, colorMode, theme.light, String(params?.blend ?? "screen")) as GlobalCompositeOperation;
@@ -1488,97 +1502,115 @@ function drawOrbitTicks(args: {
   for (let ring = 0; ring < ringCount; ring += 1) {
     const ringRadius = baseRadius + ring * gapPx;
     const ringScale = 1 + ring * 0.08;
-    for (let i = 0; i < count; i += 1) {
-      const frac = i / count;
-      const groupIndex = groupCount <= 1 ? 0 : (i % groupCount);
-      const groupPhase = groupIndex / Math.max(1, groupCount);
-      const theta0 = frac * Math.PI * 2 + rotateHz * t * Math.PI * 2 * (mirror && i % 2 === 1 ? -1 : 1);
-      const jitterTheta = (rng.float() - 0.5) * jitter * 0.35;
-      const motionWave = (() => {
-        if (patternMode === "unison") {
-          return Math.sin(t * danceHz * Math.PI * 2);
-        }
-        if (patternMode === "alternate") {
-          return Math.sin(t * danceHz * Math.PI * 2 + (i % 2 === 0 ? 0 : Math.PI));
-        }
-        if (patternMode === "triple") {
-          return Math.sin(t * danceHz * Math.PI * 2 + groupIndex * (Math.PI * 2 / 3) + ring * 0.55);
-        }
-        return Math.sin(t * danceHz * Math.PI * 2 + groupPhase * Math.PI * 2 + ring * 0.7);
-      })();
-      const beatKick = beat * (12 + tickLen * 0.08) + downbeat * (18 + tickLen * 0.12);
-      const pulse = 1 + signal * 0.46 + beat * 0.34 + downbeat * 0.44;
-      const radialModeMul =
-        patternMode === "unison" ? 0.72 :
-        patternMode === "alternate" ? 0.96 :
-        patternMode === "triple" ? 1.08 :
-        0.88;
-      const radialOffset = danceAmp * ringScale * motionWave * radialModeMul * (0.75 + signal * 0.45) + beatKick;
-      const thetaSwing =
-        patternMode === "alternate"
-          ? motionWave * 0.09 * (i % 2 === 0 ? 1 : -1)
-          : patternMode === "triple"
-            ? motionWave * 0.05
-            : patternMode === "grouped"
-              ? motionWave * 0.035 * (groupIndex % 2 === 0 ? 1 : -1)
-              : 0;
-      const theta = theta0 + jitterTheta + thetaSwing;
-      const lengthMul =
-        patternMode === "unison" ? 0.96 + signal * 0.18 :
-        patternMode === "alternate" ? 0.9 + Math.max(0, motionWave) * 0.42 + beat * 0.1 :
-        patternMode === "triple" ? 0.88 + (groupIndex === 0 ? 0.34 : groupIndex === 1 ? 0.18 : 0.08) + downbeat * 0.08 :
-        0.9 + Math.max(0, motionWave) * 0.24;
-      const outward = ringRadius + radialOffset;
-      const inward = outward - tickLen * (lengthMul + signal * 0.42 + beat * 0.12 + downbeat * 0.16);
+    const ringDirection = mirror && ring % 2 === 1 ? -1 : 1;
+    const ringCountOffset = ringCount > 1 ? (ring % 2 === 0 ? ring : -ring) : 0;
+    const ringTickCountRaw = Math.max(7, Math.min(23, count + ringCountOffset));
+    const ringTickCount =
+      style === "triangle"
+        ? ringTickCountRaw
+        : Math.max(8, Math.min(24, ringTickCountRaw % 2 === 0 ? ringTickCountRaw : ringTickCountRaw + (ringTickCountRaw < 23 ? 1 : -1)));
+    const ringThetaOffset = ringCount > 1 ? ((ring + 1) / (ringCount + 1)) * (Math.PI / ringTickCount) : 0;
+    const stepPosition = t * stepHz + stepOffset + ring * 0.37;
+    const beatStep = Math.floor(stepPosition);
+    const stepPhase = mod(stepPosition, 1);
+    const barIndex = Math.floor(beatStep / beatsPerBar);
+    const directionFlip = barIndex % 2 === 0 ? 1 : -1;
+    const randomPolarity = hashFloat(nodeSeed + ring * 97 + 11) < 0.5 ? -1 : 1;
+    const rotationDirection = directionFlip * randomPolarity * ringDirection;
+    const selectedBeat = hashFloat(nodeSeed * 0.13 + ring * 17 + beatStep * 1.37) < burstChance ? 1 : 0;
+    const stepGate = clamp01(1 - stepPhase / Math.max(0.0001, burstWindow));
+    const burstEnvelope = selectedBeat * stepGate * stepGate * (3 - 2 * stepGate) * clamp01(0.72 + beat * 0.28 + downbeat * 0.36);
+    const idleEnvelope = 1 - burstEnvelope;
+    const burstRotation = rotationDirection * burstRotateHz * burstEnvelope;
+    const baseRotation = rotateHz * 0.25;
+    const slowBreath = Math.sin(t * Math.PI * 2 * slowBreathHz + ring * 0.7 + stepOffset);
+    const ringRadialOffset = slowBreath * slowBreathPx * ringScale + burstEnvelope * burstLiftPx * (0.8 + downbeat * 0.24);
+    const ringBeatKick = beat * (12 + tickLen * 0.08) + downbeat * (18 + tickLen * 0.12);
+    const ringLengthPx = tickLen * (0.96 + signal * 0.26 + beat * 0.08 + downbeat * 0.12 + burstEnvelope * 0.16);
+    const lineMidRadius = ringRadius + ringRadialOffset + ringBeatKick + danceAmp * 0.16 * Math.sin(t * Math.PI * 2 * slowBreathHz + ring * 0.55) - ringLengthPx * 0.24;
+    const lineOuterRadius = lineMidRadius + ringLengthPx * 0.5;
+    const lineInnerRadius = lineMidRadius - ringLengthPx * 0.5;
+    const lineAlpha =
+      alphaBase *
+      (1.02 + signal * 0.12 + burstEnvelope * 0.12) *
+      (1 + beat * 0.16 + downbeat * 0.22);
+    const thetaAt = (index: number) => {
+      const frac = index / ringTickCount;
+      const theta0 = frac * Math.PI * 2 + ringThetaOffset + (baseRotation + burstRotation) * t * Math.PI * 2;
+      const jitterTheta = style === "triangle" ? (rng.float() - 0.5) * jitter * 0.35 : 0;
+      const wavePhase = frac * Math.PI * 2 + ring * 0.6;
+      const idleWave = Math.sin(t * Math.PI * 2 * idleWaveHz + wavePhase) * idleWaveAmp * idleEnvelope;
+      return theta0 + jitterTheta + idleWave;
+    };
+    if (style !== "triangle") {
+      const arcPad = (Math.PI * 2 / ringTickCount) * 0.08;
+      for (let i = 0; i < ringTickCount; i += 1) {
+        if ((i + ring) % 2 !== 0) continue;
+        const startTheta = thetaAt(i) + arcPad;
+        const endTheta = thetaAt(i + 1) - arcPad;
+        if (endTheta <= startTheta) continue;
+        const colorA = palette[i % palette.length] ?? "#FFFFFF";
+        const fillStyle =
+          colorMode === "pattern"
+            ? colorToRgba(palette[(i + ring) % palette.length] ?? colorA, lineAlpha)
+            : colorToRgba(pickFrom(palette, i + ring + nodeSeed, colorA), lineAlpha);
+        ctx.save();
+        ctx.fillStyle = fillStyle;
+        ctx.beginPath();
+        ctx.arc(cx, cy, lineOuterRadius, startTheta, endTheta);
+        ctx.arc(cx, cy, lineInnerRadius, endTheta, startTheta, true);
+        ctx.closePath();
+        ctx.fill();
+        ctx.restore();
+      }
+      continue;
+    }
+    for (let i = 0; i < ringTickCount; i += 1) {
+      const frac = i / ringTickCount;
+      const theta = thetaAt(i);
+      const lengthPx = ringLengthPx;
       const nx = Math.cos(theta);
       const ny = Math.sin(theta);
-      const px = -ny;
-      const py = nx;
-      const patternAlphaMul =
-        patternMode === "unison" ? 1.08 :
-        patternMode === "alternate" ? (i % 2 === 0 ? 1.22 : 0.94) :
-        patternMode === "triple" ? (groupIndex === 0 ? 1.24 : groupIndex === 1 ? 1.04 : 0.9) :
-        1.0 + groupIndex * 0.05;
-      const groupAlpha = alphaBase * patternAlphaMul * (1.1 + 0.34 * Math.max(0, motionWave)) * (1 + beat * 0.3 + downbeat * 0.42);
+      const dirX = nx;
+      const dirY = ny;
+      const px = -dirY;
+      const py = dirX;
+      const midRadius = lineMidRadius;
+      const midX = cx + nx * midRadius;
+      const midY = cy + ny * midRadius;
+      const outwardX = midX + dirX * (lengthPx * 0.5);
+      const outwardY = midY + dirY * (lengthPx * 0.5);
+      const inwardX = midX - dirX * (lengthPx * 0.5);
+      const inwardY = midY - dirY * (lengthPx * 0.5);
+      const groupAlpha = lineAlpha;
       const colorA = palette[i % palette.length] ?? "#FFFFFF";
       const colorB = palette[(i + 1) % palette.length] ?? colorA;
       const strokeStyle = (() => {
         if (colorMode === "gradient") {
-          const g = ctx.createLinearGradient(cx + nx * inward, cy + ny * inward, cx + nx * outward, cy + ny * outward);
+          const g = ctx.createLinearGradient(inwardX, inwardY, outwardX, outwardY);
           g.addColorStop(0, colorToRgba(colorA, groupAlpha * 0.3));
           g.addColorStop(0.5, colorToRgba(colorB, groupAlpha));
           g.addColorStop(1, colorToRgba(colorA, groupAlpha * 0.5));
           return g;
         }
         if (colorMode === "pattern") {
-          return colorToRgba(palette[(i + groupIndex) % palette.length] ?? colorA, groupAlpha);
+          return colorToRgba(palette[i % palette.length] ?? colorA, groupAlpha);
         }
         return colorToRgba(pickFrom(palette, i + ring + nodeSeed, colorA), groupAlpha);
       })();
       ctx.save();
       ctx.strokeStyle = strokeStyle;
       ctx.fillStyle = strokeStyle;
-      ctx.lineWidth = lineWidth * (1.08 + signal * 0.34 + beat * 0.14 + downbeat * 0.22 + (style === "line" ? 0 : 0.12));
+      ctx.lineWidth = lineWidth * (1.02 + signal * 0.2 + beat * 0.08 + downbeat * 0.12 + burstEnvelope * 0.08 + (style === "line" ? 0 : 0.1));
       ctx.lineCap = "round";
-      if (style === "triangle") {
-        const widthMul = Math.max(3, Number(params?.triangleWidthPx ?? (lineWidth * 2.3 + tickLen * 0.08)));
-        const tipX = cx + nx * inward;
-        const tipY = cy + ny * inward;
-        const baseX = cx + nx * outward;
-        const baseY = cy + ny * outward;
-        ctx.beginPath();
-        ctx.moveTo(tipX, tipY);
-        ctx.lineTo(baseX + px * widthMul, baseY + py * widthMul);
-        ctx.lineTo(baseX - px * widthMul, baseY - py * widthMul);
-        ctx.closePath();
-        ctx.globalAlpha = clamp01(groupAlpha * 0.96);
-        ctx.fill();
-      } else {
-        ctx.beginPath();
-        ctx.moveTo(cx + nx * outward, cy + ny * outward);
-        ctx.lineTo(cx + nx * inward, cy + ny * inward);
-        ctx.stroke();
-      }
+      const widthMul = Math.max(3, Number(params?.triangleWidthPx ?? (lineWidth * 2.3 + tickLen * 0.08))) * (1 + burstEnvelope * 0.12);
+      ctx.beginPath();
+      ctx.moveTo(inwardX, inwardY);
+      ctx.lineTo(outwardX + px * widthMul, outwardY + py * widthMul);
+      ctx.lineTo(outwardX - px * widthMul, outwardY - py * widthMul);
+      ctx.closePath();
+      ctx.globalAlpha = clamp01(groupAlpha * 0.96);
+      ctx.fill();
       ctx.restore();
     }
   }

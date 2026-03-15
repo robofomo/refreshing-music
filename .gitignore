@@ -24,6 +24,7 @@ __pycache__/
 Thumbs.db
 .vscode/
 .idea/
+AGENTS.md
 
 # Dev media assets (keep out of git)
 /dev-assets/

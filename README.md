@@ -229,6 +229,10 @@ Authoring mode supports lightweight beat/downbeat hint events from the dev viewe
 - Local-only track files:
   - `assets/<workId>/<trackId>/events.jsonl` (append-only hint events)
   - `assets/<workId>/<trackId>/effective.json` (reduced effective timing/overlay state)
+- Beat-grid override:
+  - If AI beat detection lands on a subdivision that is too fast (for example eighth notes when quarter notes would be better), add `"beatReducer": { "aiBeatDivisor": 2 }` to `tracks/<trackId>.track.json`.
+  - Then regenerate only the reduced timing state with `node tools/reduce-effective-all.mjs --trackId <trackId>`.
+  - `aiBeatDivisor: 2` keeps every second AI beat; larger values decimate further.
 - Dev viewer hint hotkeys:
   - `d`: downbeat hint at current playhead
   - `b`: beat hint at current playhead

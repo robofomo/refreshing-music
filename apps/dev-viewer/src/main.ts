@@ -1190,12 +1190,13 @@ function labPrimitiveNode(profile: { scale: number; density: number; variant: nu
         gapPx: Math.round(26 + scale * 24),
         tickLenPx: Math.round(36 + scale * 22),
         lineWidthPx: Number((1.45 + Math.min(2.1, density * 0.24)).toFixed(2)),
-        alpha: Number((0.34 + Math.min(0.22, density * 0.05)).toFixed(2)),
+        alpha: Number((0.27 + Math.min(0.18, density * 0.04)).toFixed(2)),
         rotateHz: Number((((profile.variant % 2 === 0 ? 1 : -1) * (0.01 + Math.min(0.05, scale * 0.012)))).toFixed(3)),
         danceHz: Number((0.05 + Math.min(0.08, density * 0.01)).toFixed(3)),
         danceAmpPx: Math.round(18 + scale * 12),
         style: profile.variant % 3 === 0 ? "triangle" : "line",
-        patternMode: ["grouped", "alternate", "triple", "unison"][profile.variant % 4],
+        patternMode: "unison",
+        motionMode: "rhythmStep",
         signalSource: "auto"
       }
     }, backdropTone, styleRng, "lab");
@@ -1391,12 +1392,13 @@ function activeLabSnippet() {
     "gapPx": ${Math.round(26 + scale * 24)},
     "tickLenPx": ${Math.round(36 + scale * 22)},
     "lineWidthPx": ${Number((1.45 + Math.min(2.1, density * 0.24)).toFixed(2))},
-    "alpha": ${Number((0.34 + Math.min(0.22, density * 0.05)).toFixed(2))},
+    "alpha": ${Number((0.27 + Math.min(0.18, density * 0.04)).toFixed(2))},
     "rotateHz": ${Number((((profile.variant % 2 === 0 ? 1 : -1) * (0.01 + Math.min(0.05, scale * 0.012)))).toFixed(3))},
     "danceHz": ${Number((0.05 + Math.min(0.08, density * 0.01)).toFixed(3))},
     "danceAmpPx": ${Math.round(18 + scale * 12)},
     "style": "${profile.variant % 3 === 0 ? "triangle" : "line"}",
-    "patternMode": "${["grouped", "alternate", "triple", "unison"][profile.variant % 4]}",
+    "patternMode": "unison",
+    "motionMode": "rhythmStep",
     "colorMode": "${["palette", "gradient", "pattern", "dark"][profile.variant % 4]}",
     "signalSource": "auto"
   }
@@ -4336,7 +4338,7 @@ function graphTemplateLibrary(baseRecipe: any) {
           nodes: [
             { id: "pulse", type: "shape.circlePulse", params: { ringCount: 8, radiusPx: 88, alpha: 0.18 } },
             { id: "halo", type: "frame.haloArcs", params: { arcCount: 8, ringCount: 2, radiusPx: 178, gapPx: 28, arcSpanMin: 0.24, arcSpanMax: 0.58, lineWidthPx: 1.8, alpha: 0.28, rotateHz: 0.015, pulseGain: 0.16, wobble: 0.05, colorMode: "accent", signalSource: "auto" } },
-            { id: "ticks", type: "frame.orbitTicks", params: { count: 15, ringCount: 1, radiusPx: 246, gapPx: 30, tickLenPx: 44, lineWidthPx: 1.5, alpha: 0.22, rotateHz: -0.014, danceHz: 0.08, danceAmpPx: 20, style: "line", patternMode: "alternate", colorMode: "gradient", signalSource: "auto" } },
+            { id: "ticks", type: "frame.orbitTicks", params: { count: 15, ringCount: 1, radiusPx: 246, gapPx: 30, tickLenPx: 44, lineWidthPx: 1.5, alpha: 0.18, rotateHz: -0.014, danceHz: 0.08, danceAmpPx: 20, style: "line", patternMode: "unison", motionMode: "rhythmStep", colorMode: "gradient", signalSource: "auto" } },
             { id: "lattice", type: "frame.arcLattice", params: { ringCount: 3, radiusPx: 214, gapPx: 28, segmentsPerRing: 10, spokeDensity: 0.34, arcCoverage: 0.58, lineWidthPx: 1.25, alpha: 0.18, rotateHz: 0.014, motionMode: "driftLock", symmetryMode: "mirror", colorMode: "accent", signalSource: "auto" } },
             { id: "ribbon", type: "polyline.orbitRibbon", params: { points: 60, radiusPx: 170, thicknessPx: 1.7, phaseHz: 0.08 } },
             { id: "rose", type: "curve.rosetteSpiral", params: { mode: "hybrid", steps: 860, turns: 11, growth: 3.2, petalCount: 7, petalAmp: 20, spin: 0.14, skip: 2, alpha: 0.5, lineWidth: 1.1 } }
@@ -4399,7 +4401,7 @@ function graphTemplateLibrary(baseRecipe: any) {
           opacity: 1,
           nodes: [
             { id: "halo", type: "frame.haloArcs", params: { arcCount: 7, ringCount: 2, radiusPx: 168, gapPx: 24, arcSpanMin: 0.2, arcSpanMax: 0.48, lineWidthPx: 1.6, alpha: 0.24, rotateHz: 0.012, pulseGain: 0.14, wobble: 0.04, colorMode: "palette", signalSource: "auto" } },
-            { id: "ticks", type: "frame.orbitTicks", params: { count: 12, ringCount: 1, radiusPx: 244, gapPx: 28, tickLenPx: 40, lineWidthPx: 1.35, alpha: 0.18, rotateHz: 0.01, danceHz: 0.06, danceAmpPx: 16, style: "triangle", patternMode: "triple", colorMode: "dark", signalSource: "auto" } },
+            { id: "ticks", type: "frame.orbitTicks", params: { count: 12, ringCount: 1, radiusPx: 244, gapPx: 28, tickLenPx: 40, lineWidthPx: 1.35, alpha: 0.14, rotateHz: 0.01, danceHz: 0.06, danceAmpPx: 16, style: "triangle", patternMode: "unison", motionMode: "rhythmStep", colorMode: "dark", signalSource: "auto" } },
             { id: "lattice", type: "frame.arcLattice", params: { ringCount: 3, radiusPx: 220, gapPx: 26, segmentsPerRing: 12, spokeDensity: 0.28, arcCoverage: 0.54, lineWidthPx: 1.15, alpha: 0.16, rotateHz: 0.012, motionMode: "mesh", symmetryMode: "repeat", colorMode: "dark", signalSource: "auto" } },
             { id: "rings", type: "viz.responsiveRings", params: { signalSource: "auto", ringCount: 6, points: 124, baseRadiusPx: 56, gapPx: 28, alpha: 0.44, lineWidth: 1.2, warp: 0.86, rotateHz: 0.03 } },
             { id: "bars", type: "viz.spectrumBars", params: { signalSource: "auto", barCount: 32, marginPx: 26, topRel: 0.41, bottomPadPx: 12, gapPx: 5, alpha: 0.4, smooth: 0.1, bandSmoothing: 0.08, spectralTilt: 0.2, edgeTaper: 0.16, responseSpan: 0.75 } }
@@ -4434,7 +4436,7 @@ function graphTemplateLibrary(baseRecipe: any) {
           nodes: [
             { id: "pulse", type: "shape.circlePulse", params: { ringCount: 6, radiusPx: 76, alpha: 0.14 } },
             { id: "halo", type: "frame.haloArcs", params: { arcCount: 9, ringCount: 2, radiusPx: 186, gapPx: 30, arcSpanMin: 0.26, arcSpanMax: 0.62, lineWidthPx: 1.9, alpha: 0.3, rotateHz: 0.014, pulseGain: 0.18, wobble: 0.05, colorMode: "accent", signalSource: "auto" } },
-            { id: "ticks", type: "frame.orbitTicks", params: { count: 18, ringCount: 1, radiusPx: 270, gapPx: 30, tickLenPx: 46, lineWidthPx: 1.45, alpha: 0.16, rotateHz: -0.012, danceHz: 0.07, danceAmpPx: 18, style: "line", patternMode: "grouped", colorMode: "pattern", signalSource: "auto" } },
+            { id: "ticks", type: "frame.orbitTicks", params: { count: 18, ringCount: 1, radiusPx: 270, gapPx: 30, tickLenPx: 46, lineWidthPx: 1.45, alpha: 0.13, rotateHz: -0.012, danceHz: 0.07, danceAmpPx: 18, style: "line", patternMode: "unison", motionMode: "rhythmStep", colorMode: "pattern", signalSource: "auto" } },
             { id: "lattice", type: "frame.arcLattice", params: { ringCount: 4, radiusPx: 236, gapPx: 24, segmentsPerRing: 9, spokeDensity: 0.36, arcCoverage: 0.6, lineWidthPx: 1.2, alpha: 0.18, rotateHz: 0.01, motionMode: "ratchet", symmetryMode: "mirror", colorMode: "gradient", signalSource: "auto" } },
             { id: "rose", type: "curve.rosetteSpiral", params: { mode: "rosette", steps: 980, turns: 13, growth: 2.8, petalCount: 8, petalAmp: 24, spin: 0.11, skip: 1, alpha: 0.62, lineWidth: 1.25 } }
           ]
@@ -4662,7 +4664,7 @@ function randomSceneLayersForSection(sectionId: string, options?: { allowManual?
   const wrapperPool = [
     applySharedGraphColorStyle(buildNode("wrap-rings", "viz.responsiveRings", { signalSource: "auto", ringCount: 3 + Math.floor(paramRng() * 4), points: 92 + Math.floor(paramRng() * 60), baseRadiusPx: 86 + Math.floor(paramRng() * 70), gapPx: 18 + Math.floor(paramRng() * 26), alpha: 0.18 + paramRng() * 0.14, lineWidth: 0.7 + paramRng() * 0.8, warp: 0.3 + paramRng() * 0.8, rotateHz: (paramRng() < 0.5 ? -1 : 1) * (0.008 + paramRng() * 0.04) }), backdropTone, styleRng, "wrapper"),
     applySharedGraphColorStyle(buildNode("wrap-halo", "frame.haloArcs", { arcCount: 5 + Math.floor(paramRng() * 6), ringCount: 1 + Math.floor(paramRng() * 2), radiusPx: 156 + Math.floor(paramRng() * 120), gapPx: 22 + Math.floor(paramRng() * 22), arcSpanMin: 0.2 + paramRng() * 0.12, arcSpanMax: 0.44 + paramRng() * 0.24, lineWidthPx: 1.4 + paramRng() * 1.3, alpha: 0.22 + paramRng() * 0.14, rotateHz: (paramRng() < 0.5 ? -1 : 1) * (0.008 + paramRng() * 0.028), pulseGain: 0.12 + paramRng() * 0.12, wobble: 0.03 + paramRng() * 0.05, signalSource: "auto" }), backdropTone, styleRng, "wrapper"),
-    applySharedGraphColorStyle(buildNode("wrap-ticks", "frame.orbitTicks", { count: 7 + Math.floor(paramRng() * 17), ringCount: 1 + Math.floor(paramRng() * 2), radiusPx: 190 + Math.floor(paramRng() * 150), gapPx: 28 + Math.floor(paramRng() * 24), tickLenPx: 34 + Math.floor(paramRng() * 26), lineWidthPx: 1.45 + paramRng() * 2.1, alpha: 0.32 + paramRng() * 0.18, rotateHz: (paramRng() < 0.5 ? -1 : 1) * (0.008 + paramRng() * 0.038), danceHz: 0.05 + paramRng() * 0.08, danceAmpPx: 16 + Math.floor(paramRng() * 18), style: paramRng() < 0.34 ? "triangle" : "line", patternMode: ["grouped", "alternate", "triple", "unison"][Math.floor(paramRng() * 4)], signalSource: "auto" }), backdropTone, styleRng, "wrapper"),
+    applySharedGraphColorStyle(buildNode("wrap-ticks", "frame.orbitTicks", { count: 7 + Math.floor(paramRng() * 17), ringCount: 1 + Math.floor(paramRng() * 2), radiusPx: 190 + Math.floor(paramRng() * 150), gapPx: 28 + Math.floor(paramRng() * 24), tickLenPx: 34 + Math.floor(paramRng() * 26), lineWidthPx: 1.45 + paramRng() * 2.1, alpha: 0.26 + paramRng() * 0.14, rotateHz: (paramRng() < 0.5 ? -1 : 1) * (0.008 + paramRng() * 0.038), danceHz: 0.05 + paramRng() * 0.08, danceAmpPx: 16 + Math.floor(paramRng() * 18), style: paramRng() < 0.34 ? "triangle" : "line", patternMode: "unison", motionMode: "rhythmStep", signalSource: "auto" }), backdropTone, styleRng, "wrapper"),
     applySharedGraphColorStyle(buildNode("wrap-lattice", "frame.arcLattice", { ringCount: 2 + Math.floor(paramRng() * 2), radiusPx: 176 + Math.floor(paramRng() * 120), gapPx: 28 + Math.floor(paramRng() * 20), segmentsPerRing: 8 + Math.floor(paramRng() * 8), spokeDensity: 0.22 + paramRng() * 0.34, arcCoverage: 0.42 + paramRng() * 0.28, lineWidthPx: 1.2 + paramRng() * 1.3, alpha: 0.2 + paramRng() * 0.14, rotateHz: 0.008 + paramRng() * 0.02, spokeWidthMul: 0.92 + paramRng() * 0.26, spokeAlphaMul: 1.06 + paramRng() * 0.3, ratchetSnap: 0.72 + paramRng() * 0.22, endpointBridgeBias: 0.68 + paramRng() * 0.24, lockFlashGain: 0.24 + paramRng() * 0.18, motionMode: ["mesh", "ratchet", "driftLock"][Math.floor(paramRng() * 3)], symmetryMode: ["mirror", "repeat", "offset"][Math.floor(paramRng() * 3)], signalSource: "auto" }), backdropTone, styleRng, "wrapper"),
     applySharedGraphColorStyle(buildNode("wrap-ribbon", "polyline.orbitRibbon", { points: 56 + Math.floor(paramRng() * 42), radiusPx: 180 + Math.floor(paramRng() * 90), thicknessPx: 0.8 + paramRng() * 1.2, phaseHz: 0.03 + paramRng() * 0.05, animationMode: ribbonAnim, motionProfile: ribbonProfile, signalSource: ribbonSignalSource }), backdropTone, styleRng, "wrapper"),
     buildNode("wrap-constellation", "fg.constellationLinks", { count: 20 + Math.floor(paramRng() * 24), linkDistPx: 90 + Math.floor(paramRng() * 140), dotRadiusPx: 0.8 + paramRng() * 1.2, lineWidthPx: 0.45 + paramRng() * 0.9 }),

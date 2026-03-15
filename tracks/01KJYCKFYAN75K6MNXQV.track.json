@@ -99,6 +99,9 @@
     "sectionFocus": "",
     "noGo": []
   },
+  "beatReducer": {
+    "aiBeatDivisor": 2
+  },
   "sourceGroupKey": "loose:rooms-of-unfinished-light",
   "assetDir": "assets/rooms-of-unfinished-light/01KJYCKFYAN75K6MNXQV",
   "createdLocalRaw": "March 5, 2026 at 7:39 PM",

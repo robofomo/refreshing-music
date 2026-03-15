@@ -1,0 +1,159 @@
+{
+  "schemaVersion": 1,
+  "exportedAt": "2026-03-02T07:51:15.330Z",
+  "trackId": "01KJC4RQ401X1D3KQBNJ",
+  "workId": "offset-that-wouldn-t-clear",
+  "title": "Offset That Wouldn’t Clear",
+  "assetDir": "assets/offset-that-wouldn-t-clear/01KJC4RQ401X1D3KQBNJ",
+  "applyPolicy": {
+    "eventType": "hint/sectionMarker",
+    "clearExistingSectionMarkersFirst": true,
+    "snapMode": "nearestDownbeat"
+  },
+  "markers": [
+    {
+      "order": 1,
+      "source": "hint",
+      "rawMs": 8819,
+      "rawSec": 8.819,
+      "snappedToCurrentDownbeatMs": 8819,
+      "snappedToCurrentDownbeatSec": 8.819
+    },
+    {
+      "order": 2,
+      "source": "hint",
+      "rawMs": 13182,
+      "rawSec": 13.182,
+      "snappedToCurrentDownbeatMs": 13182,
+      "snappedToCurrentDownbeatSec": 13.182
+    },
+    {
+      "order": 3,
+      "source": "hint",
+      "rawMs": 17546,
+      "rawSec": 17.546,
+      "snappedToCurrentDownbeatMs": 17546,
+      "snappedToCurrentDownbeatSec": 17.546
+    },
+    {
+      "order": 4,
+      "source": "hint",
+      "rawMs": 26273,
+      "rawSec": 26.273,
+      "snappedToCurrentDownbeatMs": 26273,
+      "snappedToCurrentDownbeatSec": 26.273
+    },
+    {
+      "order": 5,
+      "source": "hint",
+      "rawMs": 35001,
+      "rawSec": 35.001,
+      "snappedToCurrentDownbeatMs": 35001,
+      "snappedToCurrentDownbeatSec": 35.001
+    },
+    {
+      "order": 6,
+      "source": "default",
+      "rawMs": 43728,
+      "rawSec": 43.728,
+      "snappedToCurrentDownbeatMs": 43728,
+      "snappedToCurrentDownbeatSec": 43.728
+    },
+    {
+      "order": 7,
+      "source": "hint",
+      "rawMs": 52455,
+      "rawSec": 52.455,
+      "snappedToCurrentDownbeatMs": 52455,
+      "snappedToCurrentDownbeatSec": 52.455
+    },
+    {
+      "order": 8,
+      "source": "hint",
+      "rawMs": 61182,
+      "rawSec": 61.182,
+      "snappedToCurrentDownbeatMs": 61182,
+      "snappedToCurrentDownbeatSec": 61.182
+    },
+    {
+      "order": 9,
+      "source": "hint",
+      "rawMs": 69907,
+      "rawSec": 69.907,
+      "snappedToCurrentDownbeatMs": 69907,
+      "snappedToCurrentDownbeatSec": 69.907
+    },
+    {
+      "order": 10,
+      "source": "hint",
+      "rawMs": 72634,
+      "rawSec": 72.634,
+      "snappedToCurrentDownbeatMs": 72634,
+      "snappedToCurrentDownbeatSec": 72.634
+    },
+    {
+      "order": 11,
+      "source": "hint",
+      "rawMs": 90089,
+      "rawSec": 90.089,
+      "snappedToCurrentDownbeatMs": 90089,
+      "snappedToCurrentDownbeatSec": 90.089
+    },
+    {
+      "order": 12,
+      "source": "hint",
+      "rawMs": 98816,
+      "rawSec": 98.816,
+      "snappedToCurrentDownbeatMs": 98816,
+      "snappedToCurrentDownbeatSec": 98.816
+    },
+    {
+      "order": 13,
+      "source": "hint",
+      "rawMs": 107543,
+      "rawSec": 107.543,
+      "snappedToCurrentDownbeatMs": 107543,
+      "snappedToCurrentDownbeatSec": 107.543
+    },
+    {
+      "order": 14,
+      "source": "hint",
+      "rawMs": 116271,
+      "rawSec": 116.271,
+      "snappedToCurrentDownbeatMs": 116271,
+      "snappedToCurrentDownbeatSec": 116.271
+    },
+    {
+      "order": 15,
+      "source": "hint",
+      "rawMs": 124998,
+      "rawSec": 124.998,
+      "snappedToCurrentDownbeatMs": 124998,
+      "snappedToCurrentDownbeatSec": 124.998
+    },
+    {
+      "order": 16,
+      "source": "hint",
+      "rawMs": 133725,
+      "rawSec": 133.725,
+      "snappedToCurrentDownbeatMs": 133725,
+      "snappedToCurrentDownbeatSec": 133.725
+    },
+    {
+      "order": 17,
+      "source": "hint",
+      "rawMs": 142452,
+      "rawSec": 142.452,
+      "snappedToCurrentDownbeatMs": 142452,
+      "snappedToCurrentDownbeatSec": 142.452
+    },
+    {
+      "order": 18,
+      "source": "hint",
+      "rawMs": 151180,
+      "rawSec": 151.18,
+      "snappedToCurrentDownbeatMs": 151180,
+      "snappedToCurrentDownbeatSec": 151.18
+    }
+  ]
+}

@@ -1,0 +1,21 @@
+{
+  "updatedAt": "2026-02-26T07:08:22.051Z",
+  "stems": {
+    "status": "error",
+    "error": "EPERM: operation not permitted, rename 'D:\\seva\\FOMO\\Songs\\the-refresh\\refreshing-music\\assets\\offset-that-wouldn-t-clear\\01KJC4RQ401X1D3KQBNJ\\instrumental.normalized.mp3' -> 'D:\\seva\\FOMO\\Songs\\the-refresh\\refreshing-music\\assets\\offset-that-wouldn-t-clear\\01KJC4RQ401X1D3KQBNJ\\instrumental.mp3'",
+    "overwrite": false
+  },
+  "beats": {
+    "status": "skipped",
+    "reason": "beats.json exists (use --overwrite-ai to regenerate)",
+    "audioPath": "D:\\seva\\FOMO\\Songs\\the-refresh\\refreshing-music\\assets\\offset-that-wouldn-t-clear\\01KJC4RQ401X1D3KQBNJ\\instrumental.wav"
+  },
+  "whisperx": {
+    "status": "skipped",
+    "reason": "words.json exists (use --overwrite-ai to regenerate)",
+    "audioPath": "D:\\seva\\FOMO\\Songs\\the-refresh\\refreshing-music\\assets\\offset-that-wouldn-t-clear\\01KJC4RQ401X1D3KQBNJ\\vocals.wav",
+    "language": "en",
+    "device": "cpu",
+    "model": "small"
+  }
+}

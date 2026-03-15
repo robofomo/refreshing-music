@@ -1,0 +1,29 @@
+{
+  "updatedAt": "2026-03-11T08:42:22.504Z",
+  "stems": {
+    "status": "ok",
+    "zipPath": "stems.zip",
+    "pickedVocals": "0 Lead Vocals.wav",
+    "pickedInstrumental": "1 Instrumental.wav",
+    "normalized": {
+      "status": "ok",
+      "backend": "ffmpeg",
+      "files": [
+        "instrumental.mp3",
+        "vocals.mp3"
+      ]
+    },
+    "overwrite": false
+  },
+  "beats": {
+    "status": "ok",
+    "audioPath": "/mnt/d/seva/FOMO/Songs/the-refresh/refreshing-music/assets/rooms-of-unfinished-light/01KJYCKFYAN75K6MNXQV/instrumental.wav"
+  },
+  "whisperx": {
+    "status": "ok",
+    "audioPath": "/mnt/d/seva/FOMO/Songs/the-refresh/refreshing-music/assets/rooms-of-unfinished-light/01KJYCKFYAN75K6MNXQV/vocals.wav",
+    "language": "en",
+    "device": "cpu",
+    "model": "small"
+  }
+}

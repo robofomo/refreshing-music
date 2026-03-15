@@ -1,0 +1,2436 @@
+{
+  "schemaVersion": 1,
+  "generatedAt": "2026-03-15T01:46:38.780Z",
+  "trackId": "K318rgYw7KIKP1",
+  "workId": "loop-with-a-smile",
+  "derived": {
+    "beatsMs": [
+      522,
+      1057,
+      1591,
+      2136,
+      2694,
+      3239,
+      3796,
+      4377,
+      4899,
+      5422,
+      5944,
+      6467,
+      6989,
+      7512,
+      8022,
+      8533,
+      9044,
+      9555,
+      10077,
+      10600,
+      11122,
+      11645,
+      12156,
+      12678,
+      13189,
+      13700,
+      14222,
+      14745,
+      15256,
+      15790,
+      16300,
+      16811,
+      17322,
+      17845,
+      18367,
+      18901,
+      19412,
+      19923,
+      20434,
+      20956,
+      21478,
+      21989,
+      22512,
+      23034,
+      23545,
+      24056,
+      24567,
+      25101,
+      25612,
+      26122,
+      26645,
+      27167,
+      27678,
+      28201,
+      28723,
+      29234,
+      29745,
+      30267,
+      30790,
+      31300,
+      31823,
+      32345,
+      32856,
+      33367,
+      33890,
+      34412,
+      34923,
+      35434,
+      35956,
+      36479,
+      36989,
+      37512,
+      38034,
+      38545,
+      39056,
+      39578,
+      40101,
+      40612,
+      41134,
+      41657,
+      42167,
+      42678,
+      43212,
+      43723,
+      44234,
+      44756,
+      45279,
+      45790,
+      46301,
+      46823,
+      47345,
+      47856,
+      48379,
+      48901,
+      49412,
+      49923,
+      50434,
+      50956,
+      51479,
+      52001,
+      52524,
+      53034,
+      53545,
+      54056,
+      54567,
+      55089,
+      55612,
+      56123,
+      56645,
+      57168,
+      57678,
+      58201,
+      58723,
+      59234,
+      59745,
+      60267,
+      60790,
+      61301,
+      61823,
+      62346,
+      62856,
+      63367,
+      63878,
+      64401,
+      64923,
+      65445,
+      65968,
+      66479,
+      66990,
+      67512,
+      68034,
+      68545,
+      69056,
+      69579,
+      70101,
+      70612,
+      71134,
+      71657,
+      72168,
+      72678,
+      73201,
+      73723,
+      74234,
+      74757,
+      75267,
+      75790,
+      76312,
+      76835,
+      77346,
+      77857,
+      78367,
+      78890,
+      79412,
+      79923,
+      80457,
+      80968,
+      81479,
+      82001,
+      82524,
+      83035,
+      83545,
+      84068,
+      84590,
+      85101,
+      85612,
+      86134,
+      86657,
+      87168,
+      87679,
+      88201,
+      88723,
+      89234,
+      89757,
+      90279,
+      90790,
+      91312,
+      91835,
+      92346,
+      92857,
+      93379,
+      93901,
+      94412,
+      94935,
+      95446,
+      95968,
+      96479,
+      96990,
+      97512,
+      98035,
+      98545,
+      99068,
+      99590,
+      100101,
+      100612,
+      101135,
+      101657,
+      102168,
+      102690,
+      103213,
+      103724,
+      104234,
+      104757,
+      105279,
+      105790,
+      106301,
+      106823,
+      107346,
+      107857,
+      108379,
+      108902,
+      109412,
+      109935,
+      110457,
+      110968,
+      111491,
+      112013,
+      112524,
+      113035,
+      113546,
+      114068,
+      114590,
+      115101,
+      115624,
+      116146,
+      116657,
+      117168,
+      117690,
+      118213,
+      118724,
+      119234,
+      119757,
+      120279,
+      120790,
+      121301,
+      121823,
+      122346,
+      122857,
+      123379,
+      123902,
+      124413,
+      124923,
+      125434,
+      125957,
+      126479,
+      127002,
+      127524,
+      128035,
+      128557,
+      129080,
+      129591,
+      130101,
+      130624,
+      131146,
+      131657,
+      132168,
+      132690,
+      133213,
+      133724,
+      134246,
+      134769,
+      135279,
+      135790,
+      136313,
+      136835,
+      137346,
+      137857,
+      138379,
+      138902,
+      139413,
+      139935,
+      140458,
+      140968,
+      141479,
+      142002,
+      142524,
+      143035,
+      143557,
+      144080
+    ],
+    "downbeatTimesMs": [],
+    "wordsCount": 141
+  },
+  "hints": {
+    "eventsCount": 18,
+    "lastHintAt": "2026-03-03T08:04:16.713Z",
+    "downbeatAnchorsCount": 1,
+    "establishedTempoMs": 0,
+    "subdivisionFactor": 1,
+    "aiBeatDivisor": 1,
+    "lockedTempoBpm": 0,
+    "beatFusionMode": "ai-plus-snapped-hints",
+    "endMarkerSec": 0,
+    "sectionBoundaryResolver": {
+      "method": "markers+lyrics-label",
+      "adjusted": 7,
+      "avgSnapMs": 656,
+      "splitCount": 9,
+      "combinedCount": 5
+    },
+    "fusionWindowsSec": [],
+    "beatsSec": [
+      11.645
+    ],
+    "downbeatsSec": [
+      11.645
+    ],
+    "barBeats": []
+  },
+  "effective": {
+    "beatsMs": [
+      522,
+      1057,
+      1591,
+      2136,
+      2694,
+      3239,
+      3796,
+      4377,
+      4899,
+      5422,
+      5944,
+      6467,
+      6989,
+      7512,
+      8022,
+      8533,
+      9044,
+      9555,
+      10077,
+      10600,
+      11122,
+      11645,
+      12156,
+      12678,
+      13189,
+      13700,
+      14222,
+      14745,
+      15256,
+      15790,
+      16300,
+      16811,
+      17322,
+      17845,
+      18367,
+      18901,
+      19412,
+      19923,
+      20434,
+      20956,
+      21478,
+      21989,
+      22512,
+      23034,
+      23545,
+      24056,
+      24567,
+      25101,
+      25612,
+      26122,
+      26645,
+      27167,
+      27678,
+      28201,
+      28723,
+      29234,
+      29745,
+      30267,
+      30790,
+      31300,
+      31823,
+      32345,
+      32856,
+      33367,
+      33890,
+      34412,
+      34923,
+      35434,
+      35956,
+      36479,
+      36989,
+      37512,
+      38034,
+      38545,
+      39056,
+      39578,
+      40101,
+      40612,
+      41134,
+      41657,
+      42167,
+      42678,
+      43212,
+      43723,
+      44234,
+      44756,
+      45279,
+      45790,
+      46301,
+      46823,
+      47345,
+      47856,
+      48379,
+      48901,
+      49412,
+      49923,
+      50434,
+      50956,
+      51479,
+      52001,
+      52524,
+      53034,
+      53545,
+      54056,
+      54567,
+      55089,
+      55612,
+      56123,
+      56645,
+      57168,
+      57678,
+      58201,
+      58723,
+      59234,
+      59745,
+      60267,
+      60790,
+      61301,
+      61823,
+      62346,
+      62856,
+      63367,
+      63878,
+      64401,
+      64923,
+      65445,
+      65968,
+      66479,
+      66990,
+      67512,
+      68034,
+      68545,
+      69056,
+      69579,
+      70101,
+      70612,
+      71134,
+      71657,
+      72168,
+      72678,
+      73201,
+      73723,
+      74234,
+      74757,
+      75267,
+      75790,
+      76312,
+      76835,
+      77346,
+      77857,
+      78367,
+      78890,
+      79412,
+      79923,
+      80457,
+      80968,
+      81479,
+      82001,
+      82524,
+      83035,
+      83545,
+      84068,
+      84590,
+      85101,
+      85612,
+      86134,
+      86657,
+      87168,
+      87679,
+      88201,
+      88723,
+      89234,
+      89757,
+      90279,
+      90790,
+      91312,
+      91835,
+      92346,
+      92857,
+      93379,
+      93901,
+      94412,
+      94935,
+      95446,
+      95968,
+      96479,
+      96990,
+      97512,
+      98035,
+      98545,
+      99068,
+      99590,
+      100101,
+      100612,
+      101135,
+      101657,
+      102168,
+      102690,
+      103213,
+      103724,
+      104234,
+      104757,
+      105279,
+      105790,
+      106301,
+      106823,
+      107346,
+      107857,
+      108379,
+      108902,
+      109412,
+      109935,
+      110457,
+      110968,
+      111491,
+      112013,
+      112524,
+      113035,
+      113546,
+      114068,
+      114590,
+      115101,
+      115624,
+      116146,
+      116657,
+      117168,
+      117690,
+      118213,
+      118724,
+      119234,
+      119757,
+      120279,
+      120790,
+      121301,
+      121823,
+      122346,
+      122857,
+      123379,
+      123902,
+      124413,
+      124923,
+      125434,
+      125957,
+      126479,
+      127002,
+      127524,
+      128035,
+      128557,
+      129080,
+      129591,
+      130101,
+      130624,
+      131146,
+      131657,
+      132168,
+      132690,
+      133213,
+      133724,
+      134246,
+      134769,
+      135279,
+      135790,
+      136313,
+      136835,
+      137346,
+      137857,
+      138379,
+      138902,
+      139413,
+      139935,
+      140458,
+      140968,
+      141479,
+      142002,
+      142524,
+      143035,
+      143557,
+      144080
+    ],
+    "downbeatTimesMs": [
+      1057,
+      3239,
+      5422,
+      7512,
+      9555,
+      11645,
+      13700,
+      15790,
+      17845,
+      19923,
+      21989,
+      24056,
+      26122,
+      28201,
+      30267,
+      32345,
+      34412,
+      36479,
+      38545,
+      40612,
+      42678,
+      44756,
+      46823,
+      48901,
+      50956,
+      53034,
+      55089,
+      57168,
+      59234,
+      61301,
+      63367,
+      65445,
+      67512,
+      69579,
+      71657,
+      73723,
+      75790,
+      77857,
+      79923,
+      82001,
+      84068,
+      86134,
+      88201,
+      90279,
+      92346,
+      94412,
+      96479,
+      98545,
+      100612,
+      102690,
+      104757,
+      106823,
+      108902,
+      110968,
+      113035,
+      115101,
+      117168,
+      119234,
+      121301,
+      123379,
+      125434,
+      127524,
+      129591,
+      131657,
+      133724,
+      135790,
+      137857,
+      139935,
+      142002,
+      144080
+    ],
+    "beatMarkers": [
+      {
+        "tMs": 522,
+        "source": "inferred"
+      },
+      {
+        "tMs": 1057,
+        "source": "inferred"
+      },
+      {
+        "tMs": 1591,
+        "source": "inferred"
+      },
+      {
+        "tMs": 2136,
+        "source": "inferred"
+      },
+      {
+        "tMs": 2694,
+        "source": "inferred"
+      },
+      {
+        "tMs": 3239,
+        "source": "inferred"
+      },
+      {
+        "tMs": 3796,
+        "source": "inferred"
+      },
+      {
+        "tMs": 4377,
+        "source": "inferred"
+      },
+      {
+        "tMs": 4899,
+        "source": "inferred"
+      },
+      {
+        "tMs": 5422,
+        "source": "inferred"
+      },
+      {
+        "tMs": 5944,
+        "source": "inferred"
+      },
+      {
+        "tMs": 6467,
+        "source": "inferred"
+      },
+      {
+        "tMs": 6989,
+        "source": "inferred"
+      },
+      {
+        "tMs": 7512,
+        "source": "inferred"
+      },
+      {
+        "tMs": 8022,
+        "source": "inferred"
+      },
+      {
+        "tMs": 8533,
+        "source": "inferred"
+      },
+      {
+        "tMs": 9044,
+        "source": "inferred"
+      },
+      {
+        "tMs": 9555,
+        "source": "inferred"
+      },
+      {
+        "tMs": 10077,
+        "source": "inferred"
+      },
+      {
+        "tMs": 10600,
+        "source": "inferred"
+      },
+      {
+        "tMs": 11122,
+        "source": "inferred"
+      },
+      {
+        "tMs": 11645,
+        "source": "hint"
+      },
+      {
+        "tMs": 12156,
+        "source": "inferred"
+      },
+      {
+        "tMs": 12678,
+        "source": "inferred"
+      },
+      {
+        "tMs": 13189,
+        "source": "inferred"
+      },
+      {
+        "tMs": 13700,
+        "source": "inferred"
+      },
+      {
+        "tMs": 14222,
+        "source": "inferred"
+      },
+      {
+        "tMs": 14745,
+        "source": "inferred"
+      },
+      {
+        "tMs": 15256,
+        "source": "inferred"
+      },
+      {
+        "tMs": 15790,
+        "source": "inferred"
+      },
+      {
+        "tMs": 16300,
+        "source": "inferred"
+      },
+      {
+        "tMs": 16811,
+        "source": "inferred"
+      },
+      {
+        "tMs": 17322,
+        "source": "inferred"
+      },
+      {
+        "tMs": 17845,
+        "source": "inferred"
+      },
+      {
+        "tMs": 18367,
+        "source": "inferred"
+      },
+      {
+        "tMs": 18901,
+        "source": "inferred"
+      },
+      {
+        "tMs": 19412,
+        "source": "inferred"
+      },
+      {
+        "tMs": 19923,
+        "source": "inferred"
+      },
+      {
+        "tMs": 20434,
+        "source": "inferred"
+      },
+      {
+        "tMs": 20956,
+        "source": "inferred"
+      },
+      {
+        "tMs": 21478,
+        "source": "inferred"
+      },
+      {
+        "tMs": 21989,
+        "source": "inferred"
+      },
+      {
+        "tMs": 22512,
+        "source": "inferred"
+      },
+      {
+        "tMs": 23034,
+        "source": "inferred"
+      },
+      {
+        "tMs": 23545,
+        "source": "inferred"
+      },
+      {
+        "tMs": 24056,
+        "source": "inferred"
+      },
+      {
+        "tMs": 24567,
+        "source": "inferred"
+      },
+      {
+        "tMs": 25101,
+        "source": "inferred"
+      },
+      {
+        "tMs": 25612,
+        "source": "inferred"
+      },
+      {
+        "tMs": 26122,
+        "source": "inferred"
+      },
+      {
+        "tMs": 26645,
+        "source": "inferred"
+      },
+      {
+        "tMs": 27167,
+        "source": "inferred"
+      },
+      {
+        "tMs": 27678,
+        "source": "inferred"
+      },
+      {
+        "tMs": 28201,
+        "source": "inferred"
+      },
+      {
+        "tMs": 28723,
+        "source": "inferred"
+      },
+      {
+        "tMs": 29234,
+        "source": "inferred"
+      },
+      {
+        "tMs": 29745,
+        "source": "inferred"
+      },
+      {
+        "tMs": 30267,
+        "source": "inferred"
+      },
+      {
+        "tMs": 30790,
+        "source": "inferred"
+      },
+      {
+        "tMs": 31300,
+        "source": "inferred"
+      },
+      {
+        "tMs": 31823,
+        "source": "inferred"
+      },
+      {
+        "tMs": 32345,
+        "source": "inferred"
+      },
+      {
+        "tMs": 32856,
+        "source": "inferred"
+      },
+      {
+        "tMs": 33367,
+        "source": "inferred"
+      },
+      {
+        "tMs": 33890,
+        "source": "inferred"
+      },
+      {
+        "tMs": 34412,
+        "source": "inferred"
+      },
+      {
+        "tMs": 34923,
+        "source": "inferred"
+      },
+      {
+        "tMs": 35434,
+        "source": "inferred"
+      },
+      {
+        "tMs": 35956,
+        "source": "inferred"
+      },
+      {
+        "tMs": 36479,
+        "source": "inferred"
+      },
+      {
+        "tMs": 36989,
+        "source": "inferred"
+      },
+      {
+        "tMs": 37512,
+        "source": "inferred"
+      },
+      {
+        "tMs": 38034,
+        "source": "inferred"
+      },
+      {
+        "tMs": 38545,
+        "source": "inferred"
+      },
+      {
+        "tMs": 39056,
+        "source": "inferred"
+      },
+      {
+        "tMs": 39578,
+        "source": "inferred"
+      },
+      {
+        "tMs": 40101,
+        "source": "inferred"
+      },
+      {
+        "tMs": 40612,
+        "source": "inferred"
+      },
+      {
+        "tMs": 41134,
+        "source": "inferred"
+      },
+      {
+        "tMs": 41657,
+        "source": "inferred"
+      },
+      {
+        "tMs": 42167,
+        "source": "inferred"
+      },
+      {
+        "tMs": 42678,
+        "source": "inferred"
+      },
+      {
+        "tMs": 43212,
+        "source": "inferred"
+      },
+      {
+        "tMs": 43723,
+        "source": "inferred"
+      },
+      {
+        "tMs": 44234,
+        "source": "inferred"
+      },
+      {
+        "tMs": 44756,
+        "source": "inferred"
+      },
+      {
+        "tMs": 45279,
+        "source": "inferred"
+      },
+      {
+        "tMs": 45790,
+        "source": "inferred"
+      },
+      {
+        "tMs": 46301,
+        "source": "inferred"
+      },
+      {
+        "tMs": 46823,
+        "source": "inferred"
+      },
+      {
+        "tMs": 47345,
+        "source": "inferred"
+      },
+      {
+        "tMs": 47856,
+        "source": "inferred"
+      },
+      {
+        "tMs": 48379,
+        "source": "inferred"
+      },
+      {
+        "tMs": 48901,
+        "source": "inferred"
+      },
+      {
+        "tMs": 49412,
+        "source": "inferred"
+      },
+      {
+        "tMs": 49923,
+        "source": "inferred"
+      },
+      {
+        "tMs": 50434,
+        "source": "inferred"
+      },
+      {
+        "tMs": 50956,
+        "source": "inferred"
+      },
+      {
+        "tMs": 51479,
+        "source": "inferred"
+      },
+      {
+        "tMs": 52001,
+        "source": "inferred"
+      },
+      {
+        "tMs": 52524,
+        "source": "inferred"
+      },
+      {
+        "tMs": 53034,
+        "source": "inferred"
+      },
+      {
+        "tMs": 53545,
+        "source": "inferred"
+      },
+      {
+        "tMs": 54056,
+        "source": "inferred"
+      },
+      {
+        "tMs": 54567,
+        "source": "inferred"
+      },
+      {
+        "tMs": 55089,
+        "source": "inferred"
+      },
+      {
+        "tMs": 55612,
+        "source": "inferred"
+      },
+      {
+        "tMs": 56123,
+        "source": "inferred"
+      },
+      {
+        "tMs": 56645,
+        "source": "inferred"
+      },
+      {
+        "tMs": 57168,
+        "source": "inferred"
+      },
+      {
+        "tMs": 57678,
+        "source": "inferred"
+      },
+      {
+        "tMs": 58201,
+        "source": "inferred"
+      },
+      {
+        "tMs": 58723,
+        "source": "inferred"
+      },
+      {
+        "tMs": 59234,
+        "source": "inferred"
+      },
+      {
+        "tMs": 59745,
+        "source": "inferred"
+      },
+      {
+        "tMs": 60267,
+        "source": "inferred"
+      },
+      {
+        "tMs": 60790,
+        "source": "inferred"
+      },
+      {
+        "tMs": 61301,
+        "source": "inferred"
+      },
+      {
+        "tMs": 61823,
+        "source": "inferred"
+      },
+      {
+        "tMs": 62346,
+        "source": "inferred"
+      },
+      {
+        "tMs": 62856,
+        "source": "inferred"
+      },
+      {
+        "tMs": 63367,
+        "source": "inferred"
+      },
+      {
+        "tMs": 63878,
+        "source": "inferred"
+      },
+      {
+        "tMs": 64401,
+        "source": "inferred"
+      },
+      {
+        "tMs": 64923,
+        "source": "inferred"
+      },
+      {
+        "tMs": 65445,
+        "source": "inferred"
+      },
+      {
+        "tMs": 65968,
+        "source": "inferred"
+      },
+      {
+        "tMs": 66479,
+        "source": "inferred"
+      },
+      {
+        "tMs": 66990,
+        "source": "inferred"
+      },
+      {
+        "tMs": 67512,
+        "source": "inferred"
+      },
+      {
+        "tMs": 68034,
+        "source": "inferred"
+      },
+      {
+        "tMs": 68545,
+        "source": "inferred"
+      },
+      {
+        "tMs": 69056,
+        "source": "inferred"
+      },
+      {
+        "tMs": 69579,
+        "source": "inferred"
+      },
+      {
+        "tMs": 70101,
+        "source": "inferred"
+      },
+      {
+        "tMs": 70612,
+        "source": "inferred"
+      },
+      {
+        "tMs": 71134,
+        "source": "inferred"
+      },
+      {
+        "tMs": 71657,
+        "source": "inferred"
+      },
+      {
+        "tMs": 72168,
+        "source": "inferred"
+      },
+      {
+        "tMs": 72678,
+        "source": "inferred"
+      },
+      {
+        "tMs": 73201,
+        "source": "inferred"
+      },
+      {
+        "tMs": 73723,
+        "source": "inferred"
+      },
+      {
+        "tMs": 74234,
+        "source": "inferred"
+      },
+      {
+        "tMs": 74757,
+        "source": "inferred"
+      },
+      {
+        "tMs": 75267,
+        "source": "inferred"
+      },
+      {
+        "tMs": 75790,
+        "source": "inferred"
+      },
+      {
+        "tMs": 76312,
+        "source": "inferred"
+      },
+      {
+        "tMs": 76835,
+        "source": "inferred"
+      },
+      {
+        "tMs": 77346,
+        "source": "inferred"
+      },
+      {
+        "tMs": 77857,
+        "source": "inferred"
+      },
+      {
+        "tMs": 78367,
+        "source": "inferred"
+      },
+      {
+        "tMs": 78890,
+        "source": "inferred"
+      },
+      {
+        "tMs": 79412,
+        "source": "inferred"
+      },
+      {
+        "tMs": 79923,
+        "source": "inferred"
+      },
+      {
+        "tMs": 80457,
+        "source": "inferred"
+      },
+      {
+        "tMs": 80968,
+        "source": "inferred"
+      },
+      {
+        "tMs": 81479,
+        "source": "inferred"
+      },
+      {
+        "tMs": 82001,
+        "source": "inferred"
+      },
+      {
+        "tMs": 82524,
+        "source": "inferred"
+      },
+      {
+        "tMs": 83035,
+        "source": "inferred"
+      },
+      {
+        "tMs": 83545,
+        "source": "inferred"
+      },
+      {
+        "tMs": 84068,
+        "source": "inferred"
+      },
+      {
+        "tMs": 84590,
+        "source": "inferred"
+      },
+      {
+        "tMs": 85101,
+        "source": "inferred"
+      },
+      {
+        "tMs": 85612,
+        "source": "inferred"
+      },
+      {
+        "tMs": 86134,
+        "source": "inferred"
+      },
+      {
+        "tMs": 86657,
+        "source": "inferred"
+      },
+      {
+        "tMs": 87168,
+        "source": "inferred"
+      },
+      {
+        "tMs": 87679,
+        "source": "inferred"
+      },
+      {
+        "tMs": 88201,
+        "source": "inferred"
+      },
+      {
+        "tMs": 88723,
+        "source": "inferred"
+      },
+      {
+        "tMs": 89234,
+        "source": "inferred"
+      },
+      {
+        "tMs": 89757,
+        "source": "inferred"
+      },
+      {
+        "tMs": 90279,
+        "source": "inferred"
+      },
+      {
+        "tMs": 90790,
+        "source": "inferred"
+      },
+      {
+        "tMs": 91312,
+        "source": "inferred"
+      },
+      {
+        "tMs": 91835,
+        "source": "inferred"
+      },
+      {
+        "tMs": 92346,
+        "source": "inferred"
+      },
+      {
+        "tMs": 92857,
+        "source": "inferred"
+      },
+      {
+        "tMs": 93379,
+        "source": "inferred"
+      },
+      {
+        "tMs": 93901,
+        "source": "inferred"
+      },
+      {
+        "tMs": 94412,
+        "source": "inferred"
+      },
+      {
+        "tMs": 94935,
+        "source": "inferred"
+      },
+      {
+        "tMs": 95446,
+        "source": "inferred"
+      },
+      {
+        "tMs": 95968,
+        "source": "inferred"
+      },
+      {
+        "tMs": 96479,
+        "source": "inferred"
+      },
+      {
+        "tMs": 96990,
+        "source": "inferred"
+      },
+      {
+        "tMs": 97512,
+        "source": "inferred"
+      },
+      {
+        "tMs": 98035,
+        "source": "inferred"
+      },
+      {
+        "tMs": 98545,
+        "source": "inferred"
+      },
+      {
+        "tMs": 99068,
+        "source": "inferred"
+      },
+      {
+        "tMs": 99590,
+        "source": "inferred"
+      },
+      {
+        "tMs": 100101,
+        "source": "inferred"
+      },
+      {
+        "tMs": 100612,
+        "source": "inferred"
+      },
+      {
+        "tMs": 101135,
+        "source": "inferred"
+      },
+      {
+        "tMs": 101657,
+        "source": "inferred"
+      },
+      {
+        "tMs": 102168,
+        "source": "inferred"
+      },
+      {
+        "tMs": 102690,
+        "source": "inferred"
+      },
+      {
+        "tMs": 103213,
+        "source": "inferred"
+      },
+      {
+        "tMs": 103724,
+        "source": "inferred"
+      },
+      {
+        "tMs": 104234,
+        "source": "inferred"
+      },
+      {
+        "tMs": 104757,
+        "source": "inferred"
+      },
+      {
+        "tMs": 105279,
+        "source": "inferred"
+      },
+      {
+        "tMs": 105790,
+        "source": "inferred"
+      },
+      {
+        "tMs": 106301,
+        "source": "inferred"
+      },
+      {
+        "tMs": 106823,
+        "source": "inferred"
+      },
+      {
+        "tMs": 107346,
+        "source": "inferred"
+      },
+      {
+        "tMs": 107857,
+        "source": "inferred"
+      },
+      {
+        "tMs": 108379,
+        "source": "inferred"
+      },
+      {
+        "tMs": 108902,
+        "source": "inferred"
+      },
+      {
+        "tMs": 109412,
+        "source": "inferred"
+      },
+      {
+        "tMs": 109935,
+        "source": "inferred"
+      },
+      {
+        "tMs": 110457,
+        "source": "inferred"
+      },
+      {
+        "tMs": 110968,
+        "source": "inferred"
+      },
+      {
+        "tMs": 111491,
+        "source": "inferred"
+      },
+      {
+        "tMs": 112013,
+        "source": "inferred"
+      },
+      {
+        "tMs": 112524,
+        "source": "inferred"
+      },
+      {
+        "tMs": 113035,
+        "source": "inferred"
+      },
+      {
+        "tMs": 113546,
+        "source": "inferred"
+      },
+      {
+        "tMs": 114068,
+        "source": "inferred"
+      },
+      {
+        "tMs": 114590,
+        "source": "inferred"
+      },
+      {
+        "tMs": 115101,
+        "source": "inferred"
+      },
+      {
+        "tMs": 115624,
+        "source": "inferred"
+      },
+      {
+        "tMs": 116146,
+        "source": "inferred"
+      },
+      {
+        "tMs": 116657,
+        "source": "inferred"
+      },
+      {
+        "tMs": 117168,
+        "source": "inferred"
+      },
+      {
+        "tMs": 117690,
+        "source": "inferred"
+      },
+      {
+        "tMs": 118213,
+        "source": "inferred"
+      },
+      {
+        "tMs": 118724,
+        "source": "inferred"
+      },
+      {
+        "tMs": 119234,
+        "source": "inferred"
+      },
+      {
+        "tMs": 119757,
+        "source": "inferred"
+      },
+      {
+        "tMs": 120279,
+        "source": "inferred"
+      },
+      {
+        "tMs": 120790,
+        "source": "inferred"
+      },
+      {
+        "tMs": 121301,
+        "source": "inferred"
+      },
+      {
+        "tMs": 121823,
+        "source": "inferred"
+      },
+      {
+        "tMs": 122346,
+        "source": "inferred"
+      },
+      {
+        "tMs": 122857,
+        "source": "inferred"
+      },
+      {
+        "tMs": 123379,
+        "source": "inferred"
+      },
+      {
+        "tMs": 123902,
+        "source": "inferred"
+      },
+      {
+        "tMs": 124413,
+        "source": "inferred"
+      },
+      {
+        "tMs": 124923,
+        "source": "inferred"
+      },
+      {
+        "tMs": 125434,
+        "source": "inferred"
+      },
+      {
+        "tMs": 125957,
+        "source": "inferred"
+      },
+      {
+        "tMs": 126479,
+        "source": "inferred"
+      },
+      {
+        "tMs": 127002,
+        "source": "inferred"
+      },
+      {
+        "tMs": 127524,
+        "source": "inferred"
+      },
+      {
+        "tMs": 128035,
+        "source": "inferred"
+      },
+      {
+        "tMs": 128557,
+        "source": "inferred"
+      },
+      {
+        "tMs": 129080,
+        "source": "inferred"
+      },
+      {
+        "tMs": 129591,
+        "source": "inferred"
+      },
+      {
+        "tMs": 130101,
+        "source": "inferred"
+      },
+      {
+        "tMs": 130624,
+        "source": "inferred"
+      },
+      {
+        "tMs": 131146,
+        "source": "inferred"
+      },
+      {
+        "tMs": 131657,
+        "source": "inferred"
+      },
+      {
+        "tMs": 132168,
+        "source": "inferred"
+      },
+      {
+        "tMs": 132690,
+        "source": "inferred"
+      },
+      {
+        "tMs": 133213,
+        "source": "inferred"
+      },
+      {
+        "tMs": 133724,
+        "source": "inferred"
+      },
+      {
+        "tMs": 134246,
+        "source": "inferred"
+      },
+      {
+        "tMs": 134769,
+        "source": "inferred"
+      },
+      {
+        "tMs": 135279,
+        "source": "inferred"
+      },
+      {
+        "tMs": 135790,
+        "source": "inferred"
+      },
+      {
+        "tMs": 136313,
+        "source": "inferred"
+      },
+      {
+        "tMs": 136835,
+        "source": "inferred"
+      },
+      {
+        "tMs": 137346,
+        "source": "inferred"
+      },
+      {
+        "tMs": 137857,
+        "source": "inferred"
+      },
+      {
+        "tMs": 138379,
+        "source": "inferred"
+      },
+      {
+        "tMs": 138902,
+        "source": "inferred"
+      },
+      {
+        "tMs": 139413,
+        "source": "inferred"
+      },
+      {
+        "tMs": 139935,
+        "source": "inferred"
+      },
+      {
+        "tMs": 140458,
+        "source": "inferred"
+      },
+      {
+        "tMs": 140968,
+        "source": "inferred"
+      },
+      {
+        "tMs": 141479,
+        "source": "inferred"
+      },
+      {
+        "tMs": 142002,
+        "source": "inferred"
+      },
+      {
+        "tMs": 142524,
+        "source": "inferred"
+      },
+      {
+        "tMs": 143035,
+        "source": "inferred"
+      },
+      {
+        "tMs": 143557,
+        "source": "inferred"
+      },
+      {
+        "tMs": 144080,
+        "source": "inferred"
+      }
+    ],
+    "downbeatMarkers": [
+      {
+        "tMs": 1057,
+        "source": "ai"
+      },
+      {
+        "tMs": 3239,
+        "source": "ai"
+      },
+      {
+        "tMs": 5422,
+        "source": "ai"
+      },
+      {
+        "tMs": 7512,
+        "source": "ai"
+      },
+      {
+        "tMs": 9555,
+        "source": "ai"
+      },
+      {
+        "tMs": 11645,
+        "source": "hint"
+      },
+      {
+        "tMs": 13700,
+        "source": "ai"
+      },
+      {
+        "tMs": 15790,
+        "source": "ai"
+      },
+      {
+        "tMs": 17845,
+        "source": "ai"
+      },
+      {
+        "tMs": 19923,
+        "source": "ai"
+      },
+      {
+        "tMs": 21989,
+        "source": "ai"
+      },
+      {
+        "tMs": 24056,
+        "source": "ai"
+      },
+      {
+        "tMs": 26122,
+        "source": "ai"
+      },
+      {
+        "tMs": 28201,
+        "source": "ai"
+      },
+      {
+        "tMs": 30267,
+        "source": "ai"
+      },
+      {
+        "tMs": 32345,
+        "source": "ai"
+      },
+      {
+        "tMs": 34412,
+        "source": "ai"
+      },
+      {
+        "tMs": 36479,
+        "source": "ai"
+      },
+      {
+        "tMs": 38545,
+        "source": "ai"
+      },
+      {
+        "tMs": 40612,
+        "source": "ai"
+      },
+      {
+        "tMs": 42678,
+        "source": "ai"
+      },
+      {
+        "tMs": 44756,
+        "source": "ai"
+      },
+      {
+        "tMs": 46823,
+        "source": "ai"
+      },
+      {
+        "tMs": 48901,
+        "source": "ai"
+      },
+      {
+        "tMs": 50956,
+        "source": "ai"
+      },
+      {
+        "tMs": 53034,
+        "source": "ai"
+      },
+      {
+        "tMs": 55089,
+        "source": "ai"
+      },
+      {
+        "tMs": 57168,
+        "source": "ai"
+      },
+      {
+        "tMs": 59234,
+        "source": "ai"
+      },
+      {
+        "tMs": 61301,
+        "source": "ai"
+      },
+      {
+        "tMs": 63367,
+        "source": "ai"
+      },
+      {
+        "tMs": 65445,
+        "source": "ai"
+      },
+      {
+        "tMs": 67512,
+        "source": "ai"
+      },
+      {
+        "tMs": 69579,
+        "source": "ai"
+      },
+      {
+        "tMs": 71657,
+        "source": "ai"
+      },
+      {
+        "tMs": 73723,
+        "source": "ai"
+      },
+      {
+        "tMs": 75790,
+        "source": "ai"
+      },
+      {
+        "tMs": 77857,
+        "source": "ai"
+      },
+      {
+        "tMs": 79923,
+        "source": "ai"
+      },
+      {
+        "tMs": 82001,
+        "source": "ai"
+      },
+      {
+        "tMs": 84068,
+        "source": "ai"
+      },
+      {
+        "tMs": 86134,
+        "source": "ai"
+      },
+      {
+        "tMs": 88201,
+        "source": "ai"
+      },
+      {
+        "tMs": 90279,
+        "source": "ai"
+      },
+      {
+        "tMs": 92346,
+        "source": "ai"
+      },
+      {
+        "tMs": 94412,
+        "source": "ai"
+      },
+      {
+        "tMs": 96479,
+        "source": "ai"
+      },
+      {
+        "tMs": 98545,
+        "source": "ai"
+      },
+      {
+        "tMs": 100612,
+        "source": "ai"
+      },
+      {
+        "tMs": 102690,
+        "source": "ai"
+      },
+      {
+        "tMs": 104757,
+        "source": "ai"
+      },
+      {
+        "tMs": 106823,
+        "source": "ai"
+      },
+      {
+        "tMs": 108902,
+        "source": "ai"
+      },
+      {
+        "tMs": 110968,
+        "source": "ai"
+      },
+      {
+        "tMs": 113035,
+        "source": "ai"
+      },
+      {
+        "tMs": 115101,
+        "source": "ai"
+      },
+      {
+        "tMs": 117168,
+        "source": "ai"
+      },
+      {
+        "tMs": 119234,
+        "source": "ai"
+      },
+      {
+        "tMs": 121301,
+        "source": "ai"
+      },
+      {
+        "tMs": 123379,
+        "source": "ai"
+      },
+      {
+        "tMs": 125434,
+        "source": "ai"
+      },
+      {
+        "tMs": 127524,
+        "source": "ai"
+      },
+      {
+        "tMs": 129591,
+        "source": "ai"
+      },
+      {
+        "tMs": 131657,
+        "source": "ai"
+      },
+      {
+        "tMs": 133724,
+        "source": "ai"
+      },
+      {
+        "tMs": 135790,
+        "source": "ai"
+      },
+      {
+        "tMs": 137857,
+        "source": "ai"
+      },
+      {
+        "tMs": 139935,
+        "source": "ai"
+      },
+      {
+        "tMs": 142002,
+        "source": "ai"
+      },
+      {
+        "tMs": 144080,
+        "source": "ai"
+      }
+    ],
+    "aiDownbeatMarkers": [],
+    "sectionMarkers": [
+      {
+        "tMs": 3239,
+        "source": "hint"
+      },
+      {
+        "tMs": 11645,
+        "source": "hint"
+      },
+      {
+        "tMs": 19923,
+        "source": "hint"
+      },
+      {
+        "tMs": 28201,
+        "source": "default"
+      },
+      {
+        "tMs": 36479,
+        "source": "hint"
+      },
+      {
+        "tMs": 53034,
+        "source": "hint"
+      },
+      {
+        "tMs": 61301,
+        "source": "hint"
+      },
+      {
+        "tMs": 69579,
+        "source": "default"
+      },
+      {
+        "tMs": 77857,
+        "source": "hint"
+      },
+      {
+        "tMs": 94412,
+        "source": "hint"
+      },
+      {
+        "tMs": 110968,
+        "source": "hint"
+      },
+      {
+        "tMs": 127524,
+        "source": "hint"
+      }
+    ],
+    "lyricSuppressMarkers": [
+      {
+        "tMs": 110968,
+        "source": "hint"
+      }
+    ],
+    "lyricSuppressWindows": [
+      {
+        "t0Ms": 110968,
+        "t1Ms": 127524
+      }
+    ],
+    "sections": [
+      {
+        "id": "intro-1-a",
+        "baseId": "intro-1",
+        "labelRaw": "Intro",
+        "t0Ms": 0,
+        "t1Ms": 3239,
+        "source": "marker"
+      },
+      {
+        "id": "intro-1-b",
+        "baseId": "intro-1",
+        "labelRaw": "Intro",
+        "t0Ms": 3239,
+        "t1Ms": 11645,
+        "source": "marker"
+      },
+      {
+        "id": "intro-1-c",
+        "baseId": "intro-1",
+        "labelRaw": "Intro",
+        "t0Ms": 11645,
+        "t1Ms": 19923,
+        "source": "marker"
+      },
+      {
+        "id": "verse-1",
+        "baseId": "verse-1",
+        "labelRaw": "Verse",
+        "t0Ms": 19923,
+        "t1Ms": 28201,
+        "source": "marker",
+        "combinedFrom": [
+          "intro-1",
+          "verse-1"
+        ]
+      },
+      {
+        "id": "verse-2",
+        "baseId": "verse-2",
+        "labelRaw": "Verse",
+        "t0Ms": 28201,
+        "t1Ms": 36479,
+        "source": "marker",
+        "combinedFrom": [
+          "verse-2",
+          "chorus-1"
+        ]
+      },
+      {
+        "id": "chorus-1-a",
+        "baseId": "chorus-1",
+        "labelRaw": "Chorus",
+        "t0Ms": 36479,
+        "t1Ms": 53034,
+        "source": "marker"
+      },
+      {
+        "id": "chorus-1-b",
+        "baseId": "chorus-1",
+        "labelRaw": "Chorus",
+        "t0Ms": 53034,
+        "t1Ms": 61301,
+        "source": "marker"
+      },
+      {
+        "id": "verse-3",
+        "baseId": "verse-3",
+        "labelRaw": "Verse",
+        "t0Ms": 61301,
+        "t1Ms": 69579,
+        "source": "marker",
+        "combinedFrom": [
+          "chorus-1",
+          "verse-3"
+        ]
+      },
+      {
+        "id": "bridge-1",
+        "baseId": "bridge-1",
+        "labelRaw": "Bridge",
+        "t0Ms": 69579,
+        "t1Ms": 77857,
+        "source": "marker",
+        "combinedFrom": [
+          "bridge-1",
+          "final-chorus-1"
+        ]
+      },
+      {
+        "id": "final-chorus-1-a",
+        "baseId": "final-chorus-1",
+        "labelRaw": "Final Chorus",
+        "t0Ms": 77857,
+        "t1Ms": 94412,
+        "source": "marker"
+      },
+      {
+        "id": "final-chorus-1-b",
+        "baseId": "final-chorus-1",
+        "labelRaw": "Final Chorus",
+        "t0Ms": 94412,
+        "t1Ms": 110968,
+        "source": "marker"
+      },
+      {
+        "id": "ending-1-a",
+        "baseId": "ending-1",
+        "labelRaw": "Ending",
+        "t0Ms": 110968,
+        "t1Ms": 127524,
+        "source": "marker",
+        "combinedFrom": [
+          "final-chorus-1",
+          "ending-1"
+        ]
+      },
+      {
+        "id": "ending-1-b",
+        "baseId": "ending-1",
+        "labelRaw": "Ending",
+        "t0Ms": 127524,
+        "t1Ms": 148384,
+        "source": "marker"
+      }
+    ]
+  },
+  "overlays": [
+    {
+      "type": "hint/downbeat",
+      "tSec": 11.738667,
+      "payload": {
+        "groupId": "f907849d-3f48-4db1-842d-2553e32e2ffe"
+      },
+      "at": "2026-02-25T07:13:55.614Z",
+      "actor": "user"
+    },
+    {
+      "type": "hint/sectionMarker",
+      "tSec": 3.1013330000000003,
+      "payload": {
+        "action": "set",
+        "groupId": "77638d5c-f22f-4881-acdf-4b8094e60e5a"
+      },
+      "at": "2026-03-02T06:46:02.839Z",
+      "actor": "user"
+    },
+    {
+      "type": "hint/sectionMarker",
+      "tSec": 11.656,
+      "payload": {
+        "action": "set",
+        "groupId": "1c90ec15-77ff-403b-a579-d3df50e76e72"
+      },
+      "at": "2026-03-02T06:46:18.954Z",
+      "actor": "user"
+    },
+    {
+      "type": "hint/sectionMarker",
+      "tSec": 19.934846,
+      "payload": {
+        "action": "set",
+        "groupId": "9103b7d9-544e-4f81-879d-31019e17f857"
+      },
+      "at": "2026-03-02T06:46:27.231Z",
+      "actor": "user"
+    },
+    {
+      "type": "hint/sectionMarker",
+      "tSec": 22.018667,
+      "payload": {
+        "action": "clear",
+        "groupId": "ba110a74-e4ec-4e3e-bfb3-6db770a73341"
+      },
+      "at": "2026-03-02T06:46:29.310Z",
+      "actor": "user"
+    },
+    {
+      "type": "hint/sectionMarker",
+      "tSec": 32.336,
+      "payload": {
+        "action": "clear",
+        "groupId": "55939a8f-c88c-4f1e-97b9-3b25933682e1"
+      },
+      "at": "2026-03-02T06:46:39.631Z",
+      "actor": "user"
+    },
+    {
+      "type": "hint/sectionMarker",
+      "tSec": 36.498667,
+      "payload": {
+        "action": "set",
+        "groupId": "e9e64f02-e752-4fac-b5a1-230740cce2ee"
+      },
+      "at": "2026-03-02T06:46:43.789Z",
+      "actor": "user"
+    },
+    {
+      "type": "hint/sectionMarker",
+      "tSec": 53.066666999999995,
+      "payload": {
+        "action": "set",
+        "groupId": "bb2ed08a-7b65-4235-afc8-add691d155b6"
+      },
+      "at": "2026-03-02T06:47:00.357Z",
+      "actor": "user"
+    },
+    {
+      "type": "hint/sectionMarker",
+      "tSec": 61.298666999999995,
+      "payload": {
+        "action": "set",
+        "groupId": "f0afa972-028c-4931-b1fc-91ed853f0284"
+      },
+      "at": "2026-03-02T06:47:08.591Z",
+      "actor": "user"
+    },
+    {
+      "type": "hint/sectionMarker",
+      "tSec": 65.43733300000001,
+      "payload": {
+        "action": "clear",
+        "groupId": "af8f0294-b873-4934-8053-5383f7aab421"
+      },
+      "at": "2026-03-02T06:47:12.734Z",
+      "actor": "user"
+    },
+    {
+      "type": "hint/sectionMarker",
+      "tSec": 75.746328,
+      "payload": {
+        "action": "clear",
+        "groupId": "846ba08e-2419-405e-8a2e-e3c19a3496f1"
+      },
+      "at": "2026-03-02T06:47:23.034Z",
+      "actor": "user"
+    },
+    {
+      "type": "hint/sectionMarker",
+      "tSec": 77.874909,
+      "payload": {
+        "action": "set",
+        "groupId": "c0774a80-2e2e-4855-9c39-553b519b2b71"
+      },
+      "at": "2026-03-02T06:47:25.164Z",
+      "actor": "user"
+    },
+    {
+      "type": "hint/sectionMarker",
+      "tSec": 94.43733300000001,
+      "payload": {
+        "action": "set",
+        "groupId": "2118aed6-14ae-4536-bf9a-af4e4442e958"
+      },
+      "at": "2026-03-02T06:47:41.732Z",
+      "actor": "user"
+    },
+    {
+      "type": "hint/sectionMarker",
+      "tSec": 110.95638600000001,
+      "payload": {
+        "action": "set",
+        "groupId": "dcd45ce2-181b-416e-9a0a-55edfe424238"
+      },
+      "at": "2026-03-02T06:47:58.245Z",
+      "actor": "user"
+    },
+    {
+      "type": "hint/sectionMarker",
+      "tSec": 115.128,
+      "payload": {
+        "action": "clear",
+        "groupId": "1af9de16-f219-471f-8573-526fbec0728b"
+      },
+      "at": "2026-03-02T06:48:02.423Z",
+      "actor": "user"
+    },
+    {
+      "type": "hint/sectionMarker",
+      "tSec": 127.516288,
+      "payload": {
+        "action": "set",
+        "groupId": "525f4ceb-5d50-40ec-adf5-52539b84068d"
+      },
+      "at": "2026-03-02T06:48:14.811Z",
+      "actor": "user"
+    },
+    {
+      "type": "hint/lyricSuppress",
+      "tSec": 110.954648,
+      "payload": {
+        "action": "set",
+        "groupId": "7ac38aec-1dfb-4dc3-8397-d5db04073a6e"
+      },
+      "at": "2026-03-03T08:04:00.160Z",
+      "actor": "user"
+    },
+    {
+      "type": "hint/lyricSuppress",
+      "tSec": 127.50852900000001,
+      "payload": {
+        "action": "clear",
+        "groupId": "869e4d0b-26b6-4444-b2bd-735776c92c35"
+      },
+      "at": "2026-03-03T08:04:16.713Z",
+      "actor": "user"
+    }
+  ]
+}

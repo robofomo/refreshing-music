@@ -1,0 +1,73 @@
+[Song Title: Loop with a Smile]
+[Style: funk, nu-disco, clean studio recording, expressive male vocal]
+[Caption: A playful system that remembers us.]
+[Image: Neon grids, laughing avatars, looping lights.]
+[Refresh Title: The Joker]
+[Theme: Community Picked]
+[Gradients: 8]
+[Rank: 2]
+[Title Rarity: 0.30]
+[Seeds: 417, A:52, B:32, C:70, D:6]
+[Perspective: we_community]
+[Concept: Shared jokes become protocol; community as rhythm.]
+[Topic: Memory & Community → shared_jokes]
+[Genre Bias: funk / nu-disco]
+[Style Change: none]
+[Modulation: none]
+[Hook Prominence: high]
+[Deviation: none]
+[Created: January 28, 2026 at 12:16 PM]
+[Composer Version: v2.1]
+
+[Intro]
+[conversational contour]
+[clipped guitar stabs sync with a rubbery bass line]
+[soft claps set a playful grid]
+[warm synth pads swell briefly]
+
+[Verse]
+[asymmetric phrasing]
+We roll the dice, the screen lights up
+A hundred tries, we still show up
+Same old joke, but told anew
+The punchline lands because it’s you
+
+[Verse]
+[motif rotation]
+From late-night chats to morning code
+We pass the spark, we share the load
+It loops around, it never ends
+A glitch that turns us into friends
+
+[Chorus]
+[call-and-answer hook]
+Hit refresh, don’t fade it out
+Laugh it back, that’s what we’re about
+Same routine, but feels brand new
+When the system runs on me and you
+
+[Verse]
+[register swap]
+Archive days we almost lost
+Small mistakes at zero cost
+Every echo finds its place
+In the rhythm that we chase
+
+[Bridge]
+[long-tone release]
+Strip it down, just hands and feet
+Heartbeat, claps, the human beat
+Let it breathe, then pull it tight
+Cue the groove and bring the light
+
+[Final Chorus]
+[call-and-answer hook]
+Hit refresh, don’t fade it out
+Laugh it back, that’s what we’re about
+Same routine, but feels brand new
+When the system runs on me and you
+
+[Ending]
+[gentle sequence]
+Hit refresh
+Run it again

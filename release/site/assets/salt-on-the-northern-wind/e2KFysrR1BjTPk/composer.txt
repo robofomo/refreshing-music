@@ -1,0 +1,62 @@
+[Title: Salt on the Northern Wind]
+[Style: Scottish folk orchestral, clean studio recording, instruments: Great Highland bagpipes, fiddle, acoustic guitar, bodhrán, frame drum, cello, upright bass, male emotive tenor vocalist]
+[Refresh Title: Sailing the Seas]
+[Theme: Colors]
+[Gradients: 3]
+[Seed: 62]
+[Image: Grey-green waves beneath a heather sky, a lone sail edged with tartan red]
+[Caption: Old routes sung anew by wind and tide]
+[Created: January 25, 2026 at 11:03 PM]
+[Composer Version: v1.2]
+
+[Intro]
+The wind comes down from broken hills
+It names the lochs, it bends our wills
+
+[Verse]
+We loose the lines at first light’s call
+While echoes ring from stone to wall
+The pipes awake the waiting bay
+And chase the sleep from brine and spray
+
+[Verse]
+These boards have known both storm and song
+They’ve borne us short, they’ve borne us long
+Each scar recalls a ચૂક course tried
+And lessons learned from turning tide
+
+[Chorus]
+Oh heave away, my roving kin
+Let northern stars our path begin
+Through iron swell and silver sea
+We sail where we are meant to be
+
+[Verse]
+The gulls cry out in broken time
+Like half-remembered ancient rhyme
+The compass spins, then settles true
+As hearts do when they choose the blue
+
+[Bridge]
+If mist should fall and hide the shore
+We’ll trust the songs we sang before
+For every loss the waters give
+Returns as will, returns as live
+
+[Chorus]
+Oh heave away, my roving kin
+Let northern stars our path begin
+Through iron swell and silver sea
+We sail where we are meant to be
+
+[Instrumental]
+
+[Chorus]
+Oh heave away, my roving kin
+Let northern stars our path begin
+Through iron swell and silver sea
+We sail where we are meant to be
+
+[Ending]
+The tide goes quiet, oars at rest
+The sea keeps warm what we confessed

@@ -1,0 +1,77 @@
+[Song Title: Rooms of Unfinished Light]
+[Style: indie art-pop, warm upright piano, brushed drums, bowed bass, muted electric guitar harmonics, soft analog pads, clean studio recording, grounded male lead]
+[Caption: A quiet song about rebuilding trust in your own timing.]
+[Image: Window reflections at dusk, each pane holding a different memory.]
+[Refresh Title: Sunset Dreams]
+[Theme: sky]
+[Gradients: 6]
+[Rank: 8]
+[Title Rarity: 0.75]
+[Created: March 5, 2026 at 7:39 PM]
+[Seeds: 519, A:58, B:46, C:88, D:28]
+[Perspective: i_reflect]
+[Concept: I stop forcing resolution and let clarity arrive in small, honest passes.]
+[Topic: emotional_growth -> acceptance_after_noise]
+[Genre Bias: indie art-pop]
+[Style Change: none]
+[Modulation: none]
+[Hook Prominence: medium]
+[Deviation: refrain_tag]
+[Visual Mood: calm]
+[Visual Motion: low]
+[Visual Density: sparse]
+[Visual Lyric Presence: auto]
+[Visual Color Bias: warm]
+[Composer Version: v2.8]
+
+[Intro]
+[piano opens with uneven, human rubato before drums enter on soft brushes]
+[guitar harmonics bloom in the upper register with long decay]
+
+[Verse]
+[Visual: scene=hold; motion=low; density=sparse; focus=texture]
+[long-breath melody with small downward steps at line endings]
+I kept a map of every wrong turn  
+Folded thin from overuse  
+Held it up against the evening  
+Like proof I could not choose  
+
+[Pre-Chorus]
+[rising contour that resolves late into a lower held note]
+Then the streetlights came in slowly  
+And took the edges off the view  
+
+[Chorus]
+[Visual: scene=lift; motion=medium; density=normal; focus=vocal]
+[hook with gentle leap on first phrase and conversational release]
+In rooms of unfinished light  
+I learn to name what I can keep  
+Not every ache needs to be right  
+Some truths arrive when I let them sleep  
+
+[Verse]
+[melody repeats with altered cadence and softer final bar]
+I used to chase the perfect timing  
+Count each breath before I spoke  
+Now I leave a little silence  
+For the words that still have hope  
+
+[Bridge]
+[Visual: scene=contrast; motion=low; density=sparse; focus=vocal]
+[sustained line over sparse harmony with bowed bass swells]
+If morning finds me half assembled  
+That will still be more than none  
+I am not the sum of tremors  
+I am also what I've done  
+
+[Final Chorus]
+[Visual: scene=lift; motion=medium; density=normal; focus=vocal]
+[hook restated with wider backing harmonies and softer landing]
+In rooms of unfinished light  
+I learn to name what I can keep  
+Not every ache needs to be right  
+Some truths arrive when I let them sleep  
+
+[Ending]
+[refrain_tag]
+[drop to solo piano and a final bowed bass note fading to room tone]

@@ -1,0 +1,111 @@
+{
+  "schemaVersion": 1,
+  "exportedAt": "2026-03-02T07:51:15.330Z",
+  "trackId": "K318rgYw7KIKP1",
+  "workId": "loop-with-a-smile",
+  "title": "Loop with a Smile",
+  "assetDir": "assets/loop-with-a-smile/K318rgYw7KIKP1",
+  "applyPolicy": {
+    "eventType": "hint/sectionMarker",
+    "clearExistingSectionMarkersFirst": true,
+    "snapMode": "nearestDownbeat"
+  },
+  "markers": [
+    {
+      "order": 1,
+      "source": "hint",
+      "rawMs": 3239,
+      "rawSec": 3.239,
+      "snappedToCurrentDownbeatMs": 3239,
+      "snappedToCurrentDownbeatSec": 3.239
+    },
+    {
+      "order": 2,
+      "source": "hint",
+      "rawMs": 11645,
+      "rawSec": 11.645,
+      "snappedToCurrentDownbeatMs": 11645,
+      "snappedToCurrentDownbeatSec": 11.645
+    },
+    {
+      "order": 3,
+      "source": "hint",
+      "rawMs": 19923,
+      "rawSec": 19.923,
+      "snappedToCurrentDownbeatMs": 19923,
+      "snappedToCurrentDownbeatSec": 19.923
+    },
+    {
+      "order": 4,
+      "source": "default",
+      "rawMs": 28201,
+      "rawSec": 28.201,
+      "snappedToCurrentDownbeatMs": 28201,
+      "snappedToCurrentDownbeatSec": 28.201
+    },
+    {
+      "order": 5,
+      "source": "hint",
+      "rawMs": 36467,
+      "rawSec": 36.467,
+      "snappedToCurrentDownbeatMs": 36467,
+      "snappedToCurrentDownbeatSec": 36.467
+    },
+    {
+      "order": 6,
+      "source": "hint",
+      "rawMs": 53034,
+      "rawSec": 53.034,
+      "snappedToCurrentDownbeatMs": 53034,
+      "snappedToCurrentDownbeatSec": 53.034
+    },
+    {
+      "order": 7,
+      "source": "hint",
+      "rawMs": 61301,
+      "rawSec": 61.301,
+      "snappedToCurrentDownbeatMs": 61301,
+      "snappedToCurrentDownbeatSec": 61.301
+    },
+    {
+      "order": 8,
+      "source": "default",
+      "rawMs": 69579,
+      "rawSec": 69.579,
+      "snappedToCurrentDownbeatMs": 69579,
+      "snappedToCurrentDownbeatSec": 69.579
+    },
+    {
+      "order": 9,
+      "source": "hint",
+      "rawMs": 77857,
+      "rawSec": 77.857,
+      "snappedToCurrentDownbeatMs": 77857,
+      "snappedToCurrentDownbeatSec": 77.857
+    },
+    {
+      "order": 10,
+      "source": "hint",
+      "rawMs": 94412,
+      "rawSec": 94.412,
+      "snappedToCurrentDownbeatMs": 94412,
+      "snappedToCurrentDownbeatSec": 94.412
+    },
+    {
+      "order": 11,
+      "source": "hint",
+      "rawMs": 110968,
+      "rawSec": 110.968,
+      "snappedToCurrentDownbeatMs": 110968,
+      "snappedToCurrentDownbeatSec": 110.968
+    },
+    {
+      "order": 12,
+      "source": "hint",
+      "rawMs": 127524,
+      "rawSec": 127.524,
+      "snappedToCurrentDownbeatMs": 127524,
+      "snappedToCurrentDownbeatSec": 127.524
+    }
+  ]
+}

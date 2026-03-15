@@ -14,6 +14,11 @@ body,
   color: #f2f4f8;
 }
 
+body.cursor-hidden,
+body.cursor-hidden * {
+  cursor: none !important;
+}
+
 #stage {
   position: fixed;
   inset: 0;

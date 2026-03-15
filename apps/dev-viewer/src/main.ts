@@ -439,7 +439,7 @@ const DEBUG_AUDIO = false;
 let lastDebugLogTs = 0;
 let lowAmpSinceMs = 0;
 let lastGraphRebuildTs = 0;
-const CONTROLS_HIDE_MS = 5000;
+const CONTROLS_HIDE_MS = 3500;
 let controlsHideTimer = 0;
 let canvasClickTimer = 0;
 let stemLastDriftMs = 0;
@@ -1719,8 +1719,13 @@ function syncLyricsUrlParams() {
   updateUrlParam("lyricMode", null);
 }
 
+function setCursorHidden(hidden: boolean) {
+  document.body.classList.toggle("cursor-hidden", hidden);
+}
+
 function setControlsVisible(visible: boolean) {
   controls.classList.toggle("is-hidden", !visible);
+  setCursorHidden(!visible);
 }
 
 function showControlsTemporarily() {
@@ -4879,10 +4884,7 @@ function resolvePlayerSceneChoice(
   const variantIndex = Math.max(0, Math.floor(Number(state.variantIndex) || 0));
   const sectionBarIndex = Math.max(0, Math.floor(Number(state.sectionBarIndex) || 0));
   const beatInBar = Math.max(1, Math.min(4, Math.floor(Number(state.beatInBar) || 1)));
-  const h = hashStringToSeed(`player:${seed}:${sid}:${st}`) >>> 0;
-  const curatedBias = st === "chorus" || st === "bridge" || st === "outro" ? 0.72 : 0.42;
-  const roll = (h % 1000) / 1000;
-  const source: "recipe-view" | "random-scene" = roll < curatedBias ? "recipe-view" : "random-scene";
+  const source: "recipe-view" | "random-scene" = "random-scene";
   const beat3Chance = st === "chorus" ? 0.68 : st === "bridge" ? 0.48 : st === "verse" ? 0.3 : 0.22;
   const cycleChance = st === "chorus" ? 0.56 : st === "bridge" ? 0.34 : st === "verse" ? 0.18 : 0.24;
   const beat3Accent = beatInBar === 3 && ((((hashStringToSeed(`player:beat3:${seed}:${sid}:${st}`) >>> 0) % 1000) / 1000) < beat3Chance);
@@ -5737,6 +5739,10 @@ function refreshSeedAndShowControls() {
   showControlsTemporarily();
 }
 
+function refreshSeedOnly() {
+  randomizeSeed();
+}
+
 function toggleHudAndShowControls() {
   toggleHud();
   showControlsTemporarily();
@@ -6054,19 +6060,18 @@ hudBtn.addEventListener("click", () => {
 });
 
 window.addEventListener("keydown", async (e) => {
-  showControlsTemporarily();
   if (await handleTransportKeydown(e)) return;
   if (handlePostTransportKeydown(e)) return;
 });
 
 window.addEventListener("mousemove", showControlsTemporarily);
 window.addEventListener("touchstart", showControlsTemporarily, { passive: true });
-window.addEventListener("pointerdown", showControlsTemporarily);
+window.addEventListener("touchmove", showControlsTemporarily, { passive: true });
 
 canvas.addEventListener("click", () => {
   if (canvasClickTimer) window.clearTimeout(canvasClickTimer);
   canvasClickTimer = window.setTimeout(() => {
-    refreshSeedAndShowControls();
+    refreshSeedOnly();
   }, 220);
 });
 
